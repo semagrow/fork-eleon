@@ -1,0 +1,32 @@
+
+5 Mar 2009, Version 1.1
+
+This version mostly sees a major code refactoring, separating GUI from
+core functionality. It also includes the following fixes:
+ * Extends user models to generic generation profiles. 
+ * Complete URIs are preserved and not only local names. Entities with
+   foreign URIs (different prefix than current base) cannot be edited,
+   but are treated as imported vocabularies.
+ * Entity names are case-sensitively compared.
+ * Having as domain the union of named classes, makes a property
+   appear on the panel of all classes in the union.
+ * Upon importing an rdf:Property, ELEON tries to infer whether it is
+   a datatype or an object property from rdf:range triples and from fillers
+   in existing triples of this property.
+ * Greek language strings have been converted to UTF-8.
+   
+
+10 Jun 2008, Version 1.0
+
+The first public release of ELEON.
+Main points of ELEON functionality:
+ * Create for scratch or import OWL ontologies
+ * Annotate OWL ontologies with linguistic elements (nouns, verbs,
+   microplans)
+ * Create user models
+ * Connect to Natural Language Generation Engines to generate previews
+ * Connect to Description Logic inference engines for ontology
+   checking
+ * Connect to relational databases for retrieving ontology instances
+ * Supports English, Greek and Italian
+

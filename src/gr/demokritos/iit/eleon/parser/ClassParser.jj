@@ -1,0 +1,129 @@
+options {
+    JAVA_UNICODE_ESCAPE = true;
+    STATIC = false;
+}
+PARSER_BEGIN(ClassParser)
+
+package gr.demokritos.iit.mpiro.authoring.parser;
+
+import com.hp.hpl.jena.ontology.*;
+import com.hp.hpl.jena.rdf.model.*;
+import java.io.StringReader;
+import gr.demokritos.iit.mpiro.authoring.OwlExport;
+
+public class ClassParser {
+
+static private OntModel ontModel;
+static private String mpiroNS;
+
+  public static Resource parsing(String input, OntModel ontModel, String mpiroNS) throws ParseException {
+    ClassParser parser  = new ClassParser(new StringReader(input));
+    parser.ontModel = ontModel;
+    parser.mpiroNS=mpiroNS;
+    Resource oc=parser.ExpressionList();
+    return(oc);
+  }
+
+}
+
+PARSER_END(ClassParser)
+
+SKIP :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+}
+
+TOKEN :
+{
+  < IND: "Individual:" ( ["a"-"z","A"-"Z","_","0"-"9", "-", ":", "/", "."] )* >
+|
+  < CLASS: "Class:" ( ["a"-"z","A"-"Z","_","0"-"9", "-", ":", "/", "."] )* >
+|
+  < PROP: "Property:" ( ["a"-"z","A"-"Z","_","0"-"9", "-", ":", "/", "."] )* >
+|
+  < NUM: ( ["0"-"9"] )+ >
+}
+
+Resource ExpressionList() :
+{
+	//OntClass cl=ontModel.createResource();
+Resource an=ontModel.createResource();
+}
+{
+	{
+	 //System.out.println("Please type in an expression followed by a \";\" or ^D to quit:");
+	 // System.out.println("");
+	}
+an=classExpression()
+	{
+//cl.addSuperClass(an);
+	 // System.out.println(s);
+	//  System.out.println("");
+	 // System.out.println("Please type in another expression followed by a \";\" or ^D to quit:");
+	  //System.out.println("");
+	}
+  
+  <EOF>{return(an);}
+}
+
+
+Resource classExpression():
+{
+Token temp,num;
+Token ind=null;
+Resource tempClass=ontModel.createResource();
+Resource cl=ontModel.createResource();
+
+}
+{
+"(" [cl=classorunionorintersection() | "\u00AC" tempClass=classExpression(){
+cl=ontModel.createComplementClass(null,tempClass);
+ }
+| "\u2203" temp=<PROP> tempClass=classExpression(){
+  cl=ontModel.createSomeValuesFromRestriction(null, ontModel.getProperty(OwlExport.getNSFor(temp.image.replace("Property:",""), mpiroNS)), tempClass);
+ }
+| "\u220d" temp=<PROP> ind=<IND> {
+cl=ontModel.createHasValueRestriction(null, ontModel.getProperty(OwlExport.getNSFor(temp.image.replace("Property:",""), mpiroNS)), ontModel.getIndividual(OwlExport.getNSFor(ind.image.replace("Individual:",""), mpiroNS)));
+}
+| "\u2200" temp=<PROP> tempClass=classExpression() {
+cl=ontModel.createAllValuesFromRestriction(null, ontModel.getProperty(OwlExport.getNSFor(temp.image.replace("Property:",""), mpiroNS)), tempClass);
+}
+| "\u2265" num=<NUM> temp=<PROP>
+{
+cl=ontModel.createMinCardinalityRestriction(null, ontModel.getProperty(OwlExport.getNSFor(temp.image.replace("Property:",""), mpiroNS)) , Integer.parseInt(num.image));
+}
+| "=" num=<NUM> temp=<PROP>
+{
+cl=ontModel.createCardinalityRestriction(null, ontModel.getProperty(OwlExport.getNSFor(temp.image.replace("Property:",""), mpiroNS)) , Integer.parseInt(num.image));
+}
+| "\u2264" num=<NUM> temp=<PROP>
+{
+cl=ontModel.createMaxCardinalityRestriction(null, ontModel.getProperty(OwlExport.getNSFor(temp.image.replace("Property:",""), mpiroNS)) , Integer.parseInt(num.image));
+}
+| "{" temp=<IND> {cl=ontModel.createEnumeratedClass(null, ontModel.createList(new RDFNode[] {ontModel.getIndividual(OwlExport.getNSFor(temp.image.replace("Individual:",""), mpiroNS))}));} ( "," temp=<IND> {((EnumeratedClass) cl).addOneOf(ontModel.getIndividual(OwlExport.getNSFor(temp.image.replace("Individual:",""), mpiroNS)));})* "}"
+| temp=<CLASS> {cl=ontModel.getOntClass(OwlExport.getNSFor(temp.image.replace("Class:",""), mpiroNS));}] ")"
+{
+        return(cl);
+    }
+}
+
+Resource classorunionorintersection() :
+{
+Resource t1=ontModel.createResource();
+Resource t2=ontModel.createResource();
+Resource cl=ontModel.createResource();
+Token type=new Token();
+}
+{
+t1=classExpression() [type="\u222A"|type="\u2229"] t2=classExpression()
+{
+if (type.image.equalsIgnoreCase("\u222A"))
+cl=ontModel.createUnionClass(null, ontModel.createList(new RDFNode[] {t1,t2}));
+else
+cl=ontModel.createIntersectionClass(null, ontModel.createList(new RDFNode[] {t1,t2}));
+
+return(cl);}
+}
