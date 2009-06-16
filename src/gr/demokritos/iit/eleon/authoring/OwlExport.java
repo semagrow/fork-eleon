@@ -1327,7 +1327,7 @@ public class OwlExport {
                 Mpiro.win.struc.putPropertyInMainUserModelHashtable(nextProp, new Hashtable());
             Hashtable np=(Hashtable) Mpiro.win.struc.getPropertyFromMainUserModelHashtable(nextProp);
             Enumeration npkeys=np.keys();
-            Enumeration npelems=np.elements();
+            //Enumeration npelems=np.elements();
             while(npkeys.hasMoreElements()){
                 String nextDomain=npkeys.nextElement().toString();
 
@@ -1342,7 +1342,7 @@ public class OwlExport {
                         // if(usersValue.elementAt(1).toString().equalsIgnoreCase("")) continue;
                         Element CDPInterest  = doc2.createElement("owlnl:CDPInterestRepetitions");
                         CDPInterest.setAttribute("rdf:parseType","Resource");
-                        Property.appendChild(CDPInterest);
+                        
                         //Hashtable usersHash=(Hashtable) nextPropVector.elementAt(12);
                         Element forClass=doc2.createElement("owlnl:forOwlClass");
                         forClass.setAttribute("rdf:resource",uri+"#"+nextDomain);
@@ -1354,21 +1354,25 @@ public class OwlExport {
                         CDPInterest.appendChild(forUserType);
                         Element InterestValue= doc2.createElement("owlnl:InterestValue");
                         // Vector value=(Vector) values.nextElement();usersValue.elementAt(1).toString()
-                        if(usersValue.elementAt(1).toString().equalsIgnoreCase(""))
-                            InterestValue.appendChild(doc2.createTextNode(Mpiro.win.struc.getParentValuesVectorForOWLExport(nextProp, nextuser, nextDomain, 1)));
-                        //InterestValue.appendChild(doc2.createTextNode("-1"));
-                        else
-                            InterestValue.appendChild(doc2.createTextNode(usersValue.elementAt(1).toString()));
+                        if(!usersValue.elementAt(1).toString().equalsIgnoreCase(""))
+                        {InterestValue.appendChild(doc2.createTextNode(usersValue.elementAt(1).toString()));
                         CDPInterest.appendChild(InterestValue);
+                        Property.appendChild(CDPInterest);}
+                           // InterestValue.appendChild(doc2.createTextNode(Mpiro.win.struc.getParentValuesVectorForOWLExport(nextProp, nextuser, nextDomain, 1)));
+                        //InterestValue.appendChild(doc2.createTextNode("-1"));
+                      //  else
+                            
 
                         Element Repetitions= doc2.createElement("owlnl:Repetitions");
                         // Vector value=(Vector) values.nextElement();usersValue.elementAt(1).toString()
-                        if(usersValue.elementAt(2).toString().equalsIgnoreCase(""))
-                            // Repetitions.appendChild(doc2.createTextNode("-1"));
-                            Repetitions.appendChild(doc2.createTextNode(Mpiro.win.struc.getParentValuesVectorForOWLExport(nextProp, nextuser, nextDomain, 2)));
-                        else
-                            Repetitions.appendChild(doc2.createTextNode(usersValue.elementAt(2).toString()));
+                        if(!usersValue.elementAt(2).toString().equalsIgnoreCase("")){
+                             Repetitions.appendChild(doc2.createTextNode(usersValue.elementAt(2).toString()));
                         CDPInterest.appendChild(Repetitions);
+                        }
+                            // Repetitions.appendChild(doc2.createTextNode("-1"));
+                            //Repetitions.appendChild(doc2.createTextNode(Mpiro.win.struc.getParentValuesVectorForOWLExport(nextProp, nextuser, nextDomain, 2)));
+                      //  else
+                           
                     }
                 } else
                     if(Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity").containsKey(nextDomain)){
@@ -1382,7 +1386,7 @@ public class OwlExport {
                         //  if(usersValue.elementAt(1).toString().equalsIgnoreCase("")) continue;
                         Element IPInterest  = doc2.createElement("owlnl:IPInterestRepetitions");
                         IPInterest.setAttribute("rdf:parseType","Resource");
-                        Property.appendChild(IPInterest);
+                        
                         //Hashtable usersHash=(Hashtable) nextPropVector.elementAt(12);
                         Element forInstance =doc2.createElement("owlnl:forInstance");
                         forInstance.setAttribute("rdf:resource",uri+"#"+nextDomain);
@@ -1393,20 +1397,26 @@ public class OwlExport {
                         IPInterest.appendChild(forUserType);
                         Element InterestValue= doc2.createElement("owlnl:InterestValue");
                         // Vector value=(Vector) values.nextElement();
-                        if(usersValue.elementAt(1).toString().equalsIgnoreCase(""))
-                            //InterestValue.appendChild(doc2.createTextNode("-1"));
-                            InterestValue.appendChild(doc2.createTextNode(Mpiro.win.struc.getParentValuesVectorForOWLExport(nextProp, nextuser, nextDomain, 1)));
-                        else
+                        if(!usersValue.elementAt(1).toString().equalsIgnoreCase("")){
+                            Property.appendChild(IPInterest);
                             InterestValue.appendChild(doc2.createTextNode(usersValue.elementAt(1).toString()));
                         IPInterest.appendChild(InterestValue);
+                        }
+                            //InterestValue.appendChild(doc2.createTextNode("-1"));
+                           // InterestValue.appendChild(doc2.createTextNode(Mpiro.win.struc.getParentValuesVectorForOWLExport(nextProp, nextuser, nextDomain, 1)));
+                      //  else
+                            
                         Element Repetitions= doc2.createElement("owlnl:Repetitions");
                         // Vector value=(Vector) values.nextElement();
-                        if(usersValue.elementAt(2).toString().equalsIgnoreCase(""))
-                            // Repetitions.appendChild(doc2.createTextNode("-1"));
-                            Repetitions.appendChild(doc2.createTextNode(Mpiro.win.struc.getParentValuesVectorForOWLExport(nextProp, nextuser, nextDomain, 2)));
-                        else
-                            Repetitions.appendChild(doc2.createTextNode(usersValue.elementAt(2).toString()));
+                        if(!usersValue.elementAt(2).toString().equalsIgnoreCase("")){
+                             Repetitions.appendChild(doc2.createTextNode(usersValue.elementAt(2).toString()));
                         IPInterest.appendChild(Repetitions);
+                        }
+                            // Repetitions.appendChild(doc2.createTextNode("-1"));
+                          //  Repetitions.appendChild(doc2.createTextNode(Mpiro.win.struc.getParentValuesVectorForOWLExport(nextProp, nextuser, nextDomain, 2)));
+                       // else
+                           // Repetitions.appendChild(doc2.createTextNode(usersValue.elementAt(2).toString()));
+                     //   IPInterest.appendChild(Repetitions);
                     }
                     }
             }
@@ -1705,29 +1715,43 @@ Hashtable allElements=new Hashtable();
                         Vector valueVector = (Vector)entityNameVectors.nextElement();
 
                         Element Interest = doc2.createElement("owlnl:IInterestRepetitions");
-                        propert.appendChild(Interest);
+                       
                         Interest.setAttribute("rdf:parseType","Resource");
                         Element forUserType=doc2.createElement("owlnl:forUserType");
                         forUserType.setAttribute("rdf:resource",base+"#"+key);
                         Element forInstance=doc2.createElement("owlnl:forInstance");
                         forInstance.setAttribute("rdf:resource",uri+'#'+entityname);
                         Element InterestValue=doc2.createElement("owlnl:InterestValue");
-                        if(valueVector.get(0).toString().equalsIgnoreCase(""))
-                            //InterestValue.appendChild(doc2.createTextNode("-1"));
-                            InterestValue.appendChild(doc2.createTextNode(Mpiro.win.struc.getParentTypeOfVectorForOWLExport(key, entityname, 0)));
-                        else
+                        if(!valueVector.get(0).toString().equalsIgnoreCase("")){
                             InterestValue.appendChild(doc2.createTextNode(valueVector.get(0).toString()));
+                            Interest.appendChild(InterestValue);
+                             Interest.appendChild(forInstance);
+                            Interest.appendChild(forUserType);
+                             propert.appendChild(Interest);
+                        }
+                            //InterestValue.appendChild(doc2.createTextNode("-1"));
+                         //   InterestValue.appendChild(doc2.createTextNode(Mpiro.win.struc.getParentTypeOfVectorForOWLExport(key, entityname, 0)));
+                      //  else
+                            
                         Element InterestValue1=doc2.createElement("owlnl:Repetitions");
-                        if(valueVector.get(2).toString().equalsIgnoreCase(""))
-                            //InterestValue1.appendChild(doc2.createTextNode("-1"));
-                            InterestValue1.appendChild(doc2.createTextNode(Mpiro.win.struc.getParentTypeOfVectorForOWLExport(key, entityname, 2)));
-                        else
-                            InterestValue1.appendChild(doc2.createTextNode(valueVector.get(2).toString()));
+                        if(!valueVector.get(2).toString().equalsIgnoreCase("")){
+                             InterestValue1.appendChild(doc2.createTextNode(valueVector.get(2).toString()));
 
                         Interest.appendChild(forInstance);
                         Interest.appendChild(forUserType);
-                        Interest.appendChild(InterestValue);
+                        
                         Interest.appendChild(InterestValue1);
+                         propert.appendChild(Interest);
+                        }
+                            //InterestValue1.appendChild(doc2.createTextNode("-1"));
+                       //     InterestValue1.appendChild(doc2.createTextNode(Mpiro.win.struc.getParentTypeOfVectorForOWLExport(key, entityname, 2)));
+                      //  else
+                      //      InterestValue1.appendChild(doc2.createTextNode(valueVector.get(2).toString()));
+
+                       // Interest.appendChild(forInstance);
+                       // Interest.appendChild(forUserType);
+                       // Interest.appendChild(InterestValue);
+                       // Interest.appendChild(InterestValue1);
 
 
                         //   for(int i = 0; i<valueVector.size();i++){
@@ -1779,27 +1803,40 @@ Hashtable allElements=new Hashtable();
                         Vector valueVector = (Vector)entityNameVectors.nextElement();
 
                         Element Interest = doc2.createElement("owlnl:DInterestRepetitions");
-                        propert.appendChild(Interest);
+                        
                         Interest.setAttribute("rdf:parseType","Resource");
                         Element forUserType=doc2.createElement("owlnl:forUserType");
                         forUserType.setAttribute("rdf:resource",base+"#"+key);
                         Element InterestValue=doc2.createElement("owlnl:InterestValue");
-                        if(valueVector.get(0).toString().equalsIgnoreCase(""))
-                            //InterestValue.appendChild(doc2.createTextNode("-1"));
-                            InterestValue.appendChild(doc2.createTextNode(Mpiro.win.struc.getParentTypeOfVectorForOWLExport(key, entityname, 0)));
-                        else
+                        if(!valueVector.get(0).toString().equalsIgnoreCase("")){
                             InterestValue.appendChild(doc2.createTextNode(valueVector.get(0).toString()));
+                        Interest.appendChild(InterestValue);
+                        Interest.appendChild(forUserType);
+                        propert.appendChild(Interest);
+                        }
+                            //InterestValue.appendChild(doc2.createTextNode("-1"));
+                      //      InterestValue.appendChild(doc2.createTextNode(Mpiro.win.struc.getParentTypeOfVectorForOWLExport(key, entityname, 0)));
+                     //   else
+                           // InterestValue.appendChild(doc2.createTextNode(valueVector.get(0).toString()));
                         Element InterestValue1=doc2.createElement("owlnl:Repetitions");
-                        if(valueVector.get(2).toString().equalsIgnoreCase(""))
-                            //InterestValue1.appendChild(doc2.createTextNode("-1"));
-                            InterestValue1.appendChild(doc2.createTextNode(Mpiro.win.struc.getParentTypeOfVectorForOWLExport(key, entityname, 2)));
-                        else
-                            InterestValue1.appendChild(doc2.createTextNode(valueVector.get(2).toString()));
+                        if(!valueVector.get(2).toString().equalsIgnoreCase("")){
+                             InterestValue1.appendChild(doc2.createTextNode(valueVector.get(2).toString()));
                         // Interest.appendChild(forUserType);
 
                         Interest.appendChild(forUserType);
-                        Interest.appendChild(InterestValue);
+                        
                         Interest.appendChild(InterestValue1);
+                        propert.appendChild(Interest);
+                        }
+                            //InterestValue1.appendChild(doc2.createTextNode("-1"));
+                      //      InterestValue1.appendChild(doc2.createTextNode(Mpiro.win.struc.getParentTypeOfVectorForOWLExport(key, entityname, 2)));
+                      //  else
+                      //      InterestValue1.appendChild(doc2.createTextNode(valueVector.get(2).toString()));
+                        // Interest.appendChild(forUserType);
+
+                      //  Interest.appendChild(forUserType);
+                     //   Interest.appendChild(InterestValue);
+                      //  Interest.appendChild(InterestValue1);
                     }
                 }
             }
@@ -2072,7 +2109,7 @@ Hashtable allElements=new Hashtable();
                 Mpiro.win.struc.putPropertyInMainUserModelHashtable(nextProp, new Hashtable());
             Hashtable np=(Hashtable) Mpiro.win.struc.getPropertyFromMainUserModelHashtable(nextProp);
             Enumeration npkeys=np.keys();
-            Enumeration npelems=np.elements();
+          //  Enumeration npelems=np.elements();
             while(npkeys.hasMoreElements()){
                 String nextDomain=npkeys.nextElement().toString();
                 // Hashtable nextElem=(Hashtable) npelems.nextElement();
@@ -2089,7 +2126,7 @@ Hashtable allElements=new Hashtable();
                         // if(usersValue.elementAt(1).toString().equalsIgnoreCase("")) continue;
                         Element CDPInterest  = doc2.createElement("owlnl:CDPPreference");
                         CDPInterest.setAttribute("rdf:parseType","Resource");
-                        Property.appendChild(CDPInterest);
+                        
                         //Hashtable usersHash=(Hashtable) nextPropVector.elementAt(12);
                         Element forClass=doc2.createElement("owlnl:forOwlClass");
                         forClass.setAttribute("rdf:resource",uri+"#"+nextDomain);
@@ -2114,12 +2151,16 @@ Hashtable allElements=new Hashtable();
 
                         Element InterestValue= doc2.createElement("owlnl:PreferenceValue");
                         // Vector value=(Vector) values.nextElement();usersValue.elementAt(1).toString()
-                        if(usersValue.elementAt(0).toString().equalsIgnoreCase(""))
-                            InterestValue.appendChild(doc2.createTextNode(Mpiro.win.struc.getRobotsParentValuesVectorForOWLExport(nextProp, nextuser, nextDomain, 0)));
-                        //InterestValue.appendChild(doc2.createTextNode("-1"));
-                        else
-                            InterestValue.appendChild(doc2.createTextNode(usersValue.elementAt(0).toString()));
+                        if(!usersValue.elementAt(0).toString().equalsIgnoreCase("")){
+                             InterestValue.appendChild(doc2.createTextNode(usersValue.elementAt(0).toString()));
                         CDPInterest.appendChild(InterestValue);
+                        Property.appendChild(CDPInterest);
+                        }
+                         //   InterestValue.appendChild(doc2.createTextNode(Mpiro.win.struc.getRobotsParentValuesVectorForOWLExport(nextProp, nextuser, nextDomain, 0)));
+                        //InterestValue.appendChild(doc2.createTextNode("-1"));
+                      //  else
+                      //      InterestValue.appendChild(doc2.createTextNode(usersValue.elementAt(0).toString()));
+                    //    CDPInterest.appendChild(InterestValue);
 
                         //  Element Repetitions= doc2.createElement("owlnl:Repetitions");
                         // Vector value=(Vector) values.nextElement();usersValue.elementAt(1).toString()
@@ -2144,7 +2185,7 @@ Hashtable allElements=new Hashtable();
                         //  if(usersValue.elementAt(1).toString().equalsIgnoreCase("")) continue;
                         Element IPInterest  = doc2.createElement("owlnl:IPPreference");
                         IPInterest.setAttribute("rdf:parseType","Resource");
-                        Property.appendChild(IPInterest);
+                        
                         //Hashtable usersHash=(Hashtable) nextPropVector.elementAt(12);
                         Element forInstance =doc2.createElement("owlnl:forInstance");
                         forInstance .setAttribute("rdf:resource",uri+"#"+nextDomain);
@@ -2169,12 +2210,16 @@ Hashtable allElements=new Hashtable();
 
                         Element InterestValue= doc2.createElement("owlnl:PreferenceValue");
                         // Vector value=(Vector) values.nextElement();
-                        if(usersValue.elementAt(0).toString().equalsIgnoreCase(""))
-                            //InterestValue.appendChild(doc2.createTextNode("-1"));
-                            InterestValue.appendChild(doc2.createTextNode(Mpiro.win.struc.getRobotsParentValuesVectorForOWLExport(nextProp, nextuser, nextDomain, 0)));
-                        else
-                            InterestValue.appendChild(doc2.createTextNode(usersValue.elementAt(0).toString()));
+                        if(!usersValue.elementAt(0).toString().equalsIgnoreCase("")){
+                              InterestValue.appendChild(doc2.createTextNode(usersValue.elementAt(0).toString()));
                         IPInterest.appendChild(InterestValue);
+                        Property.appendChild(IPInterest);
+                        }
+                            //InterestValue.appendChild(doc2.createTextNode("-1"));
+                        //    InterestValue.appendChild(doc2.createTextNode(Mpiro.win.struc.getRobotsParentValuesVectorForOWLExport(nextProp, nextuser, nextDomain, 0)));
+                        //else
+                         //   InterestValue.appendChild(doc2.createTextNode(usersValue.elementAt(0).toString()));
+                        //IPInterest.appendChild(InterestValue);
                         //  Element Repetitions= doc2.createElement("owlnl:Repetitions");
                         // Vector value=(Vector) values.nextElement();
                         // if(usersValue.elementAt(2).toString().equalsIgnoreCase(""))
@@ -2458,7 +2503,7 @@ Hashtable allElements=new Hashtable();
             // userModelElement.appendChild(fieldElement);
 
             Enumeration fieldnameHashtableEnumKeys = fieldnameHashtable.keys();
-            Enumeration fieldnameHashtableEnumElements = fieldnameHashtable.elements();
+           // Enumeration fieldnameHashtableEnumElements = fieldnameHashtable.elements();
             while (fieldnameHashtableEnumKeys.hasMoreElements()) {
                 String entityname = fieldnameHashtableEnumKeys.nextElement().toString();
                 //  Hashtable entitynameHashtable = (Hashtable) fieldnameHashtableEnumElements.nextElement();
@@ -2487,19 +2532,26 @@ Hashtable allElements=new Hashtable();
                         Vector valueVector = (Vector)entityNameVectors.nextElement();
 
                         Element Interest = doc2.createElement("owlnl:IPreference");
-                        propert.appendChild(Interest);
-                        Interest.setAttribute("rdf:parseType","Resource");
+                       
+                       
+                        if(!valueVector.get(0).toString().equalsIgnoreCase("")){
+                             Interest.setAttribute("rdf:parseType","Resource");
                         Element forUserType=doc2.createElement("owlnl:forUserType");
                         forUserType.setAttribute("rdf:resource",base+"#"+key);
                         Element forInstance=doc2.createElement("owlnl:forInstance");
                         forInstance.setAttribute("rdf:resource",uri+'#'+entityname);
                         Element InterestValue=doc2.createElement("owlnl:PreferenceValue");
-                        if(valueVector.get(0).toString().equalsIgnoreCase(""))
-                            //InterestValue.appendChild(doc2.createTextNode("-1"));
-                            InterestValue.appendChild(doc2.createTextNode(Mpiro.win.struc.getParentTypeOfVectorForOWLExport(key, entityname, 0)));
-                        else
                             InterestValue.appendChild(doc2.createTextNode(valueVector.get(0).toString()));
-                        Element InterestValue1=doc2.createElement("owlnl:Repetitions");
+                             Interest.appendChild(forInstance);
+                        Interest.appendChild(forUserType);
+                        Interest.appendChild(InterestValue);
+                         propert.appendChild(Interest);
+                        }
+                            //InterestValue.appendChild(doc2.createTextNode("-1"));
+                        //    InterestValue.appendChild(doc2.createTextNode(Mpiro.win.struc.getParentTypeOfVectorForOWLExport(key, entityname, 0)));
+                       // else
+                         //   InterestValue.appendChild(doc2.createTextNode(valueVector.get(0).toString()));
+                      //  Element InterestValue1=doc2.createElement("owlnl:Repetitions");
                         //    if(valueVector.get(2).toString().equalsIgnoreCase(""))
                         //InterestValue1.appendChild(doc2.createTextNode("-1"));
                         //     InterestValue1.appendChild(doc2.createTextNode(Mpiro.win.struc.getParentTypeOfVectorForOWLExport(key, entityname, 2)));
@@ -2520,9 +2572,7 @@ Hashtable allElements=new Hashtable();
                             }
                         }
 
-                        Interest.appendChild(forInstance);
-                        Interest.appendChild(forUserType);
-                        Interest.appendChild(InterestValue);
+                       
                         //   Interest.appendChild(InterestValue1);
                     }
 
@@ -2543,17 +2593,23 @@ Hashtable allElements=new Hashtable();
                         String key = (String)entityNameKeys.nextElement();
                         Vector valueVector = (Vector)entityNameVectors.nextElement();
 
-                        Element Interest = doc2.createElement("owlnl:DPreference");
-                        propert.appendChild(Interest);
+                         Element Interest = doc2.createElement("owlnl:DPreference");
+                        if(!valueVector.get(0).toString().equalsIgnoreCase("")){
+
+
                         Interest.setAttribute("rdf:parseType","Resource");
                         Element forUserType=doc2.createElement("owlnl:forUserType");
                         forUserType.setAttribute("rdf:resource",base+"#"+key);
                         Element InterestValue=doc2.createElement("owlnl:PreferenceValue");
-                        if(valueVector.get(0).toString().equalsIgnoreCase(""))
-                            //InterestValue.appendChild(doc2.createTextNode("-1"));
-                            InterestValue.appendChild(doc2.createTextNode(Mpiro.win.struc.getParentTypeOfVectorForOWLExport(key, entityname, 0)));
-                        else
                             InterestValue.appendChild(doc2.createTextNode(valueVector.get(0).toString()));
+                            Interest.appendChild(forUserType);
+                        Interest.appendChild(InterestValue);
+                        propert.appendChild(Interest);
+                        }
+                            //InterestValue.appendChild(doc2.createTextNode("-1"));
+                          //  InterestValue.appendChild(doc2.createTextNode(Mpiro.win.struc.getParentTypeOfVectorForOWLExport(key, entityname, 0)));
+                      //  else
+                            
                         //   Element InterestValue1=doc2.createElement("owlnl:Repetitions");
                         ///  if(valueVector.get(2).toString().equalsIgnoreCase(""))
                         //InterestValue1.appendChild(doc2.createTextNode("-1"));
@@ -2575,8 +2631,7 @@ Hashtable allElements=new Hashtable();
                             }
                         }
 
-                        Interest.appendChild(forUserType);
-                        Interest.appendChild(InterestValue);
+                        
                         //   Interest.appendChild(InterestValue1);
                     }
                 }
