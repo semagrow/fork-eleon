@@ -1,5 +1,6 @@
 package gr.demokritos.iit.eleon.authoring;
 
+import gr.demokritos.iit.eleon.struct.QueryOptionsHashtable;
 import java.awt.*;
 import javax.swing.*;
 import java.util.Vector;
@@ -176,7 +177,7 @@ public class DialogExportToOwl
             jTextField2.setText(fileName);
             jTextField3.setText(rdfFile.getAbsolutePath().substring(0, rdfFile.getAbsolutePath().lastIndexOf('.')) + "_mpiro.xml");
             String ontName = d.getSelectedFile().getName().substring(0, d.getSelectedFile().getName().lastIndexOf('.'));
-            jTextField1.setText(QueryOptionsHashtable.getBaseURI());
+            jTextField1.setText(Mpiro.win.struc.getBaseURI());
         }
         d.removeChoosableFileFilter(filter);
     }

@@ -7,6 +7,8 @@
 package gr.demokritos.iit.eleon.ui;
 
 import gr.demokritos.iit.eleon.authoring.*;
+import gr.demokritos.iit.eleon.struct.QueryHashtable;
+import gr.demokritos.iit.eleon.struct.QueryProfileHashtable;
 
 import java.awt.Point;
 import java.awt.event.MouseEvent;
@@ -51,9 +53,9 @@ public class AnnotationPropertiesPanel extends java.awt.Dialog {
       //  titles1.add("User Type");
        // Vector test=new Vector();
        // test.add(titles1);
-        if(!QueryHashtable.annotationPropertiesHashtable.containsKey(QueryHashtable.nameWithoutOccur(DataBasePanel.last.toString())))
-            QueryHashtable.annotationPropertiesHashtable.put(QueryHashtable.nameWithoutOccur(DataBasePanel.last.toString()), new Vector());
-        anPropVector=(Vector) QueryHashtable.annotationPropertiesHashtable.get(QueryHashtable.nameWithoutOccur(DataBasePanel.last.toString()));
+        if(!Mpiro.win.struc.existsAnnotation(Mpiro.win.struc.nameWithoutOccur(DataBasePanel.last.toString())))
+            Mpiro.win.struc.addAnnotation(Mpiro.win.struc.nameWithoutOccur(DataBasePanel.last.toString()), new Vector());
+        anPropVector=(Vector) Mpiro.win.struc.getAnnotation(Mpiro.win.struc.nameWithoutOccur(DataBasePanel.last.toString()));
         Vector titles=new Vector();
         titles.add("Type");
         titles.add("Value");
@@ -108,7 +110,7 @@ public class AnnotationPropertiesPanel extends java.awt.Dialog {
         
         //JComboBox comboBox2 = new JComboBox();
         
-        //Enumeration usersHashtableEnum = QueryUsersHashtable.mainUsersHashtable.keys();
+        //Enumeration usersHashtableEnum = QueryProfileHashtable.mainUsersHashtable.keys();
         //while (usersHashtableEnum.hasMoreElements()) {
         //    comboBox2.addItem(usersHashtableEnum.nextElement());
         //}
@@ -141,7 +143,7 @@ jTable1.setBounds(100, 120, 220, 59);
                         TableCellEditor rrrr = jTable1.getCellEditor(rowNo, colNo);
                         rrrr.cancelCellEditing();
                    
-               // Enumeration enumEntities= QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity").keys();
+               // Enumeration enumEntities= Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity").keys();
       //  Vector entities=new Vector();
      //   while(enumEntities.hasMoreElements())
      //   {
@@ -159,7 +161,7 @@ jTable1.setBounds(100, 120, 220, 59);
                         
                    
                 Vector vec=new Vector();
-                for(Enumeration usertypes= QueryUsersHashtable.mainUsersHashtable.keys();usertypes.hasMoreElements();){
+                for(Enumeration usertypes= Mpiro.win.struc.getUserNames();usertypes.hasMoreElements();){
                             vec.add(new ListData(usertypes.nextElement().toString()));
                 }
                 DDialog dDialog = new DDialog("Select User Types",

@@ -8,8 +8,8 @@ package gr.demokritos.iit.eleon.ui;
 
 import gr.demokritos.iit.eleon.authoring.ListData;
 import gr.demokritos.iit.eleon.authoring.Mpiro;
-import gr.demokritos.iit.eleon.authoring.QueryHashtable;
-import gr.demokritos.iit.eleon.authoring.QueryUsersHashtable;
+import gr.demokritos.iit.eleon.struct.QueryHashtable;
+import gr.demokritos.iit.eleon.struct.QueryProfileHashtable;
 import gr.demokritos.iit.eleon.authoring.RobotsCharDialog;
 
 import java.awt.Point;
@@ -59,16 +59,19 @@ public class RobotCharacteristicsPanel extends JPanel {
       //  titles1.add("User Type");
        // Vector test=new Vector();
        // test.add(titles1);
-        //if(!QueryHashtable.annotationPropertiesHashtable.containsKey(QueryHashtable.nameWithoutOccur(DataBasePanel.last.toString())))
-      //      QueryHashtable.annotationPropertiesHashtable.put(QueryHashtable.nameWithoutOccur(DataBasePanel.last.toString()), new Vector());
-       // anPropVector=(Vector) QueryHashtable.annotationPropertiesHashtable.get(QueryHashtable.nameWithoutOccur(DataBasePanel.last.toString()));
+        //if(!Mpiro.win.struc.existsAnnotation(Mpiro.win.struc.nameWithoutOccur(DataBasePanel.last.toString())))
+      //      Mpiro.win.struc.addAnnotation(Mpiro.win.struc.nameWithoutOccur(DataBasePanel.last.toString()), new Vector());
+       // anPropVector=(Vector) Mpiro.win.struc.getAnnotation(Mpiro.win.struc.nameWithoutOccur(DataBasePanel.last.toString()));
         Vector test=new Vector();
         test.add("profile1");
         test.add("");
         test.add(false);
-         anPropVector=QueryHashtable.robotCharVector;
-         if(anPropVector.size()==0)
-        anPropVector.add(test);
+        if(Mpiro.win==null)
+            charVector=new Vector();
+        else
+         charVector=Mpiro.win.struc.getRobotCharVector();
+         if(charVector.size()==0)
+        charVector.add(test);
          Vector titles=new Vector();
         titles.add("Title");
         
@@ -76,7 +79,7 @@ public class RobotCharacteristicsPanel extends JPanel {
 
         titles.add("Universal");
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
-                anPropVector,
+                charVector,
                 titles
                 ) {
             Class[] types = new Class [] {
@@ -104,7 +107,7 @@ public class RobotCharacteristicsPanel extends JPanel {
         
         //JComboBox comboBox2 = new JComboBox();
         
-        //Enumeration usersHashtableEnum = QueryUsersHashtable.mainUsersHashtable.keys();
+        //Enumeration usersHashtableEnum = QueryProfileHashtable.mainUsersHashtable.keys();
         //while (usersHashtableEnum.hasMoreElements()) {
         //    comboBox2.addItem(usersHashtableEnum.nextElement());
         //}
@@ -137,7 +140,7 @@ public class RobotCharacteristicsPanel extends JPanel {
                    
                 Vector vec=new Vector();
                 
-                for(Enumeration robottypes= QueryUsersHashtable.robotsHashtable.keys();robottypes.hasMoreElements();){
+                for(Enumeration robottypes= Mpiro.win.struc.getRobotNames();robottypes.hasMoreElements();){
                             vec.add(new ListData(robottypes.nextElement().toString()));
                 }
                 DDialog dDialog = new DDialog("Select Profiles",
@@ -159,6 +162,8 @@ public class RobotCharacteristicsPanel extends JPanel {
                     jButton2.setEnabled(false);
                 else
                     jButton2.setEnabled(true);
+
+                Mpiro.win.struc.setRobotCharVector(charVector);
             }
             
             public void mouseReleased(MouseEvent e) {
@@ -179,12 +184,12 @@ public class RobotCharacteristicsPanel extends JPanel {
             public void tableChanged(TableModelEvent e) {
                 int row = e.getFirstRow();
                 int column = e.getColumn();
-                Vector previousData=(Vector)anPropVector.elementAt(row);
+                Vector previousData=(Vector)charVector.elementAt(row);
                 TableModel model = (TableModel)e.getSource();
                 String columnName = model.getColumnName(column);
         ///        
             String data = model.getValueAt(row, column).toString();
-            QueryHashtable.renameAttributeInRobotCharValuesHashtable(oldVal, data);
+            Mpiro.win.struc.renameAttributeInRobotCharValuesHashtable(oldVal, data);
             
             
      //           if(column==0){
@@ -274,8 +279,8 @@ public class RobotCharacteristicsPanel extends JPanel {
         String name="new_attribute";
         for(int j=1;true;j++){
             boolean exists=false;
-        for(int i=0;i<anPropVector.size();i++){
-            String existingname=((Vector)anPropVector.elementAt(i)).elementAt(0).toString();
+        for(int i=0;i<charVector.size();i++){
+            String existingname=((Vector)charVector.elementAt(i)).elementAt(0).toString();
             if(existingname.equalsIgnoreCase(name)){
                 exists=true;
             
@@ -289,15 +294,15 @@ public class RobotCharacteristicsPanel extends JPanel {
         newV.add(name);
         newV.add("");
         newV.add(false);
-        anPropVector.add(newV);
+        charVector.add(newV);
         jTable1.revalidate();
         jTable1.repaint();
     }                                        
     
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {                                         
 // TODO add your handling code here:
-        QueryHashtable.removeAttributeFromHashtable(jTable1.getValueAt(jTable1.getSelectedRow(),0).toString());
-        anPropVector.removeElementAt(jTable1.getSelectedRow());
+        Mpiro.win.struc.removeAttributeFromHashtable(jTable1.getValueAt(jTable1.getSelectedRow(),0).toString());
+        charVector.removeElementAt(jTable1.getSelectedRow());
         jTable1.revalidate();
         jTable1.repaint();
         
@@ -356,7 +361,7 @@ public class RobotCharacteristicsPanel extends JPanel {
 
     public static JTable jTable1;
     private static String oldVal="";
-    private Vector anPropVector;
+    private Vector charVector;
     
     // Variables declaration - do not modify                     
     private javax.swing.JButton jButton1;

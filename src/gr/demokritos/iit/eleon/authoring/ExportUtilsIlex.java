@@ -6,6 +6,9 @@
 
 package gr.demokritos.iit.eleon.authoring;
 
+import gr.demokritos.iit.eleon.struct.QueryHashtable;
+import gr.demokritos.iit.eleon.struct.QueryLexiconHashtable;
+import gr.demokritos.iit.eleon.struct.QueryProfileHashtable;
 import gr.demokritos.iit.eleon.ui.lang.gr.GreekAccentUtils;
 
 import java.net.URL;
@@ -74,7 +77,7 @@ public class ExportUtilsIlex
   public static void createEnglishLexicon() 
   {
     // Getting the mainLexiconHashtable nouns hashtable
-    Hashtable allNounsHashtable = (Hashtable)QueryLexiconHashtable.mainLexiconHashtable.get("Nouns");
+    Hashtable allNounsHashtable = Mpiro.win.struc.getNounsHashtable();
     String englishFile = english.toString() + "/English.lexicon";
 
     try
@@ -95,12 +98,12 @@ public class ExportUtilsIlex
 			// NOUNS
 			p.println(";;; NOUNS");
 			
-			Vector nounsVector = QueryLexiconHashtable.getNounsVectorFromMainLexiconHashtable();
+			Vector nounsVector = Mpiro.win.struc.getNounsVectorFromMainLexiconHashtable();
 			Enumeration nounsVectorEnum = nounsVector.elements();
 			while (nounsVectorEnum.hasMoreElements())
 			{
 	      String noun = nounsVectorEnum.nextElement().toString();
-	      Hashtable currentNounValues = QueryLexiconHashtable.showValues(noun, "English");
+	      Hashtable currentNounValues = Mpiro.win.struc.showValues(noun, "English");
 	      // the spelling from "enbasetext"
 	      String spelling = currentNounValues.get("enbasetext").toString();
 	
@@ -117,7 +120,7 @@ public class ExportUtilsIlex
         }
 
         // the concept
-        String concept = QueryHashtable.returnAllEntityTypesContainingThisNoun(noun);
+        String concept = Mpiro.win.struc.returnAllEntityTypesContainingThisNoun(noun);
 
 
 				// putting info into the file
@@ -143,12 +146,12 @@ public class ExportUtilsIlex
 			p.println(emptyspaceFile);
 			p.println(";;; VERBS");
 			
-			Vector verbsVector = QueryLexiconHashtable.getVerbsVectorFromMainLexiconHashtable();
+			Vector verbsVector = Mpiro.win.struc.getVerbsVectorFromMainLexiconHashtable();
 			Enumeration verbsVectorEnum = verbsVector.elements();
 			while (verbsVectorEnum.hasMoreElements())
 			{
 	      String verb = verbsVectorEnum.nextElement().toString();
-	      Hashtable currentVerbValues = QueryLexiconHashtable.showValues(verb, "English");
+	      Hashtable currentVerbValues = Mpiro.win.struc.showValues(verb, "English");
 	      // the spelling from "enbasetext"
 	      String spelling = currentVerbValues.get("vbasetext").toString();
 	
@@ -234,7 +237,7 @@ public class ExportUtilsIlex
   public static void createItalianLexicon() 
   {
 	  // Getting the mainLexiconHashtable nouns hashtable
-	  Hashtable allNounsHashtable = (Hashtable)QueryLexiconHashtable.mainLexiconHashtable.get("Nouns");
+	  Hashtable allNounsHashtable = Mpiro.win.struc.getNounsHashtable();
 	  String italianFile = italian.toString() + "/Italian.lexicon";
 	
 	  try
@@ -250,12 +253,12 @@ public class ExportUtilsIlex
 			// NOUNS
 			p.println(";;; NOUNS");
 
-      Vector nounsVector = QueryLexiconHashtable.getNounsVectorFromMainLexiconHashtable();
+      Vector nounsVector = Mpiro.win.struc.getNounsVectorFromMainLexiconHashtable();
       Enumeration nounsVectorEnum = nounsVector.elements();
       while (nounsVectorEnum.hasMoreElements())
       {
         String noun = nounsVectorEnum.nextElement().toString();
-        Hashtable currentNounValues = QueryLexiconHashtable.showValues(noun, "Italian");
+        Hashtable currentNounValues = Mpiro.win.struc.showValues(noun, "Italian");
 
         // the spelling from "enbasetext"
         String spelling = currentNounValues.get("itbasetext").toString();
@@ -284,7 +287,7 @@ public class ExportUtilsIlex
         }
 
 				// the concept
-				String concept = QueryHashtable.returnAllEntityTypesContainingThisNoun(noun);
+				String concept = Mpiro.win.struc.returnAllEntityTypesContainingThisNoun(noun);
 				
 				// putting info into the file
 				p.println(emptyspaceFile);
@@ -309,12 +312,12 @@ public class ExportUtilsIlex
 			p.println(emptyspaceFile);
 			p.println(";;; VERBS");
 			
-			Vector verbsVector = QueryLexiconHashtable.getVerbsVectorFromMainLexiconHashtable();
+			Vector verbsVector = Mpiro.win.struc.getVerbsVectorFromMainLexiconHashtable();
 			Enumeration verbsVectorEnum = verbsVector.elements();
 			while (verbsVectorEnum.hasMoreElements())
 			{
         String verb = verbsVectorEnum.nextElement().toString();
-        Hashtable currentVerbValues = QueryLexiconHashtable.showValues(verb, "Italian");
+        Hashtable currentVerbValues = Mpiro.win.struc.showValues(verb, "Italian");
         // the spelling from "enbasetext"
         String spelling = currentVerbValues.get("vbasetext").toString();
 
@@ -483,7 +486,7 @@ public class ExportUtilsIlex
   public static void createGreekLexicon() 
   {
     // Getting the mainLexiconHashtable nouns hashtable
-    Hashtable allNounsHashtable = (Hashtable)QueryLexiconHashtable.mainLexiconHashtable.get("Nouns");
+    Hashtable allNounsHashtable = Mpiro.win.struc.getNounsHashtable();
     String greekFile = greek + "/Greek.lexicon";
 
     try
@@ -499,12 +502,12 @@ public class ExportUtilsIlex
 			// NOUNS
 			p.println(";;; NOUNS");
 
-      Vector nounsVector = QueryLexiconHashtable.getNounsVectorFromMainLexiconHashtable();
+      Vector nounsVector = Mpiro.win.struc.getNounsVectorFromMainLexiconHashtable();
       Enumeration nounsVectorEnum = nounsVector.elements();
       while (nounsVectorEnum.hasMoreElements())
       {
         String noun = nounsVectorEnum.nextElement().toString();
-        Hashtable currentNounValues = QueryLexiconHashtable.showValues(noun, "Greek");
+        Hashtable currentNounValues = Mpiro.win.struc.showValues(noun, "Greek");
 
         String grbasetext = currentNounValues.get("grbasetext").toString();
         String grpluraltext = currentNounValues.get("grpluraltext").toString();
@@ -593,7 +596,7 @@ public class ExportUtilsIlex
         }
 
 				// the concept
-				String concept = QueryHashtable.returnAllEntityTypesContainingThisNoun(noun);
+				String concept = Mpiro.win.struc.returnAllEntityTypesContainingThisNoun(noun);
 				
 				// putting info into the file
 				p.println(emptyspaceFile);
@@ -658,12 +661,12 @@ public class ExportUtilsIlex
 			p.println(emptyspaceFile);
 			p.println(";;; VERBS");
 			
-			Vector verbsVector = QueryLexiconHashtable.getVerbsVectorFromMainLexiconHashtable();
+			Vector verbsVector = Mpiro.win.struc.getVerbsVectorFromMainLexiconHashtable();
 			Enumeration verbsVectorEnum = verbsVector.elements();
 			while (verbsVectorEnum.hasMoreElements())
 			{
 	      String verb = verbsVectorEnum.nextElement().toString();
-	      Hashtable currentVerbValues = QueryLexiconHashtable.showValues(verb, "Greek");
+	      Hashtable currentVerbValues = Mpiro.win.struc.showValues(verb, "Greek");
 	      // the spelling from "vbasetext"
 	      String vbasetext = currentVerbValues.get("vbasetext").toString();
 	      String vbasetext2 = currentVerbValues.get("vbasetext2").toString();
@@ -903,14 +906,14 @@ public class ExportUtilsIlex
       p.println(";;; EXHIBIT HIERARCHY");
       String domainname = Mpiro.loadedDomain.substring(0, Mpiro.loadedDomain.length()-6);
 
-      Vector allBasicTypesVector = QueryHashtable.getChildrenVectorFromMainDBHashtable("Basic-entity-types", "Entity type");
+      Vector allBasicTypesVector = Mpiro.win.struc.getChildrenVectorFromMainDBHashtable("Basic-entity-types", "Entity type");
       Enumeration allBasicTypesVectorEnum = allBasicTypesVector.elements();
       while (allBasicTypesVectorEnum.hasMoreElements())
       {
         String basicEntityType = allBasicTypesVectorEnum.nextElement().toString();
         StringBuffer upperTypes = new StringBuffer();
 
-        NodeVector nv = (NodeVector)QueryHashtable.mainDBHashtable.get(basicEntityType);
+        NodeVector nv = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(basicEntityType);
         Vector upperVector = (Vector)nv.get(1);
         int upperVectorSize = upperVector.size();
         if (upperVectorSize != 1)
@@ -953,12 +956,12 @@ public class ExportUtilsIlex
 
 
       // ENTITY TYPES (TAXONOMY)
-      Vector fullPathChilrenEntityTypes = (Vector)QueryHashtable.getFullPathChildrenVectorFromMainDBHashtable("Basic-entity-types", "Entity type");
+      Vector fullPathChilrenEntityTypes = (Vector)Mpiro.win.struc.getFullPathChildrenVectorFromMainDBHashtable("Basic-entity-types", "Entity type");
       Enumeration fullPathChilrenEntityTypesEnum = fullPathChilrenEntityTypes.elements();
       while (fullPathChilrenEntityTypesEnum.hasMoreElements())
       {
         String entityType = fullPathChilrenEntityTypesEnum.nextElement().toString();
-        Vector entityTypeChildrenVector = QueryHashtable.getChildrenVectorFromMainDBHashtable(entityType, "Entity type");
+        Vector entityTypeChildrenVector = Mpiro.win.struc.getChildrenVectorFromMainDBHashtable(entityType, "Entity type");
         if (!entityTypeChildrenVector.isEmpty())
         {
           StringBuffer childrenString = new StringBuffer();
@@ -1004,10 +1007,10 @@ public class ExportUtilsIlex
       p.println(inpackageFile);
       p.println(emptyspaceFile);
 
-      Vector allUserTypesVector = (Vector)QueryUsersHashtable.getUsersVectorFromMainUsersHashtable();
+      Vector allUserTypesVector = (Vector)Mpiro.win.struc.getUsersVectorFromMainUsersHashtable();
 
       // get a vector containing all entity-types
-      Vector allEntityTypesVector = (Vector)QueryHashtable.getFullPathChildrenVectorFromMainDBHashtable("Basic-entity-types", "Entity type");
+      Vector allEntityTypesVector = (Vector)Mpiro.win.struc.getFullPathChildrenVectorFromMainDBHashtable("Basic-entity-types", "Entity type");
       Enumeration allEntityTypesVectorEnum = allEntityTypesVector.elements();
       while (allEntityTypesVectorEnum.hasMoreElements())
       {
@@ -1022,7 +1025,7 @@ public class ExportUtilsIlex
         while (allUserTypesVectorEnum1.hasMoreElements())
         {
           String usertype = allUserTypesVectorEnum1.nextElement().toString();
-          Vector userModelValuesVector = QueryUsersHashtable.getUserModelValuesVector("Subtype-of", entityType, usertype);
+          Vector userModelValuesVector = Mpiro.win.struc.getUserModelValuesVector("Subtype-of", entityType, usertype);
 
           interest.append("(" + usertype + " " + userModelValuesVector.get(0).toString() + ") ");
           importance.append("(" + usertype + " " + userModelValuesVector.get(1).toString() + ") ");
@@ -1053,7 +1056,7 @@ public class ExportUtilsIlex
 				}
 
 				/* SPECIAL CODE
-				Vector exhibitPlusFullPathChildrenVector = (Vector)QueryHashtable.getFullPathChildrenVectorFromMainDBHashtable("Exhibit", "Entity type");
+				Vector exhibitPlusFullPathChildrenVector = (Vector)Mpiro.win.struc.getFullPathChildrenVectorFromMainDBHashtable("Exhibit", "Entity type");
 				if (!exhibitPlusFullPathChildrenVector.contains(entityType))
 				{
 				    p.println(emptyspaceFile);
@@ -1078,7 +1081,7 @@ public class ExportUtilsIlex
 
 			/* OLDER VERSION left here for reference ONLY
 			// get a vector containing all basic-entity-types
-			Vector allBasicTypesVector = QueryHashtable.getChildrenVectorFromMainDBHashtable("Basic-entity-types", "Entity type");
+			Vector allBasicTypesVector = Mpiro.win.struc.getChildrenVectorFromMainDBHashtable("Basic-entity-types", "Entity type");
 			Enumeration allBasicTypesVectorEnum = allBasicTypesVector.elements();
 			while (allBasicTypesVectorEnum.hasMoreElements())
 			{
@@ -1098,7 +1101,7 @@ public class ExportUtilsIlex
 			*/
 
 
-      Hashtable allEntityTypesHashtable = QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+      Hashtable allEntityTypesHashtable = Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
       allEntityTypesHashtable.remove("Data Base");
       allEntityTypesHashtable.remove("Basic-entity-types");
       //System.out.println("()---- " + allEntityTypesHashtable.toString());
@@ -1107,8 +1110,8 @@ public class ExportUtilsIlex
       {
         String entitytype = k.nextElement().toString();
         String parent = e.nextElement().toString();
-        NodeVector env = (NodeVector)QueryHashtable.mainDBHashtable.get(entitytype);
-        NodeVector pnv = (NodeVector)QueryHashtable.mainDBHashtable.get(parent);
+        NodeVector env = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(entitytype);
+        NodeVector pnv = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(parent);
         Vector entitytypeDBTable = (Vector)env.elementAt(0);
         Vector parentDBTable = (Vector)pnv.elementAt(0);
 
@@ -1142,7 +1145,7 @@ public class ExportUtilsIlex
             while (allUserTypesVectorEnum2.hasMoreElements())
             {
               String usertype = allUserTypesVectorEnum2.nextElement().toString();
-              Vector userModelValuesVector = QueryUsersHashtable.getUserModelValuesVector(field, entitytype, usertype);
+              Vector userModelValuesVector = Mpiro.win.struc.getUserModelValuesVector(field, entitytype, usertype);
 
               interest.append("(" + usertype + " " + userModelValuesVector.get(0).toString() + ") ");
               importance.append("(" + usertype + " " + userModelValuesVector.get(1).toString() + ") ");
@@ -1247,7 +1250,7 @@ public class ExportUtilsIlex
       p.println(emptyspaceFile);
 
       // instances.gram
-      Hashtable allEntityTypesHashtable = QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+      Hashtable allEntityTypesHashtable = Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
       allEntityTypesHashtable.remove("Data Base");
       allEntityTypesHashtable.remove("Basic-entity-types");
 
@@ -1259,7 +1262,7 @@ public class ExportUtilsIlex
 
 			// create a vector containing all fields for the "Basic-entity-types"
 			Vector allFieldsInBasicEntityTypesEntryVector = new Vector();
-			NodeVector basicEntityTypesEntry = (NodeVector)QueryHashtable.mainDBHashtable.get("Basic-entity-types");
+			NodeVector basicEntityTypesEntry = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity("Basic-entity-types");
 			Vector basicEntityTypesEntryDBTable = (Vector)basicEntityTypesEntry.getDatabaseTableVector();
 			Enumeration basicEntityTypesEntryDBTableEnum = basicEntityTypesEntryDBTable.elements();
 			while (basicEntityTypesEntryDBTableEnum.hasMoreElements())
@@ -1269,7 +1272,7 @@ public class ExportUtilsIlex
 			  allFieldsInBasicEntityTypesEntryVector.addElement(basicEntityTypesEntryDBTableRowVectorField);
 			}
 
-      Vector allBasicTypesVector = QueryHashtable.getChildrenVectorFromMainDBHashtable("Basic-entity-types", "Entity type");
+      Vector allBasicTypesVector = Mpiro.win.struc.getChildrenVectorFromMainDBHashtable("Basic-entity-types", "Entity type");
       Enumeration allBasicTypesVectorEnum = allBasicTypesVector.elements();
       while (allBasicTypesVectorEnum.hasMoreElements())
       {
@@ -1279,7 +1282,7 @@ public class ExportUtilsIlex
 				p.println(emptyspaceFile);
 				p.println("(defobject-structure " + basicEntityType);
 
-        NodeVector nv = (NodeVector)QueryHashtable.mainDBHashtable.get(basicEntityType);
+        NodeVector nv = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(basicEntityType);
         Vector dbTable = (Vector)nv.getDatabaseTableVector();
         Enumeration dbTableEnum = dbTable.elements();
         while (dbTableEnum.hasMoreElements())
@@ -1310,15 +1313,15 @@ public class ExportUtilsIlex
 					}	
 				}
 				// check all children of the basic-entity-type to export their fields under the basic-entity-type
-				Vector childrenEntityTypes = QueryHashtable.getFullPathChildrenVectorFromMainDBHashtable(basicEntityType, "Entity type");
+				Vector childrenEntityTypes = Mpiro.win.struc.getFullPathChildrenVectorFromMainDBHashtable(basicEntityType, "Entity type");
 				
 				Enumeration childrenEntityTypesEnum = childrenEntityTypes.elements();
 				while (childrenEntityTypesEnum.hasMoreElements())
 				{
 				  String childEntityType = childrenEntityTypesEnum.nextElement().toString();
 				  String parentEntityType = allEntityTypesHashtable.get(childEntityType).toString();
-				  NodeVector env = (NodeVector)QueryHashtable.mainDBHashtable.get(childEntityType);
-				  NodeVector pnv = (NodeVector)QueryHashtable.mainDBHashtable.get(parentEntityType);
+				  NodeVector env = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(childEntityType);
+				  NodeVector pnv = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(parentEntityType);
 				  Vector entitytypeDBTable = env.getDatabaseTableVector();
 				  Vector parentDBTable = pnv.getDatabaseTableVector();
 				
@@ -1373,7 +1376,7 @@ public class ExportUtilsIlex
 	    p.println(";;; OBJECTS");
 	
 	    // Enumerating all entities
-	    Hashtable allEntitiesHashtable = QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity+Generic");
+	    Hashtable allEntitiesHashtable = Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity+Generic");
 	    Enumeration allEntitiesHashtableEnum = allEntitiesHashtable.keys();
 	    while (allEntitiesHashtableEnum.hasMoreElements()) // while 1
 	    {
@@ -1388,7 +1391,7 @@ public class ExportUtilsIlex
         	p.println("   :generic-p t");
         }
 
-        NodeVector nv = (NodeVector)QueryHashtable.mainDBHashtable.get(entity);
+        NodeVector nv = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(entity);
         Vector independentFieldsVector = nv.getIndependentFieldsVector();
         Vector englishFieldsVector = nv.getEnglishFieldsVector();
         Vector italianFieldsVector = nv.getItalianFieldsVector();
@@ -1709,202 +1712,202 @@ public class ExportUtilsIlex
 
 
   /** Create the stories.gram  */
-  public static void createStoriesGram() 
-  {
-    String storiesFile = domPop.toString() + "/stories.gram";
-    String msgcatEnglishFile = english.toString() + "/msgcat.english";
-    String msgcatItalianFile = italian.toString() + "/msgcat.italian";
-    String msgcatGreekFile = greek.toString() + "/msgcat.greek";
-
-    try
-    {
-      //FileOutputStream output = new FileOutputStream(storiesFile);
-      //PrintStream p = new PrintStream(output);
-      OutputStreamWriter output = new OutputStreamWriter(new FileOutputStream(storiesFile), "ISO8859_1");
-      PrintWriter p = new PrintWriter(output);
-
-      //FileOutputStream output1 = new FileOutputStream(msgcatEnglishFile, true);
-      //PrintStream p1 = new PrintStream(output1);
-      OutputStreamWriter output1 = new OutputStreamWriter(new FileOutputStream(msgcatEnglishFile, true), "ISO8859_1");
-      PrintWriter p1 = new PrintWriter(output1);
-
-      //FileOutputStream output2 = new FileOutputStream(msgcatItalianFile, true);
-      //PrintStream p2 = new PrintStream(output2);
-      OutputStreamWriter output2 = new OutputStreamWriter(new FileOutputStream(msgcatItalianFile, true), "ISO8859_1");
-      PrintWriter p2 = new PrintWriter(output2);
-
-      //FileOutputStream output3 = new FileOutputStream(msgcatGreekFile, true);
-      //PrintStream p3 = new PrintStream(output3);
-      OutputStreamWriter output3 = new OutputStreamWriter(new FileOutputStream(msgcatGreekFile, true), "ISO8859_1");
-      PrintWriter p3 = new PrintWriter(output3);
-
-      p.println(inpackageFile);
-      p.println(emptyspaceFile);
-
-      Vector allUserTypesVector = (Vector)QueryUsersHashtable.getUsersVectorFromMainUsersHashtable();
-
-      Hashtable allEntityTypesHashtable = (Hashtable)QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
-      allEntityTypesHashtable.remove("Data Base");
-      allEntityTypesHashtable.remove("Basic-entity-types");
-      Enumeration allEntityTypesHashtableEnum = allEntityTypesHashtable.keys();
-      while (allEntityTypesHashtableEnum.hasMoreElements())
-      {
-        String entityType = allEntityTypesHashtableEnum.nextElement().toString();
-        NodeVector nv = (NodeVector)QueryHashtable.mainDBHashtable.get(entityType);
-        Vector storiesVector = nv.getStoriesVector();
-        Hashtable englishStories = (Hashtable)storiesVector.get(0);
-        Hashtable italianStories = (Hashtable)storiesVector.get(1);
-        Hashtable greekStories = (Hashtable)storiesVector.get(2);
-
-        for (Enumeration k = englishStories.keys(), e = englishStories.elements(); k.hasMoreElements(); )
-        {
-          String story = k.nextElement().toString();
-          if (!story.equalsIgnoreCase("New-story"))
-          {
-            String storyTextEnglish = englishStories.get(story).toString();
-            String storyTextItalian = italianStories.get(story).toString();
-            String storyTextGreek = greekStories.get(story).toString();
-
-            StringBuffer interest = new StringBuffer();
-            StringBuffer importance = new StringBuffer();
-            StringBuffer assimilation = new StringBuffer();
-            StringBuffer assimilationRate = new StringBuffer();
-            Enumeration allUserTypesVectorEnum3 = allUserTypesVector.elements();
-            while (allUserTypesVectorEnum3.hasMoreElements())
-            {
-              String usertype = allUserTypesVectorEnum3.nextElement().toString();
-              Vector userModelValuesVector = QueryUsersHashtable.getUserModelStoryValuesVector(story, entityType, usertype);
-
-              interest.append("(" + usertype + " " + userModelValuesVector.get(0).toString() + ") ");
-              importance.append("(" + usertype + " " + userModelValuesVector.get(1).toString() + ") ");
-              if (userModelValuesVector.get(2).toString().equalsIgnoreCase("0"))
-              {
-                assimilation.append("(" + usertype + " 1) ");
-                assimilationRate.append("(" + usertype + " 1) ");
-              }
-              else
-              {
-                assimilation.append("(" + usertype + " 0) ");
-
-                if (userModelValuesVector.get(2).toString().equalsIgnoreCase("1"))
-                {
-                	assimilationRate.append("(" + usertype + " 1) ");
-                }
-                else if (userModelValuesVector.get(2).toString().equalsIgnoreCase("2"))
-                {
-                	assimilationRate.append("(" + usertype + " 0.5) ");
-                }
-                else if (userModelValuesVector.get(2).toString().equalsIgnoreCase("3"))
-                {
-                	assimilationRate.append("(" + usertype + " 0.33) ");
-                }
-							}
-						}
-            p.println(emptyspaceFile);
-            p.println("(defstory");
-            p.println("   :id " + story);
-            p.println("   :type " + entityType);
-            p.println("   :interest ( " + interest.toString() + ")");
-            p.println("   :importance ( " + importance.toString() + ")");
-            p.println("   :assimilation ( " + assimilation.toString() + ")");
-            p.println("   :assim-rate ( " + assimilationRate.toString() + ")");
-            p.println("   :text " + "\"#story-" + entityType + "-" + story + "\"");
-            p.println(defclose);
-
-            p1.println("#story-" + entityType + "-" + story + " " + storyTextEnglish);
-            p2.println("#story-" + entityType + "-" + story + " " + storyTextItalian);
-            p3.println("#story-" + entityType + "-" + story + " " + storyTextGreek);
-					}//if
-				}//for
-			}//while
-
-      Hashtable allEntitiesHashtable = (Hashtable)QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity+Generic");
-      Enumeration allEntitiesHashtableEnum = allEntitiesHashtable.keys();
-      while (allEntitiesHashtableEnum.hasMoreElements())
-      {
-        String entity = allEntitiesHashtableEnum.nextElement().toString();
-        NodeVector nv = (NodeVector)QueryHashtable.mainDBHashtable.get(entity);
-        Vector storiesVector = nv.getStoriesVector();
-        Hashtable englishStories = (Hashtable)storiesVector.get(0);
-        Hashtable italianStories = (Hashtable)storiesVector.get(1);
-        Hashtable greekStories = (Hashtable)storiesVector.get(2);
-
-        for (Enumeration k = englishStories.keys(), e = englishStories.elements(); k.hasMoreElements(); )
-        {
-          String story = k.nextElement().toString();
-          if (!story.equalsIgnoreCase("New-story"))
-          {
-            String storyTextEnglish = englishStories.get(story).toString();
-            String storyTextItalian = italianStories.get(story).toString();
-            String storyTextGreek = greekStories.get(story).toString();
-
-            StringBuffer interest = new StringBuffer();
-            StringBuffer importance = new StringBuffer();
-            StringBuffer assimilation = new StringBuffer();
-            StringBuffer assimilationRate = new StringBuffer();
-            Enumeration allUserTypesVectorEnum4 = allUserTypesVector.elements();
-            while (allUserTypesVectorEnum4.hasMoreElements())
-            {
-              String usertype = allUserTypesVectorEnum4.nextElement().toString();
-              Vector userModelValuesVector = QueryUsersHashtable.getUserModelStoryValuesVector(story, entity, usertype);
-
-              interest.append("(" + usertype + " " + userModelValuesVector.get(0).toString() + ") ");
-              importance.append("(" + usertype + " " + userModelValuesVector.get(1).toString() + ") ");
-              if (userModelValuesVector.get(2).toString().equalsIgnoreCase("0"))
-              {
-                assimilation.append("(" + usertype + " 1) ");
-                assimilationRate.append("(" + usertype + " 1) ");
-              }
-              else
-              {
-                assimilation.append("(" + usertype + " 0) ");
-
-                if (userModelValuesVector.get(2).toString().equalsIgnoreCase("1"))
-                {
-                	assimilationRate.append("(" + usertype + " 1) ");
-                }
-                else if (userModelValuesVector.get(2).toString().equalsIgnoreCase("2"))
-                {
-                	assimilationRate.append("(" + usertype + " 0.5) ");
-                }
-                else if (userModelValuesVector.get(2).toString().equalsIgnoreCase("3"))
-                {
-                	assimilationRate.append("(" + usertype + " 0.33) ");
-                }
-							}
-						}
-            p.println(emptyspaceFile);
-            p.println("(defstory");
-            p.println("   :id " + story);
-            p.println("   :instance " + entity);
-            p.println("   :interest ( " + interest.toString() + ")");
-            p.println("   :importance ( " + importance.toString() + ")");
-            p.println("   :assimilation ( " + assimilation.toString() + ")");
-            p.println("   :assim-rate ( " + assimilationRate.toString() + ")");
-            p.println("   :text " + "\"#story-" + entity + "-" + story + "\"");
-            p.println(defclose);
-
-            p1.println("#story-" + entity + "-" + story + " " + storyTextEnglish);
-            p2.println("#story-" + entity + "-" + story + " " + storyTextItalian);
-            p3.println("#story-" + entity + "-" + story + " " + storyTextGreek);
-					}
-				}
-			}
-      p.flush();
-      p.close();
-      p1.flush();
-      p1.close();
-      p2.flush();
-      p2.close();
-      p3.flush();
-      p3.close();
-		}
-		catch (Exception ex)
-		{
-			System.out.println("|||| Exception ||||");
-			ex.printStackTrace();
-		}
-	} // createStoriesGram()
+//  public static void createStoriesGram() 
+//  {
+//    String storiesFile = domPop.toString() + "/stories.gram";
+//    String msgcatEnglishFile = english.toString() + "/msgcat.english";
+//    String msgcatItalianFile = italian.toString() + "/msgcat.italian";
+//    String msgcatGreekFile = greek.toString() + "/msgcat.greek";
+//
+//    try
+//    {
+//      //FileOutputStream output = new FileOutputStream(storiesFile);
+//      //PrintStream p = new PrintStream(output);
+//      OutputStreamWriter output = new OutputStreamWriter(new FileOutputStream(storiesFile), "ISO8859_1");
+//      PrintWriter p = new PrintWriter(output);
+//
+//      //FileOutputStream output1 = new FileOutputStream(msgcatEnglishFile, true);
+//      //PrintStream p1 = new PrintStream(output1);
+//      OutputStreamWriter output1 = new OutputStreamWriter(new FileOutputStream(msgcatEnglishFile, true), "ISO8859_1");
+//      PrintWriter p1 = new PrintWriter(output1);
+//
+//      //FileOutputStream output2 = new FileOutputStream(msgcatItalianFile, true);
+//      //PrintStream p2 = new PrintStream(output2);
+//      OutputStreamWriter output2 = new OutputStreamWriter(new FileOutputStream(msgcatItalianFile, true), "ISO8859_1");
+//      PrintWriter p2 = new PrintWriter(output2);
+//
+//      //FileOutputStream output3 = new FileOutputStream(msgcatGreekFile, true);
+//      //PrintStream p3 = new PrintStream(output3);
+//      OutputStreamWriter output3 = new OutputStreamWriter(new FileOutputStream(msgcatGreekFile, true), "ISO8859_1");
+//      PrintWriter p3 = new PrintWriter(output3);
+//
+//      p.println(inpackageFile);
+//      p.println(emptyspaceFile);
+//
+//      Vector allUserTypesVector = (Vector)Mpiro.win.struc.getUsersVectorFromMainUsersHashtable();
+//
+//      Hashtable allEntityTypesHashtable = (Hashtable)Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+//      allEntityTypesHashtable.remove("Data Base");
+//      allEntityTypesHashtable.remove("Basic-entity-types");
+//      Enumeration allEntityTypesHashtableEnum = allEntityTypesHashtable.keys();
+//      while (allEntityTypesHashtableEnum.hasMoreElements())
+//      {
+//        String entityType = allEntityTypesHashtableEnum.nextElement().toString();
+//        NodeVector nv = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(entityType);
+//        Vector storiesVector = nv.getStoriesVector();
+//        Hashtable englishStories = (Hashtable)storiesVector.get(0);
+//        Hashtable italianStories = (Hashtable)storiesVector.get(1);
+//        Hashtable greekStories = (Hashtable)storiesVector.get(2);
+//
+//        for (Enumeration k = englishStories.keys(), e = englishStories.elements(); k.hasMoreElements(); )
+//        {
+//          String story = k.nextElement().toString();
+//          if (!story.equalsIgnoreCase("New-story"))
+//          {
+//            String storyTextEnglish = englishStories.get(story).toString();
+//            String storyTextItalian = italianStories.get(story).toString();
+//            String storyTextGreek = greekStories.get(story).toString();
+//
+//            StringBuffer interest = new StringBuffer();
+//            StringBuffer importance = new StringBuffer();
+//            StringBuffer assimilation = new StringBuffer();
+//            StringBuffer assimilationRate = new StringBuffer();
+//            Enumeration allUserTypesVectorEnum3 = allUserTypesVector.elements();
+//            while (allUserTypesVectorEnum3.hasMoreElements())
+//            {
+//              String usertype = allUserTypesVectorEnum3.nextElement().toString();
+//              Vector userModelValuesVector = QueryProfileHashtable.getUserModelStoryValuesVector(story, entityType, usertype);
+//
+//              interest.append("(" + usertype + " " + userModelValuesVector.get(0).toString() + ") ");
+//              importance.append("(" + usertype + " " + userModelValuesVector.get(1).toString() + ") ");
+//              if (userModelValuesVector.get(2).toString().equalsIgnoreCase("0"))
+//              {
+//                assimilation.append("(" + usertype + " 1) ");
+//                assimilationRate.append("(" + usertype + " 1) ");
+//              }
+//              else
+//              {
+//                assimilation.append("(" + usertype + " 0) ");
+//
+//                if (userModelValuesVector.get(2).toString().equalsIgnoreCase("1"))
+//                {
+//                	assimilationRate.append("(" + usertype + " 1) ");
+//                }
+//                else if (userModelValuesVector.get(2).toString().equalsIgnoreCase("2"))
+//                {
+//                	assimilationRate.append("(" + usertype + " 0.5) ");
+//                }
+//                else if (userModelValuesVector.get(2).toString().equalsIgnoreCase("3"))
+//                {
+//                	assimilationRate.append("(" + usertype + " 0.33) ");
+//                }
+//							}
+//						}
+//            p.println(emptyspaceFile);
+//            p.println("(defstory");
+//            p.println("   :id " + story);
+//            p.println("   :type " + entityType);
+//            p.println("   :interest ( " + interest.toString() + ")");
+//            p.println("   :importance ( " + importance.toString() + ")");
+//            p.println("   :assimilation ( " + assimilation.toString() + ")");
+//            p.println("   :assim-rate ( " + assimilationRate.toString() + ")");
+//            p.println("   :text " + "\"#story-" + entityType + "-" + story + "\"");
+//            p.println(defclose);
+//
+//            p1.println("#story-" + entityType + "-" + story + " " + storyTextEnglish);
+//            p2.println("#story-" + entityType + "-" + story + " " + storyTextItalian);
+//            p3.println("#story-" + entityType + "-" + story + " " + storyTextGreek);
+//					}//if
+//				}//for
+//			}//while
+//
+//      Hashtable allEntitiesHashtable = (Hashtable)Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity+Generic");
+//      Enumeration allEntitiesHashtableEnum = allEntitiesHashtable.keys();
+//      while (allEntitiesHashtableEnum.hasMoreElements())
+//      {
+//        String entity = allEntitiesHashtableEnum.nextElement().toString();
+//        NodeVector nv = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(entity);
+//        Vector storiesVector = nv.getStoriesVector();
+//        Hashtable englishStories = (Hashtable)storiesVector.get(0);
+//        Hashtable italianStories = (Hashtable)storiesVector.get(1);
+//        Hashtable greekStories = (Hashtable)storiesVector.get(2);
+//
+//        for (Enumeration k = englishStories.keys(), e = englishStories.elements(); k.hasMoreElements(); )
+//        {
+//          String story = k.nextElement().toString();
+//          if (!story.equalsIgnoreCase("New-story"))
+//          {
+//            String storyTextEnglish = englishStories.get(story).toString();
+//            String storyTextItalian = italianStories.get(story).toString();
+//            String storyTextGreek = greekStories.get(story).toString();
+//
+//            StringBuffer interest = new StringBuffer();
+//            StringBuffer importance = new StringBuffer();
+//            StringBuffer assimilation = new StringBuffer();
+//            StringBuffer assimilationRate = new StringBuffer();
+//            Enumeration allUserTypesVectorEnum4 = allUserTypesVector.elements();
+//            while (allUserTypesVectorEnum4.hasMoreElements())
+//            {
+//              String usertype = allUserTypesVectorEnum4.nextElement().toString();
+//              Vector userModelValuesVector = QueryProfileHashtable.getUserModelStoryValuesVector(story, entity, usertype);
+//
+//              interest.append("(" + usertype + " " + userModelValuesVector.get(0).toString() + ") ");
+//              importance.append("(" + usertype + " " + userModelValuesVector.get(1).toString() + ") ");
+//              if (userModelValuesVector.get(2).toString().equalsIgnoreCase("0"))
+//              {
+//                assimilation.append("(" + usertype + " 1) ");
+//                assimilationRate.append("(" + usertype + " 1) ");
+//              }
+//              else
+//              {
+//                assimilation.append("(" + usertype + " 0) ");
+//
+//                if (userModelValuesVector.get(2).toString().equalsIgnoreCase("1"))
+//                {
+//                	assimilationRate.append("(" + usertype + " 1) ");
+//                }
+//                else if (userModelValuesVector.get(2).toString().equalsIgnoreCase("2"))
+//                {
+//                	assimilationRate.append("(" + usertype + " 0.5) ");
+//                }
+//                else if (userModelValuesVector.get(2).toString().equalsIgnoreCase("3"))
+//                {
+//                	assimilationRate.append("(" + usertype + " 0.33) ");
+//                }
+//							}
+//						}
+//            p.println(emptyspaceFile);
+//            p.println("(defstory");
+//            p.println("   :id " + story);
+//            p.println("   :instance " + entity);
+//            p.println("   :interest ( " + interest.toString() + ")");
+//            p.println("   :importance ( " + importance.toString() + ")");
+//            p.println("   :assimilation ( " + assimilation.toString() + ")");
+//            p.println("   :assim-rate ( " + assimilationRate.toString() + ")");
+//            p.println("   :text " + "\"#story-" + entity + "-" + story + "\"");
+//            p.println(defclose);
+//
+//            p1.println("#story-" + entity + "-" + story + " " + storyTextEnglish);
+//            p2.println("#story-" + entity + "-" + story + " " + storyTextItalian);
+//            p3.println("#story-" + entity + "-" + story + " " + storyTextGreek);
+//					}
+//				}
+//			}
+//      p.flush();
+//      p.close();
+//      p1.flush();
+//      p1.close();
+//      p2.flush();
+//      p2.close();
+//      p3.flush();
+//      p3.close();
+//		}
+//		catch (Exception ex)
+//		{
+//			System.out.println("|||| Exception ||||");
+//			ex.printStackTrace();
+//		}
+//	} // createStoriesGram()
 
 
   /** Create the expressions.gram  */
@@ -1951,7 +1954,7 @@ public class ExportUtilsIlex
 			IOE.printStackTrace();
 		}
 
-    Hashtable allEntityTypesHashtable = QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+    Hashtable allEntityTypesHashtable = Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
     allEntityTypesHashtable.remove("Data Base");
     allEntityTypesHashtable.remove("Basic-entity-types");
 
@@ -1959,8 +1962,8 @@ public class ExportUtilsIlex
     {
       String entitytype = k.nextElement().toString();
       String parent = e.nextElement().toString();
-      NodeVector env = (NodeVector)QueryHashtable.mainDBHashtable.get(entitytype);
-      NodeVector pnv = (NodeVector)QueryHashtable.mainDBHashtable.get(parent);
+      NodeVector env = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(entitytype);
+      NodeVector pnv = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(parent);
       Vector entitytypeDBTable = env.getDatabaseTableVector();
       Vector parentDBTable = pnv.getDatabaseTableVector();
       Hashtable microHashtable = env.getMicroPlanningValues();
@@ -1994,15 +1997,15 @@ public class ExportUtilsIlex
 					/*
           if (!microHashtable.containsKey(keyEnglish))
           {
-              QueryHashtable.updateHashtable(entitytype, field, "Verb", "English", "Choose a verb identifier");
+              Mpiro.win.struc.updateHashtable(entitytype, field, "Verb", "English", "Choose a verb identifier");
           }
           if (!microHashtable.containsKey(keyItalian))
           {
-              QueryHashtable.updateHashtable(entitytype, field, "Verb", "Italian", "Choose a verb identifier");
+              Mpiro.win.struc.updateHashtable(entitytype, field, "Verb", "Italian", "Choose a verb identifier");
           }
           if (!microHashtable.containsKey(keyGreek))
           {
-              QueryHashtable.updateHashtable(entitytype, field, "Verb", "Greek", "Choose a verb identifier");
+              Mpiro.win.struc.updateHashtable(entitytype, field, "Verb", "Greek", "Choose a verb identifier");
           }
 					*/
 					//System.out.println("()---- " + entitytype);
@@ -2034,9 +2037,9 @@ public class ExportUtilsIlex
           }
 					*/
 					/*
-          QueryHashtable.updateHashtable(entitytype, field, "SELECTION", "English", "Clause");
-          QueryHashtable.updateHashtable(entitytype, field, "SELECTION", "Italian", "Clause");
-          QueryHashtable.updateHashtable(entitytype, field, "SELECTION", "Greek", "Clause");
+          Mpiro.win.struc.updateHashtable(entitytype, field, "SELECTION", "English", "Clause");
+          Mpiro.win.struc.updateHashtable(entitytype, field, "SELECTION", "Italian", "Clause");
+          Mpiro.win.struc.updateHashtable(entitytype, field, "SELECTION", "Greek", "Clause");
 					*/
 
           if (microHashtable.get("1:" + field + ":SELECTION:English").toString().equalsIgnoreCase("Clause"))
@@ -2090,14 +2093,14 @@ public class ExportUtilsIlex
       p.println(emptyspaceFile);
       p.println(";;; Information for load-domain.lisp");
 
-      Vector allUserTypesVector = (Vector)QueryUsersHashtable.getUsersVectorFromMainUsersHashtable();
+      Vector allUserTypesVector = (Vector)Mpiro.win.struc.getUsersVectorFromMainUsersHashtable();
 
       // a StringBuffer that will hold all entities that have a
       // field "type" with user-modelling value for "repetitions" == 1
       Vector entitiesVector = new Vector();
 
       // get a vector containing all entities
-      Vector allEntitiesVector = (Vector)QueryHashtable.getFullPathChildrenVectorFromMainDBHashtable("Basic-entity-types", "Entity+Generic");
+      Vector allEntitiesVector = (Vector)Mpiro.win.struc.getFullPathChildrenVectorFromMainDBHashtable("Basic-entity-types", "Entity+Generic");
 
       Enumeration allEntitiesVectorEnum = allEntitiesVector.elements();
       while (allEntitiesVectorEnum.hasMoreElements())
@@ -2109,7 +2112,7 @@ public class ExportUtilsIlex
         while (allUserTypesVectorEnum.hasMoreElements())
         {
           String usertype = allUserTypesVectorEnum.nextElement().toString();
-          Vector userModelValuesVector = QueryUsersHashtable.getUserModelValuesVector("type", entity, usertype);
+          Vector userModelValuesVector = Mpiro.win.struc.getUserModelValuesVector("type", entity, usertype);
           if (userModelValuesVector.get(2).toString().equalsIgnoreCase("0"))
           {
           	repetitions = "0";
@@ -2281,10 +2284,10 @@ public class ExportUtilsIlex
   static String findFillerTypeOfEntityField(String entity, String field) 
   {
     String returnString = new String();
-    Hashtable allEntitiesHashtable = QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity+Generic");
+    Hashtable allEntitiesHashtable = Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity+Generic");
     String parent = allEntitiesHashtable.get(entity).toString();
 
-    NodeVector nv = (NodeVector)QueryHashtable.mainDBHashtable.get(parent);
+    NodeVector nv = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(parent);
     Vector dbTableVector = (Vector)nv.getDatabaseTableVector();
     Enumeration dbTableVectorEnum = dbTableVector.elements();
     while (dbTableVectorEnum.hasMoreElements())
@@ -2311,17 +2314,17 @@ public class ExportUtilsIlex
 	static String findClassAndSubclassOfEntity(String entity, String classOrSubclass) 
 	{
     String returnString = new String();
-    Hashtable allEntitiesHashtable = QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity+Generic");
+    Hashtable allEntitiesHashtable = Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity+Generic");
     String parent = allEntitiesHashtable.get(entity).toString();
 
     if (classOrSubclass.equalsIgnoreCase("class"))
     {
-      Vector allBasicTypesVector = QueryHashtable.getChildrenVectorFromMainDBHashtable("Basic-entity-types", "Entity type");
+      Vector allBasicTypesVector = Mpiro.win.struc.getChildrenVectorFromMainDBHashtable("Basic-entity-types", "Entity type");
       Enumeration allBasicTypesVectorEnum = allBasicTypesVector.elements();
       while (allBasicTypesVectorEnum.hasMoreElements())
       {
         String basicType = allBasicTypesVectorEnum.nextElement().toString();
-        Vector basicTypeFullPathChildrenEntitiesVector = QueryHashtable.getFullPathChildrenVectorFromMainDBHashtable(basicType, "Entity+Generic");
+        Vector basicTypeFullPathChildrenEntitiesVector = Mpiro.win.struc.getFullPathChildrenVectorFromMainDBHashtable(basicType, "Entity+Generic");
         if (basicTypeFullPathChildrenEntitiesVector.contains(entity))
         {
           returnString = basicType;

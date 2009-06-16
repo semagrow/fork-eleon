@@ -8,6 +8,7 @@ package gr.demokritos.iit.eleon.authoring;
 
 import gr.aueb.cs.nlg.Languages.Languages;
 import gr.aueb.cs.nlg.NLGEngine.NLGEngine;
+import gr.demokritos.iit.eleon.struct.QueryOptionsHashtable;
 import gr.demokritos.iit.eleon.ui.KButton;
 import gr.demokritos.iit.eleon.ui.KLabel;
 //import gr.demokritos.iit.PServer.UMVisit;
@@ -160,7 +161,7 @@ public class ExportDialog extends JFrame implements ActionListener
 	{
 		if (e.getSource() == okButton)
 		{
-                 /*   Enumeration rrr=QueryHashtable.propertiesHashtable.elements();
+                 /*   Enumeration rrr=Mpiro.win.struc.getProperties();
                     while(rrr.hasMoreElements()){
                         Vector temp=(Vector) rrr.nextElement();
                         Hashtable temp1=(Hashtable) temp.elementAt(12);
@@ -180,20 +181,20 @@ public class ExportDialog extends JFrame implements ActionListener
                     File tempOwlFile= new File("OwlTemp.owl");
                  try{
                     if (exportOntology.isSelected()){
-                        OwlExport.ExportToOwlFile(tempOwlFile,"RDF/XML-ABBREV", QueryOptionsHashtable.getBaseURI(),tempOwlFile.getName(),false);
+                        OwlExport.ExportToOwlFile(tempOwlFile,"RDF/XML-ABBREV", Mpiro.win.struc.getBaseURI(),tempOwlFile.getName(),false);
                     }
                 progress.updateProgressBar(3, 1);
                  if (exportLexicon.isSelected()){
-                     OwlExport.exportLexicon(tempOwlFile.getAbsolutePath().substring(0, tempOwlFile.getAbsolutePath().lastIndexOf(tempOwlFile.getName())), "http://localhost/OwlTemp.owl");
+                     OwlExport.exportLexicon(tempOwlFile.getAbsolutePath().substring(0, tempOwlFile.getAbsolutePath().lastIndexOf(tempOwlFile.getName())), Mpiro.win.struc.getBaseURI());
                  }
                 progress.updateProgressBar(5, 1);
                     if (exportMicros.isSelected()){
-                        OwlExport.exportMicroplans(tempOwlFile.getAbsolutePath().substring(0, tempOwlFile.getAbsolutePath().lastIndexOf(tempOwlFile.getName())), "http://localhost/OwlTemp.owl");
+                        OwlExport.exportMicroplans(tempOwlFile.getAbsolutePath().substring(0, tempOwlFile.getAbsolutePath().lastIndexOf(tempOwlFile.getName())), Mpiro.win.struc.getBaseURI());
                     }
                 progress.updateProgressBar(7, 1);
                     if (exportUsers.isSelected()){
-                        OwlExport.exportUserModelling(tempOwlFile.getAbsolutePath().substring(0, tempOwlFile.getAbsolutePath().lastIndexOf(tempOwlFile.getName())), "http://localhost/OwlTemp.owl");
-                        OwlExport.exportRobotModelling(tempOwlFile.getAbsolutePath().substring(0, tempOwlFile.getAbsolutePath().lastIndexOf(tempOwlFile.getName())), "http://localhost/OwlTemp.owl");
+                        OwlExport.exportUserModelling(tempOwlFile.getAbsolutePath().substring(0, tempOwlFile.getAbsolutePath().lastIndexOf(tempOwlFile.getName())), Mpiro.win.struc.getBaseURI());
+                        OwlExport.exportRobotModelling(tempOwlFile.getAbsolutePath().substring(0, tempOwlFile.getAbsolutePath().lastIndexOf(tempOwlFile.getName())), Mpiro.win.struc.getBaseURI());
                     }
                      }
                      catch(java.lang.Exception ex){

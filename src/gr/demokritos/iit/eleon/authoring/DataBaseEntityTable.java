@@ -6,6 +6,7 @@
 
 package gr.demokritos.iit.eleon.authoring;
 
+import gr.demokritos.iit.eleon.struct.QueryHashtable;
 import gr.demokritos.iit.eleon.ui.KLabel;
 import gr.demokritos.iit.eleon.ui.NumberCombo;
 
@@ -82,9 +83,9 @@ public class DataBaseEntityTable extends JScrollPane
 		
 		// get parent's node-name and its DataBaseTable.
 		// They will be used right below, in order to retrieve a field's filler.
-		DefaultMutableTreeNode parent = (DefaultMutableTreeNode)DataBasePanel.last.getParent();
-		NodeVector nv = (NodeVector)QueryHashtable.mainDBHashtable.get(QueryHashtable.nameWithoutOccur(parent.toString()));
-		Vector tableVector = (Vector)nv.elementAt(0);
+		//DefaultMutableTreeNode parent = (DefaultMutableTreeNode)DataBasePanel.last.getParent();
+		//NodeVector nv = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(Mpiro.win.struc.nameWithoutOccur(parent.toString()));
+		//Vector tableVector = (Vector)nv.elementAt(0);
 		
 		int a = DataBaseEntityTableModel.COL_FILLER;
 
@@ -172,12 +173,13 @@ public class DataBaseEntityTable extends JScrollPane
 						{*/
                                            // dbeTable.setDefaultEditor(String.class, new MyEditor());
                         else{
-							JTextField temptext = new JTextField();//////////
+							//JTextField temptext = new JTextField();//////////
 							TableCellEditor tempeditor = new MyEditor();
 							rm.addEditorForRow(r, tempeditor);//////////////
                         }
 							//System.out.println(r + " +++ " + fd.elementAt(1).toString()); //////++++++++++++++++
 						//}
+
 		//			}
 		//		}
 		//	}

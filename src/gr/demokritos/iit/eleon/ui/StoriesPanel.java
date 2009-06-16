@@ -12,7 +12,7 @@ import gr.demokritos.iit.eleon.authoring.IconCellRenderer;
 import gr.demokritos.iit.eleon.authoring.IconData;
 import gr.demokritos.iit.eleon.authoring.LangResources;
 import gr.demokritos.iit.eleon.authoring.Mpiro;
-import gr.demokritos.iit.eleon.authoring.QueryHashtable;
+import gr.demokritos.iit.eleon.struct.QueryHashtable;
 import gr.demokritos.iit.eleon.authoring.TreePreviews;
 import gr.demokritos.iit.eleon.authoring.ViewPanel;
 
@@ -274,9 +274,9 @@ public class StoriesPanel extends JPanel
 		Hashtable allEntityTypes = new Hashtable();
 		Hashtable allEntities = new Hashtable();
 		Hashtable allGeneric = new Hashtable();
-		allEntityTypes = (Hashtable)QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
-		allEntities = (Hashtable)QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity");
-		allGeneric = (Hashtable)QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Generic");
+		allEntityTypes = (Hashtable)Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+		allEntities = (Hashtable)Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity");
+		allGeneric = (Hashtable)Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Generic");
 		
 		// Remove the 2 entries that are not needed
 		allEntityTypes.remove("Data Base");
@@ -286,7 +286,7 @@ public class StoriesPanel extends JPanel
 		int childrenNumber = 0;
 		
 		// Adding the basic entity types
-		childrenVector = QueryHashtable.getChildrenVectorFromMainDBHashtable("Basic-entity-types", "Entity type");
+		childrenVector = Mpiro.win.struc.getChildrenVectorFromMainDBHashtable("Basic-entity-types", "Entity type");
 		addChildren(first, childrenVector);
 		for (Enumeration k = childrenVector.elements(); k.hasMoreElements();) 
 		{
@@ -306,7 +306,7 @@ public class StoriesPanel extends JPanel
 					String node = currentNode.toString();
 					if (allEntityTypes.containsValue(node))
 					{
-						childrenVector = QueryHashtable.getChildrenVectorFromMainDBHashtable(node, "Entity type");
+						childrenVector = Mpiro.win.struc.getChildrenVectorFromMainDBHashtable(node, "Entity type");
 						Enumeration enu2 = childrenVector.elements();
 						while (enu2.hasMoreElements()) 
 						{
@@ -336,7 +336,7 @@ public class StoriesPanel extends JPanel
 					String node = currentNode.toString();
 					if (allEntities.containsValue(node))
 					{
-	          childrenVector = QueryHashtable.getChildrenVectorFromMainDBHashtable(node, "Entity");
+	          childrenVector = Mpiro.win.struc.getChildrenVectorFromMainDBHashtable(node, "Entity");
 	          Enumeration enu2 = childrenVector.elements();
 	          while (enu2.hasMoreElements()) 
 	          {
@@ -366,7 +366,7 @@ public class StoriesPanel extends JPanel
           String node = currentNode.toString();
           if (allGeneric.containsValue(node))
           {
-	          childrenVector = QueryHashtable.getChildrenVectorFromMainDBHashtable(node, "Generic");
+	          childrenVector = Mpiro.win.struc.getChildrenVectorFromMainDBHashtable(node, "Generic");
 	          Enumeration enu2 = childrenVector.elements();
 	          while (enu2.hasMoreElements())
 	          {

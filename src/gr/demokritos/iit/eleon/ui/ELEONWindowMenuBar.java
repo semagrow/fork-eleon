@@ -41,10 +41,10 @@ import gr.demokritos.iit.eleon.authoring.DataBasePanel;
 import gr.demokritos.iit.eleon.authoring.LangResources;
 import gr.demokritos.iit.eleon.authoring.Mpiro;
 import gr.demokritos.iit.eleon.authoring.OptionsEditDialog;
-import gr.demokritos.iit.eleon.authoring.QueryHashtable;
-import gr.demokritos.iit.eleon.authoring.QueryLexiconHashtable;
-import gr.demokritos.iit.eleon.authoring.QueryOptionsHashtable;
-import gr.demokritos.iit.eleon.authoring.QueryUsersHashtable;
+import gr.demokritos.iit.eleon.struct.QueryHashtable;
+import gr.demokritos.iit.eleon.struct.QueryLexiconHashtable;
+import gr.demokritos.iit.eleon.struct.QueryOptionsHashtable;
+import gr.demokritos.iit.eleon.struct.QueryProfileHashtable;
 import gr.demokritos.iit.eleon.authoring.TreePreviews;
 
 import java.awt.event.ActionEvent;
@@ -437,19 +437,19 @@ implements ActionListener
         if (ae.getSource() == queryMainDBHashtableItem) {
             System.out.println("(QueryOptionsHashtable.mainDBHashtable)-------------- " + "\n");
             System.out.println("---------------- ENTITY-TYPES -------------- " + "\n");
-            Vector allentitytypesVector = QueryHashtable.getFullPathChildrenVectorFromMainDBHashtable("Basic-entity-types", "Entity type");
+            Vector allentitytypesVector = Mpiro.win.struc.getFullPathChildrenVectorFromMainDBHashtable("Basic-entity-types", "Entity type");
             Enumeration allentitytypesVectorEnum = allentitytypesVector.elements();
             while (allentitytypesVectorEnum.hasMoreElements()) {
                 String key = allentitytypesVectorEnum.nextElement().toString();
-                String element = QueryHashtable.mainDBHashtable.get(key).toString();
+                String element = Mpiro.win.struc.getEntityTypeOrEntity(key).toString();
                 System.out.println(key + " = " + element + "\n");
             }
             System.out.println("---------------- ENTITIES -------------- " + "\n");
-            Vector allentitiesVector = QueryHashtable.getFullPathChildrenVectorFromMainDBHashtable("Basic-entity-types", "Entity+Generic");
+            Vector allentitiesVector = Mpiro.win.struc.getFullPathChildrenVectorFromMainDBHashtable("Basic-entity-types", "Entity+Generic");
             Enumeration allentitiesVectorEnum = allentitiesVector.elements();
             while (allentitiesVectorEnum.hasMoreElements()) {
                 String key = allentitiesVectorEnum.nextElement().toString();
-                String element = QueryHashtable.mainDBHashtable.get(key).toString();
+                String element = Mpiro.win.struc.getEntityTypeOrEntity(key).toString();
                 System.out.println(key + " = " + element + "\n");
             }
             System.out.println("=================================================\n\n");
@@ -457,23 +457,23 @@ implements ActionListener
 
         if (ae.getSource() == queryMainLexiconHashtableItem) {
             System.out.println("(QueryOptionsHashtable.mainLexiconHashtable)---  " + "\n" +
-                               QueryLexiconHashtable.mainLexiconHashtable.entrySet().toString());
+                               Mpiro.win.struc.getMainLexiconHashtableEntrySet().toString());
         }
 
         if (ae.getSource() == queryMainUsersHashtableItem) {
-            System.out.println("(QueryOptionsHashtable.mainUsersHashtable)---  " + "\n" +
-                               QueryUsersHashtable.mainUsersHashtable.entrySet().toString());
+       //     System.out.println("(QueryOptionsHashtable.mainUsersHashtable)---  " + "\n" +
+         //                      QueryProfileHashtable.mainUsersHashtable.entrySet().toString());
         }
 
         if (ae.getSource() == queryMainUserModelHashtableItem) {
             System.out.println("(QueryOptionsHashtable.mainUserModelHashtable)-------------- " + "\n");
             System.out.println("---------------- FIELDS -------------- " + "\n");
 
-            Enumeration allfieldsEnum = QueryUsersHashtable.mainUserModelHashtable.keys();
+            Enumeration allfieldsEnum = Mpiro.win.struc.mainUserModelHashtableKeys();
             while (allfieldsEnum.hasMoreElements()) {
                 String field = allfieldsEnum.nextElement().toString();
                 System.out.println("++++++++++" + field + "+++++++++"); /////////////
-                Hashtable entitytypesAndEntitiesHashtable = (Hashtable) QueryUsersHashtable.mainUserModelHashtable.get(field);
+                Hashtable entitytypesAndEntitiesHashtable = (Hashtable) Mpiro.win.struc.getPropertyFromMainUserModelHashtable(field);
                 Enumeration entitytypesAndEntitiesHashtableEnum = entitytypesAndEntitiesHashtable.keys();
                 while (entitytypesAndEntitiesHashtableEnum.hasMoreElements()) {
                     String entitytypeOrEntity = entitytypesAndEntitiesHashtableEnum.nextElement().toString();
@@ -492,18 +492,18 @@ implements ActionListener
             System.out.println("=================================================\n\n");
         }
 
-        if (ae.getSource() == queryMainUserModelStoryHashtableItem) {
-            System.out.println("(QueryOptionsHashtable.mainUserModelStoryHashtable)---  " + "\n" +
-                               QueryUsersHashtable.mainUserModelStoryHashtable.entrySet().toString());
-        }
+     //   if (ae.getSource() == queryMainUserModelStoryHashtableItem) {
+       //     System.out.println("(QueryOptionsHashtable.mainUserModelStoryHashtable)---  " + "\n" +
+         //                      QueryProfileHashtable.mainUserModelStoryHashtable.entrySet().toString());
+       // }
 
         if (ae.getSource() == queryOptionsHashtableItem) {
-            System.out.println("(QueryOptionsHashtable.mainOptionsHashtable)---  " + "\n" +
-                               QueryOptionsHashtable.mainOptionsHashtable.entrySet().toString());
+      //      System.out.println("(QueryOptionsHashtable.mainOptionsHashtable)---  " + "\n" +
+        //                       QueryOptionsHashtable.mainOptionsHashtable.entrySet().toString());
         }
 
         if (ae.getSource() == updateOptionsHashtableItem) {
-            QueryOptionsHashtable.createMainOptionsHashtable();
+    //        QueryOptionsHashtable.createMainOptionsHashtable();
         }
 
         if (ae.getSource() == testHashtableItem) {
@@ -514,18 +514,18 @@ implements ActionListener
             Hashtable allEntityTypes = new Hashtable();
             Hashtable allEntitiesAndGeneric = new Hashtable();
             Hashtable allGeneric = new Hashtable();
-            allEntityTypes = (Hashtable) QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
-            allEntitiesAndGeneric = (Hashtable) QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity+Generic");
+            allEntityTypes = (Hashtable) Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+            allEntitiesAndGeneric = (Hashtable) Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity+Generic");
 
             Vector path;
             boolean isEntityType = false;
 
             if (allEntityTypes.containsKey(name)) {
-                path = QueryHashtable.getFullPathParentsVectorFromMainDBHashtable(name, "Entity type");
+                path = Mpiro.win.struc.getFullPathParentsVectorFromMainDBHashtable(name, "Entity type");
                 isEntityType = true;
             }
             else {
-                path = QueryHashtable.getFullPathParentsVectorFromMainDBHashtable(name, "Entity");
+                path = Mpiro.win.struc.getFullPathParentsVectorFromMainDBHashtable(name, "Entity");
             }
             //that should never be - check earlier for name existing in the domain
 

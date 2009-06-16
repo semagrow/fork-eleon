@@ -6,6 +6,7 @@
 
 package gr.demokritos.iit.eleon.authoring;
 
+import gr.demokritos.iit.eleon.struct.QueryProfileHashtable;
 import gr.demokritos.iit.eleon.ui.KButton;
 import gr.demokritos.iit.eleon.ui.KComboBox;
 import gr.demokritos.iit.eleon.ui.KLabel;
@@ -68,10 +69,10 @@ public class UserModelStoryDialog extends JFrame implements ActionListener
 		c.weightx = 1.0; c.weighty = 0.0;
 		c.gridy = 0;
 
-		//valuesHashtable = QueryLexiconHashtable.showValues(LexiconPanel.n.toString(), "Independent");
+		//valuesHashtable = Mpiro.win.struc.showValues(LexiconPanel.n.toString(), "Independent");
 		//System.out.println(valuesHashtable);
 		
-		Vector allUserTypesVector = QueryUsersHashtable.getUsersVectorFromMainUsersHashtable();
+		Vector allUserTypesVector = Mpiro.win.struc.getUsersVectorFromMainUsersHashtable();
 		Enumeration allUserTypesVectorEnum = allUserTypesVector.elements();
 		while (allUserTypesVectorEnum.hasMoreElements())
 		{
@@ -152,10 +153,10 @@ public class UserModelStoryDialog extends JFrame implements ActionListener
 			impCB.addActionListener(this);
 			repCB.addActionListener(this);
 
-			Vector valuesVector = QueryUsersHashtable.getUserModelStoryValuesVector(story, node, username);
-			intCB.setSelectedItem((String)valuesVector.elementAt(0));
-			impCB.setSelectedItem((String)valuesVector.elementAt(1));
-			repCB.setSelectedItem((String)valuesVector.elementAt(2));
+//			Vector valuesVector = QueryProfileHashtable.getUserModelStoryValuesVector(story, node, username);
+//			intCB.setSelectedItem((String)valuesVector.elementAt(0));
+//			impCB.setSelectedItem((String)valuesVector.elementAt(1));
+//			repCB.setSelectedItem((String)valuesVector.elementAt(2));
 			
 			this.add(user, c);
 			c.gridx = 1;
@@ -174,15 +175,15 @@ public class UserModelStoryDialog extends JFrame implements ActionListener
 		{
 			if (e.getSource() == intCB)
 			{
-				QueryUsersHashtable.updateUserModelStoryParameters(story, node, username, 0, intCB.getSelectedItem().toString());
+			//	QueryProfileHashtable.updateUserModelStoryParameters(story, node, username, 0, intCB.getSelectedItem().toString());
 			}
 			else if (e.getSource() == impCB)
 			{
-				QueryUsersHashtable.updateUserModelStoryParameters(story, node, username, 1, impCB.getSelectedItem().toString());
+				//QueryProfileHashtable.updateUserModelStoryParameters(story, node, username, 1, impCB.getSelectedItem().toString());
 			}
 			else if (e.getSource() == repCB)
 			{
-				QueryUsersHashtable.updateUserModelStoryParameters(story, node, username, 2, repCB.getSelectedItem().toString());
+				//QueryProfileHashtable.updateUserModelStoryParameters(story, node, username, 2, repCB.getSelectedItem().toString());
 			}
 		} // actionPerformed
 

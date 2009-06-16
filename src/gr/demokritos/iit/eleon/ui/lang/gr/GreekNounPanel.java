@@ -11,7 +11,7 @@ import gr.demokritos.iit.eleon.authoring.LangResources;
 import gr.demokritos.iit.eleon.authoring.LexiconDefaultVector;
 import gr.demokritos.iit.eleon.authoring.LexiconPanel;
 import gr.demokritos.iit.eleon.authoring.Mpiro;
-import gr.demokritos.iit.eleon.authoring.QueryLexiconHashtable;
+import gr.demokritos.iit.eleon.struct.QueryLexiconHashtable;
 import gr.demokritos.iit.eleon.ui.KButton;
 import gr.demokritos.iit.eleon.ui.KLabel;
 
@@ -346,7 +346,7 @@ public class GreekNounPanel extends JPanel implements ActionListener, FocusListe
 
 		//System.out.println(QueryLexiconHashtable.currentValues);
 		//System.out.println("Current Values: " + QueryHashtable.currentValues);
-		showValues(QueryLexiconHashtable.showValues(LexiconPanel.parent.toString(), "Greek"));
+		showValues(Mpiro.win.struc.showValues(LexiconPanel.parent.toString(), "Greek"));
 		//}
 		
 		//System.out.println(QueryLexiconHashtable.currentValues);
@@ -453,7 +453,7 @@ public class GreekNounPanel extends JPanel implements ActionListener, FocusListe
 		}//if
 
 		// Update the Hashtable
-		QueryLexiconHashtable.updateLexiconEntryNoun(node, "Greek", label, item);
+		Mpiro.win.struc.updateLexiconEntryNoun(node, "Greek", label, item);
 		Mpiro.needExportToExprimo = true;		//maria
 
 		/* Print some info

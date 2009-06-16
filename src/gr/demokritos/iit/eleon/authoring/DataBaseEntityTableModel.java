@@ -6,6 +6,7 @@
 
 package gr.demokritos.iit.eleon.authoring;
 
+import gr.demokritos.iit.eleon.struct.QueryHashtable;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.table.*;
@@ -136,18 +137,20 @@ public class DataBaseEntityTableModel extends AbstractTableModel
 			row.m_field = svalue;
 			break;
 		  case COL_FILLER:
-		  row.m_filler = svalue;
+		row.m_filler = svalue;
 
 		  break;
 		}
-                
-                 Vector propVector=(Vector) QueryHashtable.propertiesHashtable.get(row.m_field); 
+                FieldData field = (FieldData)m_vector.elementAt(nRow);
+		field.setElementAt(svalue, nCol);
+       // Mpiro.win.struc.putEntityTypeOrEntityToDB(DataBasePanel.last.toString(), Mpiro.win.ontoPipe.getExtension().getEntityTypeOrEntity(DataBasePanel.last.toString()));
+               //  Vector propVector=(Vector) Mpiro.win.struc.getProperty(row.m_field);
                                               /*    if (!(propVector.elementAt(5).toString().equalsIgnoreCase(""))){
                                       if(!row.m_filler.startsWith("Select")){
                                       String inverseofinverse="";
                                       String[] fillers=row.m_filler.split(" ");
                                       for(int j=0;j<fillers.length;j++){
-                                      NodeVector inverse=(NodeVector) QueryHashtable.mainDBHashtable.get(fillers[j]);
+                                      NodeVector inverse=(NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(fillers[j]);
                                       Vector inv=(Vector) inverse.elementAt(0);
                                       inv=(Vector) inv.elementAt(0);
                                       for(int h=3;h<inv.size();h++){
@@ -186,7 +189,7 @@ public class DataBaseEntityTableModel extends AbstractTableModel
                                       }
                                       
                                  /*     if (!initValue.equalsIgnoreCase("")&&!initValue.equals(null)&&!initValue.startsWith("Select")) {
-                                      inverse=(NodeVector) QueryHashtable.mainDBHashtable.get(initValue);
+                                      inverse=(NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(initValue);
                                        inv=(Vector) inverse.elementAt(0);
                                       inv=(Vector) inv.elementAt(0);
                                       for(int h=3;h<inv.size();h++){
@@ -199,7 +202,7 @@ public class DataBaseEntityTableModel extends AbstractTableModel
                                       }}}*/
                            /*           if (!inverseofinverse.equalsIgnoreCase("")&&!inverseofinverse.equals(null)&&!inverseofinverse.startsWith("Select")&&!inverseofinverse.startsWith(DataBasePanel.last.toString())) {
                                     inverseofinverse=inverseofinverse.replaceAll(" ","");
-                                          inverse=(NodeVector) QueryHashtable.mainDBHashtable.get(inverseofinverse);
+                                          inverse=(NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(inverseofinverse);
                                        inv=(Vector) inverse.elementAt(0);
                                       inv=(Vector) inv.elementAt(0);
                                       for(int h=3;h<inv.size();h++){
@@ -223,157 +226,152 @@ public class DataBaseEntityTableModel extends AbstractTableModel
                 
 //reeee();
 		// Update current vector
-		FieldData field = (FieldData)m_vector.elementAt(nRow);
-		field.setElementAt(svalue, nCol);
+//		FieldData field = (FieldData)m_vector.elementAt(nRow);
+//		field.setElementAt(svalue, nCol);
 
                 
                                                    
-                  if(propVector==null) propVector=new PropertiesHashtableRecord();                                                                                        
-                  if (propVector.elementAt(9).toString().equalsIgnoreCase("true")){                                                                                    
-                    String[] j=row.m_filler.split(" ");
-                    for (int f=0;f<j.length;f++)
-                    {
-                        String domainf= j[f];
-                        System.out.println(domainf);
-                        if (domainf.equalsIgnoreCase("Select")||domainf.equalsIgnoreCase(""))
-                            break;
-                            Vector vecDom=(Vector) QueryHashtable.mainDBHashtable.get(domainf);
-                            System.out.println("{ffffff"+vecDom);
-                            vecDom=(Vector) vecDom.elementAt(0);
-                            vecDom=(Vector) vecDom.elementAt(0);
-                            System.out.println(vecDom.toString());
-                            for(int a=3;a<vecDom.size();a++)
-                            {
-                                Vector nextEl=(Vector) vecDom.elementAt(a);
-                                System.out.println(nextEl.toString());
-                                if(nextEl.elementAt(0).toString().equalsIgnoreCase(row.m_field))
-                                {
-                                    String rangeVec2=nextEl.elementAt(1).toString();
-                                    if (rangeVec2.startsWith("Select")) rangeVec2="";
-                                  String[] k=rangeVec2.split(" ");
-                    for (int p=0;p<k.length;p++)
-                    {
-                                    if (k[p].equalsIgnoreCase(DataBasePanel.last.toString()))
-                                    break;
-                                    else{
-                                            if(p<k.length-1) continue;
-                                            else {
-                                        if(nextEl.elementAt(1).toString().startsWith("Select"))
-                                       nextEl.set(1, DataBasePanel.last.toString());
-                                                else
-                                                  nextEl.set(1, DataBasePanel.last.toString()+" "+nextEl.elementAt(1).toString()); 
-                                         Object obj1=QueryHashtable.mainDBHashtable.get(DataBasePanel.last.toString());
-                                            obj1=(Object) nextEl;
-                                    
-                                }}}}}}
-                      
-                      
-                      
-                      
-                  }
-                
-            //     Vector propVector=(Vector) QueryHashtable.propertiesHashtable.get(row.m_field);
-                                   if (propVector.elementAt(8).toString().equalsIgnoreCase("true")){   
-                                      String[] j=row.m_filler.split(" ");
-                    for (int f=0;f<j.length;f++)
-                    {
-                        String domainf= j[f];
-                        System.out.println(domainf);
-                        if (domainf.startsWith("Select"))
-                            break;
-                            Vector vecDom=(Vector) QueryHashtable.mainDBHashtable.get(domainf);
-                            vecDom=(Vector) vecDom.elementAt(0);
-                            vecDom=(Vector) vecDom.elementAt(0);
-                            System.out.println(vecDom.toString());
-                            for(int a=3;a<vecDom.size();a++)
-                            {
-                                Vector nextEl=(Vector) vecDom.elementAt(a);
-                                System.out.println(nextEl.toString());
-                                if(nextEl.elementAt(0).toString().equalsIgnoreCase(row.m_field)&&(!nextEl.elementAt(1).toString().startsWith("Select")))
-                                {System.out.println(nextEl.elementAt(0).toString());
-                                    for(int b=0;b<j.length;b++){
-                                        if(j[b].equalsIgnoreCase(nextEl.elementAt(1).toString())) break;
-                                        else{
-                                            if(b<j.length-1) continue;
-                                            else {row.m_filler= row.m_filler+" "+nextEl.elementAt(1).toString();
-                                            NodeVector obj1=(NodeVector) QueryHashtable.mainDBHashtable.get(DataBasePanel.last.toString());
-                                            
-                                           Vector u= (Vector)obj1.elementAt(0);
-                                           u=(Vector) u.elementAt(0);
-  
-                                            for(int g=3;g<u.size();g++)
-                            {
-                                Vector p=(Vector) u.elementAt(g);
-                                System.out.println(nextEl.toString());
-                                if(p.elementAt(0).toString().equalsIgnoreCase(row.m_field))
-                                {
-                                    p.setElementAt(row.m_filler,1);
-
-                                    System.out.print(".");
-                                }
-                                }
-                                            
-         //                                   obj1.setElementAt(row.m_filler,1);
-                                          //  obj1=(Object) childVec;
-                                //        System.out.println("kkk"+propVec.elementAt(1));
-                                //        System.out.println("ddddd"+QueryHashtable.mainDBHashtable.get(obj));
-                                            }}
-                                    }
-                                    
-                                }
-                            }
-                            
-                    }
-                                   
-                                       Vector domain=new Vector((Vector) propVector.elementAt(0));
-    for(int y=0;y<domain.size();y++){
-        if(row.m_filler.startsWith("Select ")) break;
-        Enumeration en1=DataBasePanel.top.preorderEnumeration();
-        DefaultMutableTreeNode dmtn=new  DefaultMutableTreeNode();
-        while (en1.hasMoreElements())
-        {Object ob1=en1.nextElement();
-            if(ob1.toString().equalsIgnoreCase(domain.elementAt(y).toString()))
-            {
-                dmtn=(DefaultMutableTreeNode) ob1;
-                break;
-            }
-        }
-        Enumeration elems= QueryHashtable.getChildrenEntities(dmtn).elements();
-        Enumeration keys= QueryHashtable.getChildrenEntities(dmtn).keys();
-      //  sMoreElements()){
-        while (elems.hasMoreElements()){
-            Vector childVec1=(Vector) elems.nextElement();
-            Object obj=keys.nextElement();
-            System.out.println("{{{{{{{{{{{{{{"+obj.toString());
-            Vector childVec=(Vector) childVec1.elementAt(0);
-            childVec=(Vector) childVec.elementAt(0);
-            for(int r=3;r<childVec.size();r++)
-            {
-                Vector propVect= (Vector) childVec.elementAt(r);
-                System.out.println("childVec.elementAt(r)"+childVec.elementAt(r).toString());
-                if(propVect.elementAt(0).toString().equalsIgnoreCase(row.m_field))
-                {
-                    String rangeVec= propVect.elementAt(1).toString();
-                    System.out.println("rangeVec"+rangeVec);
-                    String[] j2=rangeVec.split(" ");
-                     for (int f=0;f<j2.length;f++)
-                    {
-                        if (j2[f].equalsIgnoreCase(DataBasePanel.last.toString())){
-                            String newValue=row.m_filler;
-                            for(int u=0;u<j2.length;u++){
-                                if(!newValue.equalsIgnoreCase(j2[u])&&!newValue.contains(" "+j2[u])&&!newValue.contains(j2[u]+" "))
-                                newValue=newValue+" "+j2[u];
-                            }
-                            
-                            propVect.setElementAt(newValue,1);
-                           // rangeVec=rangeVec+" "+row.m_field;
-                            break;
-                        }
-                    }
+//                  if(propVector==null) propVector=new PropertiesHashtableRecord();
+//                  if (propVector.elementAt(9).toString().equalsIgnoreCase("true")){
+//                    String[] j=row.m_filler.split(" ");
+//                    for (int f=0;f<j.length;f++)
+//                    {
+//                        String domainf= j[f];
+//
+//                        if (domainf.equalsIgnoreCase("Select")||domainf.equalsIgnoreCase(""))
+//                            break;
+//                            Vector vecDom=(Vector) Mpiro.win.struc.getEntityTypeOrEntity(domainf);
+//
+//                            vecDom=(Vector) vecDom.elementAt(0);
+//                            vecDom=(Vector) vecDom.elementAt(0);
+//
+//                            for(int a=3;a<vecDom.size();a++)
+//                            {
+//                                Vector nextEl=(Vector) vecDom.elementAt(a);
+//
+//                                if(nextEl.elementAt(0).toString().equalsIgnoreCase(row.m_field))
+//                                {
+//                                    String rangeVec2=nextEl.elementAt(1).toString();
+//                                    if (rangeVec2.startsWith("Select")) rangeVec2="";
+//                                  String[] k=rangeVec2.split(" ");
+//                    for (int p=0;p<k.length;p++)
+//                    {
+//                                    if (k[p].equalsIgnoreCase(DataBasePanel.last.toString()))
+//                                    break;
+//                                    else{
+//                                            if(p<k.length-1) continue;
+//                                            else {
+//                                        if(nextEl.elementAt(1).toString().startsWith("Select"))
+//                                       nextEl.set(1, DataBasePanel.last.toString());
+//                                                else
+//                                                  nextEl.set(1, DataBasePanel.last.toString()+" "+nextEl.elementAt(1).toString());
+//
+//
+//                                }}}}}}
+//
+//
+//
+//
+//                  }
+//
+//
+//                                   if (propVector.elementAt(8).toString().equalsIgnoreCase("true")){
+//                                      String[] j=row.m_filler.split(" ");
+//                    for (int f=0;f<j.length;f++)
+//                    {
+//                        String domainf= j[f];
+//
+//                        if (domainf.startsWith("Select"))
+//                            break;
+//                            Vector vecDom=(Vector) Mpiro.win.struc.getEntityTypeOrEntity(domainf);
+//                            vecDom=(Vector) vecDom.elementAt(0);
+//                            vecDom=(Vector) vecDom.elementAt(0);
+//
+//                            for(int a=3;a<vecDom.size();a++)
+//                            {
+//                                Vector nextEl=(Vector) vecDom.elementAt(a);
+//
+//                                if(nextEl.elementAt(0).toString().equalsIgnoreCase(row.m_field)&&(!nextEl.elementAt(1).toString().startsWith("Select")))
+//                                {
+//                                    for(int b=0;b<j.length;b++){
+//                                        if(j[b].equalsIgnoreCase(nextEl.elementAt(1).toString())) break;
+//                                        else{
+//                                            if(b<j.length-1) continue;
+//                                            else {row.m_filler= row.m_filler+" "+nextEl.elementAt(1).toString();
+//                                            NodeVector obj1=(NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(DataBasePanel.last.toString());
+//
+//                                           Vector u= (Vector)obj1.elementAt(0);
+//                                           u=(Vector) u.elementAt(0);
+//
+//                                            for(int g=3;g<u.size();g++)
+//                            {
+//                                Vector p=(Vector) u.elementAt(g);
+//
+//                                if(p.elementAt(0).toString().equalsIgnoreCase(row.m_field))
+//                                {
+//                                    p.setElementAt(row.m_filler,1);
+//
+//
+//                                }
+//                                }
+//
+//                            }}
+//                                    }
+//
+//                                }
+//                            }
+//
+//                    }
+//
+//                                       Vector domain=new Vector((Vector) propVector.elementAt(0));
+//    for(int y=0;y<domain.size();y++){
+//        if(row.m_filler.startsWith("Select ")) break;
+//        Enumeration en1=DataBasePanel.top.preorderEnumeration();
+//        DefaultMutableTreeNode dmtn=new  DefaultMutableTreeNode();
+//        while (en1.hasMoreElements())
+//        {Object ob1=en1.nextElement();
+//            if(ob1.toString().equalsIgnoreCase(domain.elementAt(y).toString()))
+//            {
+//                dmtn=(DefaultMutableTreeNode) ob1;
+//                break;
+//            }
+//        }
+//        Enumeration elems= Mpiro.win.struc.getChildrenEntities(dmtn).elements();
+//        Enumeration keys= Mpiro.win.struc.getChildrenEntities(dmtn).keys();
+//      //  sMoreElements()){
+//        while (elems.hasMoreElements()){
+//            Vector childVec1=(Vector) elems.nextElement();
+//            Object obj=keys.nextElement();
+//
+//            Vector childVec=(Vector) childVec1.elementAt(0);
+//            childVec=(Vector) childVec.elementAt(0);
+//            for(int r=3;r<childVec.size();r++)
+//            {
+//                Vector propVect= (Vector) childVec.elementAt(r);
+//
+//                if(propVect.elementAt(0).toString().equalsIgnoreCase(row.m_field))
+//                {
+//                    String rangeVec= propVect.elementAt(1).toString();
+//
+//                    String[] j2=rangeVec.split(" ");
+//                     for (int f=0;f<j2.length;f++)
+//                    {
+//                        if (j2[f].equalsIgnoreCase(DataBasePanel.last.toString())){
+//                            String newValue=row.m_filler;
+//                            for(int u=0;u<j2.length;u++){
+//                                if(!newValue.equalsIgnoreCase(j2[u])&&!newValue.contains(" "+j2[u])&&!newValue.contains(j2[u]+" "))
+//                                newValue=newValue+" "+j2[u];
+//                            }
+//
+//                            propVect.setElementAt(newValue,1);
+//                           // rangeVec=rangeVec+" "+row.m_field;
+//                            break;
+//                        }
+//                    }
                     
-                  /*  Vector children=QueryHashtable.getChildrenVectorFromMainDBHashtable(domain.elementAt(y).toString(),"entity");
+                  /*  Vector children=Mpiro.win.struc.getChildrenVectorFromMainDBHashtable(domain.elementAt(y).toString(),"entity");
         
-       System.out.println("DDDDDd"+QueryHashtable.getChildrenEntities(dmtn).toString());
+       System.out.println("DDDDDd"+Mpiro.win.struc.getChildrenEntities(dmtn).toString());
       //  System.out.println("CCCCC"+childVector.toString());
         while(elems.hasMoreElements()){
             Vector childVect1=(Vector) elems.nextElement();
@@ -396,36 +394,36 @@ public class DataBaseEntityTableModel extends AbstractTableModel
                             break;
                         }
                     }
-                    }}}*/}}}}
-                                   
-                                   }
-
-                                  
-                                  Vector Superproperties=(Vector) propVector.elementAt(3);
-                                  for(int l=0;l<Superproperties.size();l++){
-                                      String superProp= Superproperties.elementAt(l).toString();
-                                      Vector entity=(Vector) QueryHashtable.mainDBHashtable.get(DataBasePanel.last.toString());
-                                      entity= (Vector) entity.elementAt(0);
-                                      entity= (Vector) entity.elementAt(0);
-                                      for(int g=3;g<entity.size();g++){
-                                          Vector property=(Vector) entity.elementAt(g);
-                                          if (property.elementAt(0).toString().equalsIgnoreCase(superProp))
-                                          property.set(1,row.m_filler);
-                     
-                                      }
-                                      if(l==Superproperties.size()-1) DataBaseEntityTable.dbeTable.repaint();
-                                  }
-                                  
-//DataBaseEntityTable.dbeTable.repaint();
-  }
-  public void reeee(){
-      String lastSelected=DataBasePanel.last.toString();
-                                                    NodeVector oooo= (NodeVector)  QueryHashtable.mainDBHashtable.get(DataBasePanel.last.toString());
-         if(lastSelected.substring(0,lastSelected.length()-1).endsWith("_occur"))
-                {
-                    lastSelected=lastSelected.substring(0, lastSelected.length()-7);
-                }
-               //  Hashtable allEntityTypes = (Hashtable) QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity");
+//                    }}}*///}}}}
+//
+//                                   }
+//
+//
+//                                  Vector Superproperties=(Vector) propVector.elementAt(3);
+//                                  for(int l=0;l<Superproperties.size();l++){
+//                                      String superProp= Superproperties.elementAt(l).toString();
+//                                      Vector entity=(Vector) Mpiro.win.struc.getEntityTypeOrEntity(DataBasePanel.last.toString());
+//                                      entity= (Vector) entity.elementAt(0);
+//                                      entity= (Vector) entity.elementAt(0);
+//                                      for(int g=3;g<entity.size();g++){
+//                                          Vector property=(Vector) entity.elementAt(g);
+//                                          if (property.elementAt(0).toString().equalsIgnoreCase(superProp))
+//                                          property.set(1,row.m_filler);
+//
+//                                      }
+//                                      if(l==Superproperties.size()-1) DataBaseEntityTable.dbeTable.repaint();
+//                                  }
+//
+////DataBaseEntityTable.dbeTable.repaint();
+//  }
+//  public void reeee(){
+//      String lastSelected=DataBasePanel.last.toString();
+//                                                    NodeVector oooo= (NodeVector)  Mpiro.win.struc.getEntityTypeOrEntity(DataBasePanel.last.toString());
+//         if(lastSelected.substring(0,lastSelected.length()-1).endsWith("_occur"))
+//                {
+//                    lastSelected=lastSelected.substring(0, lastSelected.length()-7);
+//                }
+               //  Hashtable allEntityTypes = (Hashtable) Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity");
                 //    Enumeration allTypesNames=allEntityTypes.keys();
                 //    while(allTypesNames.hasMoreElements())
                 //    {DefaultMutableTreeNode nextNode=null;
@@ -435,11 +433,11 @@ public class DataBaseEntityTableModel extends AbstractTableModel
                   //       System.out.println(nextEl.toString());
                    //     if ((nextEl.toString().startsWith(lastSelected+"_occur")||(nextEl.toString().equalsIgnoreCase(lastSelected)))&&(!(nextEl.toString().equalsIgnoreCase(DataBasePanel.last.toString()))))
                     //    {
-                         NodeVector iii= (NodeVector)  QueryHashtable.mainDBHashtable.get(lastSelected);
-iii.independentFieldsVector=oooo.independentFieldsVector;
-iii.englishFieldsVector=oooo.englishFieldsVector;
-iii.greekFieldsVector=oooo.greekFieldsVector;
-iii.italianFieldsVector=oooo.independentFieldsVector;
+//                         NodeVector iii= (NodeVector)  Mpiro.win.struc.getEntityTypeOrEntity(lastSelected);
+//iii.independentFieldsVector=oooo.independentFieldsVector;
+//iii.englishFieldsVector=oooo.englishFieldsVector;
+//iii.greekFieldsVector=oooo.greekFieldsVector;
+//iii.italianFieldsVector=oooo.independentFieldsVector;
 				//}}
                     
 

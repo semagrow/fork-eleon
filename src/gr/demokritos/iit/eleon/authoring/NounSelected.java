@@ -6,6 +6,7 @@
 
 package gr.demokritos.iit.eleon.authoring;
 
+import gr.demokritos.iit.eleon.struct.QueryHashtable;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.tree.*;
@@ -78,7 +79,7 @@ public class NounSelected extends JScrollPane
                 {
                     last=last.substring(0, last.length()-7);
                 }
-               //  Hashtable allEntityTypes = (Hashtable) QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+               //  Hashtable allEntityTypes = (Hashtable) Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
                   for (int k=0; k<v.size(); k++) 
 		{
 			String noun = v.elementAt(k).toString();
@@ -94,7 +95,7 @@ public class NounSelected extends JScrollPane
                         {System.out.println("LLLLLLLLLLLLLK"+nextEl.toString());
                    parent=nextEl.getParent().toString();
                    System.out.println(noun+"   "+nextEl.getParent().toString());
-		NodeVector pn = (NodeVector)QueryHashtable.mainDBHashtable.get(parent.toString());
+		NodeVector pn = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(parent.toString());
 		Vector pNounVector = (Vector)pn.elementAt(2);
 try 
 				{
@@ -166,7 +167,7 @@ try
                 {
                     last=last.substring(0, last.length()-7);
                 }
-               //  Hashtable allEntityTypes = (Hashtable) QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+               //  Hashtable allEntityTypes = (Hashtable) Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
                   for (int k=0; k<v.size(); k++) 
 		{
 			String noun = v.elementAt(k).toString();
@@ -182,7 +183,7 @@ try
                         {System.out.println("###############"+nextEl.toString());
                    String parent=nextEl.getParent().toString();
                    System.out.println(noun+"   "+nextEl.getParent().toString());
-		NodeVector pn = (NodeVector)QueryHashtable.mainDBHashtable.get(QueryHashtable.nameWithoutOccur(parent.toString()));
+		NodeVector pn = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(Mpiro.win.struc.nameWithoutOccur(parent.toString()));
 		Vector pNounVector = (Vector)pn.elementAt(2);
 try 
 				{

@@ -7,6 +7,7 @@
 package gr.demokritos.iit.eleon.authoring;
 
 
+import gr.demokritos.iit.eleon.struct.QueryLexiconHashtable;
 import gr.demokritos.iit.eleon.ui.KDialog;
 
 import java.awt.*;
@@ -33,7 +34,7 @@ public class LexiconPanel extends JPanel
 	public static ImageIcon parentim;
 	public static DefaultMutableTreeNode parent;
 	
-	static JPanel multipanel;
+	public static JPanel multipanel;
 	public static JTree lexicontree;
 	JPanel diafora;
 	static DefaultTreeModel treeModel;
@@ -336,7 +337,7 @@ public class LexiconPanel extends JPanel
 			if (parent != null) 
 			{
 				treeModel.removeNodeFromParent(currentNode);
-				QueryLexiconHashtable.removeLexiconEntry(currentNode.toString());
+				Mpiro.win.struc.removeLexiconEntry(currentNode.toString());
 				TreePreviews.generalDataBasePreview();
 				LexiconPanel.lexicontree.setSelectionRow(0);
 				LexiconPanel.multipanel.removeAll();
@@ -381,7 +382,7 @@ public class LexiconPanel extends JPanel
 		treeModel.insertNodeInto(h, node, (node.getChildCount()-1));
 		lexicontree.scrollPathToVisible(new TreePath(h.getPath()));
 		lexicontree.repaint();
-		QueryLexiconHashtable.createDefaultLexiconNoun(h.toString());
+		Mpiro.win.struc.createDefaultLexiconNoun(h.toString());
 		TreePreviews.generalDataBasePreview();
 		return true;
 	}
@@ -402,7 +403,7 @@ public class LexiconPanel extends JPanel
 		treeModel.insertNodeInto(h, node, (node.getChildCount()-1));
 		lexicontree.scrollPathToVisible(new TreePath(h.getPath()));
 		lexicontree.repaint();
-		QueryLexiconHashtable.createDefaultLexiconVerb(h.toString());
+		Mpiro.win.struc.createDefaultLexiconVerb(h.toString());
 		TreePreviews.generalDataBasePreview();
 		return true;
 	}
@@ -413,7 +414,7 @@ public class LexiconPanel extends JPanel
 		DefaultMutableTreeNode nounTop = (DefaultMutableTreeNode)top.getChildAt(0);
 		DefaultMutableTreeNode verbTop = (DefaultMutableTreeNode)top.getChildAt(1);
 		
-		Vector nounVector = QueryLexiconHashtable.getNounsVectorFromMainLexiconHashtable();
+		Vector nounVector = Mpiro.win.struc.getNounsVectorFromMainLexiconHashtable();
 		Enumeration enm = nounVector.elements();
 		while (enm.hasMoreElements()) 
 		{
@@ -431,7 +432,7 @@ public class LexiconPanel extends JPanel
 			currentNounNode.add(grLeaf);
 		}
 
-		Vector verbVector = QueryLexiconHashtable.getVerbsVectorFromMainLexiconHashtable();
+		Vector verbVector = Mpiro.win.struc.getVerbsVectorFromMainLexiconHashtable();
 		Enumeration enme = verbVector.elements();
 		while (enme.hasMoreElements()) 
 		{

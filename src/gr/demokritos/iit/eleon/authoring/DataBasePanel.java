@@ -8,6 +8,9 @@ package gr.demokritos.iit.eleon.authoring;
 
 import gr.aueb.cs.nlg.Languages.Languages;
 import gr.aueb.cs.nlg.NLGEngine.NLGEngine;
+import gr.demokritos.iit.eleon.struct.QueryHashtable;
+import gr.demokritos.iit.eleon.struct.QueryOptionsHashtable;
+import gr.demokritos.iit.eleon.struct.QueryProfileHashtable;
 import gr.demokritos.iit.eleon.ui.AnnotationPropertiesPanel;
 import gr.demokritos.iit.eleon.ui.Equivalent;
 import gr.demokritos.iit.eleon.ui.KButton;
@@ -47,8 +50,8 @@ public class DataBasePanel
     
     
     
-    static JScrollPane htmlView;
-    static JPanel previewPanel;
+    public static JScrollPane htmlView;
+    public static JPanel previewPanel;
     static JPanel depthPanel;
     static JCheckBox useComparisons;
     static ViewPanel htmlPane;
@@ -56,13 +59,13 @@ public class DataBasePanel
     private static boolean DEBUG = false;
     private URL helpURL;
     protected TreePath clickedPath;
-    static JLabel label01;
+    public static JLabel label01;
     public static JTree databaseTree;
-    static JPanel diafora;
-    static JPanel multiPanel;
-    static JPanel multiTable;
-    static JPanel multiNoun;
-    static JPanel multiFlagPanel;
+    public static JPanel diafora;
+    public static JPanel multiPanel;
+    public static JPanel multiTable;
+    public static JPanel multiNoun;
+    public static JPanel multiFlagPanel;
     
     static JPopupMenu popuptopA;
     static JPopupMenu popupbasic;
@@ -336,9 +339,9 @@ public class DataBasePanel
         //pass= new JPasswordField();
         //pass.setPreferredSize(new Dimension(115, 24));
       //  depthLabel.setAlignmentX(112);
-      //  previewFunctionsPanel.add(depthLabel);
-      //  previewFunctionsPanel.add(depth);
-        previewFunctionsPanel.add(depthPanel);
+       previewFunctionsPanel.add(depthLabel);
+        previewFunctionsPanel.add(depth);
+      // previewFunctionsPanel.add(depthPanel);
         previewFunctionsPanel.add(useComparisons);
         //previewFunctionsPanel.add(pass);
         previewFunctionsPanel.add(flags);
@@ -492,7 +495,7 @@ public class DataBasePanel
                                                  previewEnglishEntityMenu.removeAll();
                                                  previewItalianEntityMenu.removeAll();
                                                  previewGreekEntityMenu.removeAll();
-                                                 Vector userTypesVector = QueryUsersHashtable.getUsersVectorFromMainUsersHashtable();
+                                                 Vector userTypesVector = Mpiro.win.struc.getUsersVectorFromMainUsersHashtable();
                                                  Enumeration userTypesVectorEnum = userTypesVector.elements();
                                                  while (userTypesVectorEnum.hasMoreElements())
                                                  {
@@ -535,7 +538,7 @@ public class DataBasePanel
                                                   previewEnglishGenericMenu.removeAll();
                                                   previewItalianGenericMenu.removeAll();
                                                   previewGreekGenericMenu.removeAll();
-                                                  Vector userTypesVector = QueryUsersHashtable.getUsersVectorFromMainUsersHashtable();
+                                                  Vector userTypesVector = Mpiro.win.struc.getUsersVectorFromMainUsersHashtable();
                                                   Enumeration userTypesVectorEnum = userTypesVector.elements();
                                                   while (userTypesVectorEnum.hasMoreElements())
                                                   {
@@ -677,7 +680,7 @@ public class DataBasePanel
      */
     Action a1 = new AbstractAction(addNewBasicType_action) {
         public void actionPerformed(ActionEvent e) {
-            NodeVector rootVector = (NodeVector) QueryHashtable.mainDBHashtable.get("Data Base");
+            NodeVector rootVector = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity("Data Base");
             Vector upperVector = (Vector) rootVector.elementAt(1);
             KDialog newBasicTypeDialog = new KDialog(addBasicType_text,
                     nameOfTheBasicType_text,
@@ -712,10 +715,10 @@ public class DataBasePanel
             DefaultMutableTreeNode v = (DefaultMutableTreeNode) (selpath.getLastPathComponent());
             String k = v.toString();
             addObject(new IconData(ICON_GENERIC, "Generic-" + k));
-            QueryHashtable.createEntity(k, "Generic-" + k);
-            QueryHashtable.updateCreatedEntity(k, "Generic-" + k);
-            QueryUsersHashtable.addEntityInUserModelHashtable("Generic-" + k);
-            QueryUsersHashtable.addEntityTypeOrEntityInUserModelStoryHashtable("Generic-" + k);
+            Mpiro.win.struc.createEntity(k, "Generic-" + k);
+            Mpiro.win.struc.updateCreatedEntity(k, "Generic-" + k);
+            Mpiro.win.struc.addEntityInUserModelHashtable("Generic-" + k);
+            //QueryProfileHashtable.addEntityTypeOrEntityInUserModelStoryHashtable("Generic-" + k);
             Mpiro.needExportToEmulator = true; //maria
             Mpiro.needExportToExprimo = true; //maria
             databaseTree.revalidate();
@@ -725,7 +728,7 @@ public class DataBasePanel
     
     Action a5 = new AbstractAction(upperModelTypes_action) {
         public void actionPerformed(ActionEvent e) {
-            NodeVector rootVector = (NodeVector) QueryHashtable.mainDBHashtable.get("Data Base");
+            NodeVector rootVector = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity("Data Base");
             Vector upperVector = (Vector) rootVector.elementAt(1);
             KDialog upperTypesDialog = new KDialog(upperModelTypes_action,
                     null,
@@ -883,11 +886,11 @@ public class DataBasePanel
          
                                 if (entity.substring(0, entity.length()-1).endsWith("_occur"))
                                     entity=entity.substring(0, entity.length()-7);
-//QueryHashtable.mainDBHashtable.get(entity)
+//Mpiro.win.struc.getEntityTypeOrEntity(entity)
 /*                                String parent=last.getParent().toString();
                                 if (parent.substring(0, parent.length()-1).endsWith("_occur"))
                                     parent=parent.substring(0, parent.length()-7);
-NodeVector f11=(NodeVector) QueryHashtable.mainDBHashtable.get(parent);
+NodeVector f11=(NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(parent);
          
 f11.nounVector=(Vector) f11.elementAt(2);*/
     // setting the exprimo home directory
@@ -1069,15 +1072,15 @@ f11.nounVector=(Vector) f11.elementAt(2);*/
                                         Mpiro.pageFactory.setCurrentUser("auth-" + userTypeString);
                                         uk.ac.ed.ltg.exprimo.workbench.ExpUser u = Mpiro.pageFactory.getCurrentUser();
                                         u.setNewFocus(entity);
-                                   //     Object f=QueryHashtable.mainDBHashtable.get("IBM2000");
+                                   //     Object f=Mpiro.win.struc.getEntityTypeOrEntity("IBM2000");
                         //                System.out.println("IBM2000"+f.toString());
-                             //           NodeVector f1=(NodeVector) QueryHashtable.mainDBHashtable.get("dfgdfdd");
+                             //           NodeVector f1=(NodeVector) Mpiro.win.struc.getEntityTypeOrEntity("dfgdfdd");
                             //            System.out.println("dfgdfdd"+f1.toString());
                                       //  f1.nounVector=(Vector) f1.elementAt(2);
                              //           System.out.println(f1.nounVector.toString());
-                                 //      Object f2=QueryHashtable.mainDBHashtable.get("Computer_occur2");
+                                 //      Object f2=Mpiro.win.struc.getEntityTypeOrEntity("Computer_occur2");
                                //      System.out.println("Computer"+f2.toString());
-                     ////                  Object f3=QueryHashtable.mainDBHashtable.get("IBM2000_occur2");
+                     ////                  Object f3=Mpiro.win.struc.getEntityTypeOrEntity("IBM2000_occur2");
                       //                System.out.println("IBM2000_occur2"+f3.toString());
                                         uk.ac.ed.ltg.exprimo.page.Page p = Mpiro.pageFactory.makePage();
                                         String currentText = new String();
@@ -1148,15 +1151,15 @@ f11.nounVector=(Vector) f11.elementAt(2);*/
             public void actionPerformed(ActionEvent e) {
                 
                 // find the entity node-name
-                String entity = QueryHashtable.nameWithoutOccur(databaseTree.getLastSelectedPathComponent().toString());
+                String entity = Mpiro.win.struc.nameWithoutOccur(databaseTree.getLastSelectedPathComponent().toString());
                 
                 //    if (entity.substring(0, entity.length()-1).endsWith("_occur"))
                 //      entity=entity.substring(0, entity.length()-7);
-//QueryHashtable.mainDBHashtable.get(entity)
+//Mpiro.win.struc.getEntityTypeOrEntity(entity)
 /*                                String parent=last.getParent().toString();
                                 if (parent.substring(0, parent.length()-1).endsWith("_occur"))
                                     parent=parent.substring(0, parent.length()-7);
-NodeVector f11=(NodeVector) QueryHashtable.mainDBHashtable.get(parent);
+NodeVector f11=(NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(parent);
  
 f11.nounVector=(Vector) f11.elementAt(2);*/
                 // setting the exprimo home directory
@@ -1348,15 +1351,15 @@ f11.nounVector=(Vector) f11.elementAt(2);*/
                             //}
                             try{
                                 //progress.updateProgressBar(2, 1);
-                                OwlExport.ExportToOwlFile(tempOwlFile,"RDF/XML-ABBREV", QueryOptionsHashtable.getBaseURI(),tempOwlFile.getName(),false);
+                                OwlExport.ExportToOwlFile(tempOwlFile,"RDF/XML-ABBREV", Mpiro.win.struc.getBaseURI(),tempOwlFile.getName(),false);
                                 progress.updateProgressBar(3, 1);
-                                OwlExport.exportLexicon(tempOwlFile.getAbsolutePath().substring(0, tempOwlFile.getAbsolutePath().lastIndexOf(tempOwlFile.getName())), "http://localhost/OwlTemp.owl");
+                                OwlExport.exportLexicon(tempOwlFile.getAbsolutePath().substring(0, tempOwlFile.getAbsolutePath().lastIndexOf(tempOwlFile.getName())), Mpiro.win.struc.getBaseURI());
                                 progress.updateProgressBar(4, 1);
-                                OwlExport.exportMicroplans(tempOwlFile.getAbsolutePath().substring(0, tempOwlFile.getAbsolutePath().lastIndexOf(tempOwlFile.getName())), "http://localhost/OwlTemp.owl");
+                                OwlExport.exportMicroplans(tempOwlFile.getAbsolutePath().substring(0, tempOwlFile.getAbsolutePath().lastIndexOf(tempOwlFile.getName())), Mpiro.win.struc.getBaseURI());
                                 progress.updateProgressBar(5, 1);
-                                OwlExport.exportRobotModelling(tempOwlFile.getAbsolutePath().substring(0, tempOwlFile.getAbsolutePath().lastIndexOf(tempOwlFile.getName())), "http://localhost/OwlTemp.owl");
+                                OwlExport.exportRobotModelling(tempOwlFile.getAbsolutePath().substring(0, tempOwlFile.getAbsolutePath().lastIndexOf(tempOwlFile.getName())), Mpiro.win.struc.getBaseURI());
                                 progress.updateProgressBar(6, 1);
-                                OwlExport.exportUserModelling(tempOwlFile.getAbsolutePath().substring(0, tempOwlFile.getAbsolutePath().lastIndexOf(tempOwlFile.getName())), "http://localhost/OwlTemp.owl");
+                                OwlExport.exportUserModelling(tempOwlFile.getAbsolutePath().substring(0, tempOwlFile.getAbsolutePath().lastIndexOf(tempOwlFile.getName())), Mpiro.win.struc.getBaseURI());
                                 progress.updateProgressBar(8, 1);
                             } catch(java.lang.Exception ex){
                                 ex.printStackTrace(System.out);
@@ -1388,21 +1391,24 @@ f11.nounVector=(Vector) f11.elementAt(2);*/
                     //	Mpiro.pageFactory.setCurrentUser("auth-" + userTypeString);
                     //	uk.ac.ed.ltg.exprimo.workbench.ExpUser u = Mpiro.pageFactory.getCurrentUser();
                     //	u.setNewFocus(entity);
-                    //     Object f=QueryHashtable.mainDBHashtable.get("IBM2000");
+                    //     Object f=Mpiro.win.struc.getEntityTypeOrEntity("IBM2000");
                     //                System.out.println("IBM2000"+f.toString());
-                    //           NodeVector f1=(NodeVector) QueryHashtable.mainDBHashtable.get("dfgdfdd");
+                    //           NodeVector f1=(NodeVector) Mpiro.win.struc.getEntityTypeOrEntity("dfgdfdd");
                     //            System.out.println("dfgdfdd"+f1.toString());
                     //  f1.nounVector=(Vector) f1.elementAt(2);
                     //           System.out.println(f1.nounVector.toString());
-                    //      Object f2=QueryHashtable.mainDBHashtable.get("Computer_occur2");
+                    //      Object f2=Mpiro.win.struc.getEntityTypeOrEntity("Computer_occur2");
                     //      System.out.println("Computer"+f2.toString());
-                    ////                  Object f3=QueryHashtable.mainDBHashtable.get("IBM2000_occur2");
+                    ////                  Object f3=Mpiro.win.struc.getEntityTypeOrEntity("IBM2000_occur2");
                     //                System.out.println("IBM2000_occur2"+f3.toString());
                     //	uk.ac.ed.ltg.exprimo.page.Page p = Mpiro.pageFactory.makePage();
                     String currentText = new String();
                     
                     String UT = "http://www.aueb.gr/users/ion/owlnl/UserModelling#"+userTypeString;
-                    String objectURI = "http://localhost/OwlTemp.owl#"+entity;
+                    String base=Mpiro.win.struc.getBaseURI();
+                    if(!base.endsWith("#"))
+                        base=base+"#";
+                    String objectURI = base+entity;
   /*       String owlPath = "C:\\Documents and Settings\\dbilid\\desktop\\Final\\MPIRO-authoring-v4.4_with_OWL\\NLFiles-MPIRO\\mpiro.owl";
         String NLResourcePath = "C:\\Documents and Settings\\dbilid\\desktop\\Final\\MPIRO-authoring-v4.4_with_OWL\\NLFiles-MPIRO\\";
         String UT = "http://www.owlnl.com/NLG/UserModelling#Adult";
@@ -1889,7 +1895,7 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
         
         
         boolean exists=false;
-        String nameWithoutOccur=QueryHashtable.nameWithoutOccur(DataBasePanel.last.toString());
+        String nameWithoutOccur=Mpiro.win.struc.nameWithoutOccur(DataBasePanel.last.toString());
         //        if (DataBasePanel.last.toString().substring(0, DataBasePanel.last.toString().length()-1).endsWith("_occur") ){
         //          nameWithoutOccur=DataBasePanel.last.toString().substring(0, DataBasePanel.last.toString().length()-7);
         //    }
@@ -1932,7 +1938,7 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
                 removeNode(nameWithoutOccur);
                 
             } else 
-                if(getNode(QueryHashtable.nameWithoutOccur(DataBasePanel.last.getParent().toString())+"_occur2")!=null){
+                if(getNode(Mpiro.win.struc.nameWithoutOccur(DataBasePanel.last.getParent().toString())+"_occur2")!=null){
                     boolean hasMore=true;
                     for(int r=2;hasMore;r++) { //System.out.println("3");
                         Object elem2=null;
@@ -2024,12 +2030,12 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
                         //"\"" + child + "\"" + " is sibling!");
                     } else {
                         String c = child.toString();
-                        if (!QueryHashtable.mainDBHashtable.containsKey(c)) {
+                        if (!Mpiro.win.struc.mainDBcontainsEntityOrEntityType(c)) {
                             System.err.println("(DataBasePanel)ERROR: the specified key: " + "\"" + c + "\"" +
                                     " does not exist!");
                         } else {
                             ////System.out.println(c);
-                            QueryHashtable.mainDBHashtable.remove(c);
+                            Mpiro.win.struc.removeEntityTypeOrEntityFromDB(c);
                             removedNodes.addElement(child);
                         }
                     }
@@ -2068,7 +2074,7 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
                     currentNode.removeAllChildren();
                     treeModel.removeNodeFromParent(currentNode);
                     // Remove appropriate entry from mainDBHashtable
-                    QueryHashtable.mainDBHashtable.remove(currentNode.toString());
+                    Mpiro.win.struc.removeEntityTypeOrEntityFromDB(currentNode.toString());
                     
                     // Set the Database Tree to "Data Base"
                     TreePreviews.setDataBaseTable("Data Base");
@@ -2078,14 +2084,14 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
                     DataBasePanel.databaseTree.repaint();
                     // Remove all references of deleted nodes from remaining nodes' fields
                     if (!removedNodes.isEmpty()) {
-                        QueryHashtable.updateExistingFieldsAfterRemovingANode(deletedEntityTypes, deletedEntities);
+                        Mpiro.win.struc.updateExistingFieldsAfterRemovingANode(deletedEntityTypes, deletedEntities);
                         // remove all instances of the deleted nodes from mainUserModelHashtable
                         Enumeration removedNodesEnum = removedNodes.elements();
                         while (removedNodesEnum.hasMoreElements()) {
                             String nodename = removedNodesEnum.nextElement().toString();
-                            QueryUsersHashtable.removeEntityTypeOrEntityInUserModelHashtable(nodename);
-                            QueryUsersHashtable.removeEntityTypeOrEntityInRobotsModelHashtable(nodename);
-                            QueryUsersHashtable.removeEntityTypeOrEntityInUserModelStoryHashtable(nodename);
+                            Mpiro.win.struc.removeEntityTypeOrEntityInUserModelHashtable(nodename);
+                           // QueryProfileHashtable.removeEntityTypeOrEntityInRobotsModelHashtable(nodename);
+                           // QueryProfileHashtable.removeEntityTypeOrEntityInUserModelStoryHashtable(nodename);
                         }
                     }
                     return;
@@ -2096,8 +2102,8 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
         
         public static void removeCurrentNode() {
             // Setting up two hashtables to be used in "QueryHashtable.updateExistingFieldsAfterRemovingANode"
-            //QueryHashtable.allEntityTypesBeforeRemove = QueryHashtable.getFullPathChildrenVectorFromMainDBHashtable("Basic-entity-types", "Entity type");
-            //QueryHashtable.allEntitiesAndGenericBeforeRemove = QueryHashtable.getFullPathChildrenVectorFromMainDBHashtable("Basic-entity-types", "Entity+Generic");
+            //QueryHashtable.allEntityTypesBeforeRemove = Mpiro.win.struc.getFullPathChildrenVectorFromMainDBHashtable("Basic-entity-types", "Entity type");
+            //QueryHashtable.allEntitiesAndGenericBeforeRemove = Mpiro.win.struc.getFullPathChildrenVectorFromMainDBHashtable("Basic-entity-types", "Entity+Generic");
             
             // Before removing a node we construct a vector containing all nodes that are deleted
             // This is used for updating the information about those nodes in the field of other nodes
@@ -2118,12 +2124,12 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
                         //"\"" + child + "\"" + " is sibling!");
                     } else {
                         String c = child.toString();
-                        if (!QueryHashtable.mainDBHashtable.containsKey(c)) {
+                        if (!Mpiro.win.struc.mainDBcontainsEntityOrEntityType(c)) {
                             System.err.println("(DataBasePanel)ERROR: the specified key: " + "\"" + c + "\"" +
                                     " does not exist!");
                         } else {
                             ////System.out.println(c);
-                            QueryHashtable.mainDBHashtable.remove(c);
+                            Mpiro.win.struc.removeEntityTypeOrEntityFromDB(c);
                             removedNodes.addElement(child);
                         }
                     }
@@ -2162,7 +2168,7 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
                     currentNode.removeAllChildren();
                     treeModel.removeNodeFromParent(currentNode);
                     // Remove appropriate entry from mainDBHashtable
-                    QueryHashtable.mainDBHashtable.remove(currentNode.toString());
+                    Mpiro.win.struc.removeEntityTypeOrEntityFromDB(currentNode.toString());
                     
                     // Set the Database Tree to "Data Base"
                     TreePreviews.setDataBaseTable("Data Base");
@@ -2172,14 +2178,14 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
                     DataBasePanel.databaseTree.repaint();
                     // Remove all references of deleted nodes from remaining nodes' fields
                     if (!removedNodes.isEmpty()) {
-                        QueryHashtable.updateExistingFieldsAfterRemovingANode(deletedEntityTypes, deletedEntities);
+                        Mpiro.win.struc.updateExistingFieldsAfterRemovingANode(deletedEntityTypes, deletedEntities);
                         // remove all instances of the deleted nodes from mainUserModelHashtable
                         Enumeration removedNodesEnum = removedNodes.elements();
                         while (removedNodesEnum.hasMoreElements()) {
                             String nodename = removedNodesEnum.nextElement().toString();
-                            QueryUsersHashtable.removeEntityTypeOrEntityInUserModelHashtable(nodename);
-                            QueryUsersHashtable.removeEntityTypeOrEntityInRobotsModelHashtable(nodename);
-                            QueryUsersHashtable.removeEntityTypeOrEntityInUserModelStoryHashtable(nodename);
+                            Mpiro.win.struc.removeEntityTypeOrEntityInUserModelHashtable(nodename);
+                           // QueryProfileHashtable.removeEntityTypeOrEntityInRobotsModelHashtable(nodename);
+                           // QueryProfileHashtable.removeEntityTypeOrEntityInUserModelStoryHashtable(nodename);
                         }
                     }
                     return;
@@ -2260,6 +2266,8 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
                 builtinnode[a] = new DefaultMutableTreeNode(new IconData(ICON_BUILT, builtintype[a]));
                 topB.add(builtinnode[a]);
             }
+            if(Mpiro.win!=null)
+            Mpiro.win.ontoPipe.rebind();
         } // createNodes method
         
         public static boolean addBasicEntityType(String nodeName) {
@@ -2270,21 +2278,22 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
             String parent = node.toString();
             addObject(new IconData(ICON_BASIC, nodeName));
             // Now, create a new element in the mainDBHashtable with the given parameters
-            QueryHashtable.createSubType(parent, nodeName);
-            QueryUsersHashtable.addEntityTypeInUserModelHashtable(nodeName); //==
-            QueryUsersHashtable.addEntityTypeInRobotsModelHashtable(nodeName);
-            QueryUsersHashtable.addEntityTypeOrEntityInUserModelStoryHashtable(nodeName); //==
+            Mpiro.win.struc.createSubType(parent, nodeName);
+            Mpiro.win.struc.addEntityTypeInUserModelHashtable(nodeName); //==
+           // QueryProfileHashtable.addEntityTypeInRobotsModelHashtable(nodeName);
+            //QueryProfileHashtable.addEntityTypeOrEntityInUserModelStoryHashtable(nodeName); //==
             // Update the above created entry of mainDBHashtable with the chosen upperVector
-            NodeVector createdVector = (NodeVector) QueryHashtable.mainDBHashtable.get(nodeName);
+            NodeVector createdVector = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(nodeName);
             createdVector.setElementAt(KDialog.chboli.getItemsVector(), 1);
-            // QueryHashtable.valueRestrictionsHashtable.put(nodeName,new ValueRestriction());
+            // Mpiro.win.struc.addValueRestriction(nodeName,new ValueRestriction());
             databaseTree.revalidate();
             databaseTree.repaint();
-            Vector v=new Vector();
+            //Vector v=new Vector();
             //if(QueryHashtable.superClassesHashtable.containsKey(nodeName))
-            //    v=(Vector)QueryHashtable.superClassesHashtable.get(nodeName);
+            //    v=(Vector)Mpiro.win.struc.getSuperClasses(nodeName);
             //v.add(("(Class:"+parent+")"));
             //QueryHashtable.superClassesHashtable.put(nodeName,v);
+            Mpiro.win.ontoPipe.rebind();
             return true;
         }
         
@@ -2297,15 +2306,16 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
             if (obj == null)return false;
             String parent = node.toString();
             addObject(new IconData(ICON_BOOK, nodeName));
-            QueryHashtable.createSubType(parent, nodeName);
-            QueryUsersHashtable.addEntityTypeInUserModelHashtable(nodeName); //==
-            QueryUsersHashtable.addEntityTypeInRobotsModelHashtable(nodeName);
-            QueryUsersHashtable.addEntityTypeOrEntityInUserModelStoryHashtable(nodeName); //==
+            Mpiro.win.struc.createSubType(parent, nodeName);
+            Mpiro.win.struc.addEntityTypeInUserModelHashtable(nodeName); //==
+          //  QueryProfileHashtable.addEntityTypeInRobotsModelHashtable(nodeName);
+           // QueryProfileHashtable.addEntityTypeOrEntityInUserModelStoryHashtable(nodeName); //==
             databaseTree.revalidate();
             databaseTree.repaint();
             //Vector v=new Vector();
             //v.add(("(Class:"+parent+")"));
             //QueryHashtable.superClassesHashtable.put(nodeName,v);
+            Mpiro.win.ontoPipe.rebind();
             return true;
         }
         
@@ -2317,12 +2327,12 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
             String parent = node.toString();
             //System.out.println("parent:::::"+parent);
             addObject(new IconData(ICON_GEI, nodeName));
-            QueryHashtable.createEntity(parent, nodeName);
-            QueryHashtable.updateCreatedEntity(parent, nodeName);
-            QueryUsersHashtable.addEntityInUserModelHashtable(nodeName); //==
-            QueryUsersHashtable.addEntityInRobotsModelHashtable(nodeName);
-            QueryUsersHashtable.addEntityTypeOrEntityInUserModelStoryHashtable(nodeName); //==
-            QueryHashtable.addValuesFromHasValueRestrictions(nodeName, parent);
+            Mpiro.win.struc.createEntity(parent, nodeName);
+            Mpiro.win.struc.updateCreatedEntity(parent, nodeName);
+            Mpiro.win.struc.addEntityInUserModelHashtable(nodeName); //==
+          //  QueryProfileHashtable.addEntityInRobotsModelHashtable(nodeName);
+            //QueryProfileHashtable.addEntityTypeOrEntityInUserModelStoryHashtable(nodeName); //==
+            Mpiro.win.struc.addValuesFromHasValueRestrictions(nodeName, parent);
             databaseTree.revalidate();
             databaseTree.repaint();
             return true;
@@ -2335,7 +2345,7 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
             DefaultMutableTreeNode first = (DefaultMutableTreeNode) top.getChildAt(0);
             
             Enumeration lastTypeChildren=first.preorderEnumeration();
-            //Enumeration lastTypeChildren=QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity Type").keys();
+            //Enumeration lastTypeChildren=Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity Type").keys();
             while (lastTypeChildren.hasMoreElements()) {
                 elem1=lastTypeChildren.nextElement();
                 ////System.out.println("QQQQQQQQ"+elem1);
@@ -2346,18 +2356,18 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
                 //System.out.println("OOOOOOOOOOOOOOOOOOOOOOOO"+parent);
             }
             addObject(node,new IconData(ICON_BOOK, nodeName));
-            QueryHashtable.createSubType(parent, nodeName);
-            QueryUsersHashtable.addEntityTypeInUserModelHashtable(nodeName); //==
-            QueryUsersHashtable.addEntityTypeInRobotsModelHashtable(nodeName);
-            QueryUsersHashtable.addEntityTypeOrEntityInUserModelStoryHashtable(nodeName); //==
+            Mpiro.win.struc.createSubType(parent, nodeName);
+            Mpiro.win.struc.addEntityTypeInUserModelHashtable(nodeName); //==
+           // QueryProfileHashtable.addEntityTypeInRobotsModelHashtable(nodeName);
+           // QueryProfileHashtable.addEntityTypeOrEntityInUserModelStoryHashtable(nodeName); //==
             databaseTree.revalidate();
             databaseTree.repaint();
             // Vector v=new Vector();
             // if(QueryHashtable.superClassesHashtable.containsKey(nodeName))
-            //      v=(Vector)QueryHashtable.superClassesHashtable.get(nodeName);
+            //      v=(Vector)Mpiro.win.struc.getSuperClasses(nodeName);
             //  v.add(("(Class:"+parent+")"));
             //QueryHashtable.superClassesHashtable.put(nodeName,v);
-            
+            Mpiro.win.ontoPipe.rebind();
             return true;
         }
         
@@ -2367,7 +2377,7 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
             DefaultMutableTreeNode first = (DefaultMutableTreeNode) top.getChildAt(0);
             
             Enumeration lastTypeChildren=first.preorderEnumeration();
-            //Enumeration lastTypeChildren=QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity Type").keys();
+            //Enumeration lastTypeChildren=Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity Type").keys();
             while (lastTypeChildren.hasMoreElements()) {
                 elem1=lastTypeChildren.nextElement();
                 ////System.out.println("QQQQQQQQ"+elem1);
@@ -2378,18 +2388,19 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
                 //System.out.println("OOOOOOOOOOOOOOOOOOOOOOOO"+parent);
             }
             addObject(node,new IconData(ICON_BOOK, nodeName));
-            //QueryHashtable.createSubType(parent, nodeName);
-            //QueryUsersHashtable.addEntityTypeInUserModelHashtable(nodeName); //==
-            //QueryUsersHashtable.addEntityTypeOrEntityInUserModelStoryHashtable(nodeName); //==
+            //Mpiro.win.struc.createSubType(parent, nodeName);
+            //Mpiro.win.struc.addEntityTypeInUserModelHashtable(nodeName); //==
+            //QueryProfileHashtable.addEntityTypeOrEntityInUserModelStoryHashtable(nodeName); //==
             databaseTree.revalidate();
             databaseTree.repaint();
-            //  if(QueryHashtable.superClassesHashtable.containsKey(QueryHashtable.nameWithoutOccur(nodeName)))
-            //  ((Vector)QueryHashtable.superClassesHashtable.get(QueryHashtable.nameWithoutOccur(nodeName))).add("(Class:"+parent+")");
+            //  if(QueryHashtable.superClassesHashtable.containsKey(Mpiro.win.struc.nameWithoutOccur(nodeName)))
+            //  ((Vector)Mpiro.win.struc.getSuperClasses(Mpiro.win.struc.nameWithoutOccur(nodeName))).add("(Class:"+parent+")");
             //  else{
             //       Vector v=new Vector();
             //      v.add("(Class:"+parent+")");
-            //       QueryHashtable.superClassesHashtable.put(QueryHashtable.nameWithoutOccur(nodeName), v);
+            //       QueryHashtable.superClassesHashtable.put(Mpiro.win.struc.nameWithoutOccur(nodeName), v);
             //   }
+            Mpiro.win.ontoPipe.rebind();
             return true;
         }
         
@@ -2407,7 +2418,7 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
             DefaultMutableTreeNode first = (DefaultMutableTreeNode) top.getChildAt(0);
             
             Enumeration lastTypeChildren=first.preorderEnumeration();
-            //Enumeration lastTypeChildren=QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity Type").keys();
+            //Enumeration lastTypeChildren=Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity Type").keys();
             while (lastTypeChildren.hasMoreElements()) {
                 elem1=lastTypeChildren.nextElement();
                 ////System.out.println("QQQQQQQQ"+elem1);
@@ -2418,15 +2429,16 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
                 // //System.out.println(parent);
             }
             addObject(node,new IconData(ICON_GEI, nodeName));
-            QueryHashtable.createEntity(parent, nodeName);
-            QueryHashtable.updateCreatedEntity(parent, nodeName);
+            Mpiro.win.struc.createEntity(parent, nodeName);
+            Mpiro.win.struc.updateCreatedEntity(parent, nodeName);
             
-            QueryUsersHashtable.addEntityInUserModelHashtable(nodeName); //==
-            QueryUsersHashtable.addEntityInRobotsModelHashtable(nodeName); 
-            QueryUsersHashtable.addEntityTypeOrEntityInUserModelStoryHashtable(nodeName); //==
-            QueryHashtable.addValuesFromHasValueRestrictions(nodeName, parent);
+            Mpiro.win.struc.addEntityInUserModelHashtable(nodeName); //==
+           // QueryProfileHashtable.addEntityInRobotsModelHashtable(nodeName); 
+           // QueryProfileHashtable.addEntityTypeOrEntityInUserModelStoryHashtable(nodeName); //==
+            Mpiro.win.struc.addValuesFromHasValueRestrictions(nodeName, parent);
             databaseTree.revalidate();
             databaseTree.repaint();
+            Mpiro.win.ontoPipe.rebind();
             return true;
         }
         
@@ -2444,7 +2456,7 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
             DefaultMutableTreeNode first = (DefaultMutableTreeNode) top.getChildAt(0);
             
             Enumeration lastTypeChildren=first.preorderEnumeration();
-            //Enumeration lastTypeChildren=QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity Type").keys();
+            //Enumeration lastTypeChildren=Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity Type").keys();
             while (lastTypeChildren.hasMoreElements()) {
                 elem1=lastTypeChildren.nextElement();
                 ////System.out.println("QQQQQQQQ"+elem1);
@@ -2455,14 +2467,15 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
                 // //System.out.println(parent);
             }
             addObject(node,new IconData(ICON_GEI, nodeName));
-            //QueryHashtable.createEntity(parent, nodeName);
-            //QueryHashtable.updateCreatedEntity(parent, nodeName);
+            //Mpiro.win.struc.createEntity(parent, nodeName);
+            //Mpiro.win.struc.updateCreatedEntity(parent, nodeName);
             
-            //QueryUsersHashtable.addEntityInUserModelHashtable(nodeName); //==
-            //QueryUsersHashtable.addEntityTypeOrEntityInUserModelStoryHashtable(nodeName); //==
-            //QueryHashtable.addValuesFromHasValueRestrictions(nodeName, parent);
+            //Mpiro.win.struc.addEntityInUserModelHashtable(nodeName); //==
+            //QueryProfileHashtable.addEntityTypeOrEntityInUserModelStoryHashtable(nodeName); //==
+            //Mpiro.win.struc.addValuesFromHasValueRestrictions(nodeName, parent);
             databaseTree.revalidate();
             databaseTree.repaint();
+            Mpiro.win.ontoPipe.rebind();
             return true;
         }
         
@@ -2481,15 +2494,14 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
             Vector tempVector = new Vector();
             tempVector.addElement("Basic-entity-types");
             Vector childrenVector = new Vector();
-//Object f=QueryHashtable.mainDBHashtable.remove("olympic-games");
-//QueryHashtable.mainDBHashtable.remove("virtual-reality");
-            // Create 2 hashtables with keys=entity-type/entity, values=parent
+
             Hashtable allEntityTypes = new Hashtable();
             Hashtable allEntities = new Hashtable();
             Hashtable allGeneric = new Hashtable();
-            allEntityTypes = (Hashtable) QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
-            allEntities = (Hashtable) QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity");
-            allGeneric = (Hashtable) QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Generic");
+           // Hashtable temp= Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+            allEntityTypes = (Hashtable) Mpiro.win.ontoPipe.getExtension().getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+            allEntities = (Hashtable) Mpiro.win.ontoPipe.getExtension().getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity");
+            allGeneric = (Hashtable) Mpiro.win.ontoPipe.getExtension().getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Generic");
             
             
             //         allEntities.remove("olympic-games");
@@ -2502,7 +2514,7 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
             int childrenNumber = 0;
             
             // Adding the basic entity types
-            childrenVector = QueryHashtable.getChildrenVectorFromMainDBHashtable("Basic-entity-types", "Entity type");
+            childrenVector = Mpiro.win.ontoPipe.getExtension().getChildrenVectorFromMainDBHashtable("Basic-entity-types", "Entity type");
             addChildren(first, childrenVector);
             //remove (Basic) Entity Types from the allEntityTypes HashTable
             for (Enumeration k = childrenVector.elements(); k.hasMoreElements(); ) {
@@ -2511,14 +2523,17 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
             }
             
             // Adding the entity types
-            while (allEntityTypes.size() != 0) {
+            boolean continueLoop=true;
+            while (allEntityTypes.size() != 0 &&  continueLoop) {
+                continueLoop=false;
                 Enumeration enu1 = first.preorderEnumeration();
                 while (enu1.hasMoreElements()) {
                     DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) enu1.nextElement();
                     if (!currentNode.isNodeSibling(first)) {
+                        continueLoop=true;
                         String node = currentNode.toString();
                         if (allEntityTypes.containsValue(node)) {
-                            childrenVector = QueryHashtable.getChildrenVectorFromMainDBHashtable(node, "Entity type");
+                            childrenVector = Mpiro.win.ontoPipe.getExtension().getChildrenVectorFromMainDBHashtable(node, "Entity type");
                             Enumeration enu2 = childrenVector.elements();
                             while (enu2.hasMoreElements()) {
                                 String child = enu2.nextElement().toString();
@@ -2535,18 +2550,18 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
             // Adding the entities
             childrenVector.clear();
             childrenNumber = 0;
-            
-            while (allEntities.size() != 0) {
-                //Vector lll=(Vector) QueryHashtable.mainDBHashtable.get("building7");
-                // QueryHashtable.mainDBHashtable.remove("mathematics");
-                //allEntities.remove("mathematics");
+             continueLoop=true;
+            while (allEntities.size() != 0 && continueLoop) {
+                 continueLoop=false;
+                
                 Enumeration enu1 = first.preorderEnumeration();
                 while (enu1.hasMoreElements()) {
                     DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) enu1.nextElement();
                     if (!currentNode.isNodeSibling(first)) {
+                        continueLoop=true;
                         String node = currentNode.toString();
                         if (allEntities.containsValue(node)) {
-                            childrenVector = QueryHashtable.getChildrenVectorFromMainDBHashtable(node, "Entity");
+                            childrenVector = Mpiro.win.ontoPipe.getExtension().getChildrenVectorFromMainDBHashtable(node, "Entity");
                             Enumeration enu2 = childrenVector.elements();
                             while (enu2.hasMoreElements()) {
                                 String child = enu2.nextElement().toString();
@@ -2564,26 +2579,26 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
             childrenVector.clear();
             childrenNumber = 0;
             
-            while (allGeneric.size() != 0) {
-                Enumeration enu1 = first.preorderEnumeration();
-                while (enu1.hasMoreElements()) {
-                    DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) enu1.nextElement();
-                    if (!currentNode.isNodeSibling(first)) {
-                        String node = currentNode.toString();
-                        if (allGeneric.containsValue(node)) {
-                            childrenVector = QueryHashtable.getChildrenVectorFromMainDBHashtable(node, "Generic");
-                            Enumeration enu2 = childrenVector.elements();
-                            while (enu2.hasMoreElements()) {
-                                String child = enu2.nextElement().toString();
-                                currentNode.add(new DefaultMutableTreeNode(new IconData(DataBasePanel.ICON_GENERIC, child)));
-                                allGeneric.remove(child);
-                            }
-                            databaseTree.revalidate();
-                            databaseTree.repaint();
-                        }
-                    }
-                }
-            }
+//            while (allGeneric.size() != 0) {
+//                Enumeration enu1 = first.preorderEnumeration();
+//                while (enu1.hasMoreElements()) {
+//                    DefaultMutableTreeNode currentNode = (DefaultMutableTreeNode) enu1.nextElement();
+//                    if (!currentNode.isNodeSibling(first)) {
+//                        String node = currentNode.toString();
+//                        if (allGeneric.containsValue(node)) {
+//                            childrenVector = Mpiro.win.struc.getChildrenVectorFromMainDBHashtable(node, "Generic");
+//                            Enumeration enu2 = childrenVector.elements();
+//                            while (enu2.hasMoreElements()) {
+//                                String child = enu2.nextElement().toString();
+//                                currentNode.add(new DefaultMutableTreeNode(new IconData(DataBasePanel.ICON_GENERIC, child)));
+//                                allGeneric.remove(child);
+//                            }
+//                            databaseTree.revalidate();
+//                            databaseTree.repaint();
+//                        }
+//                    }
+//                }
+//            }
             databaseTree.revalidate();
             databaseTree.repaint();
         } //reloadDBTree()
@@ -2644,17 +2659,17 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
                     Hashtable allEntityTypes = new Hashtable();
                     Hashtable allEntitiesAndGeneric = new Hashtable();
                     Hashtable allGeneric = new Hashtable();
-                    allEntityTypes = (Hashtable) QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
-                    allEntitiesAndGeneric = (Hashtable) QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity+Generic");
+                    allEntityTypes = (Hashtable) Mpiro.win.ontoPipe.getExtension().getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+                    allEntitiesAndGeneric = (Hashtable) Mpiro.win.ontoPipe.getExtension().getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity+Generic");
                     
                     Vector path;
                     boolean isEntityType = false;
                     
                     if (allEntityTypes.containsKey(namenode)) {
-                        path = QueryHashtable.getFullPathParentsVectorFromMainDBHashtable(namenode, "Entity type");
+                        path = Mpiro.win.ontoPipe.getExtension().getFullPathParentsVectorFromMainDBHashtable(namenode, "Entity type");
                         isEntityType = true;
                     } else {
-                        path = QueryHashtable.getFullPathParentsVectorFromMainDBHashtable(namenode, "Entity");
+                        path = Mpiro.win.ontoPipe.getExtension().getFullPathParentsVectorFromMainDBHashtable(namenode, "Entity");
                     }
                     Object[] o = (Object[]) currentNode.getPath();
                     TreePath treeP = new TreePath(o);
@@ -2699,7 +2714,7 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
         
         public void fillComboBox() { //theofilos
             usersCombo.removeAllItems();
-            Vector userTypesVector = QueryUsersHashtable.getUsersVectorFromMainUsersHashtable();
+            Vector userTypesVector = Mpiro.win.ontoPipe.getExtension().getUsersVectorFromMainUsersHashtable();
             ////System.out.println("vector=" + userTypesVector.toString() + "#");
             Enumeration userTypesVectorEnum = userTypesVector.elements();
             while (userTypesVectorEnum.hasMoreElements()) {
@@ -2717,10 +2732,10 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
         
         
         public static void deletePropFromChildren(String ParentName, FieldData property11) {
-            Vector vec= QueryHashtable.getChildrenVectorFromMainDBHashtable(ParentName,"entity+generic");
+            Vector vec= Mpiro.win.struc.getChildrenVectorFromMainDBHashtable(ParentName,"entity+generic");
             for(int x=0;x<4;x++){
                 for (int u=0;u<vec.size();u++) {
-                    Vector vec1=(Vector) QueryHashtable.mainDBHashtable.get(vec.elementAt(u));
+                    Vector vec1=(Vector) Mpiro.win.struc.getEntityTypeOrEntity(vec.elementAt(u).toString());
                     
                     Vector vec2=(Vector) vec1.elementAt(0);
                     vec2=(Vector) vec2.elementAt(x);
@@ -2733,9 +2748,9 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
                     }}
             }
             
-            Vector vecTypes=(Vector) QueryHashtable.getChildrenVectorFromMainDBHashtable(ParentName,"entity type");
+            Vector vecTypes=(Vector) Mpiro.win.struc.getChildrenVectorFromMainDBHashtable(ParentName,"entity type");
             for(int s=0;s<vecTypes.size();s++) {
-                Vector lo=(Vector) QueryHashtable.mainDBHashtable.get(vecTypes.elementAt(0));
+                Vector lo=(Vector) Mpiro.win.struc.getEntityTypeOrEntity(vecTypes.elementAt(0).toString());
                 //System.out.println(vecTypes.firstElement().toString()+"JJJJJJJJJJJJJJJjjjjjjjjj");
                 Vector LK=(Vector) lo.elementAt(s);
                 for(int k=3;k<LK.size();k++){
@@ -2750,9 +2765,9 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
             }
         }
         public static void removeNounFromChildren(String nameWithoutOccur,Object noun){
-            Vector children=QueryHashtable.getChildrenVectorFromMainDBHashtable(nameWithoutOccur,"entity type");
+            Vector children=Mpiro.win.struc.getChildrenVectorFromMainDBHashtable(nameWithoutOccur,"entity type");
             for(int g=0;g<children.size();g++) {
-                NodeVector nv=    (NodeVector) QueryHashtable.mainDBHashtable.get(children.elementAt(g).toString());
+                NodeVector nv=    (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(children.elementAt(g).toString());
                 Vector n1=nv.nounVector;
                 n1.remove(noun);
                 nv.set(2,n1);
@@ -2768,30 +2783,30 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
             return null;
         }
         private static void moveSubtypes(String name){
-            Enumeration subtypes=QueryHashtable.getChildrenVectorFromMainDBHashtable(name, "entity type").elements();
+            Enumeration subtypes=Mpiro.win.struc.getChildrenVectorFromMainDBHashtable(name, "entity type").elements();
             while(subtypes.hasMoreElements()){
                 String next=subtypes.nextElement().toString();
-                Vector db=(Vector)QueryHashtable.mainDBHashtable.get(next);
+                Vector db=(Vector)Mpiro.win.struc.getEntityTypeOrEntity(next);
                 Vector database=(Vector)db.elementAt(0);
                 Vector subType=(Vector)database.elementAt(0);
                 subType.setElementAt(DataBasePanel.getNode(next+"_occur2").getParent().toString(),1);
-                QueryHashtable.mainDBHashtable.put(next+"_occur2",db);
+                Mpiro.win.struc.putEntityTypeOrEntityToDB(next+"_occur2",(NodeVector)db);
                 moveSubtypes(next);
                 moveEntities(next);
             }
         }
         
         private static void moveEntities(String name){
-            Enumeration subtypes=QueryHashtable.getChildrenVectorFromMainDBHashtable(name, "entity").elements();
+            Enumeration subtypes=Mpiro.win.struc.getChildrenVectorFromMainDBHashtable(name, "entity").elements();
             while(subtypes.hasMoreElements()){
                 String next=subtypes.nextElement().toString();
-                Vector db=(Vector)QueryHashtable.mainDBHashtable.get(next);
+                Vector db=(Vector)Mpiro.win.struc.getEntityTypeOrEntity(next);
                 Vector database=(Vector)db.elementAt(0);
                 Vector indep=(Vector)database.elementAt(0);
                 Vector subType=(Vector)indep.elementAt(1);
                 //DefaultMutableTreeNode test=DataBasePanel.getNode(next+"_occur2");
                 subType.setElementAt(DataBasePanel.getNode(next+"_occur2").getParent().toString(),1);
-                QueryHashtable.mainDBHashtable.put(next+"_occur2",db);
+                Mpiro.win.struc.putEntityTypeOrEntityToDB(next+"_occur2",(NodeVector)db);
                 //   moveSubtypes(next);
                 // moveEntities(next);
             }
@@ -2808,8 +2823,8 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
                 }
             }
             
-            NodeVector entityTypeWithoutOccur = (NodeVector) QueryHashtable.mainDBHashtable.get(nameWithoutOccur);
-            NodeVector entityTypeParentOfLast = (NodeVector) QueryHashtable.mainDBHashtable.get(parent);
+            NodeVector entityTypeWithoutOccur = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(nameWithoutOccur);
+            NodeVector entityTypeParentOfLast = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(parent);
             
             Vector databaseVectorOfTypeWithoutOccur =(Vector) entityTypeWithoutOccur.elementAt(0);
             Vector databaseVectorOfParentOfLast =(Vector) entityTypeParentOfLast.elementAt(0);
@@ -2829,7 +2844,7 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
                     //System.out.println("lllllllllll"+name2);
                     //if(( (nameWithoutOccur.equalsIgnoreCase(name2.replaceAll("_occur", "").substring(0, name2.replaceAll("_occur", "").length()-1))) ||  nameWithoutOccur.equalsIgnoreCase(name2))&& (!(name2.equalsIgnoreCase(last.toString()))))
                     if((next.toString().startsWith(nameWithoutOccur+"_occur")||next.toString().equalsIgnoreCase(nameWithoutOccur))&&!next.toString().equalsIgnoreCase(DataBasePanel.last.toString())) {
-                        Vector db=(Vector)((Vector)QueryHashtable.mainDBHashtable.get(next.getParent().toString())).elementAt(0);
+                        Vector db=(Vector)((Vector)Mpiro.win.struc.getEntityTypeOrEntity(next.getParent().toString())).elementAt(0);
                         if(db.contains(property1)){
                             check=false;
                             break;
@@ -2854,11 +2869,11 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
             
             
             if(!nodenameToDelete.contains("_occur")){
-                Vector db=(Vector)QueryHashtable.mainDBHashtable.get(nameWithoutOccur);
+                Vector db=(Vector)Mpiro.win.struc.getEntityTypeOrEntity(nameWithoutOccur);
                 Vector database=(Vector)db.elementAt(0);
                 Vector subType=(Vector)database.elementAt(0);
                 subType.setElementAt(DataBasePanel.getNode(nameWithoutOccur+"_occur2").getParent().toString(),1);
-                QueryHashtable.mainDBHashtable.put(nameWithoutOccur+"_occur2",db);
+                Mpiro.win.struc.putEntityTypeOrEntityToDB(nameWithoutOccur+"_occur2", (NodeVector)db);
                 moveSubtypes(nameWithoutOccur);
                 moveEntities(nameWithoutOccur);
             }
@@ -2875,7 +2890,7 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
                     DefaultMutableTreeNode nodeNext1= (DefaultMutableTreeNode) lastTypeChildren5.nextElement();
                     String name2=nodeNext1.toString();
                     if( (nameWithoutOccur.equalsIgnoreCase(name2.replaceAll("_occur", "").substring(0, name2.replaceAll("_occur", "").length()-1))) ||  nameWithoutOccur.equalsIgnoreCase(name2)) {
-                        NodeVector par = (NodeVector) QueryHashtable.mainDBHashtable.get(nodeNext1.getParent().toString());
+                        NodeVector par = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(nodeNext1.getParent().toString());
                         Vector nounVector2 = (Vector) par.elementAt(2);
                         noun=nounVector1.elementAt(h);
                         if(nounVector2.contains(noun))
@@ -2923,8 +2938,8 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
                         
                         DefaultMutableTreeNode tree1= (DefaultMutableTreeNode) elem3;
                         String par1=tree1.getParent().toString();
-                        Enumeration hash1= QueryHashtable.getChildrenVectorFromMainDBHashtable(tree1.toString(), "entity").elements();
-                        Enumeration subtypes=QueryHashtable.getChildrenVectorFromMainDBHashtable(tree1.toString(), "entity type").elements();
+                        Enumeration hash1= Mpiro.win.struc.getChildrenVectorFromMainDBHashtable(tree1.toString(), "entity").elements();
+                        Enumeration subtypes=Mpiro.win.struc.getChildrenVectorFromMainDBHashtable(tree1.toString(), "entity type").elements();
                         //   Enumeration childrenEnt=hash1.
                         Object nextChild=null;
                         hasMore2=true; //System.out.println("5");
@@ -2940,7 +2955,7 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
                             while(subtypes.hasMoreElements()) {
                                 
                                 nextChild=subtypes.nextElement();
-                                for(Enumeration hash2=QueryHashtable.getChildrenVectorFromMainDBHashtable(nextChild.toString(), "entity").elements();hash2.hasMoreElements();){
+                                for(Enumeration hash2=Mpiro.win.struc.getChildrenVectorFromMainDBHashtable(nextChild.toString(), "entity").elements();hash2.hasMoreElements();){
                                     Object nextEnt=hash2.nextElement();
                                     KDialog.renameOccur(nextEnt.toString().substring(0, nextEnt.toString().length()-7)+"_occur"+String.valueOf(d-1),nextEnt.toString().substring(0, nextEnt.toString().length()-7)+"_occur"+String.valueOf(d),nameWithoutOccur+"_occur"+String.valueOf(d));
                                 }
@@ -2957,7 +2972,7 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
                             }
                             while(subtypes.hasMoreElements()) {
                                 nextChild=subtypes.nextElement();
-                                for(Enumeration hash2=QueryHashtable.getChildrenVectorFromMainDBHashtable(nextChild.toString(), "entity").elements();hash2.hasMoreElements();){
+                                for(Enumeration hash2=Mpiro.win.struc.getChildrenVectorFromMainDBHashtable(nextChild.toString(), "entity").elements();hash2.hasMoreElements();){
                                     Object nextEnt=hash2.nextElement();
                                     KDialog.renameEntity(nextEnt.toString().substring(0, nextEnt.toString().length()-7),nextEnt.toString(),nameWithoutOccur+"_occur"+String.valueOf(d));
                                 }

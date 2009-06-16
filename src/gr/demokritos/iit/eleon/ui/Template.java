@@ -12,7 +12,7 @@ import gr.demokritos.iit.eleon.authoring.FieldData;
 import gr.demokritos.iit.eleon.authoring.LangResources;
 import gr.demokritos.iit.eleon.authoring.Mpiro;
 import gr.demokritos.iit.eleon.authoring.NodeVector;
-import gr.demokritos.iit.eleon.authoring.QueryHashtable;
+import gr.demokritos.iit.eleon.struct.QueryHashtable;
 import gr.demokritos.iit.eleon.authoring.TemplateVector;
 
 import java.awt.*;
@@ -96,7 +96,7 @@ public class Template extends JPanel implements ActionListener
                     lastSelected=lastSelected.substring(0, lastSelected.length()-7);
                 }
                 
-                 Hashtable allEntityTypes = (Hashtable) QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+                 Hashtable allEntityTypes = (Hashtable) Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
                     Enumeration allTypesNames=allEntityTypes.keys();
                     while(allTypesNames.hasMoreElements())
                     {//DefaultMutableTreeNode nextNode=null;
@@ -106,7 +106,7 @@ public class Template extends JPanel implements ActionListener
                          
                         if ((nextEl.toString().startsWith(lastSelected+"_occur")||(nextEl.toString().equalsIgnoreCase(lastSelected)))&&(!(nextEl.toString().equalsIgnoreCase(DataBasePanel.last.toString()))))
                         {  y++; 
-                            NodeVector nv1 = (NodeVector)QueryHashtable.mainDBHashtable.get(nextEl.toString());
+                            NodeVector nv1 = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(nextEl.toString());
 		tv = (TemplateVector)nv1.elementAt(4);
           //      System.out.println(tv.elementAt(finalEIG-1).toString());
                Hashtable testin= (Hashtable)tv.elementAt(finalEIG-1);
@@ -135,7 +135,7 @@ public class Template extends JPanel implements ActionListener
                 
                 
 		// get the values-hashtable
-		Vector property = (Vector) QueryHashtable.propertiesHashtable.get(m_fieldName);
+		Vector property = (Vector) Mpiro.win.struc.getProperty(m_fieldName);
 		tv = (TemplateVector) property.elementAt(11);
 		allFields = (Hashtable)tv.elementAt(finalEIG-1); // because finalEIG is 1 for english
 		                                               // but englishValues position in tv is 0, etc.
@@ -786,18 +786,19 @@ public class Template extends JPanel implements ActionListener
 			String type_text = LangResources.getString(Mpiro.selectedLocale, "type_text");
 			String case_text = LangResources.getString(Mpiro.selectedLocale, "case_text");
 			
-			String nodeName = DataBasePanel.last.toString();									//maria
-			NodeVector nodeVector = (NodeVector)QueryHashtable.mainDBHashtable.get(nodeName);	//maria
-			Vector nodeTable = (Vector)nodeVector.elementAt(0);									//maria
-			for(int j=0; j<nodeTable.size(); j++)												//maria
-			{																					//maria
-				FieldData ff = (FieldData)nodeTable.elementAt(j);								//maria
-				if(ff.elementAt(0).toString().equalsIgnoreCase(m_fieldName))					//maria
-				{																				//maria
-					fieldFillerType = ff.elementAt(1).toString();								//maria
-					//System.out.println("fieldFillerType-----"+fieldFillerType);				//maria
-				}																				//maria
-			}
+                        fieldFillerType=Mpiro.win.struc.getProperty(m_fieldName).getRange().elementAt(0).toString();
+//			String nodeName = DataBasePanel.last.toString();									//maria
+//			NodeVector nodeVector = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(nodeName);	//maria
+//			Vector nodeTable = (Vector)nodeVector.elementAt(0);									//maria
+//			for(int j=0; j<nodeTable.size(); j++)												//maria
+//			{																					//maria
+//				FieldData ff = (FieldData)nodeTable.elementAt(j);								//maria
+//				if(ff.elementAt(0).toString().equalsIgnoreCase(m_fieldName))					//maria
+//				{																				//maria
+//					fieldFillerType = ff.elementAt(1).toString();								//maria
+//					//System.out.println("fieldFillerType-----"+fieldFillerType);				//maria
+//				}																				//maria
+//			}
 			if ((fieldFillerType.equalsIgnoreCase("Number"))||		//maria
       		(fieldFillerType.equalsIgnoreCase("String"))||		//maria
       		(fieldFillerType.equalsIgnoreCase("Date"))||		//maria

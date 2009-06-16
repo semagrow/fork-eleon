@@ -7,7 +7,7 @@
 package gr.demokritos.iit.eleon.ui;
 
 import gr.demokritos.iit.eleon.authoring.Mpiro;
-import gr.demokritos.iit.eleon.authoring.QueryHashtable;
+import gr.demokritos.iit.eleon.struct.QueryHashtable;
 
 import java.util.Enumeration;
 import java.util.Properties;
@@ -25,7 +25,7 @@ public class Complex extends java.awt.Dialog {
         super(parent, modal);
         initComponents();
         equival=equiv;
-        Enumeration entitytypes= QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type").keys();
+        Enumeration entitytypes= Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type").keys();
         Vector entityTypes=new Vector();
         while(entitytypes.hasMoreElements())
         {
@@ -33,14 +33,14 @@ public class Complex extends java.awt.Dialog {
         }
         jList1.setListData(entityTypes);
         
-        Enumeration Entities= QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity").keys();
+        Enumeration Entities= Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity").keys();
         Vector entities=new Vector();
         while(Entities.hasMoreElements())
         {
             entities.add(Entities.nextElement().toString());
         }
         jList2.setListData(entities);
-        Enumeration properties= QueryHashtable.propertiesHashtable.keys();
+        Enumeration properties= Mpiro.win.struc.getPropertyNames();
         Vector prop=new Vector();
         while(properties.hasMoreElements())
         {

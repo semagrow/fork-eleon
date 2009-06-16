@@ -6,6 +6,7 @@
 
 package gr.demokritos.iit.eleon.authoring;
 
+import gr.demokritos.iit.eleon.struct.QueryHashtable;
 import java.net.URL;
 import java.io.IOException;
 import java.awt.*;
@@ -61,7 +62,7 @@ public class ExportUtilsWebinfo
 	
 	    p.println(emptyspaceFile);
 	
-	    Hashtable allEntitiesHashtable = QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity+Generic");
+	    Hashtable allEntitiesHashtable = Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity+Generic");
 	    for (Enumeration k = allEntitiesHashtable.keys(), e = allEntitiesHashtable.elements(); k.hasMoreElements(); )
 	    {
 	      String entity = k.nextElement().toString();
@@ -71,7 +72,7 @@ public class ExportUtilsWebinfo
 	      // Finding the "parents" //////////////////////////////////////////////
 	      p.println("  <parents>");
 
-				Vector allParentsVector = QueryHashtable.getFullPathParentsVectorFromMainDBHashtable(entity, "Entity+Generic");
+				Vector allParentsVector = Mpiro.win.struc.getFullPathParentsVectorFromMainDBHashtable(entity, "Entity+Generic");
 				Enumeration allParentsVectorEnum = allParentsVector.elements();
 				while (allParentsVectorEnum.hasMoreElements())
 				{
@@ -81,7 +82,7 @@ public class ExportUtilsWebinfo
 				p.println("  </parents>");
 
         // Finding the "images" //////////////////////////////////////////////
-        Vector entityNodeVector = (Vector)QueryHashtable.mainDBHashtable.get(entity);
+        Vector entityNodeVector = (Vector)Mpiro.win.struc.getEntityTypeOrEntity(entity);
         Vector entityTableVector = (Vector)entityNodeVector.get(0);
         Vector entityIndependentTableVector = (Vector)entityTableVector.get(0);
 
@@ -164,13 +165,13 @@ public class ExportUtilsWebinfo
 	    p2.println(emptyspaceFile);
 	    p3.println(emptyspaceFile);
 	
-	    Hashtable allEntitiesHashtable = QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity+Generic");
+	    Hashtable allEntitiesHashtable = Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity+Generic");
 	    for (Enumeration k = allEntitiesHashtable.keys(), e = allEntitiesHashtable.elements(); k.hasMoreElements(); )
 	    {
 	      String entity = k.nextElement().toString();
 	      String parent = e.nextElement().toString();
 	
-	      Vector entityNodeVector = (Vector)QueryHashtable.mainDBHashtable.get(entity);
+	      Vector entityNodeVector = (Vector)Mpiro.win.struc.getEntityTypeOrEntity(entity);
 	      Vector entityTableVector = (Vector)entityNodeVector.get(0);
 	      Vector entityEnglishTableVector = (Vector)entityTableVector.get(1);
 	      Vector entityItalianTableVector = (Vector)entityTableVector.get(2);

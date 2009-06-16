@@ -6,6 +6,7 @@
 
 package gr.demokritos.iit.eleon.authoring;
 
+import gr.demokritos.iit.eleon.struct.QueryOptionsHashtable;
 import gr.demokritos.iit.eleon.ui.KButton;
 import gr.demokritos.iit.eleon.ui.KLabel;
 import gr.demokritos.iit.eleon.ui.MessageDialog;
@@ -42,7 +43,7 @@ public class OptionsEditDialog extends JFrame implements ActionListener
 	    dialog = new JDialog(this, LangResources.getString(Mpiro.selectedLocale, "editPersonalisationServerAddress_text"), true);
 	    super.setIconImage(Mpiro.obj.image_corner);
 	
-	    Vector oldPServerAddressVector = QueryOptionsHashtable.getPServerAddressFromMainOptionsHashtable();
+	    Vector oldPServerAddressVector = Mpiro.win.struc.getPServerAddressFromMainOptionsHashtable();
 	
 	    selectionLabel = new KLabel(LangResources.getString(Mpiro.selectedLocale, "pleaseGiveANewIPAddressAndPort_text"));
 	    selectionLabel.setPreferredSize(new Dimension(250, 20));
@@ -105,7 +106,7 @@ public class OptionsEditDialog extends JFrame implements ActionListener
 	{
 	  if (e.getSource() == okButton)
 	  {
-	    QueryOptionsHashtable.addPServerAddressToMainOptionsHashtable(pserverIP.getText(), pserverPort.getText());
+	    Mpiro.win.struc.addPServerAddressToMainOptionsHashtable(pserverIP.getText(), pserverPort.getText());
 	    dialog.dispose();
 	    new MessageDialog(dialog, MessageDialog.theNewPersonalisationServerAddressWillBeRecorded_ETC_dialog);
 	  }

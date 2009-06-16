@@ -23,6 +23,11 @@ public class DefaultVector extends Vector
    * 1st constructor for BasicTypes and EntityTypes
    * @param parentName The name of the parent entity-type
    */
+     public DefaultVector(Vector s)
+  {
+         super(s);
+         
+     }
   public DefaultVector(String parentName) 
   {
 		if (parentName.equalsIgnoreCase(DataBasePanel.top.toString())) 

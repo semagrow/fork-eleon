@@ -6,6 +6,10 @@
 
 package gr.demokritos.iit.eleon.authoring;
 
+import gr.demokritos.iit.eleon.profiles.Robot;
+import gr.demokritos.iit.eleon.profiles.User;
+import gr.demokritos.iit.eleon.struct.QueryHashtable;
+import gr.demokritos.iit.eleon.struct.QueryProfileHashtable;
 import gr.demokritos.iit.eleon.ui.StoriesPanel;
 import gr.demokritos.iit.eleon.ui.StoriesTable;
 import gr.demokritos.iit.eleon.ui.StoriesTableModel;
@@ -16,13 +20,8 @@ import gr.demokritos.iit.eleon.ui.lang.gr.GreekNounPanel;
 import gr.demokritos.iit.eleon.ui.lang.gr.GreekVerbPanel;
 import gr.demokritos.iit.eleon.ui.lang.it.ItalianNounPanel;
 import gr.demokritos.iit.eleon.ui.lang.it.ItalianVerbPanel;
-
-import javax.swing.JTree;
-import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.tree.*;
-import javax.swing.border.*;
 import java.util.*;
 
 
@@ -48,7 +47,7 @@ public class TreePreviews
         
         public static void setDataBaseTable(String nodeName)
 	{
-                nodeName=QueryHashtable.nameWithoutOccur(nodeName);
+                nodeName=Mpiro.win.struc.nameWithoutOccur(nodeName);
 		DataBasePanel.multiTable.removeAll();
 		DataBasePanel.multiNoun.removeAll();
 		DataBasePanel.multiFlagPanel.removeAll();
@@ -74,15 +73,15 @@ public class TreePreviews
 			// The table view
 			// First: the parent's table vector
 			//String parent = DataBasePanel.last.getParent().toString();
-                        //parent=QueryHashtable.nameWithoutOccur(parent);
-			//NodeVector parentVector = (NodeVector)QueryHashtable.mainDBHashtable.get(parent);
+                        //parent=Mpiro.win.struc.nameWithoutOccur(parent);
+			//NodeVector parentVector = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(parent);
 			//Vector parentTable = (Vector)parentVector.elementAt(0);
 			// Second: the current node's table vector
-			NodeVector nodeVector = (NodeVector)QueryHashtable.mainDBHashtable.get(nodeName);
+			NodeVector nodeVector = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(nodeName);
                         
 			
                         
-                        nodeTable=QueryHashtable.getPropertiesForType(nodeName);
+                        nodeTable=Mpiro.win.struc.getPropertiesForType(nodeName);
                         
                         
                         
@@ -117,7 +116,7 @@ public class TreePreviews
                     lastSelected=lastSelected.substring(0, lastSelected.length()-7);
                 }
                 
-                 Hashtable allEntityTypes = (Hashtable) QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+                 Hashtable allEntityTypes = (Hashtable) Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
                     Enumeration allTypesNames=DataBasePanel.top.preorderEnumeration();
                     while(allTypesNames.hasMoreElements())
                     {//DefaultMutableTreeNode nextNode=null;
@@ -127,7 +126,7 @@ public class TreePreviews
                          
                         if (nextEl.toString().startsWith(lastSelected+"_occur")){
                             System.out.println("hhhhhhhh"+nextEl.toString());
-                           NodeVector multiParent= (NodeVector) QueryHashtable.mainDBHashtable.get(nextEl.getParent().toString());
+                           NodeVector multiParent= (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(nextEl.getParent().toString());
                            Vector multiParentDatabaseTableVector = multiParent.getDatabaseTableVector();
                             for (int h=8;h<multiParentDatabaseTableVector.size();h++){
                                property = (FieldData) multiParentDatabaseTableVector.elementAt(h);
@@ -141,7 +140,7 @@ public class TreePreviews
                                 
           */                          
                                     
-                                    /* NodeVector entityTypeParentNode = (NodeVector) QueryHashtable.mainDBHashtable.get(nextNode.toString());
+                                    /* NodeVector entityTypeParentNode = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(nextNode.toString());
                              Vector parentDatabaseTableVector = entityTypeParentNode.getDatabaseTableVector();
                               FieldData property=null;
                              for (int h=parentDatabaseTableVector.size();h>0;h--){
@@ -201,8 +200,8 @@ public class TreePreviews
 			DataBasePanel.multiFlagPanel.add("Center", new FlagPanel(1));
 
 			// The table view (the language-independent instance is the default)
-			NodeVector nodeVector = (NodeVector)QueryHashtable.mainDBHashtable.get(nodeName);
-                       // System.out.println("GGFDFDDFFF"+QueryHashtable.mainDBHashtable.get(nodeName));
+			NodeVector nodeVector = (NodeVector)Mpiro.win.ontoPipe.getExtension().getEntityTypeOrEntity(nodeName);
+                       // System.out.println("GGFDFDDFFF"+Mpiro.win.struc.getEntityTypeOrEntity(nodeName));
 			nodeTable = (Vector)nodeVector.elementAt(0);  // THIS VECTOR CONTAINS 4 TABLE VECTORS:
 			// 1. LANGUAGE INDEPENDENT FIELDS TABLE
 			// 2. ENGLISH FIELDS TABLE
@@ -227,8 +226,8 @@ public class TreePreviews
         
         public static void setDataBaseTable(String nodeName,String parent)
 	{
-                nodeName=QueryHashtable.nameWithoutOccur(nodeName);
-                parent=QueryHashtable.nameWithoutOccur(parent);
+                nodeName=Mpiro.win.struc.nameWithoutOccur(nodeName);
+                parent=Mpiro.win.struc.nameWithoutOccur(parent);
 		DataBasePanel.multiTable.removeAll();
 		DataBasePanel.multiNoun.removeAll();
 		DataBasePanel.multiFlagPanel.removeAll();
@@ -254,10 +253,10 @@ public class TreePreviews
 			// The table view
 			// First: the parent's table vector
 			//String parent = DataBasePanel.last.getParent().toString();
-			//NodeVector parentVector = (NodeVector)QueryHashtable.mainDBHashtable.get(parent);
+			//NodeVector parentVector = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(parent);
 			//Vector parentTable = (Vector)parentVector.elementAt(0);
 			// Second: the current node's table vector
-			NodeVector nodeVector = (NodeVector)QueryHashtable.mainDBHashtable.get(nodeName);
+			NodeVector nodeVector = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(nodeName);
 			nodeTable = (Vector)nodeVector.elementAt(0);
 
 			// Make a new "nodeTable" having new FieldData(s) with no text in 4th col!
@@ -320,7 +319,7 @@ public class TreePreviews
 			DataBasePanel.multiFlagPanel.add("Center", new FlagPanel(1));
 
 			// The table view (the language-independent instance is the default)
-			NodeVector nodeVector = (NodeVector)QueryHashtable.mainDBHashtable.get(nodeName);
+			NodeVector nodeVector = (NodeVector)Mpiro.win.ontoPipe.getExtension().getEntityTypeOrEntity(nodeName);
 			nodeTable = (Vector)nodeVector.elementAt(0);  // THIS VECTOR CONTAINS 4 TABLE VECTORS:
 			// 1. LANGUAGE INDEPENDENT FIELDS TABLE
 			// 2. ENGLISH FIELDS TABLE
@@ -342,11 +341,11 @@ public class TreePreviews
 
 	public static void entityPreview(String entityName, String generatedText)
 	{
-            entityName=QueryHashtable.nameWithoutOccur(entityName);
+            entityName=Mpiro.win.struc.nameWithoutOccur(entityName);
 	  DataBasePanel.previewPanel.removeAll();
 	  ViewPanel vp = null;
 
-	  Vector entityVector = (Vector)QueryHashtable.mainDBHashtable.get(entityName);
+	  Vector entityVector = (Vector)Mpiro.win.struc.getEntityTypeOrEntity(entityName);
 	  Vector entityTablesVector = (Vector)entityVector.get(0);
 
 	  // find the "title" and "notes" for the entity (current language)
@@ -614,11 +613,11 @@ public class TreePreviews
 			UsersPanel.label01.setText("  " + text);
 
 			String node = UsersPanel.last.toString();
-			Vector userVector = (Vector)QueryUsersHashtable.mainUsersHashtable.get(node);
-			Integer attribute1 = new Integer(userVector.get(0).toString());
-			Integer attribute2 = new Integer(userVector.get(1).toString());
-			Integer attribute3 = new Integer(userVector.get(2).toString());
-			String attribute4 = userVector.get(3).toString();
+			User userVector = (User)Mpiro.win.struc.getUser(node);
+			Integer attribute1 = new Integer(userVector.getMaxFactsPerSentence());
+			Integer attribute2 = new Integer(userVector.getFactsPerPage());
+			Integer attribute3 = new Integer(userVector.getLinks());
+			String attribute4 = userVector.getSynthVoice();
 			UsersPanel.multipanel.add("North", UsersPanel.theFourPanels);
 
                         UsersPanel.setPersonalityValues(attribute1, attribute2, attribute3, attribute4);
@@ -642,12 +641,12 @@ public class TreePreviews
 			UsersPanel.label01.setText("  " + text);
 
 			String node = UsersPanel.last.toString();
-			Vector robotsVector = (Vector)QueryUsersHashtable.robotsHashtable.get(node);
-			Integer attribute1 = new Integer(robotsVector.get(0).toString());
-			Integer attribute2 = new Integer(robotsVector.get(1).toString());
-			Integer attribute3 = new Integer(robotsVector.get(2).toString());
-			Integer attribute4 = new Integer(robotsVector.get(3).toString());
-                        Integer attribute5 = new Integer(robotsVector.get(4).toString());
+			Robot robot= (Robot)Mpiro.win.struc.getUser(node);
+			Integer attribute1 = new Integer(robot.getO());
+			Integer attribute2 = new Integer(robot.getC());
+			Integer attribute3 = new Integer(robot.getE());
+			Integer attribute4 = new Integer(robot.getA());
+                        Integer attribute5 = new Integer(robot.getN());
 			UsersPanel.multipanel.add("North", UsersPanel.theFivePanels);
                         
                         
@@ -693,7 +692,7 @@ public class TreePreviews
 			StoriesPanel.label01.setText("  " + text);
 
 			String node = StoriesPanel.last.toString();
-			NodeVector nodeVector = (NodeVector)QueryHashtable.mainDBHashtable.get(node);
+			NodeVector nodeVector = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(node);
 			Vector storiesVector = (Vector)nodeVector.elementAt(3);
 			//System.out.println("\n" + node + storiesVector); /////////////////////
 
@@ -780,8 +779,8 @@ public class TreePreviews
 
 	public static void setDataBaseTableAfterSearch(String nodeName, DefaultMutableTreeNode currentNode, boolean isEntityType)
 	{
-            nodeName=QueryHashtable.nameWithoutOccur(nodeName);
-            currentNode=DataBasePanel.getNode(QueryHashtable.nameWithoutOccur(currentNode.toString()));
+            nodeName=Mpiro.win.struc.nameWithoutOccur(nodeName);
+            currentNode=DataBasePanel.getNode(Mpiro.win.struc.nameWithoutOccur(currentNode.toString()));
 		DataBasePanel.last = currentNode;
 
 		DataBasePanel.multiTable.removeAll();
@@ -801,10 +800,10 @@ public class TreePreviews
 		// The table view
 		// First: the parent's table vector
 		//String parent = DataBasePanel.last.getParent().toString();
-		//NodeVector parentVector = (NodeVector)QueryHashtable.mainDBHashtable.get(parent);
+		//NodeVector parentVector = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(parent);
 		//Vector parentTable = (Vector)parentVector.elementAt(0);
 		// Second: the current node's table vector
-		NodeVector nodeVector = (NodeVector)QueryHashtable.mainDBHashtable.get(nodeName);
+		NodeVector nodeVector = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(nodeName);
 		nodeTable = (Vector)nodeVector.elementAt(0);
 
 		// Make a new "nodeTable" having new FieldData(s) with no text in 4th col!
@@ -854,7 +853,7 @@ public class TreePreviews
 	  DataBasePanel.multiFlagPanel.add("Center", new FlagPanel(1));
 
 	  // The table view (the language-independent instance is the default)
-	  NodeVector nodeVector = (NodeVector)QueryHashtable.mainDBHashtable.get(nodeName);
+	  NodeVector nodeVector = (NodeVector)Mpiro.win.ontoPipe.getExtension().getEntityTypeOrEntity(nodeName);
 	  nodeTable = (Vector)nodeVector.elementAt(0);  // THIS VECTOR CONTAINS 4 TABLE VECTORS:
 	  // 1. LANGUAGE INDEPENDENT FIELDS TABLE
 	  // 2. ENGLISH FIELDS TABLE

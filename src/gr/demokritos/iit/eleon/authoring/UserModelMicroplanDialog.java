@@ -6,6 +6,8 @@
 
 package gr.demokritos.iit.eleon.authoring;
 
+import gr.demokritos.iit.eleon.struct.QueryHashtable;
+import gr.demokritos.iit.eleon.struct.QueryProfileHashtable;
 import gr.demokritos.iit.eleon.ui.KButton;
 import gr.demokritos.iit.eleon.ui.KComboBox;
 import gr.demokritos.iit.eleon.ui.KLabel;
@@ -52,7 +54,7 @@ public class UserModelMicroplanDialog extends JFrame implements ActionListener
 		number = microplanNumber;
 		frameTitle = new String(appropriateness_action + " (" + field + ")");
 		// Get the nodeVector of the selected node
-		currentVector = (NodeVector)QueryHashtable.mainDBHashtable.get(DataBasePanel.last.toString());
+		currentVector = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(DataBasePanel.last.toString());
 		
 		// The dialog and its components from top to bottom (1-6)
 		dialog = new JDialog(this, frameTitle, true);
@@ -75,7 +77,7 @@ public class UserModelMicroplanDialog extends JFrame implements ActionListener
 		c.weightx = 1.0; c.weighty = 0.0;
 		c.gridy = 0;
 
-    Vector allUserTypesVector = QueryUsersHashtable.getUsersVectorFromMainUsersHashtable();
+    Vector allUserTypesVector = Mpiro.win.struc.getUsersVectorFromMainUsersHashtable();
     Enumeration allUserTypesVectorEnum = allUserTypesVector.elements();
     while (allUserTypesVectorEnum.hasMoreElements())
     {
@@ -158,7 +160,7 @@ public class UserModelMicroplanDialog extends JFrame implements ActionListener
 			itCB.addActionListener(this);
 			grCB.addActionListener(this);
 
-			Vector valuesVector = QueryUsersHashtable.getAppropriatenessValuesVector(field, number, username);
+			Vector valuesVector = Mpiro.win.struc.getAppropriatenessValuesVector(field, number, username);
 			enCB.setSelectedItem((String)valuesVector.elementAt(0));
 			itCB.setSelectedItem((String)valuesVector.elementAt(1));
 			grCB.setSelectedItem((String)valuesVector.elementAt(2));
@@ -181,17 +183,17 @@ public class UserModelMicroplanDialog extends JFrame implements ActionListener
 		{
 			if (e.getSource() == enCB)
 			{
-				QueryHashtable.updateHashtable(node, number, field, username, "English", enCB.getSelectedItem().toString());
+				Mpiro.win.struc.updateHashtable(node, number, field, username, "English", enCB.getSelectedItem().toString());
 				Mpiro.needExportToEmulator=true;			//maria
 			}
 			else if (e.getSource() == itCB)
 			{
-				QueryHashtable.updateHashtable(node, number, field, username, "Italian", itCB.getSelectedItem().toString());
+				Mpiro.win.struc.updateHashtable(node, number, field, username, "Italian", itCB.getSelectedItem().toString());
 				Mpiro.needExportToEmulator=true;			//maria
 			}
 			else if (e.getSource() == grCB)
 			{
-				QueryHashtable.updateHashtable(node, number, field, username, "Greek", grCB.getSelectedItem().toString());
+				Mpiro.win.struc.updateHashtable(node, number, field, username, "Greek", grCB.getSelectedItem().toString());
 				Mpiro.needExportToEmulator=true;			//maria
 			}
 		} // actionPerformed

@@ -11,6 +11,9 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Resource;
 
 import gr.demokritos.iit.eleon.authoring.*;
+import gr.demokritos.iit.eleon.struct.QueryHashtable;
+import gr.demokritos.iit.eleon.struct.QueryLexiconHashtable;
+import gr.demokritos.iit.eleon.struct.QueryProfileHashtable;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -109,7 +112,7 @@ public class KDialog
         if (Mpiro.win.tabbedPane.getSelectedIndex() == 0) { //Lexicon tab
         } else if (Mpiro.win.tabbedPane.getSelectedIndex() == 2) { // Users tab
         } else if (Mpiro.win.tabbedPane.getSelectedIndex() == 1) {
-            currentVector = (NodeVector) QueryHashtable.mainDBHashtable.get(DataBasePanel.last.toString());
+            currentVector = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(DataBasePanel.last.toString());
         }
         // The dialog and its components from top to bottom (1-6)
         dialog = new JDialog(Mpiro.win.getFrames()[0], frameTitle, true);
@@ -155,7 +158,7 @@ public class KDialog
             // p.add(scrollPane);
             textField.setVisible(false);
             
-            Hashtable allEntityTypes = (Hashtable) QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+            Hashtable allEntityTypes = (Hashtable) Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
             allEntityTypes.remove("Data Base");
             allEntityTypes.remove("Basic-entity-types");
             if (DataBasePanel.last.toString().substring(0,DataBasePanel.last.toString().length()-1).endsWith("_occur"))
@@ -210,7 +213,7 @@ public class KDialog
             // p.add(scrollPane);
             textField.setVisible(false);
             
-            Hashtable allEntities = (Hashtable) QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity");
+            Hashtable allEntities = (Hashtable) Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity");
             // allEntityTypes.remove("Data Base");
             //  allEntityTypes.remove("Basic-entity-types");
             //  if (DataBasePanel.last.toString().substring(0,DataBasePanel.last.toString().length()-1).endsWith("_occur"))
@@ -266,9 +269,9 @@ public class KDialog
             // p.add(scrollPane);
             textField.setVisible(false);
             
-            //Enumeration properties=QueryHashtable.propertiesHashtable.keys();
-            Vector orderedTypes=QuickSort.quickSort(0,QueryHashtable.propertiesHashtable.size()-1,new Vector(QueryHashtable.propertiesHashtable.keySet()));
-            checkPanel1.setLayout(new GridLayout(QueryHashtable.propertiesHashtable.size() , 1));
+            //Enumeration properties=Mpiro.win.struc.getPropertyNames();
+            Vector orderedTypes=QuickSort.quickSort(0,Mpiro.win.struc.getNoOfProperties()-1,new Vector(Mpiro.win.struc.getPropertiesKeySet()));
+            checkPanel1.setLayout(new GridLayout(Mpiro.win.struc.getNoOfProperties() , 1));
             //  JScrollPane scrollPane = new JScrollPane());
             
             
@@ -278,7 +281,7 @@ public class KDialog
                 // while (properties.hasMoreElements()){
 //scrollPane.add(new Checkbox(allTypesNames.nextElement().toString(), cbg, true));
                 String nextElem=orderedTypes.elementAt(g).toString();
-                Vector vec=(Vector)   QueryHashtable.mainDBHashtable.get(DataBasePanel.last.toString());
+                Vector vec=(Vector)   Mpiro.win.struc.getEntityTypeOrEntity(DataBasePanel.last.toString());
                 vec=(Vector) vec.elementAt(0);
                 boolean exists=false;
                 for(int i=8;i<vec.size();i++){
@@ -331,10 +334,10 @@ public class KDialog
             if(last.substring(0,last.length()-1).endsWith("_occur")) {
                 
                 last=last.substring(0, last.length()-7);
-                currentVector=(NodeVector) QueryHashtable.mainDBHashtable.get(last);
+                currentVector=(NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(last);
             }
             Vector pNounVector=new Vector();
-            //  Hashtable allEntityTypes = (Hashtable) QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+            //  Hashtable allEntityTypes = (Hashtable) Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
             //        for (int k=0; k<v.size(); k++)
             //	{
             //		String noun = v.elementAt(k).toString();
@@ -348,7 +351,7 @@ public class KDialog
                 if (nextEl.toString().startsWith(last+"_occur")||nextEl.toString().equalsIgnoreCase(last)) {
                     String parent=nextEl.getParent().toString();
                     // System.out.println(noun+"   "+nextEl.getParent().toString());
-                    NodeVector pn = (NodeVector)QueryHashtable.mainDBHashtable.get(parent.toString());
+                    NodeVector pn = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(parent.toString());
                     Vector temp1 = (Vector)pn.elementAt(2);
                     for(int y=0;y<temp1.size();y++){
                         if (!pNounVector.contains(temp1.elementAt(y)))
@@ -361,7 +364,7 @@ public class KDialog
             
             
             //     DefaultMutableTreeNode parent = (DefaultMutableTreeNode) DataBasePanel.last.getParent();
-            //     NodeVector pn = (NodeVector) QueryHashtable.mainDBHashtable.get(parent.toString());
+            //     NodeVector pn = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(parent.toString());
             //     Vector pNounVector = (Vector) pn.elementAt(2);
             // get current-node's nounVector
             Vector nouns = (Vector) currentVector.elementAt(2);
@@ -595,7 +598,7 @@ public class KDialog
             if (e.getSource() == removeButton) {
                 Vector p = chboli.getPositionsVector();
                 
-                NodeVector rootVector = (NodeVector) QueryHashtable.mainDBHashtable.get("Data Base");
+                NodeVector rootVector = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity("Data Base");
                 Vector upperTypes = (Vector) rootVector.elementAt(1);
                 Vector clone = new Vector(upperTypes);
                 int count = 0;
@@ -616,7 +619,7 @@ public class KDialog
                         //Updating the UpperVectors of all Basic-entity-types
                         for (Enumeration topAChildren = DataBasePanel.topA.children(); topAChildren.hasMoreElements(); ) {
                             String child = topAChildren.nextElement().toString();
-                            NodeVector childVector = (NodeVector) QueryHashtable.mainDBHashtable.get(child);
+                            NodeVector childVector = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(child);
                             Vector childUpperTypes = (Vector) childVector.elementAt(1);
                             if (childUpperTypes.contains(removedUpperType)) {
                                 childUpperTypes.removeElement(removedUpperType);
@@ -661,8 +664,8 @@ public class KDialog
                     {
                         text = textField.getText();
                         
-                        String checkValid = QueryHashtable.checkNameValidity(text);
-                        int check = QueryHashtable.checkName(text);
+                        String checkValid = Mpiro.win.struc.checkNameValidity(text);
+                        int check = Mpiro.win.struc.checkName(text);
                         
                         if ( (check == 1) && (text.equalsIgnoreCase("NewEntityType"))) {
                             new MessageDialog(dialog, MessageDialog.attentionYouHaveAnUnnamedEntityType_dialog);
@@ -723,7 +726,7 @@ public class KDialog
                                 Vector noun=getAllInheritedNouns(DataBasePanel.last.toString());
                                 /// Vector noun=(Vector) nv1.elementAt(2);
                                 Vector nounNew=chboli.getItemsVector();
-                                NodeVector nv1=(NodeVector) QueryHashtable.mainDBHashtable.get(nextEl.toString());
+                                NodeVector nv1=(NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(nextEl.toString());
                                 //Vector noun=(Vector) nv2.elementAt(2);
                                 for(int z=0;z<noun.size();z++) {
                                     if (!nounNew.contains(noun.elementAt(z)))
@@ -731,11 +734,11 @@ public class KDialog
                                 }
                                 nv1.setElementAt(nounNew, 2);
                                 nv1.nounVector=(Vector) nv1.elementAt(2);
-                                QueryHashtable.updateChildrenNounVectors(nextEl,beforeOkNounVector, chboli.getItemsVector());
+                                Mpiro.win.struc.updateChildrenNounVectors(nextEl,beforeOkNounVector, chboli.getItemsVector());
                             }}
                         //   System.out.println("rrrrrrr"+nounNew.toArray().toString());
                         
-                        QueryHashtable.updateChildrenNounVectors(DataBasePanel.last,beforeOkNounVector, chboli.getItemsVector());
+                        Mpiro.win.struc.updateChildrenNounVectors(DataBasePanel.last,beforeOkNounVector, chboli.getItemsVector());
                         TreePreviews.dbnp.nounSelected.updateNouns(chboli.getItemsVector());
                         Mpiro.needExportToExprimo = true; //maria
                         dialog.dispose();
@@ -762,7 +765,7 @@ public class KDialog
                                 Vector noun=getAllInheritedNouns(DataBasePanel.last.toString());
                                 /// Vector noun=(Vector) nv1.elementAt(2);
                                 Vector nounNew=chboli.getItemsVector();
-                                NodeVector nv1=(NodeVector) QueryHashtable.mainDBHashtable.get(nextEl.toString());
+                                NodeVector nv1=(NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(nextEl.toString());
                                 //Vector noun=(Vector) nv2.elementAt(2);
                                 for(int z=0;z<noun.size();z++) {
                                     if (!nounNew.contains(noun.elementAt(z)))
@@ -770,9 +773,9 @@ public class KDialog
                                 }
                                 nv1.setElementAt(nounNew, 2);
                                 nv1.nounVector=(Vector) nv1.elementAt(2);
-                                QueryHashtable.updateChildrenNounVectors(nextEl,beforeOkNounVector, chboli.getItemsVector());
+                                Mpiro.win.struc.updateChildrenNounVectors(nextEl,beforeOkNounVector, chboli.getItemsVector());
                             }}
-                        QueryHashtable.updateChildrenNounVectors(DataBasePanel.last,beforeOkNounVector, inheritedVector);
+                        Mpiro.win.struc.updateChildrenNounVectors(DataBasePanel.last,beforeOkNounVector, inheritedVector);
                         TreePreviews.dbnp.nounSelected.updateNouns(inheritedVector);
                         Mpiro.needExportToExprimo = true; //maria
                         dialog.dispose();
@@ -782,8 +785,8 @@ public class KDialog
                 if (type == "ENTITY-TYPE") {
                     text = textField.getText();
                     
-                    String checkValid = QueryHashtable.checkNameValidity(text);
-                    int check = QueryHashtable.checkName(text);
+                    String checkValid = Mpiro.win.struc.checkNameValidity(text);
+                    int check = Mpiro.win.struc.checkName(text);
                     
                     if ( (check == 1) && (text.equalsIgnoreCase("NewEntityType"))) {
                         new MessageDialog(dialog, MessageDialog.attentionYouHaveAnUnnamedEntityType_dialog);
@@ -807,8 +810,8 @@ public class KDialog
                         String lastWithoutOccur= DataBasePanel.last.toString();
                         if (lastWithoutOccur.substring(0,lastWithoutOccur.length()-1).endsWith("_occur"))
                             lastWithoutOccur=lastWithoutOccur.substring(0,lastWithoutOccur.length()-7);
-                        //    Enumeration parents=QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity type").elements();
-                        Enumeration alltypes= QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity type").keys();
+                        //    Enumeration parents=Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity type").elements();
+                        Enumeration alltypes= Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity type").keys();
                         
                         while (alltypes.hasMoreElements()){
                             
@@ -823,7 +826,7 @@ public class KDialog
                             //        DataBasePanel.addEntityType()
                             
                         }
-                        //QueryHashtable.valueRestrictionsHashtable.put(text,new ValueRestriction());
+                        //Mpiro.win.struc.addValueRestriction(text,new ValueRestriction());
                         //DataBasePanel.addEntityType(text);
                         Mpiro.needExportToEmulator = true; //maria
                         Mpiro.needExportToExprimo = true; //maria
@@ -837,17 +840,17 @@ public class KDialog
                 //}
                 
                 if (type == "FIELD") {
-                    Vector propVector=(Vector) QueryHashtable.propertiesHashtable.get(cbg1.getSelection().getActionCommand());
+                    Vector propVector=(Vector) Mpiro.win.struc.getProperty(cbg1.getSelection().getActionCommand());
                     Vector Domain=(Vector) propVector.elementAt(0);
-                    if (Domain.contains(QueryHashtable.nameWithoutOccur(DataBasePanel.last.toString()))) {
+                    if (Domain.contains(Mpiro.win.struc.nameWithoutOccur(DataBasePanel.last.toString()))) {
                         System.out.println("Prop exists");
                         return;
                     }
-                    //NodeVector nv=(NodeVector) QueryHashtable.mainDBHashtable.get("person");
+                    //NodeVector nv=(NodeVector) Mpiro.win.struc.getEntityTypeOrEntity("person");
                     FieldData fd=new FieldData(cbg1.getSelection().getActionCommand(),propVector.elementAt(1).toString().replace("]","").replace("[",""),true,"");
-                    QueryHashtable.insertExistingRowInDataBaseTable(fd,8);
-                    QueryUsersHashtable.addFieldInUserModelHashtable(fd.m_field, DataBasePanel.last.toString());
-                    QueryUsersHashtable.addFieldInRobotsModelHashtable(fd.m_field, DataBasePanel.last.toString());
+                    Mpiro.win.struc.insertExistingRowInDataBaseTable(fd,8);
+                    Mpiro.win.struc.addFieldInUserModelHashtable(fd.m_field, DataBasePanel.last.toString());
+                  //  QueryProfileHashtable.addFieldInRobotsModelHashtable(fd.m_field, DataBasePanel.last.toString());
                     DataBaseTable.dbTable.revalidate();
                     DataBaseTable.dbTable.repaint();
                     dialog.dispose();
@@ -858,7 +861,7 @@ public class KDialog
                     // String childName =
                     System.out.println("sssssss"+cbg1.getSelection().getActionCommand());
                     createSubClass(cbg1.getSelection().getActionCommand() , DataBasePanel.last.toString());
-         /*           Hashtable allEntityTypes = (Hashtable) QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+         /*           Hashtable allEntityTypes = (Hashtable) Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
                     Enumeration allTypesNames=allEntityTypes.keys();
                     int occur=2;
           
@@ -882,8 +885,8 @@ public class KDialog
           
                     text=childName+"_occur"+String.valueOf(occur);
                     System.out.println(text);
-                    String checkValid = QueryHashtable.checkNameValidity(text);
-                    int check = QueryHashtable.checkName(text);
+                    String checkValid = Mpiro.win.struc.checkNameValidity(text);
+                    int check = Mpiro.win.struc.checkName(text);
           
                     if ( (check == 1) && (text.equalsIgnoreCase("NewEntityType"))) {
                         new MessageDialog(dialog, MessageDialog.attentionYouHaveAnUnnamedEntityType_dialog);
@@ -916,15 +919,15 @@ public class KDialog
                         TreePreviews.setDataBaseTable(DataBasePanel.last.toString());
                     }
                         //NodeVector nv = new NodeVector(DataBasePanel.last.toString(), "createdNodeName");
-                //QueryHashtable.mainDBHashtable.put("createdNodeName", nv);
+                //Mpiro.win.struc.putEntityTypeOrEntityToDB("createdNodeName", nv);
           
-                    //QueryHashtable.createSubType(childName, text);
+                    //Mpiro.win.struc.createSubType(childName, text);
            //         NodeVector nv = new NodeVector(childName);
         //	Vector tableVector = nv.getDatabaseTableVector();
           //      tableVector.addElement(new FieldData(0));
             //    		nv.setElementAt(tableVector, 0);
-                    NodeVector entityTypeNode = (NodeVector) QueryHashtable.mainDBHashtable.get(text);
-            NodeVector entityTypeParentNode = (NodeVector) QueryHashtable.mainDBHashtable.get(childName);
+                    NodeVector entityTypeNode = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(text);
+            NodeVector entityTypeParentNode = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(childName);
           
             Vector childDatabaseTableVector = entityTypeNode.getDatabaseTableVector();
             Vector parentDatabaseTableVector = entityTypeParentNode.getDatabaseTableVector();
@@ -956,7 +959,7 @@ public class KDialog
           
           
           
-                 Hashtable allEntities = (Hashtable)  QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity");
+                 Hashtable allEntities = (Hashtable)  Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity");
                //  Enumeration allEntitiesNames=allEntities.keys();
                  Enumeration keyss=allEntities.keys();
                      Iterator valuess=allEntities.values().iterator();
@@ -979,7 +982,7 @@ public class KDialog
                          keyss.nextElement().toString();
                  }
           
-                                   Vector children= QueryHashtable.getChildrenVectorFromMainDBHashtable(cbg.getSelectedCheckbox().getLabel(),"Entity type");
+                                   Vector children= Mpiro.win.struc.getChildrenVectorFromMainDBHashtable(cbg.getSelectedCheckbox().getLabel(),"Entity type");
                     System.out.println("cccccccccccccccccc"+children.toString());
           */
                 } //if TEST
@@ -995,8 +998,8 @@ public class KDialog
                 if (type == "ENTITY") {
                     text = textField.getText();
                     
-                    String checkValid = QueryHashtable.checkNameValidity(text);
-                    int check = QueryHashtable.checkName(text);
+                    String checkValid = Mpiro.win.struc.checkNameValidity(text);
+                    int check = Mpiro.win.struc.checkName(text);
                     
                     if ( (check == 1) && (text.equalsIgnoreCase("NewEntity"))) {
                         new MessageDialog(dialog, MessageDialog.attentionYouHaveAnUnnamedEntity_dialog);
@@ -1051,8 +1054,8 @@ public class KDialog
                 if (type == "LEXICON-NOUN") {
                     text = textField.getText();
                     
-                    String checkValid = QueryHashtable.checkNameValidity(text);
-                    int check = QueryLexiconHashtable.checkLexiconName(text);
+                    String checkValid = Mpiro.win.struc.checkNameValidity(text);
+                    int check = Mpiro.win.struc.checkLexiconName(text);
                     
                     if ( (check == 1) && (text.equalsIgnoreCase("NewNoun"))) {
                         new MessageDialog(dialog, MessageDialog.attentionYouHaveAnUnnamedNounNode_dialog);
@@ -1078,8 +1081,8 @@ public class KDialog
                 if (type == "LEXICON-VERB") {
                     text = textField.getText();
                     
-                    String checkValid = QueryHashtable.checkNameValidity(text);
-                    int check = QueryLexiconHashtable.checkLexiconName(text);
+                    String checkValid = Mpiro.win.struc.checkNameValidity(text);
+                    int check = Mpiro.win.struc.checkLexiconName(text);
                     
                     if ( (check == 1) && (text.equalsIgnoreCase("NewVerb"))) {
                         new MessageDialog(dialog, MessageDialog.attentionYouHaveAnUnnamedVerbNode_dialog);
@@ -1104,8 +1107,8 @@ public class KDialog
                 if (type == "USER") {
                     text = textField.getText();
                     
-                    String checkValid = QueryHashtable.checkNameValidity(text);
-                    int check = QueryUsersHashtable.checkUsersName(text);
+                    String checkValid = Mpiro.win.struc.checkNameValidity(text);
+                    int check = Mpiro.win.struc.checkUsersName(text);
                     
                     if ( (check == 1) && (text.equalsIgnoreCase("NewUserType"))) {
                         new MessageDialog(dialog, MessageDialog.attentionYouHaveAnUnnamedUserNode_dialog);
@@ -1129,8 +1132,8 @@ public class KDialog
                 if (type == "ROBOT") {
                     text = textField.getText();
                     
-                    String checkValid = QueryHashtable.checkNameValidity(text);
-                    int check = QueryUsersHashtable.checkRobotsName(text);
+                    String checkValid = Mpiro.win.struc.checkNameValidity(text);
+                    int check = Mpiro.win.struc.checkRobotsName(text);
                     
                     if ( (check == 1) && (text.equalsIgnoreCase("NewProfile"))) {
                         new MessageDialog(dialog, MessageDialog.attentionYouHaveAnUnnamedUserNode_dialog);
@@ -1157,7 +1160,7 @@ public class KDialog
                         // Check if the new name already exists
                         text = textField.getText();
                         
-                        String checkValid = QueryHashtable.checkNameValidity(text);
+                        String checkValid = Mpiro.win.struc.checkNameValidity(text);
                         String type="user";
                         if(UsersPanel.last.getUserObject() instanceof IconData){
                             IconData id = (IconData)UsersPanel.last.getUserObject();
@@ -1168,9 +1171,9 @@ public class KDialog
                                 type="robot";
                         }
                         
-                        int check = QueryUsersHashtable.checkUsersName(text);
+                        int check = Mpiro.win.struc.checkUsersName(text);
                         if(type.equals("robot"))
-                            check = QueryUsersHashtable.checkRobotsName(text);
+                            check = Mpiro.win.struc.checkRobotsName(text);
                         
                         
                         if (check == 1) {
@@ -1193,14 +1196,14 @@ public class KDialog
                         //if all checks pass
                         else if (check == 0 && type.equals("user")) {
                             // Rename the user entry
-                            QueryUsersHashtable.renameUser(UsersPanel.last.toString(), text);
-                            QueryUsersHashtable.updateIndependentLexiconHashtable(text, UsersPanel.last.toString(), "RENAME");
-                            QueryUsersHashtable.updateAppropriatenessValuesInMicroplanningOfFields(text, UsersPanel.last.toString(), "RENAME");
-                            QueryUsersHashtable.renameUserInUserModelHashtable(UsersPanel.last.toString(), text);
-                            QueryHashtable.renameUserInAnnotationsHashtable(UsersPanel.last.toString(), text);
-                            QueryUsersHashtable.renameUserInUserModelStoryHashtable(UsersPanel.last.toString(), text);
-                            QueryHashtable.renameUserInPropertiesHashtable(UsersPanel.last.toString(), text);
-                            //    QueryHashtable.renameUserInPropertiesHashtable(UsersPanel.last.toString(), text);
+                            Mpiro.win.struc.renameUser(UsersPanel.last.toString(), text);
+                            Mpiro.win.struc.updateIndependentLexiconHashtable(text, UsersPanel.last.toString(), "RENAME");
+                            Mpiro.win.struc.updateAppropriatenessValuesInMicroplanningOfFields(text, UsersPanel.last.toString(), "RENAME");
+                            Mpiro.win.struc.renameUserInUserOrRobotModelHashtable(UsersPanel.last.toString(), text);
+                            Mpiro.win.struc.renameUserInAnnotationsHashtable(UsersPanel.last.toString(), text);
+                           // QueryProfileHashtable.renameUserInUserModelStoryHashtable(UsersPanel.last.toString(), text);
+                            Mpiro.win.struc.renameUserInPropertiesHashtable(UsersPanel.last.toString(), text);
+                            //    Mpiro.win.struc.renameUserInPropertiesHashtable(UsersPanel.last.toString(), text);
                             Mpiro.needExportToEmulator = true; //maria
                             lastNode = UsersPanel.last;
                             Object obj = (Object) (lastNode.getUserObject());
@@ -1214,15 +1217,15 @@ public class KDialog
                         } // end if check==0
                         else if (check == 0 && type.equals("robot")) {
                             // Rename the user entry
-                            QueryUsersHashtable.renameRobot(UsersPanel.last.toString(), text);
-                            QueryHashtable.renameRobotInRobotCharVector(UsersPanel.last.toString(), text);
-                            QueryUsersHashtable.renameRobotInRobotsModelHashtable(UsersPanel.last.toString(), text);
-                            //QueryUsersHashtable.updateIndependentLexiconHashtable(text, UsersPanel.last.toString(), "RENAME");
-                            //QueryUsersHashtable.updateAppropriatenessValuesInMicroplanningOfFields(text, UsersPanel.last.toString(), "RENAME");
-                            //QueryUsersHashtable.renameUserInUserModelHashtable(UsersPanel.last.toString(), text);
-                            //QueryUsersHashtable.renameUserInUserModelStoryHashtable(UsersPanel.last.toString(), text);
-                            //QueryHashtable.renameUserInPropertiesHashtable(UsersPanel.last.toString(), text);
-                            QueryHashtable.renameRobotInPropertiesHashtable(UsersPanel.last.toString(), text);
+                            Mpiro.win.struc.renameRobot(UsersPanel.last.toString(), text);
+                            Mpiro.win.struc.renameRobotInRobotCharVector(UsersPanel.last.toString(), text);
+                            Mpiro.win.struc.renameUserInUserOrRobotModelHashtable(UsersPanel.last.toString(), text);
+                            //QueryProfileHashtable.updateIndependentLexiconHashtable(text, UsersPanel.last.toString(), "RENAME");
+                            //Mpiro.win.struc.updateAppropriatenessValuesInMicroplanningOfFields(text, UsersPanel.last.toString(), "RENAME");
+                            //Mpiro.win.struc.renameUserInUserOrRobotModelHashtable(UsersPanel.last.toString(), text);
+                            //QueryProfileHashtable.renameUserInUserModelStoryHashtable(UsersPanel.last.toString(), text);
+                            //Mpiro.win.struc.renameUserInPropertiesHashtable(UsersPanel.last.toString(), text);
+                            Mpiro.win.struc.renameRobotInPropertiesHashtable(UsersPanel.last.toString(), text);
                             Mpiro.needExportToEmulator = true; //maria
                             lastNode = UsersPanel.last;
                             Object obj = (Object) (lastNode.getUserObject());
@@ -1239,8 +1242,8 @@ public class KDialog
                     else if (Mpiro.win.tabbedPane.getSelectedIndex() == 1) { //database tab
                         text = textField.getText();
                         
-                        String checkValid = QueryHashtable.checkNameValidity(text);
-                        int check = QueryHashtable.checkName(text);
+                        String checkValid = Mpiro.win.struc.checkNameValidity(text);
+                        int check = Mpiro.win.struc.checkName(text);
                         
                         // Check if the new name already exists
                         if (check == 1) {
@@ -1318,8 +1321,8 @@ public class KDialog
                         // Check if the new name already exists
                         text = textField.getText();
                         
-                        String checkValid = QueryHashtable.checkNameValidity(text);
-                        int check = QueryLexiconHashtable.checkLexiconName(text);
+                        String checkValid = Mpiro.win.struc.checkNameValidity(text);
+                        int check = Mpiro.win.struc.checkLexiconName(text);
                         
                         if (check == 1) {
                             if (!text.equalsIgnoreCase(LexiconPanel.n.toString())) {
@@ -1341,7 +1344,7 @@ public class KDialog
                         //if all checks pass
                         else if (check == 0) {
                             // Rename the Lexicon entry
-                            QueryLexiconHashtable.renameLexiconEntry(LexiconPanel.n.toString(), text);
+                            Mpiro.win.struc.renameLexiconEntry(LexiconPanel.n.toString(), text);
                             Mpiro.needExportToEmulator = true; //maria
                             Mpiro.needExportToExprimo = true; //maria
                             lastNode = LexiconPanel.n;
@@ -1365,49 +1368,49 @@ public class KDialog
                         } // end if check==0
                     }
                     
-                    else if (Mpiro.win.tabbedPane.getSelectedIndex() == 3) {
-                        text = textField.getText();
-                        String oldStory = StoriesTableListener.selectedField;
-                        
-                        String checkName = QueryHashtable.checkNameValidity(text);
-                        Vector storyNamesVector = new Vector();
-                        Enumeration enumer = StoriesTable.m_data.m_vector.elements();
-                        while (enumer.hasMoreElements()) {
-                            Vector rowVector = (Vector) enumer.nextElement();
-                            if (rowVector.elementAt(0) != null) {
-                                String storyName = rowVector.get(0).toString();
-                                storyNamesVector.addElement(storyName);
-                            }
-                        }
-                        
-                        if ( (storyNamesVector.contains(text)) && (! (text.equalsIgnoreCase(oldStory)))) {
-                            new MessageDialog(StoriesTable.storiesTable, MessageDialog.thisStoryNameAlreadyExists_dialog);
-                        } else if (text.indexOf(" ") > 0 || text.startsWith(" ")) {
-                            new MessageDialog(StoriesTable.storiesTable, MessageDialog.noSpacesAreAllowedForAStoryName_dialog);
-                        } else if (text.equalsIgnoreCase("")) {
-                            new MessageDialog(StoriesTable.storiesTable, MessageDialog.pleaseGiveANameForTheStory_dialog);
-                        } else if (!checkName.equalsIgnoreCase("VALID")) {
-                            new MessageDialog(StoriesTable.storiesTable, MessageDialog.theNameContainsTheFollowingInvalidCharacters_dialog + "\n" + checkName);
-                        } else {
-                            StoriesTable.storiesTable.setValueAt(text, StoriesTableListener.rowNo, 0);
-                            ////System.out.println("(oldStory)---- " + oldStory);
-                            ////System.out.println("(newStory)---- " + text);
-                            /* Update mainDBHashtable */
-                            QueryHashtable.renameHashtableStory(StoriesPanel.last.toString(), oldStory, text);
-                            
-                            // Update mainUserModelStoryHashtable
-                            if ( (oldStory.equalsIgnoreCase("New-story")) && (!text.equalsIgnoreCase("New-story"))) {
-                                QueryUsersHashtable.addStoryInUserModelStoryHashtable(text, StoriesPanel.last.toString());
-                            } else if ( (!oldStory.equalsIgnoreCase("New-story")) && (!text.equalsIgnoreCase("New-story"))) {
-                                QueryUsersHashtable.renameStoryInUserModelStoryHashtable(StoriesPanel.last.toString(), oldStory, text);
-                            } else if (text.equalsIgnoreCase("New-story")) {
-                                QueryUsersHashtable.removeStoryInUserModelStoryHashtable(StoriesPanel.last.toString(), oldStory);
-                            } else {
-                                System.out.println("(ALERT)---- " + oldStory + "  ==  " + text);
-                            }
-                        }
-                        dialog.dispose();
-                    }
+//                    else if (Mpiro.win.tabbedPane.getSelectedIndex() == 3) {
+//                        text = textField.getText();
+//                        String oldStory = StoriesTableListener.selectedField;
+//                        
+//                        String checkName = Mpiro.win.struc.checkNameValidity(text);
+//                        Vector storyNamesVector = new Vector();
+//                        Enumeration enumer = StoriesTable.m_data.m_vector.elements();
+//                        while (enumer.hasMoreElements()) {
+//                            Vector rowVector = (Vector) enumer.nextElement();
+//                            if (rowVector.elementAt(0) != null) {
+//                                String storyName = rowVector.get(0).toString();
+//                                storyNamesVector.addElement(storyName);
+//                            }
+//                        }
+//                        
+//                        if ( (storyNamesVector.contains(text)) && (! (text.equalsIgnoreCase(oldStory)))) {
+//                            new MessageDialog(StoriesTable.storiesTable, MessageDialog.thisStoryNameAlreadyExists_dialog);
+//                        } else if (text.indexOf(" ") > 0 || text.startsWith(" ")) {
+//                            new MessageDialog(StoriesTable.storiesTable, MessageDialog.noSpacesAreAllowedForAStoryName_dialog);
+//                        } else if (text.equalsIgnoreCase("")) {
+//                            new MessageDialog(StoriesTable.storiesTable, MessageDialog.pleaseGiveANameForTheStory_dialog);
+//                        } else if (!checkName.equalsIgnoreCase("VALID")) {
+//                            new MessageDialog(StoriesTable.storiesTable, MessageDialog.theNameContainsTheFollowingInvalidCharacters_dialog + "\n" + checkName);
+//                        } else {
+//                            StoriesTable.storiesTable.setValueAt(text, StoriesTableListener.rowNo, 0);
+//                            ////System.out.println("(oldStory)---- " + oldStory);
+//                            ////System.out.println("(newStory)---- " + text);
+//                            /* Update mainDBHashtable */
+//                            QueryHashtable.renameHashtableStory(StoriesPanel.last.toString(), oldStory, text);
+//                            
+//                            // Update mainUserModelStoryHashtable
+//                            if ( (oldStory.equalsIgnoreCase("New-story")) && (!text.equalsIgnoreCase("New-story"))) {
+//                               // QueryProfileHashtable.addStoryInUserModelStoryHashtable(text, StoriesPanel.last.toString());
+//                            } else if ( (!oldStory.equalsIgnoreCase("New-story")) && (!text.equalsIgnoreCase("New-story"))) {
+//                               // QueryProfileHashtable.renameStoryInUserModelStoryHashtable(StoriesPanel.last.toString(), oldStory, text);
+//                            } else if (text.equalsIgnoreCase("New-story")) {
+//                             //   QueryProfileHashtable.removeStoryInUserModelStoryHashtable(StoriesPanel.last.toString(), oldStory);
+//                            } else {
+//                                System.out.println("(ALERT)---- " + oldStory + "  ==  " + text);
+//                            }
+//                        }
+//                        dialog.dispose();
+//                    }
                     
                 } // if RENAME
                 
@@ -1454,8 +1457,8 @@ public class KDialog
                 {
                     text = textField.getText();
                     
-                    String checkValid = QueryHashtable.checkNameValidity(text);
-                    int check = QueryHashtable.checkName(text);
+                    String checkValid = Mpiro.win.struc.checkNameValidity(text);
+                    int check = Mpiro.win.struc.checkName(text);
                     
                     if ( (check == 1) && (text.equalsIgnoreCase("NewEntityType"))) {
                         new MessageDialog(dialog, MessageDialog.attentionYouHaveAnUnnamedEntityType_dialog);
@@ -1524,7 +1527,7 @@ public class KDialog
                             Vector noun=getAllInheritedNouns(DataBasePanel.last.toString());
                             /// Vector noun=(Vector) nv1.elementAt(2);
                             Vector nounNew=chboli.getItemsVector();
-                            NodeVector nv1=(NodeVector) QueryHashtable.mainDBHashtable.get(nextEl.toString());
+                            NodeVector nv1=(NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(nextEl.toString());
                             //Vector noun=(Vector) nv2.elementAt(2);
                             for(int z=0;z<noun.size();z++) {
                                 if (!nounNew.contains(noun.elementAt(z)))
@@ -1532,9 +1535,9 @@ public class KDialog
                             }
                             nv1.setElementAt(nounNew, 2);
                             nv1.nounVector=(Vector) nv1.elementAt(2);
-                            QueryHashtable.updateChildrenNounVectors(nextEl,beforeOkNounVector, chboli.getItemsVector());
+                            Mpiro.win.struc.updateChildrenNounVectors(nextEl,beforeOkNounVector, chboli.getItemsVector());
                         }}
-                    QueryHashtable.updateChildrenNounVectors(DataBasePanel.last,beforeOkNounVector, chboli.getItemsVector());
+                    Mpiro.win.struc.updateChildrenNounVectors(DataBasePanel.last,beforeOkNounVector, chboli.getItemsVector());
                     TreePreviews.dbnp.nounSelected.updateNouns(chboli.getItemsVector());
                     Mpiro.needExportToExprimo = true; //maria
                     dialog.dispose();
@@ -1561,7 +1564,7 @@ public class KDialog
                             Vector noun=getAllInheritedNouns(DataBasePanel.last.toString());
                             /// Vector noun=(Vector) nv1.elementAt(2);
                             Vector nounNew=chboli.getItemsVector();
-                            NodeVector nv1=(NodeVector) QueryHashtable.mainDBHashtable.get(nextEl.toString());
+                            NodeVector nv1=(NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(nextEl.toString());
                             //Vector noun=(Vector) nv2.elementAt(2);
                             for(int z=0;z<noun.size();z++) {
                                 if (!nounNew.contains(noun.elementAt(z)))
@@ -1569,9 +1572,9 @@ public class KDialog
                             }
                             nv1.setElementAt(nounNew, 2);
                             nv1.nounVector=(Vector) nv1.elementAt(2);
-                            QueryHashtable.updateChildrenNounVectors(nextEl,beforeOkNounVector, chboli.getItemsVector());
+                            Mpiro.win.struc.updateChildrenNounVectors(nextEl,beforeOkNounVector, chboli.getItemsVector());
                         }}
-                    QueryHashtable.updateChildrenNounVectors(DataBasePanel.last,beforeOkNounVector, inheritedVector);
+                    Mpiro.win.struc.updateChildrenNounVectors(DataBasePanel.last,beforeOkNounVector, inheritedVector);
                     TreePreviews.dbnp.nounSelected.updateNouns(inheritedVector);
                     Mpiro.needExportToExprimo = true; //maria
                     dialog.dispose();
@@ -1581,8 +1584,8 @@ public class KDialog
             if (type == "ENTITY-TYPE") {
                 text = textField.getText();
                 
-                String checkValid = QueryHashtable.checkNameValidity(text);
-                int check = QueryHashtable.checkName(text);
+                String checkValid = Mpiro.win.struc.checkNameValidity(text);
+                int check = Mpiro.win.struc.checkName(text);
                 
                 if ( (check == 1) && (text.equalsIgnoreCase("NewEntityType"))) {
                     new MessageDialog(dialog, MessageDialog.attentionYouHaveAnUnnamedEntityType_dialog);
@@ -1618,8 +1621,8 @@ public class KDialog
             if (type == "ENTITY") {
                 text = textField.getText();
                 
-                String checkValid = QueryHashtable.checkNameValidity(text);
-                int check = QueryHashtable.checkName(text);
+                String checkValid = Mpiro.win.struc.checkNameValidity(text);
+                int check = Mpiro.win.struc.checkName(text);
                 
                 if ( (check == 1) && (text.equalsIgnoreCase("NewEntity"))) {
                     new MessageDialog(dialog, MessageDialog.attentionYouHaveAnUnnamedEntity_dialog);
@@ -1674,8 +1677,8 @@ public class KDialog
             if (type == "LEXICON-NOUN") {
                 text = textField.getText();
                 
-                String checkValid = QueryHashtable.checkNameValidity(text);
-                int check = QueryLexiconHashtable.checkLexiconName(text);
+                String checkValid = Mpiro.win.struc.checkNameValidity(text);
+                int check = Mpiro.win.struc.checkLexiconName(text);
                 
                 if ( (check == 1) && (text.equalsIgnoreCase("NewNoun"))) {
                     new MessageDialog(dialog, MessageDialog.attentionYouHaveAnUnnamedNounNode_dialog);
@@ -1701,8 +1704,8 @@ public class KDialog
             if (type == "LEXICON-VERB") {
                 text = textField.getText();
                 
-                String checkValid = QueryHashtable.checkNameValidity(text);
-                int check = QueryLexiconHashtable.checkLexiconName(text);
+                String checkValid = Mpiro.win.struc.checkNameValidity(text);
+                int check = Mpiro.win.struc.checkLexiconName(text);
                 
                 if ( (check == 1) && (text.equalsIgnoreCase("NewVerb"))) {
                     new MessageDialog(dialog, MessageDialog.attentionYouHaveAnUnnamedVerbNode_dialog);
@@ -1727,8 +1730,8 @@ public class KDialog
             if (type == "USER") {
                 text = textField.getText();
                 
-                String checkValid = QueryHashtable.checkNameValidity(text);
-                int check = QueryUsersHashtable.checkUsersName(text);
+                String checkValid = Mpiro.win.struc.checkNameValidity(text);
+                int check = Mpiro.win.struc.checkUsersName(text);
                 
                 if ( (check == 1) && (text.equalsIgnoreCase("NewUserType"))) {
                     new MessageDialog(dialog, MessageDialog.attentionYouHaveAnUnnamedUserNode_dialog);
@@ -1754,8 +1757,8 @@ public class KDialog
             if (type == "ROBOT") {
                 text = textField.getText();
                 
-                String checkValid = QueryHashtable.checkNameValidity(text);
-                int check = QueryUsersHashtable.checkRobotsName(text);
+                String checkValid = Mpiro.win.struc.checkNameValidity(text);
+                int check = Mpiro.win.struc.checkRobotsName(text);
                 
                 if ( (check == 1) && (text.equalsIgnoreCase("NewProfile"))) {
                     new MessageDialog(dialog, MessageDialog.attentionYouHaveAnUnnamedUserNode_dialog);
@@ -1781,7 +1784,7 @@ public class KDialog
                     // Check if the new name already exists
                     text = textField.getText();
                     
-                    String checkValid = QueryHashtable.checkNameValidity(text);
+                    String checkValid = Mpiro.win.struc.checkNameValidity(text);
                     String type="user";
                     if(UsersPanel.last.getUserObject() instanceof IconData){
                         IconData id = (IconData)UsersPanel.last.getUserObject();
@@ -1792,9 +1795,9 @@ public class KDialog
                             type="robot";
                     }
                     
-                    int check = QueryUsersHashtable.checkUsersName(text);
+                    int check = Mpiro.win.struc.checkUsersName(text);
                     if(type.equals("robot"))
-                        check = QueryUsersHashtable.checkRobotsName(text);
+                        check = Mpiro.win.struc.checkRobotsName(text);
                     
                     
                     if (check == 1) {
@@ -1817,14 +1820,14 @@ public class KDialog
                     //if all checks pass
                     else if (check == 0 && type.equals("user")) {
                         // Rename the user entry
-                        QueryUsersHashtable.renameUser(UsersPanel.last.toString(), text);
-                        QueryUsersHashtable.updateIndependentLexiconHashtable(text, UsersPanel.last.toString(), "RENAME");
-                        QueryUsersHashtable.updateAppropriatenessValuesInMicroplanningOfFields(text, UsersPanel.last.toString(), "RENAME");
-                        QueryUsersHashtable.renameUserInUserModelHashtable(UsersPanel.last.toString(), text);
-                        QueryUsersHashtable.renameRobotInRobotsModelHashtable(UsersPanel.last.toString(), text);
-                        QueryUsersHashtable.renameUserInUserModelStoryHashtable(UsersPanel.last.toString(), text);
-                        QueryHashtable.renameUserInPropertiesHashtable(UsersPanel.last.toString(), text);
-                        //    QueryHashtable.renameUserInPropertiesHashtable(UsersPanel.last.toString(), text);
+                        Mpiro.win.struc.renameUser(UsersPanel.last.toString(), text);
+                        Mpiro.win.struc.updateIndependentLexiconHashtable(text, UsersPanel.last.toString(), "RENAME");
+                        Mpiro.win.struc.updateAppropriatenessValuesInMicroplanningOfFields(text, UsersPanel.last.toString(), "RENAME");
+                        Mpiro.win.struc.renameUserInUserOrRobotModelHashtable(UsersPanel.last.toString(), text);
+                        Mpiro.win.struc.renameUserInUserOrRobotModelHashtable(UsersPanel.last.toString(), text);
+                       // QueryProfileHashtable.renameUserInUserModelStoryHashtable(UsersPanel.last.toString(), text);
+                        Mpiro.win.struc.renameUserInPropertiesHashtable(UsersPanel.last.toString(), text);
+                        //    Mpiro.win.struc.renameUserInPropertiesHashtable(UsersPanel.last.toString(), text);
                         Mpiro.needExportToEmulator = true; //maria
                         lastNode = UsersPanel.last;
                         Object obj = (Object) (lastNode.getUserObject());
@@ -1838,14 +1841,14 @@ public class KDialog
                     } // end if check==0
                     else if (check == 0 && type.equals("robot")) {
                         // Rename the user entry
-                        QueryUsersHashtable.renameRobot(UsersPanel.last.toString(), text);
-                        QueryHashtable.renameRobotInRobotCharVector(UsersPanel.last.toString(), text);
-                        //QueryUsersHashtable.updateIndependentLexiconHashtable(text, UsersPanel.last.toString(), "RENAME");
-                        //QueryUsersHashtable.updateAppropriatenessValuesInMicroplanningOfFields(text, UsersPanel.last.toString(), "RENAME");
-                        QueryUsersHashtable.renameRobotInRobotsModelHashtable(UsersPanel.last.toString(), text);
-                        //QueryUsersHashtable.renameUserInUserModelStoryHashtable(UsersPanel.last.toString(), text);
-                        //QueryHashtable.renameUserInPropertiesHashtable(UsersPanel.last.toString(), text);
-                        QueryHashtable.renameRobotInPropertiesHashtable(UsersPanel.last.toString(), text);
+                        Mpiro.win.struc.renameRobot(UsersPanel.last.toString(), text);
+                        Mpiro.win.struc.renameRobotInRobotCharVector(UsersPanel.last.toString(), text);
+                        //QueryProfileHashtable.updateIndependentLexiconHashtable(text, UsersPanel.last.toString(), "RENAME");
+                        //Mpiro.win.struc.updateAppropriatenessValuesInMicroplanningOfFields(text, UsersPanel.last.toString(), "RENAME");
+                        Mpiro.win.struc.renameUserInUserOrRobotModelHashtable(UsersPanel.last.toString(), text);
+                        //QueryProfileHashtable.renameUserInUserModelStoryHashtable(UsersPanel.last.toString(), text);
+                        //Mpiro.win.struc.renameUserInPropertiesHashtable(UsersPanel.last.toString(), text);
+                        Mpiro.win.struc.renameRobotInPropertiesHashtable(UsersPanel.last.toString(), text);
                         Mpiro.needExportToEmulator = true; //maria
                         lastNode = UsersPanel.last;
                         Object obj = (Object) (lastNode.getUserObject());
@@ -1862,8 +1865,8 @@ public class KDialog
                 else if (Mpiro.win.tabbedPane.getSelectedIndex() == 1) { //database tab
                     text = textField.getText();
                     
-                    String checkValid = QueryHashtable.checkNameValidity(text);
-                    int check = QueryHashtable.checkName(text);
+                    String checkValid = Mpiro.win.struc.checkNameValidity(text);
+                    int check = Mpiro.win.struc.checkName(text);
                     
                     // Check if the new name already exists
                     if (check == 1) {
@@ -1934,8 +1937,8 @@ public class KDialog
                     // Check if the new name already exists
                     text = textField.getText();
                     
-                    String checkValid = QueryHashtable.checkNameValidity(text);
-                    int check = QueryLexiconHashtable.checkLexiconName(text);
+                    String checkValid = Mpiro.win.struc.checkNameValidity(text);
+                    int check = Mpiro.win.struc.checkLexiconName(text);
                     
                     if (check == 1) {
                         if (!text.equalsIgnoreCase(LexiconPanel.n.toString())) {
@@ -1957,7 +1960,7 @@ public class KDialog
                     //if all checks pass
                     else if (check == 0) {
                         // Rename the Lexicon entry
-                        QueryLexiconHashtable.renameLexiconEntry(LexiconPanel.n.toString(), text);
+                        Mpiro.win.struc.renameLexiconEntry(LexiconPanel.n.toString(), text);
                         Mpiro.needExportToEmulator = true; //maria
                         Mpiro.needExportToExprimo = true; //maria
                         lastNode = LexiconPanel.n;
@@ -1981,49 +1984,49 @@ public class KDialog
                     } // end if check==0
                 }
                 
-                else if (Mpiro.win.tabbedPane.getSelectedIndex() == 3) {
-                    text = textField.getText();
-                    String oldStory = StoriesTableListener.selectedField;
-                    
-                    String checkName = QueryHashtable.checkNameValidity(text);
-                    Vector storyNamesVector = new Vector();
-                    Enumeration enumer = StoriesTable.m_data.m_vector.elements();
-                    while (enumer.hasMoreElements()) {
-                        Vector rowVector = (Vector) enumer.nextElement();
-                        if (rowVector.elementAt(0) != null) {
-                            String storyName = rowVector.get(0).toString();
-                            storyNamesVector.addElement(storyName);
-                        }
-                    }
-                    
-                    if ( (storyNamesVector.contains(text)) && (! (text.equalsIgnoreCase(oldStory)))) {
-                        new MessageDialog(StoriesTable.storiesTable, MessageDialog.thisStoryNameAlreadyExists_dialog);
-                    } else if (text.indexOf(" ") > 0 || text.startsWith(" ")) {
-                        new MessageDialog(StoriesTable.storiesTable, MessageDialog.noSpacesAreAllowedForAStoryName_dialog);
-                    } else if (text.equalsIgnoreCase("")) {
-                        new MessageDialog(StoriesTable.storiesTable, MessageDialog.pleaseGiveANameForTheStory_dialog);
-                    } else if (!checkName.equalsIgnoreCase("VALID")) {
-                        new MessageDialog(StoriesTable.storiesTable, MessageDialog.theNameContainsTheFollowingInvalidCharacters_dialog + "\n" + checkName);
-                    } else {
-                        StoriesTable.storiesTable.setValueAt(text, StoriesTableListener.rowNo, 0);
-                        ////System.out.println("(oldStory)---- " + oldStory);
-                        ////System.out.println("(newStory)---- " + text);
-                        /* Update mainDBHashtable */
-                        QueryHashtable.renameHashtableStory(StoriesPanel.last.toString(), oldStory, text);
-                        
-                        // Update mainUserModelStoryHashtable
-                        if ( (oldStory.equalsIgnoreCase("New-story")) && (!text.equalsIgnoreCase("New-story"))) {
-                            QueryUsersHashtable.addStoryInUserModelStoryHashtable(text, StoriesPanel.last.toString());
-                        } else if ( (!oldStory.equalsIgnoreCase("New-story")) && (!text.equalsIgnoreCase("New-story"))) {
-                            QueryUsersHashtable.renameStoryInUserModelStoryHashtable(StoriesPanel.last.toString(), oldStory, text);
-                        } else if (text.equalsIgnoreCase("New-story")) {
-                            QueryUsersHashtable.removeStoryInUserModelStoryHashtable(StoriesPanel.last.toString(), oldStory);
-                        } else {
-                            System.out.println("(ALERT)---- " + oldStory + "  ==  " + text);
-                        }
-                    }
-                    dialog.dispose();
-                }
+//                else if (Mpiro.win.tabbedPane.getSelectedIndex() == 3) {
+//                    text = textField.getText();
+//                    String oldStory = StoriesTableListener.selectedField;
+//                    
+//                    String checkName = Mpiro.win.struc.checkNameValidity(text);
+//                    Vector storyNamesVector = new Vector();
+//                    Enumeration enumer = StoriesTable.m_data.m_vector.elements();
+//                    while (enumer.hasMoreElements()) {
+//                        Vector rowVector = (Vector) enumer.nextElement();
+//                        if (rowVector.elementAt(0) != null) {
+//                            String storyName = rowVector.get(0).toString();
+//                            storyNamesVector.addElement(storyName);
+//                        }
+//                    }
+//                    
+//                    if ( (storyNamesVector.contains(text)) && (! (text.equalsIgnoreCase(oldStory)))) {
+//                        new MessageDialog(StoriesTable.storiesTable, MessageDialog.thisStoryNameAlreadyExists_dialog);
+//                    } else if (text.indexOf(" ") > 0 || text.startsWith(" ")) {
+//                        new MessageDialog(StoriesTable.storiesTable, MessageDialog.noSpacesAreAllowedForAStoryName_dialog);
+//                    } else if (text.equalsIgnoreCase("")) {
+//                        new MessageDialog(StoriesTable.storiesTable, MessageDialog.pleaseGiveANameForTheStory_dialog);
+//                    } else if (!checkName.equalsIgnoreCase("VALID")) {
+//                        new MessageDialog(StoriesTable.storiesTable, MessageDialog.theNameContainsTheFollowingInvalidCharacters_dialog + "\n" + checkName);
+//                    } else {
+//                        StoriesTable.storiesTable.setValueAt(text, StoriesTableListener.rowNo, 0);
+//                        ////System.out.println("(oldStory)---- " + oldStory);
+//                        ////System.out.println("(newStory)---- " + text);
+//                        /* Update mainDBHashtable */
+//                        QueryHashtable.renameHashtableStory(StoriesPanel.last.toString(), oldStory, text);
+//                        
+//                        // Update mainUserModelStoryHashtable
+//                        if ( (oldStory.equalsIgnoreCase("New-story")) && (!text.equalsIgnoreCase("New-story"))) {
+//                          //  QueryProfileHashtable.addStoryInUserModelStoryHashtable(text, StoriesPanel.last.toString());
+//                        } else if ( (!oldStory.equalsIgnoreCase("New-story")) && (!text.equalsIgnoreCase("New-story"))) {
+//                           // QueryProfileHashtable.renameStoryInUserModelStoryHashtable(StoriesPanel.last.toString(), oldStory, text);
+//                        } else if (text.equalsIgnoreCase("New-story")) {
+//                            QueryProfileHashtable.removeStoryInUserModelStoryHashtable(StoriesPanel.last.toString(), oldStory);
+//                        } else {
+//                            System.out.println("(ALERT)---- " + oldStory + "  ==  " + text);
+//                        }
+//                    }
+//                    dialog.dispose();
+//                }
                 
             } // if RENAME
         }
@@ -2037,18 +2040,18 @@ public class KDialog
     };
     public void renameEntity(String text) {
         // Rename all oldname instances in mainUserModelHashtable
-        QueryUsersHashtable.renameEntityTypeOrEntityInUserModelHashtable(DataBasePanel.last.toString(), text);
-        QueryUsersHashtable.renameEntityTypeOrEntityInRobotsModelHashtable(DataBasePanel.last.toString(), text);
+        Mpiro.win.struc.renameEntityTypeOrEntityInUserModelHashtable(DataBasePanel.last.toString(), text);
+       // QueryProfileHashtable.renameEntityTypeOrEntityInRobotsModelHashtable(DataBasePanel.last.toString(), text);
         // Rename all oldname instances in mainUserModelStoryHashtable
-        QueryUsersHashtable.renameEntityTypeOrEntityInUserModelStoryHashtable(DataBasePanel.last.toString(), text);
+        //QueryProfileHashtable.renameEntityTypeOrEntityInUserModelStoryHashtable(DataBasePanel.last.toString(), text);
         // Rename all instances of the node name in the domain
-        QueryHashtable.updateExistingFieldsAfterRenamingANode(DataBasePanel.last, text);
+        Mpiro.win.struc.updateExistingFieldsAfterRenamingANode(DataBasePanel.last, text);
         // Remove the old entry
-        QueryHashtable.mainDBHashtable.remove(DataBasePanel.last.toString());
+        Mpiro.win.struc.removeEntityTypeOrEntityFromDB(DataBasePanel.last.toString());
         // Add an entry in mainDBHashtable with new node-name as key
-        QueryHashtable.mainDBHashtable.put(text, currentVector);
+        Mpiro.win.struc.putEntityTypeOrEntityToDB(text, currentVector);
         // Update new node's children tables (Subtype-of: new nodeName)
-        QueryHashtable.updateChildrenTableVectorsWithNewParentName(text);
+        Mpiro.win.struc.updateChildrenTableVectorsWithNewParentName(text);
         Mpiro.needExportToEmulator = true; //maria
         Mpiro.needExportToExprimo = true; //maria
         // Refresh the selected node giving it its new name
@@ -2066,7 +2069,7 @@ public class KDialog
                     if (kkk.toString().startsWith("Generic-")) {
                         String oldname = kkk.toString();
                         kkk.setUserObject(new IconData(DataBasePanel.ICON_GENERIC, "Generic-" + text));
-                        QueryHashtable.renameNodesGenericEntity(oldname, "Generic-" + text);
+                        Mpiro.win.struc.renameNodesGenericEntity(oldname, "Generic-" + text);
                     }
                 }
                 TreePreviews.setDataBaseTable(text);
@@ -2078,14 +2081,14 @@ public class KDialog
                     if (kkk.toString().startsWith("Generic-")) {
                         String oldname = kkk.toString();
                         kkk.setUserObject(new IconData(DataBasePanel.ICON_GENERIC, "Generic-" + text));
-                        QueryHashtable.renameNodesGenericEntity(oldname, "Generic-" + text);
+                        Mpiro.win.struc.renameNodesGenericEntity(oldname, "Generic-" + text);
                     }
                 }
                 TreePreviews.setDataBaseTable(text);
             } else if (ii == DataBasePanel.ICON_GEI || ii == DataBasePanel.ICON_GENERIC) {
                 lastNode.setUserObject(new IconData(DataBasePanel.ICON_GEI, text));
                 // ... and update DataBaseEntityTables' first rows with new name
-                NodeVector newCurrentVector = (NodeVector) QueryHashtable.mainDBHashtable.get(text);
+                NodeVector newCurrentVector = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(text);
                 Vector newTableVector = (Vector) newCurrentVector.elementAt(0);
                 Vector inFV = (Vector) newTableVector.elementAt(0);
                 FieldData inFD = new FieldData("entity-id", text);
@@ -2115,7 +2118,7 @@ public class KDialog
         DefaultMutableTreeNode first = (DefaultMutableTreeNode) DataBasePanel.top.getChildAt(0);
         
         Enumeration lastTypeChildren=first.preorderEnumeration();
-        //Enumeration lastTypeChildren=QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity Type").keys();
+        //Enumeration lastTypeChildren=Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity Type").keys();
         while (lastTypeChildren.hasMoreElements()) {
             elem1=lastTypeChildren.nextElement();
             //System.out.println("QQQQQQQQ"+elem1);
@@ -2128,19 +2131,19 @@ public class KDialog
         }
         //System.out.println(nodeName);
         // Rename all oldname instances in mainUserModelHashtable
-        QueryUsersHashtable.renameEntityTypeOrEntityInUserModelHashtable(nodeName, text);
-        QueryUsersHashtable.renameEntityTypeOrEntityInRobotsModelHashtable(nodeName, text);
+        Mpiro.win.struc.renameEntityTypeOrEntityInUserModelHashtable(nodeName, text);
+       // QueryProfileHashtable.renameEntityTypeOrEntityInRobotsModelHashtable(nodeName, text);
         // Rename all oldname instances in mainUserModelStoryHashtable
-        QueryUsersHashtable.renameEntityTypeOrEntityInUserModelStoryHashtable(nodeName, text);
+      //  QueryProfileHashtable.renameEntityTypeOrEntityInUserModelStoryHashtable(nodeName, text);
         // Rename all instances of the node name in the domain
-        QueryHashtable.updateExistingFieldsAfterRenamingANode(node, text);
+        Mpiro.win.struc.updateExistingFieldsAfterRenamingANode(node, text);
         // Remove the old entry
-        QueryHashtable.mainDBHashtable.remove(nodeName);
+        Mpiro.win.struc.removeEntityTypeOrEntityFromDB(nodeName);
         // Add an entry in mainDBHashtable with new node-name as key
-        // currentVector = (NodeVector) QueryHashtable.mainDBHashtable.get(DataBasePanel.last.toString());
-        QueryHashtable.mainDBHashtable.put(text, currentVector);
+        // currentVector = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(DataBasePanel.last.toString());
+        Mpiro.win.struc.putEntityTypeOrEntityToDB(text, currentVector);
         // Update new node's children tables (Subtype-of: new nodeName)
-        QueryHashtable.updateChildrenTableVectorsWithNewParentName(text,node);
+        Mpiro.win.struc.updateChildrenTableVectorsWithNewParentName(text,node);
         Mpiro.needExportToEmulator = true; //maria
         Mpiro.needExportToExprimo = true; //maria
         // Refresh the selected node giving it its new name
@@ -2158,7 +2161,7 @@ public class KDialog
                     if (kkk.toString().startsWith("Generic-")) {
                         String oldname = kkk.toString();
                         kkk.setUserObject(new IconData(DataBasePanel.ICON_GENERIC, "Generic-" + text));
-                        QueryHashtable.renameNodesGenericEntity(oldname, "Generic-" + text);
+                        Mpiro.win.struc.renameNodesGenericEntity(oldname, "Generic-" + text);
                     }
                 }
                 TreePreviews.setDataBaseTable(text);
@@ -2170,14 +2173,14 @@ public class KDialog
                     if (kkk.toString().startsWith("Generic-")) {
                         String oldname = kkk.toString();
                         kkk.setUserObject(new IconData(DataBasePanel.ICON_GENERIC, "Generic-" + text));
-                        QueryHashtable.renameNodesGenericEntity(oldname, "Generic-" + text);
+                        Mpiro.win.struc.renameNodesGenericEntity(oldname, "Generic-" + text);
                     }
                 }
                 TreePreviews.setDataBaseTable(text);
             } else if (ii == DataBasePanel.ICON_GEI || ii == DataBasePanel.ICON_GENERIC) {
                 node.setUserObject(new IconData(DataBasePanel.ICON_GEI, text));
                 // ... and update DataBaseEntityTables' first rows with new name
-                NodeVector newCurrentVector = (NodeVector) QueryHashtable.mainDBHashtable.get(text);
+                NodeVector newCurrentVector = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(text);
                 Vector newTableVector = (Vector) newCurrentVector.elementAt(0);
                 Vector inFV = (Vector) newTableVector.elementAt(0);
                 FieldData inFD = new FieldData("entity-id", text);
@@ -2211,9 +2214,9 @@ public class KDialog
             if (nextEl.toString().startsWith(nodeWithoutOccur+"_occur")||nextEl.toString().equalsIgnoreCase(nodeWithoutOccur)) {
                 System.out.println("%%%%%%%"+nextEl.toString());
                 
-                //     NodeVector nv1=(NodeVector) QueryHashtable.mainDBHashtable.get(nextEl.toString());
+                //     NodeVector nv1=(NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(nextEl.toString());
                 // Vector noun=(Vector) nv1.elementAt(2);
-                NodeVector nv2=(NodeVector) QueryHashtable.mainDBHashtable.get(nextEl.getParent().toString());
+                NodeVector nv2=(NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(nextEl.getParent().toString());
                 Vector noun=(Vector) nv2.elementAt(2);
                 //Vector nounNew=chboli.getItemsVector();
                 for(int z=0;z<noun.size();z++) {
@@ -2227,7 +2230,7 @@ public class KDialog
     
     
     public static void renameEntity(String text,String nodeName,String parent) {
-        Vector currentVector1=(NodeVector) QueryHashtable.mainDBHashtable.get(nodeName);
+        Vector currentVector1=(NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(nodeName);
         DefaultMutableTreeNode node = null;
         Object elem1=null;
         //  //System.out.println("QQQQQQQQ"+parent);
@@ -2240,7 +2243,7 @@ public class KDialog
         DefaultMutableTreeNode first = (DefaultMutableTreeNode) DataBasePanel.top.getChildAt(0);
         
         Enumeration lastTypeChildren=first.preorderEnumeration();
-        //Enumeration lastTypeChildren=QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity Type").keys();
+        //Enumeration lastTypeChildren=Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity Type").keys();
         while (lastTypeChildren.hasMoreElements()) {
             elem1=lastTypeChildren.nextElement();
             ////System.out.println("QQQQQQQQ"+elem1);
@@ -2255,20 +2258,20 @@ public class KDialog
         //System.out.println(nodeName);
         // Rename all oldname instances in mainUserModelHashtable
         //  if(!nodeName.contains("_occur")){
-        QueryUsersHashtable.renameEntityTypeOrEntityInUserModelHashtable(nodeName, text);
-        QueryUsersHashtable.renameEntityTypeOrEntityInRobotsModelHashtable(nodeName, text);
+        Mpiro.win.struc.renameEntityTypeOrEntityInUserModelHashtable(nodeName, text);
+       // QueryProfileHashtable.renameEntityTypeOrEntityInRobotsModelHashtable(nodeName, text);
         // Rename all oldname instances in mainUserModelStoryHashtable
-        QueryUsersHashtable.renameEntityTypeOrEntityInUserModelStoryHashtable(nodeName, text);
+      //  QueryProfileHashtable.renameEntityTypeOrEntityInUserModelStoryHashtable(nodeName, text);
         // Rename all instances of the node name in the domain
-        QueryHashtable.updateExistingFieldsAfterRenamingANode(node, text);
+        Mpiro.win.struc.updateExistingFieldsAfterRenamingANode(node, text);
         // Remove the old entry
-        QueryHashtable.mainDBHashtable.remove(nodeName);
+        Mpiro.win.struc.removeEntityTypeOrEntityFromDB(nodeName);
         // Add an entry in mainDBHashtable with new node-name as key
-        // currentVector = (NodeVector) QueryHashtable.mainDBHashtable.get(DataBasePanel.last.toString());
+        // currentVector = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(DataBasePanel.last.toString());
         
-        QueryHashtable.mainDBHashtable.put(text, currentVector1);
+        Mpiro.win.struc.putEntityTypeOrEntityToDB(text, (NodeVector)currentVector1);
         // Update new node's children tables (Subtype-of: new nodeName)
-        QueryHashtable.updateChildrenTableVectorsWithNewParentName(text,node);
+        Mpiro.win.struc.updateChildrenTableVectorsWithNewParentName(text,node);
         // }
         //     Enumeration temp=QueryHashtable.mainDBHashtable.keys();
         //  System.out.println("...");
@@ -2289,7 +2292,7 @@ public class KDialog
                     if (kkk.toString().startsWith("Generic-")) {
                         String oldname = kkk.toString();
                         kkk.setUserObject(new IconData(DataBasePanel.ICON_GENERIC, "Generic-" + text));
-                        QueryHashtable.renameNodesGenericEntity(oldname, "Generic-" + text);
+                        Mpiro.win.struc.renameNodesGenericEntity(oldname, "Generic-" + text);
                     }
                 }
                 
@@ -2302,7 +2305,7 @@ public class KDialog
                     if (kkk.toString().startsWith("Generic-")) {
                         String oldname = kkk.toString();
                         kkk.setUserObject(new IconData(DataBasePanel.ICON_GENERIC, "Generic-" + text));
-                        QueryHashtable.renameNodesGenericEntity(oldname, "Generic-" + text);
+                        Mpiro.win.struc.renameNodesGenericEntity(oldname, "Generic-" + text);
                     }
                 }
                 
@@ -2310,7 +2313,7 @@ public class KDialog
             } else if (ii == DataBasePanel.ICON_GEI || ii == DataBasePanel.ICON_GENERIC) {
                 node.setUserObject(new IconData(DataBasePanel.ICON_GEI, text));
                 // ... and update DataBaseEntityTables' first rows with new name
-                NodeVector newCurrentVector = (NodeVector) QueryHashtable.mainDBHashtable.get(text);
+                NodeVector newCurrentVector = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(text);
                 Vector newTableVector = (Vector) newCurrentVector.elementAt(0);
                 Vector inFV = (Vector) newTableVector.elementAt(0);
                 FieldData inFD = new FieldData("entity-id", text);
@@ -2332,7 +2335,7 @@ public class KDialog
     
     
     public static void renameOccur(String text,String nodeName,String parent) {
-//Vector currentVector1=(NodeVector) QueryHashtable.mainDBHashtable.get(nodeName);
+//Vector currentVector1=(NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(nodeName);
         //DefaultMutableTreeNode node = null;
         //Object elem1=null;
         //  //System.out.println("QQQQQQQQ"+parent);
@@ -2345,7 +2348,7 @@ public class KDialog
         //DefaultMutableTreeNode first = (DefaultMutableTreeNode) DataBasePanel.top.getChildAt(0);
         
         // Enumeration lastTypeChildren=first.preorderEnumeration();
-        //Enumeration lastTypeChildren=QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity Type").keys();
+        //Enumeration lastTypeChildren=Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity Type").keys();
         //   while (lastTypeChildren.hasMoreElements())
         //  {
         //    elem1=lastTypeChildren.nextElement();
@@ -2372,7 +2375,7 @@ public class KDialog
                     if (kkk.toString().startsWith("Generic-")) {
                         String oldname = kkk.toString();
                         kkk.setUserObject(new IconData(DataBasePanel.ICON_GENERIC, "Generic-" + text));
-                        QueryHashtable.renameNodesGenericEntity(oldname, "Generic-" + text);
+                        Mpiro.win.struc.renameNodesGenericEntity(oldname, "Generic-" + text);
                     }
                 }
                 
@@ -2385,7 +2388,7 @@ public class KDialog
                     if (kkk.toString().startsWith("Generic-")) {
                         String oldname = kkk.toString();
                         kkk.setUserObject(new IconData(DataBasePanel.ICON_GENERIC, "Generic-" + text));
-                        QueryHashtable.renameNodesGenericEntity(oldname, "Generic-" + text);
+                        Mpiro.win.struc.renameNodesGenericEntity(oldname, "Generic-" + text);
                     }
                 }
                 
@@ -2393,7 +2396,7 @@ public class KDialog
             } else if (ii == DataBasePanel.ICON_GEI || ii == DataBasePanel.ICON_GENERIC) {
                 node.setUserObject(new IconData(DataBasePanel.ICON_GEI, text));
                 // ... and update DataBaseEntityTables' first rows with new name
-                //   NodeVector newCurrentVector = (NodeVector) QueryHashtable.mainDBHashtable.get(text);
+                //   NodeVector newCurrentVector = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(text);
                 //  Vector newTableVector = (Vector) newCurrentVector.elementAt(0);
                 //  Vector inFV = (Vector) newTableVector.elementAt(0);
                 // FieldData inFD = new FieldData("entity-id", text);
@@ -2417,7 +2420,7 @@ public class KDialog
     public void createSubClass(String childName1,String parent) {
         
         String childName=childName1;
-        //  Hashtable allEntityTypes = (Hashtable) QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+        //  Hashtable allEntityTypes = (Hashtable) Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
         Enumeration allTypesNames=DataBasePanel.top.preorderEnumeration();
         int occur=2;
         
@@ -2435,7 +2438,7 @@ public class KDialog
         }
         
         
-        NodeVector nextEntVector2 = (NodeVector) QueryHashtable.mainDBHashtable.get(parent);
+        NodeVector nextEntVector2 = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(parent);
         text=childName+"_occur"+String.valueOf(occur);
         
         
@@ -2444,8 +2447,8 @@ public class KDialog
         // Vector pNounVector1=(Vector) nextEntVector2.elementAt(2);
         //  Vector pNounVector=  (Vector) pNounVector1.clone();
         //System.out.println(text);
-        String checkValid = QueryHashtable.checkNameValidity(text);
-        int check = QueryHashtable.checkName(text);
+        String checkValid = Mpiro.win.struc.checkNameValidity(text);
+        int check = Mpiro.win.struc.checkName(text);
         
         if ( (check == 1) && (text.equalsIgnoreCase("NewEntityType"))) {
             new MessageDialog(dialog, MessageDialog.attentionYouHaveAnUnnamedEntityType_dialog);
@@ -2487,8 +2490,8 @@ public class KDialog
         
         
         
-        NodeVector entityTypeNode = (NodeVector) QueryHashtable.mainDBHashtable.get(parent);
-        NodeVector entityTypeParentNode = (NodeVector) QueryHashtable.mainDBHashtable.get(childName);
+        NodeVector entityTypeNode = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(parent);
+        NodeVector entityTypeParentNode = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(childName);
         
         Vector childDatabaseTableVector =(Vector) entityTypeNode.elementAt(0);
         Vector parentDatabaseTableVector =(Vector) entityTypeParentNode.elementAt(0);
@@ -2517,7 +2520,7 @@ public class KDialog
             //System.out.println("!!@!@!!!!@111!111"+property1.toString()+property1.m_field);
             if (!(parentDatabaseTableVector.contains(property1))){
                 parentDatabaseTableVector.add(g,property1);
-                QueryHashtable.valueRestrictionsHashtable.put(childName+":"+property1.m_field,QueryHashtable.valueRestrictionsHashtable.get(parent+":"+property1.m_field));
+                Mpiro.win.struc.addValueRestriction(childName+":"+property1.m_field,Mpiro.win.struc.getValueRestriction(parent+":"+property1.m_field));
                 addFieldToChildrenTypes(childName, property1, g);
                 addFieldToChildrenEntities(childName, property1);
             }
@@ -2528,7 +2531,7 @@ public class KDialog
     }
     
     private void createSubtypes(String name, String occur){
-        Enumeration children= QueryHashtable.getChildrenVectorFromMainDBHashtable(name,"Entity type").elements();
+        Enumeration children= Mpiro.win.struc.getChildrenVectorFromMainDBHashtable(name,"Entity type").elements();
         while(children.hasMoreElements()){
             String next=children.nextElement().toString();
             DataBasePanel.addEntityTypeOccur(next+"_occur"+occur, name+"_occur"+occur);
@@ -2540,7 +2543,7 @@ public class KDialog
     }
     
     private void createEntities(String name, String occur){
-        Enumeration children= QueryHashtable.getChildrenVectorFromMainDBHashtable(name,"Entity").elements();
+        Enumeration children= Mpiro.win.struc.getChildrenVectorFromMainDBHashtable(name,"Entity").elements();
         while(children.hasMoreElements()){
             String next=children.nextElement().toString();
             DataBasePanel.addEntityOccur(next+"_occur"+occur, name+"_occur"+occur);
@@ -2550,10 +2553,10 @@ public class KDialog
     }
     
     private void addNounToChildrenTypes(String name, Object noun){
-        Enumeration children= QueryHashtable.getChildrenVectorFromMainDBHashtable(name,"Entity type").elements();
+        Enumeration children= Mpiro.win.struc.getChildrenVectorFromMainDBHashtable(name,"Entity type").elements();
         while(children.hasMoreElements()){
             String next=children.nextElement().toString();
-            NodeVector nextChild=(NodeVector) QueryHashtable.mainDBHashtable.get(next);
+            NodeVector nextChild=(NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(next);
             Vector nounVector=(Vector) nextChild.elementAt(2);
             if(!nounVector.contains(noun)){
                 nounVector.add(noun);
@@ -2563,14 +2566,14 @@ public class KDialog
     }
     
     private void addFieldToChildrenTypes(String name, FieldData field, int g){
-        Enumeration children= QueryHashtable.getChildrenVectorFromMainDBHashtable(name,"Entity type").elements();
+        Enumeration children= Mpiro.win.struc.getChildrenVectorFromMainDBHashtable(name,"Entity type").elements();
         while(children.hasMoreElements()){
             String next=children.nextElement().toString();
-            NodeVector nextChild=(NodeVector) QueryHashtable.mainDBHashtable.get(next);
+            NodeVector nextChild=(NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(next);
             Vector dataVector=(Vector) nextChild.elementAt(0);
             if(!dataVector.contains(field)){
                 dataVector.add(g,field);
-                QueryHashtable.valueRestrictionsHashtable.put(next+":"+field.m_field,QueryHashtable.valueRestrictionsHashtable.get(name+":"+field.m_field));
+                Mpiro.win.struc.addValueRestriction(next+":"+field.m_field,Mpiro.win.struc.getValueRestriction(name+":"+field.m_field));
                 addFieldToChildrenTypes(next, field, g);
                 addFieldToChildrenEntities(next, field);
                 
@@ -2579,10 +2582,10 @@ public class KDialog
     }
     
     private void addFieldToChildrenEntities(String name, FieldData field){
-        Enumeration children= QueryHashtable.getChildrenVectorFromMainDBHashtable(name,"Entity").elements();
+        Enumeration children= Mpiro.win.struc.getChildrenVectorFromMainDBHashtable(name,"Entity").elements();
         while(children.hasMoreElements()){
             String next=children.nextElement().toString();
-            NodeVector nextChild=(NodeVector) QueryHashtable.mainDBHashtable.get(next);
+            NodeVector nextChild=(NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(next);
             Vector dataVector=(Vector) nextChild.elementAt(0);
             if(field.m_filler.equalsIgnoreCase("String")){
                 for(int i=1;i<4;i++){
@@ -2596,7 +2599,7 @@ public class KDialog
             //     if(!dataVector.contains(field)){
             //    dataVector.add(g,field);
             //    addFieldToChildrenTypes(next, field, g);
-            //   QueryHashtable.valueRestrictionsHashtable.put(next+":"+field.m_field,QueryHashtable.valueRestrictionsHashtable.get(name+":"+field.m_field));
+            //   Mpiro.win.struc.addValueRestriction(next+":"+field.m_field,Mpiro.win.struc.getValueRestriction(name+":"+field.m_field));
             // }
         }
     }

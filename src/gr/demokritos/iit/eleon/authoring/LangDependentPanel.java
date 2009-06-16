@@ -6,6 +6,7 @@
 
 package gr.demokritos.iit.eleon.authoring;
 
+import gr.demokritos.iit.eleon.struct.QueryHashtable;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -85,7 +86,7 @@ public class LangDependentPanel extends JPanel implements ActionListener
 		allPanel.setPreferredSize(new Dimension(390, 165));//prepei na einai analoga meta pedia
 
 
-		NodeVector nodeVector = (NodeVector)QueryHashtable.mainDBHashtable.get(DataBasePanel.last.toString());
+		NodeVector nodeVector = (NodeVector)Mpiro.win.ontoPipe.getExtension().getEntityTypeOrEntity(DataBasePanel.last.toString());
 		//nodeTable = (Vector)nodeVector.elementAt(0);
 		Vector englishFieldsVector = (Vector)nodeVector.getEnglishFieldsVector();
 		Vector italianFieldsVector = (Vector)nodeVector.getItalianFieldsVector();

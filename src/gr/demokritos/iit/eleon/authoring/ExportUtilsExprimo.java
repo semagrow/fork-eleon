@@ -7,6 +7,9 @@
 package gr.demokritos.iit.eleon.authoring;
 
 
+import gr.demokritos.iit.eleon.struct.QueryHashtable;
+import gr.demokritos.iit.eleon.struct.QueryLexiconHashtable;
+import gr.demokritos.iit.eleon.struct.QueryProfileHashtable;
 import gr.demokritos.iit.eleon.ui.lang.gr.GreekAccentUtils;
 import java.util.*;
 
@@ -181,25 +184,25 @@ public class ExportUtilsExprimo
 	    lexiconDocs.put(lang, lexiconDoc);
 		}
 				    
-		allNounsHashtable = (Hashtable)QueryLexiconHashtable.mainLexiconHashtable.get("Nouns");
-		nounsVector = QueryLexiconHashtable.getNounsVectorFromMainLexiconHashtable();
-		verbsVector = QueryLexiconHashtable.getVerbsVectorFromMainLexiconHashtable();
+		allNounsHashtable = Mpiro.win.struc.getNounsHashtable();
+		nounsVector = Mpiro.win.struc.getNounsVectorFromMainLexiconHashtable();
+		verbsVector = Mpiro.win.struc.getVerbsVectorFromMainLexiconHashtable();
 		
-		allEntityTypesHashtable = QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
-		noRemoveAllEntityTypesHashtable = QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
-		allEntitiesHashtable = QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity+Generic");
-		allNonGenericEntitiesHashtable = QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity");
-		allGenericEntitiesHashtable = QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Generic");
+		allEntityTypesHashtable = Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+		noRemoveAllEntityTypesHashtable = Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+		allEntitiesHashtable = Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity+Generic");
+		allNonGenericEntitiesHashtable = Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity");
+		allGenericEntitiesHashtable = Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Generic");
 		
-		allBasicTypesVector = QueryHashtable.getChildrenVectorFromMainDBHashtable("Basic-entity-types",
+		allBasicTypesVector = Mpiro.win.struc.getChildrenVectorFromMainDBHashtable("Basic-entity-types",
 											  "Entity type",
 											  allEntityTypesHashtable);
-		allUserTypesVector = (Vector)QueryUsersHashtable.getUsersVectorFromMainUsersHashtable();
-		allEntityTypesVector = (Vector)QueryHashtable.getFullPathChildrenVectorFromMainDBHashtable("Basic-entity-types",
+		allUserTypesVector = (Vector)Mpiro.win.struc.getUsersVectorFromMainUsersHashtable();
+		allEntityTypesVector = (Vector)Mpiro.win.struc.getFullPathChildrenVectorFromMainDBHashtable("Basic-entity-types",
 													   "Entity type",
 													   allEntityTypesHashtable,
 													   allEntityTypesHashtable);
-		basicEntityTypesEntry = (NodeVector)QueryHashtable.mainDBHashtable.get("Basic-entity-types");
+		basicEntityTypesEntry = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity("Basic-entity-types");
 	
 		encodings.put("English", "ISO-8859-1");
 		encodings.put("Italian", "ISO-8859-1");
@@ -295,7 +298,7 @@ public class ExportUtilsExprimo
 		while (nounsVectorEnum.hasMoreElements()) 
 		{
 	    String noun = nounsVectorEnum.nextElement().toString();
-	    Hashtable currentNounValues = QueryLexiconHashtable.showValues(noun, "English");
+	    Hashtable currentNounValues = Mpiro.win.struc.showValues(noun, "English");
 	    
 	    // the spelling from "enbasetext"
 	
@@ -322,7 +325,7 @@ public class ExportUtilsExprimo
 
 	    // the concept
 	    
-	    ArrayList nounConceptList = QueryHashtable.arrayListReturnAllEntityTypesContainingThisNoun(noun, (Hashtable)noRemoveAllEntityTypesHashtable.clone());
+	    ArrayList nounConceptList = Mpiro.win.struc.arrayListReturnAllEntityTypesContainingThisNoun(noun, (Hashtable)noRemoveAllEntityTypesHashtable.clone());
 	    
 	    ArrayList nounFeatures = new ArrayList();
 	    nounFeatures.add("noun");
@@ -373,7 +376,7 @@ public class ExportUtilsExprimo
 	    /* Find values for a verb */
 	
 	    String verb = verbsVectorEnum.nextElement().toString();
-	    Hashtable currentVerbValues = QueryLexiconHashtable.showValues(verb, "English");
+	    Hashtable currentVerbValues = Mpiro.win.struc.showValues(verb, "English");
 	
 	    // the spelling from "enbasetext"
 
@@ -515,7 +518,7 @@ public class ExportUtilsExprimo
 		while (nounsVectorEnum.hasMoreElements()) 
 		{
 	    String noun = nounsVectorEnum.nextElement().toString();
-	    Hashtable currentNounValues = QueryLexiconHashtable.showValues(noun, "Italian");
+	    Hashtable currentNounValues = Mpiro.win.struc.showValues(noun, "Italian");
 	    
 	    // the spelling from "itbasetext"
 	    
@@ -553,7 +556,7 @@ public class ExportUtilsExprimo
 	    
 	    // the concept
 	    
-	    ArrayList nounConceptList = QueryHashtable.arrayListReturnAllEntityTypesContainingThisNoun(noun, (Hashtable)noRemoveAllEntityTypesHashtable.clone());
+	    ArrayList nounConceptList = Mpiro.win.struc.arrayListReturnAllEntityTypesContainingThisNoun(noun, (Hashtable)noRemoveAllEntityTypesHashtable.clone());
 	    
 	    ArrayList nounFeatures = new ArrayList();
 	    nounFeatures.add("noun");
@@ -606,7 +609,7 @@ public class ExportUtilsExprimo
 	    /* Find values for a verb */
 
 	    String verb = verbsVectorEnum.nextElement().toString();
-	    Hashtable currentVerbValues = QueryLexiconHashtable.showValues(verb, "Italian");
+	    Hashtable currentVerbValues = Mpiro.win.struc.showValues(verb, "Italian");
 
 	    // the spelling from "itbasetext"
 
@@ -819,7 +822,7 @@ public class ExportUtilsExprimo
 		while (nounsVectorEnum.hasMoreElements()) 
 		{
 			String noun = nounsVectorEnum.nextElement().toString();
-			Hashtable currentNounValues = QueryLexiconHashtable.showValues(noun, "Greek");
+			Hashtable currentNounValues = Mpiro.win.struc.showValues(noun, "Greek");
 			
 			String grbasetext = currentNounValues.get("grbasetext").toString();
 			String grpluraltext = currentNounValues.get("grpluraltext").toString();
@@ -917,7 +920,7 @@ public class ExportUtilsExprimo
 	    }
 	    // the concept
 	    
-	    ArrayList nounConceptList = QueryHashtable.arrayListReturnAllEntityTypesContainingThisNoun(noun, (Hashtable)noRemoveAllEntityTypesHashtable.clone());
+	    ArrayList nounConceptList = Mpiro.win.struc.arrayListReturnAllEntityTypesContainingThisNoun(noun, (Hashtable)noRemoveAllEntityTypesHashtable.clone());
 	    
 	    ArrayList nounFeatures = new ArrayList();
 	    nounFeatures.add("noun");
@@ -1036,7 +1039,7 @@ public class ExportUtilsExprimo
 			/* Find values for a verb */
 			
 			String verb = verbsVectorEnum.nextElement().toString();
-			Hashtable currentVerbValues = QueryLexiconHashtable.showValues(verb, "Greek");
+			Hashtable currentVerbValues = Mpiro.win.struc.showValues(verb, "Greek");
 			
 			// the spelling from "vbasetext"
 			
@@ -1310,7 +1313,7 @@ public class ExportUtilsExprimo
 	    String printBasicEntityType = inUpperModel(basicEntityType, true);
 	    String upperType = "";
 	    
-	    NodeVector nv = (NodeVector)QueryHashtable.mainDBHashtable.get(basicEntityType);
+	    NodeVector nv = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(basicEntityType);
 	    Vector upperVector = (Vector)nv.get(1);
 	    int upperVectorSize = upperVector.size();
 	    if (upperVectorSize != 1) 
@@ -1410,7 +1413,7 @@ public class ExportUtilsExprimo
 	    String entityType = allEntityTypesVectorEnum.nextElement().toString();
 	    String printEntityType = inUpperModel(entityType, true);
 
-	    Vector entityTypeChildrenVector = QueryHashtable.getChildrenVectorFromMainDBHashtable(entityType, "Entity type", noRemoveAllEntityTypesHashtable);
+	    Vector entityTypeChildrenVector = Mpiro.win.struc.getChildrenVectorFromMainDBHashtable(entityType, "Entity type", noRemoveAllEntityTypesHashtable);
 
 	    Iterator documentIter = predicatesDocuments.keySet().iterator();
 	    while (documentIter.hasNext()) 
@@ -1468,7 +1471,7 @@ public class ExportUtilsExprimo
             
 	    String printEntityType = inUpperModel(entitytype, true);
 	    String parent = e.nextElement().toString();
-	    NodeVector env = (NodeVector)QueryHashtable.mainDBHashtable.get(entitytype);	   
+	    NodeVector env = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(entitytype);	   
 	    Vector entitytypeDBTable = (Vector)env.elementAt(0);
             
 	    Hashtable microHashtable = env.getMicroPlanningValues();
@@ -1504,7 +1507,7 @@ public class ExportUtilsExprimo
             
             //if(parent.substring(0,parent.length()-1).endsWith("_occur")) parent=parent.substring(0,parent.length()-7);
             
-            Hashtable all= QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity type");
+            Hashtable all= Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity type");
             Enumeration allkeys=all.keys();
             Enumeration allelements=all.elements();
             while (allkeys.hasMoreElements()){
@@ -1512,7 +1515,7 @@ public class ExportUtilsExprimo
                 String par=allelements.nextElement().toString();
                 if (nextel.equalsIgnoreCase(entitytype)||nextel.startsWith(entitytype+"_occur")){
                     
-            NodeVector pnv = (NodeVector)QueryHashtable.mainDBHashtable.get(par);
+            NodeVector pnv = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(par);
 	    Vector parentDBTable = (Vector)pnv.elementAt(0);
 	    	    Enumeration parentDBTableEnum = parentDBTable.elements();
 	    while (parentDBTableEnum.hasMoreElements()) 
@@ -1552,7 +1555,7 @@ public class ExportUtilsExprimo
 						Element predicatesElement = predicatesDoc.getDocumentElement();
 						
 						ArrayList microplans = new ArrayList();
-                                                Vector property=(Vector) QueryHashtable.propertiesHashtable.get(field);
+                                                Vector property=(Vector) Mpiro.win.struc.getProperty(field);
 			 Hashtable fieldHash=(Hashtable) property.elementAt(10);
                                                 Vector TempVector=(Vector) property.elementAt(11);
 						for (int i = 1; i < 6; i++) 
@@ -1597,7 +1600,7 @@ public class ExportUtilsExprimo
 					    stringElement.appendChild(textChild);
 			    
 			    		sendWarning(language + ": no microplanning expression for field " + field);
-                                        Object obddd=QueryHashtable.mainDBHashtable.get(entitytype);
+                                        Object obddd=Mpiro.win.struc.getEntityTypeOrEntity(entitytype);
                                         System.out.print("fff");
                                         
 						}
@@ -1681,7 +1684,7 @@ public class ExportUtilsExprimo
             
 	    String printEntityType = inUpperModel(entitytype, true);
 	    String parent = e.nextElement().toString();
-	    NodeVector env = (NodeVector)QueryHashtable.mainDBHashtable.get(entitytype);	   
+	    NodeVector env = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(entitytype);	   
 	    Vector entitytypeDBTable = (Vector)env.elementAt(0);
             
 	    Hashtable microHashtable = env.getMicroPlanningValues();
@@ -1782,7 +1785,7 @@ public class ExportUtilsExprimo
 				objectEls.put(language, objectElement);
 	    }
 	    
-	    NodeVector nv = (NodeVector)QueryHashtable.mainDBHashtable.get(basicEntityType);
+	    NodeVector nv = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(basicEntityType);
 	    Vector dbTable = (Vector)nv.getDatabaseTableVector();
 	    Enumeration dbTableEnum = dbTable.elements();
 
@@ -1799,14 +1802,14 @@ public class ExportUtilsExprimo
 	    }
 	    // check all children of the basic-entity-type to export their fields under the basic-entity-type
 	    
-	    Vector childrenEntityTypes = QueryHashtable.getFullPathChildrenVectorFromMainDBHashtable(basicEntityType, "Entity type", noRemoveAllEntityTypesHashtable, noRemoveAllEntityTypesHashtable);
+	    Vector childrenEntityTypes = Mpiro.win.struc.getFullPathChildrenVectorFromMainDBHashtable(basicEntityType, "Entity type", noRemoveAllEntityTypesHashtable, noRemoveAllEntityTypesHashtable);
 	    Enumeration childrenEntityTypesEnum = childrenEntityTypes.elements();
 	    while (childrenEntityTypesEnum.hasMoreElements()) 
 	    {
 				String childEntityType = childrenEntityTypesEnum.nextElement().toString();
 				String parentEntityType = allEntityTypesHashtable.get(childEntityType).toString();
-				NodeVector env = (NodeVector)QueryHashtable.mainDBHashtable.get(childEntityType);
-				NodeVector pnv = (NodeVector)QueryHashtable.mainDBHashtable.get(parentEntityType);
+				NodeVector env = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(childEntityType);
+				NodeVector pnv = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(parentEntityType);
 				Vector entitytypeDBTable = env.getDatabaseTableVector();
 				Vector parentDBTable = pnv.getDatabaseTableVector();
 				
@@ -1863,7 +1866,7 @@ public class ExportUtilsExprimo
 				makeRoleElements(objectElements, GENERIC, T);
 	    }
 
-	    NodeVector nv = (NodeVector)QueryHashtable.mainDBHashtable.get(entity);
+	    NodeVector nv = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(entity);
 	    Vector independentFieldsVector = nv.getIndependentFieldsVector();
 	    Hashtable dependentFieldsVectors = new Hashtable();
 	    dependentFieldsVectors.put("English", nv.getEnglishFieldsVector());
@@ -2116,7 +2119,7 @@ public class ExportUtilsExprimo
 		String returnString = new String();
 		
 		String parent = allEntitiesHashtable.get(entity).toString();
-		NodeVector nv = (NodeVector)QueryHashtable.mainDBHashtable.get(parent);
+		NodeVector nv = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(parent);
 		Vector dbTableVector = (Vector)nv.getDatabaseTableVector();
 		Enumeration dbTableVectorEnum = dbTableVector.elements();
 		while (dbTableVectorEnum.hasMoreElements()) 
@@ -2152,7 +2155,7 @@ public class ExportUtilsExprimo
 			{
 				String basicType = allBasicTypesVectorEnum.nextElement().toString();
 				
-				Vector basicTypeFullPathChildrenEntitiesVector = QueryHashtable.getFullPathChildrenVectorFromMainDBHashtable(basicType, "Entity+Generic", noRemoveAllEntityTypesHashtable, allEntitiesHashtable);
+				Vector basicTypeFullPathChildrenEntitiesVector = Mpiro.win.struc.getFullPathChildrenVectorFromMainDBHashtable(basicType, "Entity+Generic", noRemoveAllEntityTypesHashtable, allEntitiesHashtable);
 				if (basicTypeFullPathChildrenEntitiesVector.contains(entity)) 
 				{
 					returnString = basicType;
@@ -3135,7 +3138,7 @@ public class ExportUtilsExprimo
                                     return;
 		String printEntityType = inUpperModel(entityType, true);
 	
-		Vector entityTypeChildrenVector = QueryHashtable.getChildrenVectorFromMainDBHashtable(entityType, "Entity type", noRemoveAllEntityTypesHashtable);
+		Vector entityTypeChildrenVector = Mpiro.win.struc.getChildrenVectorFromMainDBHashtable(entityType, "Entity type", noRemoveAllEntityTypesHashtable);
 		if (!entityTypeChildrenVector.isEmpty()) 
 		{
 

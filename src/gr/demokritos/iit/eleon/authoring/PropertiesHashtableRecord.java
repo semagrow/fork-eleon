@@ -9,16 +9,25 @@
  */
 
 package gr.demokritos.iit.eleon.authoring;
+import gr.demokritos.iit.eleon.struct.QueryHashtable;
+import gr.demokritos.iit.eleon.struct.QueryProfileHashtable;
 import java.util.*;
 /**
  *
  * @author dbilid
  */
 public class PropertiesHashtableRecord extends Vector{
-    static final long serialVersionUID= 7753555422102686221L;
+  //  static final long serialVersionUID= 7753555422102686221L;
     /** Creates a new instance of propertiesHashtableRecord 
       NEW-USER-FIELD=[ [DOMAIN], [RANGE], [SUB], [SUPER], [EQUIVALENT], INVERSE, functional, inverse-functional, transitive, symmetric, {microplans}, [templateVector] ]
      */
+
+
+    public PropertiesHashtableRecord(Vector v)
+  {
+	  super(v);
+  }
+
     public PropertiesHashtableRecord(boolean dom) {
        // Vector prop=new Vector();
              Vector domain= new Vector();
@@ -39,7 +48,7 @@ public class PropertiesHashtableRecord extends Vector{
                 add(new TemplateVector());
                 Hashtable users=new Hashtable();
                 try{
-                Vector allUserTypesVector = QueryUsersHashtable.getUsersVectorFromMainUsersHashtable();
+                Vector allUserTypesVector = Mpiro.win.struc.getUsersVectorFromMainUsersHashtable();
 		Enumeration allUserTypesVectorEnum = allUserTypesVector.elements();
 		while (allUserTypesVectorEnum.hasMoreElements())
 		{
@@ -64,11 +73,11 @@ public class PropertiesHashtableRecord extends Vector{
                   add(users);
                 }
                
-                add("");
+                add("1");
                 add("false");
                  Hashtable robots=new Hashtable();
                 try{
-                Vector allRobotTypesVector = QueryUsersHashtable.getRobotsVectorFromRobotsHashtable();
+                Vector allRobotTypesVector = Mpiro.win.struc.getRobotsVectorFromUsersHashtable();
 		Enumeration allRobotTypesVectorEnum = allRobotTypesVector.elements();
 		while (allRobotTypesVectorEnum.hasMoreElements())
 		{
@@ -114,7 +123,7 @@ public class PropertiesHashtableRecord extends Vector{
                 add(new Hashtable());
                 add(new TemplateVector());
                 Hashtable users=new Hashtable();
-                Vector allUserTypesVector = QueryUsersHashtable.getUsersVectorFromMainUsersHashtable();
+                Vector allUserTypesVector = Mpiro.win.struc.getUsersVectorFromMainUsersHashtable();
 		Enumeration allUserTypesVectorEnum = allUserTypesVector.elements();
 		while (allUserTypesVectorEnum.hasMoreElements())
 		{
@@ -128,11 +137,11 @@ public class PropertiesHashtableRecord extends Vector{
 		  
 		}
                 add(users);
-                add("");
+                add("1");
                 add("false");
                  Hashtable robots=new Hashtable();
                 //try{
-                Vector allRobotTypesVector = QueryUsersHashtable.getRobotsVectorFromRobotsHashtable();
+                Vector allRobotTypesVector = Mpiro.win.struc.getRobotsVectorFromUsersHashtable();
 		Enumeration allRobotTypesVectorEnum = allRobotTypesVector.elements();
 		while (allRobotTypesVectorEnum.hasMoreElements())
 		{
@@ -180,7 +189,7 @@ public class PropertiesHashtableRecord extends Vector{
                 add(new Hashtable());
                 add(new TemplateVector());
                 Hashtable users=new Hashtable();
-                Vector allUserTypesVector = QueryUsersHashtable.getUsersVectorFromMainUsersHashtable();
+                Vector allUserTypesVector = Mpiro.win.struc.getUsersVectorFromMainUsersHashtable();
 		Enumeration allUserTypesVectorEnum = allUserTypesVector.elements();
 		while (allUserTypesVectorEnum.hasMoreElements())
 		{
@@ -194,11 +203,11 @@ public class PropertiesHashtableRecord extends Vector{
 		  
 		}
                 add(users);
-                add("");
+                add("1");
                 add("false");
                  Hashtable robots=new Hashtable();
                 //try{
-                Vector allRobotTypesVector = QueryUsersHashtable.getRobotsVectorFromRobotsHashtable();
+                Vector allRobotTypesVector = Mpiro.win.struc.getRobotsVectorFromUsersHashtable();
 		Enumeration allRobotTypesVectorEnum = allRobotTypesVector.elements();
 		while (allRobotTypesVectorEnum.hasMoreElements())
 		{
@@ -233,7 +242,7 @@ public class PropertiesHashtableRecord extends Vector{
                 add(new Hashtable());
                 add(new TemplateVector());
                 Hashtable users=new Hashtable();
-                Vector allUserTypesVector = QueryUsersHashtable.getUsersVectorFromMainUsersHashtable();
+                Vector allUserTypesVector = Mpiro.win.struc.getUsersVectorFromMainUsersHashtable();
 		Enumeration allUserTypesVectorEnum = allUserTypesVector.elements();
 		while (allUserTypesVectorEnum.hasMoreElements())
 		{
@@ -247,11 +256,11 @@ public class PropertiesHashtableRecord extends Vector{
 		  
 		}
                 add(users);
-                add("");
+                add("1");
                 add("false");
                  Hashtable robots=new Hashtable();
                 //try{
-                Vector allRobotTypesVector = QueryUsersHashtable.getRobotsVectorFromRobotsHashtable();
+                Vector allRobotTypesVector = Mpiro.win.struc.getRobotsVectorFromUsersHashtable();
 		Enumeration allRobotTypesVectorEnum = allRobotTypesVector.elements();
 		while (allRobotTypesVectorEnum.hasMoreElements())
 		{
@@ -271,7 +280,7 @@ public class PropertiesHashtableRecord extends Vector{
          Vector domain=(Vector)this.elementAt(0);
          if (domain.contains(type))
              return true;
-             Vector supertypes=QueryHashtable.getAllSupertypes(type);
+             Vector supertypes=Mpiro.win.struc.getAllSupertypes(type);
              for(int i=0;i<supertypes.size();i++){
                  if (domain.contains(supertypes.elementAt(i).toString()))
              return true;
@@ -289,5 +298,15 @@ public class PropertiesHashtableRecord extends Vector{
   {
 	  return (Vector)this.elementAt(0);
   }
+
+    void removeFromRange(String oldValue) {
+        Vector range=(Vector)this.elementAt(1);
+        range.remove(oldValue);
+    }
+
+    void addToRange(String svalue) {
+       Vector range=(Vector)this.elementAt(1);
+        range.add(svalue);
+    }
     
 }

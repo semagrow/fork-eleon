@@ -13,7 +13,7 @@ import gr.demokritos.iit.eleon.authoring.LexiconDefaultVector;
 import gr.demokritos.iit.eleon.authoring.LexiconPanel;
 import gr.demokritos.iit.eleon.authoring.LexiconTable;
 import gr.demokritos.iit.eleon.authoring.Mpiro;
-import gr.demokritos.iit.eleon.authoring.QueryLexiconHashtable;
+import gr.demokritos.iit.eleon.struct.QueryLexiconHashtable;
 import gr.demokritos.iit.eleon.ui.KLabel;
 
 import javax.swing.JTable;
@@ -154,11 +154,11 @@ public class ItalianVerbPanel extends JPanel implements ActionListener, FocusLis
 	  //Create the panels that hold the JScrollPane pairs for each table
 	  JPanel verbPanel = new JPanel(new BorderLayout());
 	  //vPanel.setBorder(new LineBorder(new Color(250, 250, 250), 1));
-	  verbPanel.add(BorderLayout.WEST, new JScrollPane(QueryLexiconHashtable.createDefaultTable("verb-italian-1")));
+	  verbPanel.add(BorderLayout.WEST, new JScrollPane(Mpiro.win.struc.createDefaultTable("verb-italian-1")));
 	  verbPanel.add(BorderLayout.EAST, vScroll);
 
     JPanel participlePanel = new JPanel(new BorderLayout());
-    participlePanel.add(BorderLayout.WEST, new JScrollPane(QueryLexiconHashtable.createDefaultTable("verb-italian-2")));
+    participlePanel.add(BorderLayout.WEST, new JScrollPane(Mpiro.win.struc.createDefaultTable("verb-italian-2")));
     participlePanel.add(BorderLayout.EAST, pScroll);
 
 
@@ -300,7 +300,7 @@ public class ItalianVerbPanel extends JPanel implements ActionListener, FocusLis
 		vtrans1.addActionListener(ItalianVerbPanel.this);
 		vtrans2.addActionListener(ItalianVerbPanel.this);
 
-		showValues(QueryLexiconHashtable.showValues(LexiconPanel.parent.toString(), "Italian"));
+		showValues(Mpiro.win.struc.showValues(LexiconPanel.parent.toString(), "Italian"));
 		
 		vPanel.revalidate();
 		vPanel.repaint();
@@ -330,13 +330,13 @@ public class ItalianVerbPanel extends JPanel implements ActionListener, FocusLis
 			{
 				item = "false";
 			}
-			QueryLexiconHashtable.updateLexiconEntryVerb(node, "Italian", label, item);
+			Mpiro.win.struc.updateLexiconEntryVerb(node, "Italian", label, item);
 			Mpiro.needExportToExprimo = true;
 		}
 		if (tf != null) 
 		{
 			item = tf.getText();
-			QueryLexiconHashtable.updateLexiconEntryVerb(node, "Italian", label, item);
+			Mpiro.win.struc.updateLexiconEntryVerb(node, "Italian", label, item);
 			Mpiro.needExportToExprimo = true;
 		}
 		if (rb != null) 
@@ -359,7 +359,7 @@ public class ItalianVerbPanel extends JPanel implements ActionListener, FocusLis
         }
 			}
 			//item = rb.getText();
-			QueryLexiconHashtable.updateLexiconEntryVerb(node, "Italian", label, item);
+			Mpiro.win.struc.updateLexiconEntryVerb(node, "Italian", label, item);
 		 	Mpiro.needExportToExprimo = true;
 		}
 		if (ldv != null) 
@@ -367,7 +367,7 @@ public class ItalianVerbPanel extends JPanel implements ActionListener, FocusLis
 			//System.out.println("Lexicon label: " + label);
 			itemVector = ldv;
 			//System.out.println("Lexicon item : " + itemVector);
-			QueryLexiconHashtable.updateLexiconEntryVerb(node, "Italian", label, itemVector);
+			Mpiro.win.struc.updateLexiconEntryVerb(node, "Italian", label, itemVector);
 			Mpiro.needExportToExprimo = true;
 		}
 

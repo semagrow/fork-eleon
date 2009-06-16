@@ -6,6 +6,8 @@
 
 package gr.demokritos.iit.eleon.authoring;
 
+import gr.demokritos.iit.eleon.struct.QueryHashtable;
+import gr.demokritos.iit.eleon.struct.QueryProfileHashtable;
 import gr.demokritos.iit.eleon.ui.EditFieldProperties;
 import gr.demokritos.iit.eleon.ui.KDialog;
 import gr.demokritos.iit.eleon.ui.MessageDialog;
@@ -376,18 +378,21 @@ public class DataBaseTableListener extends MouseAdapter
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-                            Vector propVector=(Vector) QueryHashtable.propertiesHashtable.get(selectedField);
+                            Vector propVector=(Vector) Mpiro.win.struc.getProperty(selectedField);
                             if (propVector== null){
                                 propVector= new PropertiesHashtableRecord(DataBaseTable.dbTable.getValueAt(rowNo, 1).toString());
-                            QueryHashtable.propertiesHashtable.put(selectedField, propVector);
+                            Mpiro.win.struc.addProperty(selectedField, (PropertiesHashtableRecord) propVector);
                             }
 		EditFieldProperties efp=   new EditFieldProperties(Mpiro.win.getFrames()[0], true, propVector, selectedField);
                 efp.setSize(500,410);
                 efp.setLocation(300,180);
                 efp.setTitle(selectedField);
               //  efp.jCheckBox1.setSelected(true);
-                efp.setVisible(true);                            
+                efp.setVisible(true);
+                 if(Mpiro.win.ontoPipe.isRealTime())
+        Mpiro.win.ontoPipe.rebind();
 			}
+
 		};
                 
                 Action restrictions = new AbstractAction(editRestriction_action)
@@ -396,9 +401,9 @@ public class DataBaseTableListener extends MouseAdapter
 			{
                             String last=DataBasePanel.last.toString();
                             if (last.substring(0,last.length()-1).endsWith("_occur")) last=last.substring(0,last.length()-7);
-                            Vector resVector=(Vector) QueryHashtable.valueRestrictionsHashtable.get(last+":"+selectedField);
+                            Vector resVector=Mpiro.win.struc.getValueRestriction(last+":"+selectedField);
                             if (resVector== null)
-                            QueryHashtable.valueRestrictionsHashtable.put(last+":"+selectedField, new ValueRestriction());
+                            Mpiro.win.struc.addValueRestriction(last+":"+selectedField, new ValueRestriction());
                             
                 RestrictionsDialog efp1;
                 efp1 = new RestrictionsDialog( Mpiro.win.getFrames()[0],true, selectedField );
@@ -407,7 +412,8 @@ public class DataBaseTableListener extends MouseAdapter
                 efp1.setTitle(selectedField);
               //  efp.jCheckBox1.setSelected(true);
                 efp1.setVisible(true);
-                
+                 if(Mpiro.win.ontoPipe.isRealTime())
+        Mpiro.win.ontoPipe.rebind();
 			}
 		};
 
@@ -415,8 +421,8 @@ public class DataBaseTableListener extends MouseAdapter
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				Vector allExistingFieldsVector = (Vector)QueryHashtable.getExistingFieldnamesForEntityTypeAndChildren(DataBasePanel.topA);
-				if (allExistingFieldsVector.contains("New-user-field")) 
+				//Vector allExistingFieldsVector = (Vector)Mpiro.win.struc.getExistingFieldnamesForEntityTypeAndChildren(DataBasePanel.topA);
+				if (Mpiro.win.struc.existsProperty("New-user-field"))
 				{
 					new MessageDialog(DataBaseTable.dbTable, MessageDialog.thereIsAnUnnamedUserField_ETC_dialog);
 					return;
@@ -429,21 +435,23 @@ public class DataBaseTableListener extends MouseAdapter
 					TableModelEvent.INSERT));
 					DataBaseTable.dbTable.revalidate();
 					DataBaseTable.dbTable.repaint();
-					QueryHashtable.createDefaultHashtableField(DataBasePanel.last.toString());
-					QueryUsersHashtable.addFieldInUserModelHashtable("New-user-field", DataBasePanel.last.toString());
-                                        QueryUsersHashtable.addFieldInRobotsModelHashtable("New-user-field", DataBasePanel.last.toString());
+					Mpiro.win.struc.createDefaultHashtableField(DataBasePanel.last.toString());
+					Mpiro.win.struc.addFieldInUserModelHashtable("New-user-field", DataBasePanel.last.toString());
+                                        //QueryProfileHashtable.addFieldInRobotsModelHashtable("New-user-field", DataBasePanel.last.toString());
                                         
 					Mpiro.needExportToExprimo = true;		//maria
-                                        Vector allOccur=QueryHashtable.getAllOccurrences(DataBasePanel.last.toString());
+                                        Vector allOccur=Mpiro.win.struc.getAllOccurrences(DataBasePanel.last.toString());
                                         for(int j=0;j<allOccur.size();j++){
                                             String next=allOccur.elementAt(j).toString();
-                                            QueryHashtable.valueRestrictionsHashtable.put(next+":"+"New-user-field",new ValueRestriction());
-                                            Enumeration children=QueryHashtable.getChildrenBasics(DataBasePanel.getNode(next)).keys();
+                                            Mpiro.win.struc.addValueRestriction(next+":"+"New-user-field",new ValueRestriction());
+                                            Enumeration children=Mpiro.win.struc.getChildrenBasics(DataBasePanel.getNode(next)).keys();
                                             while(children.hasMoreElements()){
-                                                QueryHashtable.valueRestrictionsHashtable.put(children.nextElement().toString()+":"+"New-user-field",new ValueRestriction());
+                                                Mpiro.win.struc.addValueRestriction(children.nextElement().toString()+":"+"New-user-field",new ValueRestriction());
                                             }
                                         }
 				}
+                 if(Mpiro.win.ontoPipe.isRealTime())
+        Mpiro.win.ontoPipe.rebind();
 			}
 		};
 
@@ -451,8 +459,8 @@ public class DataBaseTableListener extends MouseAdapter
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				Vector allExistingFieldsVector = (Vector)QueryHashtable.getExistingFieldnamesForEntityTypeAndChildren(DataBasePanel.topA);
-				if (allExistingFieldsVector.contains("New-user-field")) 
+				
+				if (Mpiro.win.struc.existsProperty("New-user-field"))
 				{
 					new MessageDialog(DataBaseTable.dbTable, MessageDialog.thereIsAnUnnamedUserField_ETC_dialog);
 					return;				
@@ -465,21 +473,24 @@ public class DataBaseTableListener extends MouseAdapter
 					TableModelEvent.INSERT));
 					DataBaseTable.dbTable.revalidate();
 					DataBaseTable.dbTable.repaint();
-					QueryHashtable.createDefaultHashtableField(DataBasePanel.last.toString());
-					QueryUsersHashtable.addFieldInUserModelHashtable("New-user-field", DataBasePanel.last.toString());
-                                        QueryUsersHashtable.addFieldInRobotsModelHashtable("New-user-field", DataBasePanel.last.toString());
+					Mpiro.win.struc.createDefaultHashtableField(DataBasePanel.last.toString());
+					Mpiro.win.struc.addFieldInUserModelHashtable("New-user-field", DataBasePanel.last.toString());
+                                       // QueryProfileHashtable.addFieldInRobotsModelHashtable("New-user-field", DataBasePanel.last.toString());
 					Mpiro.needExportToExprimo = true;		//maria
-                                         Vector allOccur=QueryHashtable.getAllOccurrences(DataBasePanel.last.toString());
+                                         Vector allOccur=Mpiro.win.struc.getAllOccurrences(DataBasePanel.last.toString());
                                         for(int j=0;j<allOccur.size();j++){
                                             String next=allOccur.elementAt(j).toString();
-                                            QueryHashtable.valueRestrictionsHashtable.put(next+":"+"New-user-field",new ValueRestriction());
-                                            Enumeration children=QueryHashtable.getChildrenBasics(DataBasePanel.getNode(next)).keys();
+                                            Mpiro.win.struc.addValueRestriction(next+":"+"New-user-field",new ValueRestriction());
+                                            Enumeration children=Mpiro.win.struc.getChildrenBasics(DataBasePanel.getNode(next)).keys();
                                             while(children.hasMoreElements()){
-                                                QueryHashtable.valueRestrictionsHashtable.put(children.nextElement().toString()+":"+"New-user-field",new ValueRestriction());
+                                                Mpiro.win.struc.addValueRestriction(children.nextElement().toString()+":"+"New-user-field",new ValueRestriction());
                                             }
                                         }
 				}
-			}
+			 if(Mpiro.win.ontoPipe.isRealTime())
+        Mpiro.win.ontoPipe.rebind();
+            }
+
 		};
 
 
@@ -493,6 +504,8 @@ public class DataBaseTableListener extends MouseAdapter
 	      Mpiro.needExportToExprimo = true;		//maria
 	
 	      DataBaseTable.dbTable.repaint();
+           if(Mpiro.win.ontoPipe.isRealTime())
+        Mpiro.win.ontoPipe.rebind();
 	    }
 		};
 
@@ -524,8 +537,8 @@ public class DataBaseTableListener extends MouseAdapter
                 {
                     lastSelected=lastSelected.substring(0, lastSelected.length()-7);
                 }
-                                         for(Object parents:QueryHashtable.getParents(lastSelected)){
-                                             Vector nextParent=(Vector)QueryHashtable.mainDBHashtable.get(parents.toString());
+                                         for(Object parents:Mpiro.win.struc.getParents(lastSelected)){
+                                             Vector nextParent=(Vector)Mpiro.win.struc.getEntityTypeOrEntity(parents.toString());
                                              Vector db=(Vector)nextParent.elementAt(0);
                                              for(int k=8;k<db.size();k++){
                                                  Vector field=(Vector) db.elementAt(k);
@@ -536,7 +549,7 @@ public class DataBaseTableListener extends MouseAdapter
                                              }
                                              
                                          }
-               /*  Hashtable allEntityTypes = (Hashtable) QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+               /*  Hashtable allEntityTypes = (Hashtable) Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
                     Enumeration allTypesNames=allEntityTypes.keys();
                     while(allTypesNames.hasMoreElements())
                     {//DefaultMutableTreeNode nextNode=null;
@@ -564,6 +577,8 @@ public class DataBaseTableListener extends MouseAdapter
 				{
 					return;
 				}
+         if(Mpiro.win.ontoPipe.isRealTime())
+        Mpiro.win.ontoPipe.rebind();
 			}
 		};
 		
@@ -573,7 +588,8 @@ public class DataBaseTableListener extends MouseAdapter
                     {                      
 			KDialog addEntityDialog = new KDialog("test1", "test2", "", new Vector(), false, "FIELD", true);
 		
-                       
+                        if(Mpiro.win.ontoPipe.isRealTime())
+        Mpiro.win.ontoPipe.rebind();
                     }
                 };
                 
@@ -582,9 +598,9 @@ public class DataBaseTableListener extends MouseAdapter
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				Vector allExistingFieldsVector = (Vector)QueryHashtable.getExistingFieldnamesForEntityTypeAndChildren(DataBasePanel.topA);
+				//Vector allExistingFieldsVector = (Vector)Mpiro.win.struc.getExistingFieldnamesForEntityTypeAndChildren(DataBasePanel.topA);
 				//////System.out.println("--" + allExistingFieldsVector.toString());
-				if (allExistingFieldsVector.contains("New-user-field")) 
+				if (Mpiro.win.struc.existsProperty("New-user-field"))
 				{
 					new MessageDialog(DataBaseTable.dbTable, MessageDialog.thereIsAnUnnamedUserField_ETC_dialog);
 					return;
@@ -598,20 +614,22 @@ public class DataBaseTableListener extends MouseAdapter
 					TableModelEvent.INSERT));
 					DataBaseTable.dbTable.revalidate();
 					DataBaseTable.dbTable.repaint();
-					QueryHashtable.createDefaultHashtableField(DataBasePanel.last.toString());
-					QueryUsersHashtable.addFieldInUserModelHashtable("New-user-field", DataBasePanel.last.toString());
-                                        QueryUsersHashtable.addFieldInRobotsModelHashtable("New-user-field", DataBasePanel.last.toString());
+					Mpiro.win.struc.createDefaultHashtableField(DataBasePanel.last.toString());
+					Mpiro.win.struc.addFieldInUserModelHashtable("New-user-field", DataBasePanel.last.toString());
+                                       // QueryProfileHashtable.addFieldInRobotsModelHashtable("New-user-field", DataBasePanel.last.toString());
 					Mpiro.needExportToExprimo = true;		//maria
-                                         Vector allOccur=QueryHashtable.getAllOccurrences(DataBasePanel.last.toString());
+                                         Vector allOccur=Mpiro.win.struc.getAllOccurrences(DataBasePanel.last.toString());
                                         for(int j=0;j<allOccur.size();j++){
                                             String next=allOccur.elementAt(j).toString();
-                                            QueryHashtable.valueRestrictionsHashtable.put(next+":"+"New-user-field",new ValueRestriction());
-                                            Enumeration children=QueryHashtable.getChildrenBasics(DataBasePanel.getNode(next)).keys();
+                                            Mpiro.win.struc.addValueRestriction(next+":"+"New-user-field",new ValueRestriction());
+                                            Enumeration children=Mpiro.win.struc.getChildrenBasics(DataBasePanel.getNode(next)).keys();
                                             while(children.hasMoreElements()){
-                                                QueryHashtable.valueRestrictionsHashtable.put(children.nextElement().toString()+":"+"New-user-field",new ValueRestriction());
+                                                Mpiro.win.struc.addValueRestriction(children.nextElement().toString()+":"+"New-user-field",new ValueRestriction());
                                             }
                                         }
 				}
+                 if(Mpiro.win.ontoPipe.isRealTime())
+        Mpiro.win.ontoPipe.rebind();
 			}
 		};
 

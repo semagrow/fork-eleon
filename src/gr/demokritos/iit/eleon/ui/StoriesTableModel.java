@@ -9,14 +9,11 @@ package gr.demokritos.iit.eleon.ui;
 import gr.demokritos.iit.eleon.authoring.FieldData;
 import gr.demokritos.iit.eleon.authoring.LangResources;
 import gr.demokritos.iit.eleon.authoring.Mpiro;
-import gr.demokritos.iit.eleon.authoring.QueryHashtable;
+import gr.demokritos.iit.eleon.struct.QueryHashtable;
 
 import java.util.*;
 import javax.swing.*;
 import javax.swing.table.*;
-import javax.swing.tree.*;
-import javax.swing.JTree;
-
 
 public class StoriesTableModel extends AbstractTableModel
 {
@@ -201,13 +198,13 @@ public class StoriesTableModel extends AbstractTableModel
 
   public void insert(int row) 
   {
-		QueryHashtable.insertRowInStoriesTable(row);
+		Mpiro.win.struc.insertRowInStoriesTable(row);
   }
 
   public boolean delete(int row) 
   {
 		String story = (String)getValueAt(row, 0);
-		return (boolean)QueryHashtable.removeRowFromStoriesTable(story, row);
+		return (boolean)Mpiro.win.struc.removeRowFromStoriesTable(story, row);
   }
 
 }

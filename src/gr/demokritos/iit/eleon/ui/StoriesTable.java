@@ -74,16 +74,3 @@ public class StoriesTable extends JScrollPane
 
 } // class
 
-class StoriesColumnData
-{
-  public String  m_title;
-  int m_width;
-  int m_alignment;
-
-  public StoriesColumnData(String title, int width, int alignment) 
-  {
-	  m_title = title;
-	  m_width = width;
-	  m_alignment = alignment;
-  }
-}

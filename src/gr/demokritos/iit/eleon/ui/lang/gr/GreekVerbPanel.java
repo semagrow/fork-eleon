@@ -13,7 +13,7 @@ import gr.demokritos.iit.eleon.authoring.LexiconDefaultVector;
 import gr.demokritos.iit.eleon.authoring.LexiconPanel;
 import gr.demokritos.iit.eleon.authoring.LexiconTable;
 import gr.demokritos.iit.eleon.authoring.Mpiro;
-import gr.demokritos.iit.eleon.authoring.QueryLexiconHashtable;
+import gr.demokritos.iit.eleon.struct.QueryLexiconHashtable;
 import gr.demokritos.iit.eleon.ui.ELEONWindow;
 import gr.demokritos.iit.eleon.ui.KButton;
 import gr.demokritos.iit.eleon.ui.KLabel;
@@ -167,11 +167,11 @@ public class GreekVerbPanel extends JPanel implements ActionListener, FocusListe
 		//Create the panels that hold the JScrollPane pairs for each table
 		JPanel verbPanel = new JPanel(new BorderLayout());
 		//vPanel.setBorder(new LineBorder(new Color(250, 250, 250), 1));
-		verbPanel.add(BorderLayout.WEST, new JScrollPane(QueryLexiconHashtable.createDefaultTable("verb-greek-1")));
+		verbPanel.add(BorderLayout.WEST, new JScrollPane(Mpiro.win.struc.createDefaultTable("verb-greek-1")));
 		verbPanel.add(BorderLayout.EAST, vScroll);
 		
 		JPanel participlePanel = new JPanel(new BorderLayout());
-		participlePanel.add(BorderLayout.WEST, new JScrollPane(QueryLexiconHashtable.createDefaultTable("verb-greek-2")));
+		participlePanel.add(BorderLayout.WEST, new JScrollPane(Mpiro.win.struc.createDefaultTable("verb-greek-2")));
 		participlePanel.add(BorderLayout.EAST, pScroll);
 		
 		// The Greek verb view
@@ -418,7 +418,7 @@ public class GreekVerbPanel extends JPanel implements ActionListener, FocusListe
 		//System.out.println(QueryLexiconHashtable.currentValues);
 		
 		//System.out.println("Current Values: " + QueryHashtable.currentValues);
-		showValues(QueryLexiconHashtable.showValues(LexiconPanel.parent.toString(), "Greek"));
+		showValues(Mpiro.win.struc.showValues(LexiconPanel.parent.toString(), "Greek"));
 		
 		//System.out.println(QueryLexiconHashtable.currentValues);
 		vPanel.revalidate();
@@ -450,13 +450,13 @@ public class GreekVerbPanel extends JPanel implements ActionListener, FocusListe
 				item = "false";
 			}
 			// Update the Hashtable
-			QueryLexiconHashtable.updateLexiconEntryVerb(node, "Greek", label, item);
+			Mpiro.win.struc.updateLexiconEntryVerb(node, "Greek", label, item);
 		}
 		if (tf != null) 
 		{
 			item = tf.getText();
 			// Update the Hashtable
-			QueryLexiconHashtable.updateLexiconEntryVerb(node, "Greek", label, item);
+			Mpiro.win.struc.updateLexiconEntryVerb(node, "Greek", label, item);
 			Mpiro.needExportToExprimo = true;
 		}
 		if (rb != null) 
@@ -481,7 +481,7 @@ public class GreekVerbPanel extends JPanel implements ActionListener, FocusListe
 			//item = rb.getText();
 			
 			// Update the Hashtable
-			QueryLexiconHashtable.updateLexiconEntryVerb(node, "Greek", label, item);
+			Mpiro.win.struc.updateLexiconEntryVerb(node, "Greek", label, item);
 			Mpiro.needExportToExprimo = true;
 		}
 		if (ldv != null) 
@@ -490,7 +490,7 @@ public class GreekVerbPanel extends JPanel implements ActionListener, FocusListe
 			itemVector = ldv;
 			//System.out.println("Lexicon item : " + itemVector);
 			// Update the Hashtable
-			QueryLexiconHashtable.updateLexiconEntryVerb(node, "Greek", label, itemVector);
+			Mpiro.win.struc.updateLexiconEntryVerb(node, "Greek", label, itemVector);
 			Mpiro.needExportToExprimo = true;
 		}
 

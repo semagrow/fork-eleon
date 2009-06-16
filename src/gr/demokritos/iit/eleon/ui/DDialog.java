@@ -14,7 +14,7 @@ import gr.demokritos.iit.eleon.authoring.LangResources;
 import gr.demokritos.iit.eleon.authoring.ListData;
 import gr.demokritos.iit.eleon.authoring.Mpiro;
 import gr.demokritos.iit.eleon.authoring.NodeVector;
-import gr.demokritos.iit.eleon.authoring.QueryHashtable;
+import gr.demokritos.iit.eleon.struct.QueryHashtable;
 
 import java.awt.*;
 import java.io.*;
@@ -118,7 +118,7 @@ public class DDialog
 
         // Get the nodeVector of the selected 
         if(!type.equals("ROBOT"))
-        currentVector = (NodeVector) QueryHashtable.mainDBHashtable.get(DataBasePanel.last.toString());
+        currentVector = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(DataBasePanel.last.toString());
 
         // The dialog and its components from top to bottom (1-6)
         dialog = new JDialog(Mpiro.win.getFrames()[0], frameTitle, true);
@@ -423,7 +423,7 @@ public class DDialog
                 if(type == "DOMAIN"){
                      Vector selectedDomains = (Vector) chboli.getItemsVector();
                     
-                    QueryHashtable.setPropertyDomain(selectedDomains, textFieldLabel.getText());
+                    Mpiro.win.struc.setPropertyDomain(selectedDomains, textFieldLabel.getText());
                     
                   
                            dialog.dispose();
@@ -433,7 +433,7 @@ public class DDialog
                 if(type == "SUBPROPERTIES"){
                     Vector selectedSubProp = (Vector) chboli.getItemsVector();
                     
-                    QueryHashtable.addSubpropertiesToProperty(selectedSubProp, textFieldLabel.getText());
+                    Mpiro.win.struc.addSubpropertiesToProperty(selectedSubProp, textFieldLabel.getText());
                     
                   
                            dialog.dispose();
@@ -442,7 +442,7 @@ public class DDialog
                 
                 if(type == "SUPERPROPERTIES"){
                     Vector selectedSuperProp = (Vector) chboli.getItemsVector();
-                    QueryHashtable.addSuperpropertiesToProperty(selectedSuperProp, textFieldLabel.getText());
+                    Mpiro.win.struc.addSuperpropertiesToProperty(selectedSuperProp, textFieldLabel.getText());
                             
                     dialog.dispose();
                     return;
@@ -454,7 +454,7 @@ public class DDialog
                //     Hashtable test=QueryHashtable.mainDBHashtable;
                     Vector selectedItems = (Vector) chboli.getItemsVector();
                     
-                    QueryHashtable.setPropertyFillers(selectedItems, setVector);
+                    Mpiro.win.struc.setPropertyFillers(selectedItems, setVector);
                                         
                     
                   //  Mpiro.needExportToExprimo = true; //maria
@@ -484,7 +484,7 @@ public class DDialog
                     for(int h=1;h<selectedItems.size();h++){
                         value+=" "+selectedItems.elementAt(h).toString();
                     }
-                    QueryHashtable.addChangesInRobotCharValuesHashtable(selectedItems);
+                    Mpiro.win.struc.addChangesInRobotCharValuesHashtable(selectedItems);
                //     System.out.print(String.valueOf(AnnotationPropertiesPanel.jTable1.getEditingRow()));
                     RobotCharacteristicsPanel.jTable1.setValueAt(value, RobotCharacteristicsPanel.jTable1.getSelectedRow(),1);
                 //AnnotationPropertiesPanel.jTable1   
@@ -798,7 +798,7 @@ public class DDialog
 
             StringBuffer date = new StringBuffer();
 
-            String checkValid = QueryHashtable.checkNameValidityNumberOnly(dateField.getText());
+            String checkValid = Mpiro.win.struc.checkNameValidityNumberOnly(dateField.getText());
             //check for empty dateField
             if ( (dateField.getText().length() == 0) || (dateField.getText().length() > 12)) {
                 new MessageDialog(dialog, MessageDialog.pleaseGiveADate_ETC_dialog);

@@ -6,8 +6,8 @@
 
 package gr.demokritos.iit.eleon.ui;
 
+import gr.demokritos.iit.eleon.authoring.Mpiro;
 import gr.demokritos.iit.eleon.authoring.OwlExport;
-import gr.demokritos.iit.eleon.authoring.QueryOptionsHashtable;
 
 import java.io.File;
 import jracer.*;
@@ -29,7 +29,7 @@ public class Reasoner extends javax.swing.JDialog {
             tempOwlFile=new File(tempOwlFile.getAbsolutePath().substring(0,tempOwlFile.getAbsolutePath().indexOf(":\\"))+":\\\\OwlTemp.owl");
         }
         try{
-        OwlExport.ExportToOwlFile(tempOwlFile,"RDF/XML-ABBREV", QueryOptionsHashtable.getBaseURI(),tempOwlFile.getName(),false);
+        OwlExport.ExportToOwlFile(tempOwlFile,"RDF/XML-ABBREV", Mpiro.win.struc.getBaseURI(),tempOwlFile.getName(),false);
         }
         catch(java.lang.Exception e){}
         

@@ -8,7 +8,7 @@ package gr.demokritos.iit.eleon.ui;
 
 import gr.demokritos.iit.eleon.authoring.DataBasePanel;
 import gr.demokritos.iit.eleon.authoring.Mpiro;
-import gr.demokritos.iit.eleon.authoring.QueryHashtable;
+import gr.demokritos.iit.eleon.struct.QueryHashtable;
 
 import java.util.Vector;
 
@@ -26,17 +26,17 @@ public class Equivalent extends java.awt.Dialog {
                        this.setLocation(350,250);
         equivalent=equivalent1;
         if(DataBasePanel.last!=null){
-        nameWithoutOccur=QueryHashtable.nameWithoutOccur(DataBasePanel.last.toString());
+        nameWithoutOccur=Mpiro.win.struc.nameWithoutOccur(DataBasePanel.last.toString());
         if(equivalent){
-        if(!QueryHashtable.equivalentClassesHashtable.containsKey(nameWithoutOccur)){
+        if(!Mpiro.win.struc.existsEquivalentClasses(nameWithoutOccur)){
                 
         //Vector  eq=new Vector();
        
-            QueryHashtable.equivalentClassesHashtable.put(nameWithoutOccur, new Vector());}
-        eq=((Vector) QueryHashtable.equivalentClassesHashtable.get(nameWithoutOccur));
+            Mpiro.win.struc.addEquivalentClasses(nameWithoutOccur, new Vector());}
+        eq=((Vector) Mpiro.win.struc.getEquivalentClasses(nameWithoutOccur));
          //eq=(Vector)eq1.clone();
-            //eq=(Vector) QueryHashtable.equivalentClassesHashtable.get(QueryHashtable.nameWithoutOccur(DataBasePanel.last.toString()));
- /*       Vector parents=QueryHashtable.getParents(nameWithoutOccur);    
+            //eq=(Vector) Mpiro.win.struc.getEquivalentClasses(Mpiro.win.struc.nameWithoutOccur(DataBasePanel.last.toString()));
+ /*       Vector parents=Mpiro.win.struc.getParents(nameWithoutOccur);    
         for(int i=0;i<parents.size();i++){
             eq.add("(Class:"+parents.elementAt(i).toString()+")");
             }
@@ -77,15 +77,15 @@ public class Equivalent extends java.awt.Dialog {
         
     }
         else{
-            if(!QueryHashtable.superClassesHashtable.containsKey(nameWithoutOccur)){
+            if(!Mpiro.win.struc.existsSuperClasses(nameWithoutOccur)){
                 
         //Vector  eq=new Vector();
        
-            QueryHashtable.superClassesHashtable.put(nameWithoutOccur, new Vector());}
-     eq1   =(Vector) QueryHashtable.superClassesHashtable.get(nameWithoutOccur);
+            Mpiro.win.struc.addSuperClasses(nameWithoutOccur, new Vector());}
+     eq1   =(Vector) Mpiro.win.struc.getSuperClasses(nameWithoutOccur);
          eq=(Vector)eq1.clone();
-            //eq=(Vector) QueryHashtable.equivalentClassesHashtable.get(QueryHashtable.nameWithoutOccur(DataBasePanel.last.toString()));
-                    Vector parents=QueryHashtable.getParents(nameWithoutOccur);    
+            //eq=(Vector) Mpiro.win.struc.getEquivalentClasses(Mpiro.win.struc.nameWithoutOccur(DataBasePanel.last.toString()));
+                    Vector parents=Mpiro.win.struc.getParents(nameWithoutOccur);    
         for(int i=0;i<parents.size();i++){
             eq.add("(Class:"+parents.elementAt(i).toString()+")");
         }
@@ -98,9 +98,9 @@ public class Equivalent extends java.awt.Dialog {
                     for(int j=0;j<v.size();j++){
                         QueryHashtable.valueRestrictionsHashtable.remove(v.elementAt(j).toString());
                     }*/
-        for(Object key: QueryHashtable.valueRestrictionsHashtable.keySet()){
+        for(Object key: Mpiro.win.struc.getRestrictionsKeySet()){
             if(key.toString().contains(":")&& key.toString().split(":")[0].equalsIgnoreCase(nameWithoutOccur)){
-                Vector restrictions=(Vector)QueryHashtable.valueRestrictionsHashtable.get(key);
+                Vector restrictions=Mpiro.win.struc.getValueRestriction(key.toString());
                 String property=key.toString().split(":")[1];
                 Vector allValuesFrom=(Vector) restrictions.elementAt(0);
                 for(int h=0;h<allValuesFrom.size();h++){
@@ -205,15 +205,15 @@ public class Equivalent extends java.awt.Dialog {
         //Vector eq=new Vector();
         
       //  if(equivalent)
-       // eq=(Vector) QueryHashtable.equivalentClassesHashtable.get(nameWithoutOccur);
+       // eq=(Vector) Mpiro.win.struc.getEquivalentClasses(nameWithoutOccur);
         //else
-         //           eq=(Vector) QueryHashtable.superClassesHashtable.get(nameWithoutOccur);
+         //           eq=(Vector) Mpiro.win.struc.getSuperClasses(nameWithoutOccur);
         if(!equivalent){
         if(isNamedClass(jList1.getSelectedValue().toString())){
             DataBasePanel.deleteOccur(nameWithoutOccur, jList1.getSelectedValue().toString().replace("(Class:","").replace(")",""));
         }
         else if(isSimpleRestriction(jList1.getSelectedValue().toString())){
-            Vector restrictions=(Vector)QueryHashtable.valueRestrictionsHashtable.get(nameWithoutOccur+":"+jList1.getSelectedValue().toString().split("Property:")[1].split(" ")[0]);
+            Vector restrictions=Mpiro.win.struc.getValueRestriction(nameWithoutOccur+":"+jList1.getSelectedValue().toString().split("Property:")[1].split(" ")[0]);
            // String temp=jList1.getSelectedValue().toString();
                 if(jList1.getSelectedValue().toString().contains("\u2200")){
                     String value= jList1.getSelectedValue().toString().split("Class:")[1].replace("))","");
@@ -228,7 +228,7 @@ public class Equivalent extends java.awt.Dialog {
                     ((Vector)restrictions.elementAt(2)).remove(value);
                 }}
             else if(isCardRestriction(jList1.getSelectedValue().toString())){
-            Vector restrictions=(Vector)QueryHashtable.valueRestrictionsHashtable.get(nameWithoutOccur+":"+jList1.getSelectedValue().toString().split("Property:")[1].replace(")",""));
+            Vector restrictions=Mpiro.win.struc.getValueRestriction(nameWithoutOccur+":"+jList1.getSelectedValue().toString().split("Property:")[1].replace(")",""));
             
                 if(jList1.getSelectedValue().toString().contains("\u2264")){
                     String value= jList1.getSelectedValue().toString().split(" ")[1].replace("\u2264","");
@@ -260,10 +260,10 @@ public class Equivalent extends java.awt.Dialog {
               //  efp.jCheckBox1.setSelected(true);
                 complexDialog.setVisible(true);
    /*             if(equivalent){
-       Vector eq1=((Vector) QueryHashtable.equivalentClassesHashtable.get(nameWithoutOccur));
+       Vector eq1=((Vector) Mpiro.win.struc.getEquivalentClasses(nameWithoutOccur));
         Vector eq=(Vector)eq1.clone();
-            //eq=(Vector) QueryHashtable.equivalentClassesHashtable.get(QueryHashtable.nameWithoutOccur(DataBasePanel.last.toString()));
-        Vector parents=QueryHashtable.getParents(nameWithoutOccur);    
+            //eq=(Vector) Mpiro.win.struc.getEquivalentClasses(Mpiro.win.struc.nameWithoutOccur(DataBasePanel.last.toString()));
+        Vector parents=Mpiro.win.struc.getParents(nameWithoutOccur);    
         for(int i=0;i<parents.size();i++){
             eq.add("(Class:"+parents.elementAt(i).toString()+")");
             }
@@ -298,16 +298,16 @@ public class Equivalent extends java.awt.Dialog {
             }
                 
             }
-            //eq=(Vector) QueryHashtable.equivalentClassesHashtable.get(QueryHashtable.nameWithoutOccur(DataBasePanel.last.toString()));
+            //eq=(Vector) Mpiro.win.struc.getEquivalentClasses(Mpiro.win.struc.nameWithoutOccur(DataBasePanel.last.toString()));
             
         
                 jList1.setListData(eq);
                 }
                 else{
-                    Vector eq1=(Vector) QueryHashtable.superClassesHashtable.get(nameWithoutOccur);
+                    Vector eq1=(Vector) Mpiro.win.struc.getSuperClasses(nameWithoutOccur);
         Vector eq=(Vector)eq1.clone();
-            //eq=(Vector) QueryHashtable.equivalentClassesHashtable.get(QueryHashtable.nameWithoutOccur(DataBasePanel.last.toString()));
-                    Vector parents=QueryHashtable.getParents(nameWithoutOccur);    
+            //eq=(Vector) Mpiro.win.struc.getEquivalentClasses(Mpiro.win.struc.nameWithoutOccur(DataBasePanel.last.toString()));
+                    Vector parents=Mpiro.win.struc.getParents(nameWithoutOccur);    
         for(int i=0;i<parents.size();i++){
             eq.add("(Class:"+parents.elementAt(i).toString()+")");
             }
@@ -342,7 +342,7 @@ public class Equivalent extends java.awt.Dialog {
                 
             }
         }
-            //eq=(Vector) QueryHashtable.equivalentClassesHashtable.get(QueryHashtable.nameWithoutOccur(DataBasePanel.last.toString()));
+            //eq=(Vector) Mpiro.win.struc.getEquivalentClasses(Mpiro.win.struc.nameWithoutOccur(DataBasePanel.last.toString()));
             
         
                 jList1.setListData(eq);
@@ -353,9 +353,9 @@ public class Equivalent extends java.awt.Dialog {
         
     /*    Vector eq=new Vector();
         
-        eq=(Vector) QueryHashtable.equivalentClassesHashtable.get(nameWithoutOccur);
+        eq=(Vector) Mpiro.win.struc.getEquivalentClasses(nameWithoutOccur);
         else
-                    eq=(Vector) QueryHashtable.superClassesHashtable.get(nameWithoutOccur);*/
+                    eq=(Vector) Mpiro.win.struc.getSuperClasses(nameWithoutOccur);*/
      //   if(!equivalent){
        // String[] s=splitIntersections(exp).split("A-N-D");
         
@@ -375,30 +375,30 @@ public class Equivalent extends java.awt.Dialog {
         if(isSimpleRestriction(exp)){
             if(exp.charAt(1)=='\u2200'){ 
                 String property=exp.substring(12).split(" ")[0];
-                QueryHashtable.addRestriction("allValuesFrom", property, nameWithoutOccur, exp.split("Class:")[1].replace(")",""));
+                Mpiro.win.struc.addRestriction("allValuesFrom", property, nameWithoutOccur, exp.split("Class:")[1].replace(")",""));
             }
             if(exp.charAt(1)=='\u2203'){ 
                 String property=exp.substring(12).split(" ")[0];
-                QueryHashtable.addRestriction("someValuesFrom", property, nameWithoutOccur, exp.split("Class:")[1].replace(")",""));
+                Mpiro.win.struc.addRestriction("someValuesFrom", property, nameWithoutOccur, exp.split("Class:")[1].replace(")",""));
             }
             if(exp.charAt(1)=='\u220D'){ 
                 String property=exp.substring(12).split(" ")[0];
-                QueryHashtable.addRestriction("hasValue", property, nameWithoutOccur, exp.split(" ")[1].replace(")",""));
+                Mpiro.win.struc.addRestriction("hasValue", property, nameWithoutOccur, exp.split(" ")[1].replace(")",""));
             }
         }
         else
              if(isCardRestriction(exp)){
             if(exp.charAt(2)=='\u2264'){ 
                 String property=exp.split("Property:")[1].replace(")","");
-                QueryHashtable.addRestriction("maxCardinality", property, nameWithoutOccur, exp.split(" ")[1].replace("\u2264",""));
+                Mpiro.win.struc.addRestriction("maxCardinality", property, nameWithoutOccur, exp.split(" ")[1].replace("\u2264",""));
             }
             if(exp.charAt(2)=='\u2265'){ 
                 String property=exp.split("Property:")[1].replace(")","");
-                QueryHashtable.addRestriction("minCardinality", property, nameWithoutOccur, exp.split(" ")[1].replace("\u2265",""));
+                Mpiro.win.struc.addRestriction("minCardinality", property, nameWithoutOccur, exp.split(" ")[1].replace("\u2265",""));
             }
             if(exp.charAt(2)=='='){ 
                 String property=exp.split("Property:")[1].replace(")","");
-                QueryHashtable.addRestriction("cardinality", property, nameWithoutOccur, exp.split(" ")[1].replace("=",""));
+                Mpiro.win.struc.addRestriction("cardinality", property, nameWithoutOccur, exp.split(" ")[1].replace("=",""));
             }
         }
         else

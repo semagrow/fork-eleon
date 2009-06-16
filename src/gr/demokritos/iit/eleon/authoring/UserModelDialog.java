@@ -6,6 +6,8 @@
 
 package gr.demokritos.iit.eleon.authoring;
 
+import gr.demokritos.iit.eleon.struct.QueryHashtable;
+import gr.demokritos.iit.eleon.struct.QueryProfileHashtable;
 import gr.demokritos.iit.eleon.ui.KButton;
 import gr.demokritos.iit.eleon.ui.KComboBox;
 import gr.demokritos.iit.eleon.ui.KLabel;
@@ -59,7 +61,7 @@ public class UserModelDialog extends JFrame implements ActionListener
 		type = dialogType;
 		frameTitle = new String(editing_text+ "(" + field + ")");		//maria
 		// Get the nodeVector of the selected node
-		currentVector = (NodeVector)QueryHashtable.mainDBHashtable.get(DataBasePanel.last.toString());
+		currentVector = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(DataBasePanel.last.toString());
 		
 		// The dialog and its components from top to bottom (1-6)
 		dialog = new JDialog(this, frameTitle, true);
@@ -81,7 +83,7 @@ public class UserModelDialog extends JFrame implements ActionListener
 		c.weightx = 1.0; c.weighty = 0.0;
 		c.gridy = 0;
 
-		Vector allUserTypesVector = QueryUsersHashtable.getUsersVectorFromMainUsersHashtable();
+		Vector allUserTypesVector = Mpiro.win.struc.getUsersVectorFromMainUsersHashtable();
 		Enumeration allUserTypesVectorEnum = allUserTypesVector.elements();
 		while (allUserTypesVectorEnum.hasMoreElements())
 		{
@@ -141,7 +143,7 @@ public class UserModelDialog extends JFrame implements ActionListener
             else{
                 
             }*/
-		Hashtable allFieldsAndContainingEntityTypesHashtable = QueryHashtable.returnAllFieldsAndContainingEntityTypes();
+		Hashtable allFieldsAndContainingEntityTypesHashtable = Mpiro.win.struc.returnAllFieldsAndContainingEntityTypes();
 		
 		// this is used for the "type" and "called" (name/shortname) fields
 		// that are not present in entity-types. They are entity only
@@ -153,13 +155,13 @@ public class UserModelDialog extends JFrame implements ActionListener
 			defaultVector.addElement("1");
 			return defaultVector;
 		}
-		String containingEntityType = QueryHashtable.getParents(QueryHashtable.nameWithoutOccur(DataBasePanel.last.toString())).elementAt(0).toString();
+		String containingEntityType = Mpiro.win.struc.getParents(Mpiro.win.struc.nameWithoutOccur(DataBasePanel.last.toString())).elementAt(0).toString();
                 if(!containingEntityType.equalsIgnoreCase("Basic-entity-types")){
-		Vector parentValuesVector = QueryUsersHashtable.getUserModelValuesVector(currentField, containingEntityType, usertype);
+		Vector parentValuesVector = Mpiro.win.struc.getUserModelValuesVector(currentField, containingEntityType, usertype);
 		return parentValuesVector;
                 }
                 else{
-                   return (Vector) (((Hashtable)((Vector)QueryHashtable.propertiesHashtable.get(currentField)).elementAt(12)).get(usertype));
+                   return (Vector) (((Hashtable)((Vector)Mpiro.win.struc.getProperty(currentField)).elementAt(12)).get(usertype));
                 }
 	}
 
@@ -201,9 +203,9 @@ public class UserModelDialog extends JFrame implements ActionListener
 Vector valuesVector=new Vector();
                         if(type.equalsIgnoreCase("Property")){
                             
-             valuesVector=QueryHashtable.getPropertyImportanceAndRepetitions(field,username);
+             valuesVector=Mpiro.win.struc.getPropertyImportanceAndRepetitions(field,username);
                         }else
-			valuesVector = QueryUsersHashtable.getUserModelValuesVector(field, node, username);
+			valuesVector = Mpiro.win.struc.getUserModelValuesVector(field, node, username);
 			/*!!!*/  //intCB.setSelectedItem((String)valuesVector.elementAt(0));
 			impCB.setSelectedItem((String)valuesVector.elementAt(1));
 			repCB.setSelectedItem((String)valuesVector.elementAt(2));
@@ -226,13 +228,13 @@ Vector valuesVector=new Vector();
                     if(type.equalsIgnoreCase("Property")){
                         if (e.getSource() == impCB)
 			{
-				QueryHashtable.updateImportanceOrRepetitionsForProperty(field, username, 1, impCB.getSelectedItem().toString());
-				QueryHashtable.updateImportanceOrRepetitionsForProperty(field, username, 0, impCB.getSelectedItem().toString());
+				Mpiro.win.struc.updateImportanceOrRepetitionsForProperty(field, username, 1, impCB.getSelectedItem().toString());
+				Mpiro.win.struc.updateImportanceOrRepetitionsForProperty(field, username, 0, impCB.getSelectedItem().toString());
 				Mpiro.needExportToEmulator=true;			//maria
 			}
 			else if (e.getSource() == repCB)
 			{
-				QueryHashtable.updateImportanceOrRepetitionsForProperty(field, username, 2, repCB.getSelectedItem().toString());
+				Mpiro.win.struc.updateImportanceOrRepetitionsForProperty(field, username, 2, repCB.getSelectedItem().toString());
 				Mpiro.needExportToEmulator=true;			//maria
 			}
                     }
@@ -240,17 +242,17 @@ Vector valuesVector=new Vector();
                     else{
                     /* if (e.getSource() == intCB)
 			{
-			QueryUsersHashtable.updateUserModelParameters(field, node, username, 0, intCB.getSelectedItem().toString());
+			Mpiro.win.struc.updateUserOrRobotModelParameters(field, node, username, 0, intCB.getSelectedItem().toString());
 			}
 			else*/ if (e.getSource() == impCB)
 			{
-				QueryUsersHashtable.updateUserModelParameters(field, node, username, 1, impCB.getSelectedItem().toString());
-				QueryUsersHashtable.updateUserModelParameters(field, node, username, 0, impCB.getSelectedItem().toString());
+				Mpiro.win.struc.updateUserOrRobotModelParameters(field, node, username, 1, impCB.getSelectedItem().toString());
+				Mpiro.win.struc.updateUserOrRobotModelParameters(field, node, username, 0, impCB.getSelectedItem().toString());
 				Mpiro.needExportToEmulator=true;			//maria
 			}
 			else if (e.getSource() == repCB)
 			{
-				QueryUsersHashtable.updateUserModelParameters(field, node, username, 2, repCB.getSelectedItem().toString());
+				Mpiro.win.struc.updateUserOrRobotModelParameters(field, node, username, 2, repCB.getSelectedItem().toString());
 				Mpiro.needExportToEmulator=true;			//maria
 			}
                     }

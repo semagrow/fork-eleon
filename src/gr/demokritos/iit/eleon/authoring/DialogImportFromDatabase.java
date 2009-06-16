@@ -9,6 +9,7 @@
 
 package gr.demokritos.iit.eleon.authoring;
 
+import gr.demokritos.iit.eleon.struct.QueryHashtable;
 import java.awt.*;
 import javax.swing.*;
 import java.sql.*;
@@ -440,7 +441,7 @@ public class DialogImportFromDatabase
 
         //get selected entity fields
         String entityName = DataBasePanel.last.toString();
-        NodeVector nodeVector = (NodeVector) QueryHashtable.mainDBHashtable.get(entityName);
+        NodeVector nodeVector = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(entityName);
         Vector databaseTableVector = nodeVector.getDatabaseTableVector();
 
         englishLabelVector.add(new JLabel("title"));
@@ -689,7 +690,7 @@ public class DialogImportFromDatabase
                 }
 
                 //if entity with the this name already exists
-                if (QueryHashtable.mainDBHashtable.get(entityName) != null) {
+                if (Mpiro.win.struc.getEntityTypeOrEntity(entityName) != null) {
                     if (JOptionPane.showConfirmDialog(this, "An Entity with name " + entityName + " already exists./n Replace it?", "Information",
                         JOptionPane.ERROR_MESSAGE + JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION)
                         continue;
@@ -697,10 +698,10 @@ public class DialogImportFromDatabase
                 else
                     DataBasePanel.addEntity(entityName,"");
 
-                entityNode = (NodeVector) QueryHashtable.mainDBHashtable.get(entityName);
+                entityNode = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(entityName);
 
                 String parentName = ( (FieldData) entityNode.getIndependentFieldsVector().get(1)).m_filler;
-                NodeVector parentNodeVector = (NodeVector) QueryHashtable.mainDBHashtable.get(parentName);
+                NodeVector parentNodeVector = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(parentName);
                 //independent values
                 for (int j = 0; j < independentComboVector.size(); j++) {
                     FieldData fieldData = (FieldData) entityNode.getIndependentFieldsVector().get(j + 3);
@@ -722,7 +723,7 @@ public class DialogImportFromDatabase
                             //if entity in the filler does not exist create one
                             if (! (parentField.m_filler.equals("String") || parentField.m_filler.equals("Number") || parentField.m_filler.equals("Date") ||
                                    parentField.m_filler.equals("Dimension"))) {
-                                if (QueryHashtable.mainDBHashtable.get(fieldData.m_filler) == null) {
+                                if (Mpiro.win.struc.getEntityTypeOrEntity(fieldData.m_filler) == null) {
                                     findTreeNode(parentField.m_filler);
                                     DataBasePanel.addEntity(fieldData.m_filler,"");
                                     findTreeNode(parentName);

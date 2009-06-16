@@ -6,6 +6,7 @@
 
 package gr.demokritos.iit.eleon.authoring;
 
+import gr.demokritos.iit.eleon.struct.QueryHashtable;
 import gr.demokritos.iit.eleon.ui.DDialog;
 import gr.demokritos.iit.eleon.ui.NumberCombo;
 
@@ -59,7 +60,7 @@ public class DataBaseEntityTableListener extends MouseAdapter {
            
             String entityFieldName = DataBaseEntityTable.dbeTable.getValueAt(rowNo, 0).toString();
             DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode)DataBasePanel.last.getParent();
-            NodeVector parentNodeVector = (NodeVector)QueryHashtable.mainDBHashtable.get(QueryHashtable.nameWithoutOccur(parentNode.toString()));
+            NodeVector parentNodeVector = (NodeVector)Mpiro.win.ontoPipe.getExtension().getEntityTypeOrEntity(Mpiro.win.ontoPipe.getExtension().nameWithoutOccur(parentNode.toString()));
             Vector parentTableVector = (Vector)parentNodeVector.get(0); // DataBaseTable
             
             String parentFieldName = new String();
@@ -127,7 +128,7 @@ public class DataBaseEntityTableListener extends MouseAdapter {
             
             String entityFieldName = DataBaseEntityTable.dbeTable.getValueAt(rowNo, 0).toString();
             DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode)DataBasePanel.last.getParent();
-            NodeVector parentNodeVector = (NodeVector)QueryHashtable.mainDBHashtable.get(QueryHashtable.nameWithoutOccur(parentNode.toString()));
+            NodeVector parentNodeVector = (NodeVector)Mpiro.win.ontoPipe.getExtension().getEntityTypeOrEntity(Mpiro.win.ontoPipe.getExtension().nameWithoutOccur(parentNode.toString()));
             Vector parentTableVector = (Vector)parentNodeVector.get(0); // DataBaseTable
             
              
@@ -172,7 +173,7 @@ public class DataBaseEntityTableListener extends MouseAdapter {
                 //    if(entityFieldName.equalsIgnoreCase("number")) break;
                   //  FieldData pfd = (FieldData)parentTableVector.elementAt(m);
                     //DefaultMutableTreeNode fieldNameNode = (DefaultMutableTreeNode)pfd.elementAt(0);/////
-               domains=     ((Vector)((Vector)QueryHashtable.propertiesHashtable.get(entityFieldName)).elementAt(1));
+               domains=     ((Vector)((Vector)Mpiro.win.ontoPipe.getExtension().getProperty(entityFieldName)).elementAt(1));
                //     parentFillerType=parentFieldName = pfd.elementAt(0).toString();
                   //  parentFillerType =  pfd.elementAt(1).toString();
               //      parentSetValued = pfd.elementAt(2).toString();
@@ -180,9 +181,9 @@ public class DataBaseEntityTableListener extends MouseAdapter {
                     
                     // check if selected field is Date, Dimension, or Set
                 //    if (entityFieldName.equalsIgnoreCase(parentFieldName)) {
-                        if (!QueryHashtable.valueRestrictionsHashtable.containsKey(parentNode.toString()+":"+entityFieldName))
-                            QueryHashtable.valueRestrictionsHashtable.put(parentNode.toString()+":"+entityFieldName, new ValueRestriction());
-                        Vector allValues=(Vector) QueryHashtable.valueRestrictionsHashtable.get(parentNode.toString()+":"+entityFieldName);
+                        if (!Mpiro.win.ontoPipe.getExtension().existsValueRestriction(parentNode.toString()+":"+entityFieldName))
+                            Mpiro.win.ontoPipe.getExtension().addValueRestriction(parentNode.toString()+":"+entityFieldName, new ValueRestriction());
+                        Vector allValues=Mpiro.win.ontoPipe.getExtension().getValueRestriction(parentNode.toString()+":"+entityFieldName);
                         //   String cardinalities= allValues.elementAt(3).toString().equalsIgnoreCase("")?"-1 ": allValues.elementAt(3).toString()+" ";
                         // cardinalities= allValues.elementAt(4).toString().equalsIgnoreCase("")?cardinalities+"-1 ":cardinalities+allValues.elementAt(4).toString()+" ";
                         //cardinalities= allValues.elementAt(5).toString().equalsIgnoreCase("")?cardinalities+"-1 ":cardinalities+allValues.elementAt(5).toString()+" ";
@@ -209,7 +210,7 @@ public class DataBaseEntityTableListener extends MouseAdapter {
                                 }
                             }
                             
-                            Hashtable childrenEntitiesHashtable = (Hashtable)QueryHashtable.getChildrenEntities(targetNode);
+                            Hashtable childrenEntitiesHashtable = (Hashtable)Mpiro.win.ontoPipe.getExtension().getChildrenEntities(targetNode);
                            // Vector vec = new Vector();
                             Enumeration ena = childrenEntitiesHashtable.keys();
                             
@@ -217,13 +218,13 @@ public class DataBaseEntityTableListener extends MouseAdapter {
                                 String next=ena.nextElement().toString();
                                 boolean contains=false;
                                 for(int k=0;k<vec.size();k++){
-                                    if(vec.elementAt(k).toString().equalsIgnoreCase(QueryHashtable.nameWithoutOccur(next)))
+                                    if(vec.elementAt(k).toString().equalsIgnoreCase(Mpiro.win.ontoPipe.getExtension().nameWithoutOccur(next)))
                                     {contains=true;
                                     break;
                                 }}
                                 if(!contains)
-                                    vec.addElement(QueryHashtable.nameWithoutOccur(next));
-                                //vec.addElement(new ListData(QueryHashtable.nameWithoutOccur(next)));
+                                    vec.addElement(Mpiro.win.ontoPipe.getExtension().nameWithoutOccur(next));
+                                //vec.addElement(new ListData(Mpiro.win.ontoPipe.getExtension().nameWithoutOccur(next)));
                             }
                             
                            }
@@ -238,19 +239,19 @@ public class DataBaseEntityTableListener extends MouseAdapter {
                                     listDataVec,
                                     cellContent,
                                     "SET");
-                         /*   Hashtable childrenEntitiesHashtable = (Hashtable)QueryHashtable.getChildrenEntities(targetNode);
+                         /*   Hashtable childrenEntitiesHashtable = (Hashtable)Mpiro.win.ontoPipe.getExtension().getChildrenEntities(targetNode);
                             Vector vec = new Vector();
                             Enumeration ena = childrenEntitiesHashtable.keys();
                             while (ena.hasMoreElements()) {
                                 String next=ena.nextElement().toString();
                                 boolean contains=false;
                                 for(int i=0;i<vec.size();i++){
-                                    if(((ListData)vec.elementAt(i)).m_name.equalsIgnoreCase(QueryHashtable.nameWithoutOccur(next)))
+                                    if(((ListData)vec.elementAt(i)).m_name.equalsIgnoreCase(Mpiro.win.ontoPipe.getExtension().nameWithoutOccur(next)))
                                     {contains=true;
                                     break;
                                 }}
                                 if(!contains)
-                                vec.addElement(new ListData(QueryHashtable.nameWithoutOccur(next)));
+                                vec.addElement(new ListData(Mpiro.win.ontoPipe.getExtension().nameWithoutOccur(next)));
                             }
                             
                             DDialog dDialog = new DDialog(LangResources.getString(Mpiro.selectedLocale, "selectMultipleEntities_text"),
@@ -333,6 +334,9 @@ public class DataBaseEntityTableListener extends MouseAdapter {
                 }
             }
             }
+        if(Mpiro.win.ontoPipe.isRealTime())
+            Mpiro.win.ontoPipe.rebind();
+
     } //mousePressed
     
     

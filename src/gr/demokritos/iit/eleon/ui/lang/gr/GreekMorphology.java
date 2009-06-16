@@ -11,7 +11,7 @@
 
 package gr.demokritos.iit.eleon.ui.lang.gr;
 
-import gr.demokritos.iit.eleon.authoring.QueryLexiconHashtable;
+import gr.demokritos.iit.eleon.authoring.Mpiro;
 import java.util.*;
 
 
@@ -30,7 +30,7 @@ public class GreekMorphology
 		String spellingString;
 		try
 		{
-			Hashtable currentNounValues = QueryLexiconHashtable.showValues(noun, "Greek");
+			Hashtable currentNounValues = Mpiro.win.struc.showValues(noun, "Greek");
 			String grgenderValue = currentNounValues.get("grgender").toString();
 			if (grgenderValue.equalsIgnoreCase("Neuter"))
 			{
@@ -91,7 +91,7 @@ public class GreekMorphology
 		featuresVector.add("noun");
 		featuresVector.add("common-noun");
 		
-		Hashtable currentNounValues = QueryLexiconHashtable.showValues(noun, language);
+		Hashtable currentNounValues = Mpiro.win.struc.showValues(noun, language);
 		
 		String grbasetext = currentNounValues.get("grbasetext").toString();
 		String grpluraltext = currentNounValues.get("grpluraltext").toString();
@@ -196,7 +196,7 @@ public class GreekMorphology
 	{
 	  Vector featuresVector = new Vector();
 
-		Hashtable currentVerbValues = QueryLexiconHashtable.showValues(verb, "Greek");
+		Hashtable currentVerbValues = Mpiro.win.struc.showValues(verb, "Greek");
 		// the spelling from "vbasetext"
 		String vbasetext = currentVerbValues.get("vbasetext").toString();
 		String vbasetext2 = currentVerbValues.get("vbasetext2").toString();

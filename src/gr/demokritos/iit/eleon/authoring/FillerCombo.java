@@ -6,6 +6,7 @@
 
 package gr.demokritos.iit.eleon.authoring;
 
+import gr.demokritos.iit.eleon.struct.QueryHashtable;
 import gr.demokritos.iit.eleon.ui.KComboBox;
 
 import java.util.*;
@@ -61,7 +62,7 @@ class FillerCombo extends KComboBox
 		Vector toBeSortedVector = new Vector();
 		toBeSortedVector.addElement("");
 		
-		Hashtable h = QueryHashtable.getChildrenEntities(node);
+		Hashtable h = Mpiro.win.struc.getChildrenEntities(node);
 		           //System.out.println("(FillerCombo)---check use (node)- " + node);
 		String item;
 		

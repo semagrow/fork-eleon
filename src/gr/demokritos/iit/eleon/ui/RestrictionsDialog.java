@@ -7,6 +7,7 @@
 package gr.demokritos.iit.eleon.ui;
 
 import gr.demokritos.iit.eleon.authoring.*;
+import gr.demokritos.iit.eleon.struct.QueryHashtable;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -48,10 +49,10 @@ public class RestrictionsDialog extends java.awt.Dialog {
         
         String last= DataBasePanel.last.toString();
         if (last.substring(0,last.length()-1).endsWith("_occur")) last= last.substring(0,last.length()-7);
-        allRestrictions=(Vector) QueryHashtable.valueRestrictionsHashtable.get(last+":"+property);
+        allRestrictions= Mpiro.win.struc.getValueRestriction(last+":"+property);
         if (allRestrictions==null){
-            QueryHashtable.valueRestrictionsHashtable.put(last+":"+property,new ValueRestriction());
-            allRestrictions=(Vector) QueryHashtable.valueRestrictionsHashtable.get(last+":"+property);
+            Mpiro.win.struc.addValueRestriction(last+":"+property,new ValueRestriction());
+            allRestrictions= Mpiro.win.struc.getValueRestriction(last+":"+property);
         }
         allValuesRestriction=(Vector) allRestrictions.elementAt(0);
         someValuesRestriction=(Vector) allRestrictions.elementAt(1);
@@ -182,7 +183,7 @@ public class RestrictionsDialog extends java.awt.Dialog {
             allTypes.add("Dimension");
             combo2=new JComboBox(allTypes);
         }else{
-         Vector r=QuickSort.quickSort(0,QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type").size()-1,new Vector(QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type").keySet()));
+         Vector r=QuickSort.quickSort(0,Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type").size()-1,new Vector(Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type").keySet()));
 //Vector allTypes=new Vector();
                   for(int h=0;h<r.size();h++){
                     //while(allEntities1.hasMoreElements()){
@@ -289,8 +290,8 @@ public class RestrictionsDialog extends java.awt.Dialog {
             combo2.addItem("Dimension");
         }}else{
                 if (comboBox.getSelectedItem().toString().equalsIgnoreCase("has value")){
-                   // Enumeration allEntities1= QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity").keys();
-                    Vector r=QuickSort.quickSort(0,QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity").size()-1,new Vector(QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity").keySet()));
+                   // Enumeration allEntities1= Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity").keys();
+                    Vector r=QuickSort.quickSort(0,Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity").size()-1,new Vector(Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity").keySet()));
 //Vector allEntities=new Vector();
                     for(int h=0;h<r.size();h++){
                     //while(allEntities1.hasMoreElements()){
@@ -301,8 +302,8 @@ public class RestrictionsDialog extends java.awt.Dialog {
                 }
                 
                 else{
-                   // Enumeration allTypes1= QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type").keys();
-                                        Vector r=QuickSort.quickSort(0,QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type").size()-1,new Vector(QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type").keySet()));
+                   // Enumeration allTypes1= Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type").keys();
+                                        Vector r=QuickSort.quickSort(0,Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type").size()-1,new Vector(Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type").keySet()));
 //Vector allTypes=new Vector();
                   for(int h=0;h<r.size();h++){
                     //while(allEntities1.hasMoreElements()){
@@ -441,42 +442,13 @@ public class RestrictionsDialog extends java.awt.Dialog {
          jButton4.setEnabled(false);
     }//GEN-LAST:event_jButton4ActionPerformed
     
-    private boolean checkExistingEntities(String node){
-        Hashtable childrenEntities= QueryHashtable.getChildrenEntities(DataBasePanel.getNode(node));
-        Enumeration keys=childrenEntities.keys();
-        Enumeration values=childrenEntities.elements();
-        while(keys.hasMoreElements()){
-            String nextKey=keys.nextElement().toString();
-            Vector nextEntity=(Vector) values.nextElement();
-            nextEntity=(Vector) nextEntity.elementAt(0);
-            nextEntity=(Vector) nextEntity.elementAt(0);
-            for(int y=3;y<nextEntity.size();y++){
-                Vector nextField=(Vector) nextEntity.elementAt(y);
-                if (nextField.elementAt(0).toString().equals(propName)){
-                    int j=0;
-                    try{
-                        j=Integer.parseInt(value.getText());
-        } catch(NumberFormatException n){
-            MessageDialog error=new MessageDialog(this, "INVALLID NUMBER");
-            System.out.println("INVALLID NUMBER");
-            return false;
-        }
-                    if(!nextField.elementAt(1).toString().startsWith("Select ")&&nextField.elementAt(1).toString().split(" ").length>j){
-                        MessageDialog error=new MessageDialog(this, "Error. "+nextKey+" has more than "+value.getText()+" values for "+propName);
-                        System.out.println("ERROR: "+nextKey);
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
-    }
+   
     
     
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
 // TODO add your handling code here:
-        Vector property=(Vector) QueryHashtable.propertiesHashtable.get(propName);
-        if(property.elementAt(8).toString().equalsIgnoreCase("true"))
+    /*     Vector property=(Vector) Mpiro.win.struc.getProperty(propName);
+       if(property.elementAt(8).toString().equalsIgnoreCase("true"))
         {
              Object[] optionButtons = {
                 "ok",
@@ -491,9 +463,9 @@ public class RestrictionsDialog extends java.awt.Dialog {
                     optionButtons,
                     optionButtons[0]);
             
-        }else{
+        }else{*/
         if (comboBoxCard.getSelectedItem().toString().equalsIgnoreCase("Max Cardinality")){
-            if(maxCard.contains(value.getText())||!checkExistingEntities(DataBasePanel.last.toString()))
+            if(maxCard.contains(value.getText()))
                 return;
             addCardRestriction(DataBasePanel.last.toString(),"3");
         
@@ -506,7 +478,7 @@ public class RestrictionsDialog extends java.awt.Dialog {
         //            someValuesRestriction.add(combo2.getSelectedItem().toString());}
         
         if (comboBoxCard.getSelectedItem().toString().equalsIgnoreCase("Cardinality")){
-            if(Card.contains(value.getText())||!checkExistingEntities(DataBasePanel.last.toString()))
+            if(Card.contains(value.getText()))
                 return;
             if(Card.size()>0){
                 MessageDialog error=new MessageDialog(this, "there is already a cardinality restriction");
@@ -517,7 +489,7 @@ public class RestrictionsDialog extends java.awt.Dialog {
           // checkExistingEntities(DataBasePanel.last.toString());
             
         }
-        }
+       // }
         obCard =new Object [maxCard.size()+minCard.size()+Card.size()][2];
         for(int i=0;i<maxCard.size();i++){
             obCard[i][0]="Max Cardinality";
@@ -563,11 +535,11 @@ jButton4.setEnabled(false);
             MessageDialog error=new MessageDialog(this, "INVALLID NUMBER");
             return;
         }
-        name=QueryHashtable.nameWithoutOccur(name);
-        Vector temp=(Vector) QueryHashtable.valueRestrictionsHashtable.get(name+":"+propName);
+        name=Mpiro.win.struc.nameWithoutOccur(name);
+        Vector temp= Mpiro.win.struc.getValueRestriction(name+":"+propName);
         if(temp==null){
-            QueryHashtable.valueRestrictionsHashtable.put(name+":"+propName, new ValueRestriction());
-            temp=(Vector) QueryHashtable.valueRestrictionsHashtable.get(name+":"+propName);
+            Mpiro.win.struc.addValueRestriction(name+":"+propName, new ValueRestriction());
+            temp=Mpiro.win.struc.getValueRestriction(name+":"+propName);
         }
         if(type.equalsIgnoreCase("3"))
             temp=(Vector) temp.elementAt(3);
@@ -581,7 +553,7 @@ jButton4.setEnabled(false);
             temp.add((value.getText()));
             
             //   if(!types.elementAt(i).toString().contains("_occur")){
-            Vector children=QueryHashtable.getChildrenVectorFromMainDBHashtable(name,"entity type");
+            Vector children=Mpiro.win.struc.getChildrenVectorFromMainDBHashtable(name,"entity type");
             for(int y=0;y<children.size();y++){
                 addCardRestriction(children.elementAt(y).toString(),type);
             }
@@ -592,19 +564,19 @@ jButton4.setEnabled(false);
  /*   private void setCardinalities(String name, String cardValue, String cardType){
          Vector types=QueryHashtable.getAllOccurrences(name);
         for(int i=0;i<types.size();i++){
-            Vector parents =QueryHashtable.getParents(types.elementAt(i).toString());
+            Vector parents =Mpiro.win.struc.getParents(types.elementAt(i).toString());
             Vector temp=new ValueRestriction();
              for(int j=0;j<parents.size();j++){
-                if(QueryHashtable.valueRestrictionsHashtable.get(parents.elementAt(i).toString()+":"+propName)!=null)
+                if(Mpiro.win.struc.valueRestrictionsHashtable.getRestriction(parents.elementAt(i).toString()+":"+propName)!=null)
                 {
-                    temp=(Vector) QueryHashtable.valueRestrictionsHashtable.get(parents.elementAt(i).toString()+":"+propName);
+                    temp=(Vector) Mpiro.win.struc.valueRestrictionsHashtable.getRestriction(parents.elementAt(i).toString()+":"+propName);
                     break;
                 }
              }
-            Vector cur=(Vector) QueryHashtable.valueRestrictionsHashtable.get(types.elementAt(i).toString()+":"+propName);
+            Vector cur=(Vector) Mpiro.win.struc.valueRestrictionsHashtable.getRestriction(types.elementAt(i).toString()+":"+propName);
             if(cur==null){
-                QueryHashtable.valueRestrictionsHashtable.put(types.elementAt(i).toString()+":"+propName,new ValueRestriction());
-                cur=(Vector) QueryHashtable.valueRestrictionsHashtable.get(types.elementAt(i).toString()+":"+propName);
+                Mpiro.win.struc.addValueRestriction(types.elementAt(i).toString()+":"+propName,new ValueRestriction());
+                cur=(Vector) Mpiro.win.struc.valueRestrictionsHashtable.getRestriction(types.elementAt(i).toString()+":"+propName);
             }
             if(cardType.equalsIgnoreCase("maxCard")){
                 if(!temp.elementAt(3).toString().equalsIgnoreCase("")){
@@ -624,7 +596,7 @@ jButton4.setEnabled(false);
                     return;
                 cur.setElementAt(cardValue,5);}
             if(!types.elementAt(i).toString().contains("_occur")){
-                Vector children=QueryHashtable.getChildrenVectorFromMainDBHashtable(types.elementAt(i).toString(),"entity type");
+                Vector children=Mpiro.win.struc.getChildrenVectorFromMainDBHashtable(types.elementAt(i).toString(),"entity type");
                 for(int y=0;y<children.size();y++){
                     setCardinalities(children.elementAt(y).toString(), cardValue, cardType);
                     }
@@ -633,13 +605,13 @@ jButton4.setEnabled(false);
     }
   */
     private void deleteCardRestriction(String name, String type){
-        name=QueryHashtable.nameWithoutOccur(name);
+        name=Mpiro.win.struc.nameWithoutOccur(name);
         
-        Vector parents=QueryHashtable.getParents(name);
+        Vector parents=Mpiro.win.struc.getParents(name);
         for(int m=0;m<parents.size();m++){
             String parent=parents.elementAt(m).toString();
             if(parent.contains("_occur")) continue;
-            Vector parentVector=(Vector) QueryHashtable.valueRestrictionsHashtable.get(parent+":"+propName);
+            Vector parentVector=Mpiro.win.struc.getValueRestriction(parent+":"+propName);
             if(parentVector!=null){
                 if(type.equalsIgnoreCase("3")){
                     parentVector=(Vector)parentVector.elementAt(3);
@@ -656,8 +628,8 @@ jButton4.setEnabled(false);
                     return;
                 }}}
         
-        Vector temp=(Vector) QueryHashtable.valueRestrictionsHashtable.get(name+":"+propName);
-        //  Vector parentVector=(Vector) QueryHashtable.valueRestrictionsHashtable.get(parent+":"+propName);
+        Vector temp=Mpiro.win.struc.getValueRestriction(name+":"+propName);
+        //  Vector parentVector=(Vector) Mpiro.win.struc.valueRestrictionsHashtable.getRestriction(parent+":"+propName);
         if(type.equalsIgnoreCase("5")){
             //  parentVector=(Vector)parentVector.elementAt(2);
             temp=(Vector) temp.elementAt(5);}
@@ -674,7 +646,7 @@ jButton4.setEnabled(false);
         temp.remove(obCard[jTableCard.getSelectedRow()][1].toString());
         //temp.add((combo2.getSelectedItem().toString()));
         //    if(!types.elementAt(i).toString().contains("_occur")){
-        Vector children=QueryHashtable.getChildrenVectorFromMainDBHashtable(name,"entity type");
+        Vector children=Mpiro.win.struc.getChildrenVectorFromMainDBHashtable(name,"entity type");
         for(int y=0;y<children.size();y++){
             deleteCardRestriction(children.elementAt(y).toString(),type);
         }
@@ -685,13 +657,13 @@ jButton4.setEnabled(false);
     private void deleteValuesRestriction(String name, String type){
         //   Vector types=QueryHashtable.getAllOccurrences(name);
         // for(int i=0;i<types.size();i++){
-        name=QueryHashtable.nameWithoutOccur(name);
+        name=Mpiro.win.struc.nameWithoutOccur(name);
         //   String parent=DataBasePanel.getNode(name).getParent().toString();
-        Vector parents=QueryHashtable.getParents(name);
+        Vector parents=Mpiro.win.struc.getParents(name);
         for(int m=0;m<parents.size();m++){
             String parent=parents.elementAt(m).toString();
             if(parent.contains("_occur")) continue;
-            Vector parentVector=(Vector) QueryHashtable.valueRestrictionsHashtable.get(parent+":"+propName);
+            Vector parentVector=Mpiro.win.struc.getValueRestriction(parent+":"+propName);
             if(parentVector!=null){
                 if(type.equalsIgnoreCase("0")){
                     parentVector=(Vector)parentVector.elementAt(0);
@@ -710,7 +682,7 @@ jButton4.setEnabled(false);
         
         
         
-        Vector temp=(Vector) QueryHashtable.valueRestrictionsHashtable.get(name+":"+propName);
+        Vector temp= Mpiro.win.struc.getValueRestriction(name+":"+propName);
         if(type.equalsIgnoreCase("0")){
             //parentVector=(Vector)parentVector.elementAt(0);
             temp=(Vector) temp.elementAt(0);}
@@ -727,7 +699,7 @@ jButton4.setEnabled(false);
         temp.remove(ob[jTable1.getSelectedRow()][1].toString());
         //temp.add((combo2.getSelectedItem().toString()));
         //    if(!types.elementAt(i).toString().contains("_occur")){
-        Vector children=QueryHashtable.getChildrenVectorFromMainDBHashtable(name,"entity type");
+        Vector children=Mpiro.win.struc.getChildrenVectorFromMainDBHashtable(name,"entity type");
         for(int y=0;y<children.size();y++){
             deleteValuesRestriction(children.elementAt(y).toString(),type);
         }
@@ -793,11 +765,11 @@ jButton4.setEnabled(false);
             value=combo2.getSelectedItem().toString();
         //    Vector types=QueryHashtable.getAllOccurrences(name);
         //  for(int i=0;i<types.size();i++){
-        name=QueryHashtable.nameWithoutOccur(name);
-        Vector temp=(Vector) QueryHashtable.valueRestrictionsHashtable.get(name+":"+propName);
+        name=Mpiro.win.struc.nameWithoutOccur(name);
+        Vector temp=Mpiro.win.struc.getValueRestriction(name+":"+propName);
         if(temp==null){
-            QueryHashtable.valueRestrictionsHashtable.put(name+":"+propName, new ValueRestriction());
-            temp=(Vector) QueryHashtable.valueRestrictionsHashtable.get(name+":"+propName);
+            Mpiro.win.struc.addValueRestriction(name+":"+propName, new ValueRestriction());
+            temp= Mpiro.win.struc.getValueRestriction(name+":"+propName);
         }
         if(type.equalsIgnoreCase("0"))
             temp=(Vector) temp.elementAt(0);
@@ -809,69 +781,9 @@ jButton4.setEnabled(false);
             return;
         else{
             temp.add(value);
-            if(type.equalsIgnoreCase("2")){
-                Enumeration en=DataBasePanel.top.preorderEnumeration();
-                DefaultMutableTreeNode dmtn=new DefaultMutableTreeNode();
-                while(en.hasMoreElements()){
-                    dmtn=(DefaultMutableTreeNode) en.nextElement();
-                    if(dmtn.toString().equalsIgnoreCase(name)) break;
-                }
-                Hashtable entities= QueryHashtable.getChildrenEntities(dmtn);
-                Enumeration en1=entities.keys();
-                while(en1.hasMoreElements()){
-                    Vector v=(Vector) QueryHashtable.mainDBHashtable.get(en1.nextElement().toString());
-                    v=(Vector) v.elementAt(0);
-                    Vector vec=new Vector();
-                    if(!DataBaseTable.dbTable.getValueAt(DataBaseTable.dbtl.rowNo,1).toString().equalsIgnoreCase("String")){
-                    vec=(Vector) v.elementAt(0);
-                    for(int y =3;y<vec.size();y++){
-                        Vector next=(Vector) vec.elementAt(y);
-                        if (next.elementAt(0).toString().equalsIgnoreCase(propName)){
-                            if(next.elementAt(1).toString().startsWith("Select ")||next.elementAt(1).toString().equalsIgnoreCase(""))
-                                next.setElementAt(value,1);
-                            else{
-                                boolean add=true;
-                                String[] values=next.elementAt(1).toString().split(" ");
-                                for (int h=0;h<values.length;h++){
-                                    if (values[h].equalsIgnoreCase(value)) {
-                                        add=false;
-                                        break;
-                                    }}
-                                if(add)
-                                    next.setElementAt(next.elementAt(1)+" "+value,1);
-                            }
-                            break;
-                        }
-                    }
-                    }
-                    else{
-                        for(int g=1;g<4;g++){
-                         vec=(Vector) v.elementAt(g);
-                    for(int y =6;y<vec.size();y++){
-                        Vector next=(Vector) vec.elementAt(y);
-                        if (next.elementAt(0).toString().equalsIgnoreCase(propName)){
-                            if(next.elementAt(1).toString().startsWith("Select ")||next.elementAt(1).toString().equalsIgnoreCase(""))
-                                next.setElementAt(value,1);
-                            else{
-                                boolean add=true;
-                                String[] values=next.elementAt(1).toString().split(" ");
-                                for (int h=0;h<values.length;h++){
-                                    if (values[h].equalsIgnoreCase(value)) {
-                                        add=false;
-                                        break;
-                                    }}
-                                if(add)
-                                    next.setElementAt(next.elementAt(1)+" "+value,1);
-                            }
-                            break;
-                        }
-                    }
-                    }
-                    }
-                }
-            }
+            
             //   if(!types.elementAt(i).toString().contains("_occur")){
-            Vector children=QueryHashtable.getChildrenVectorFromMainDBHashtable(name,"entity type");
+            Vector children=Mpiro.win.struc.getChildrenVectorFromMainDBHashtable(name,"entity type");
             for(int y=0;y<children.size();y++){
                 addValuesRestriction(children.elementAt(y).toString(),type);
             }

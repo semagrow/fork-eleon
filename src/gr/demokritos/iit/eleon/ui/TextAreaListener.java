@@ -6,15 +6,8 @@
 
 package gr.demokritos.iit.eleon.ui;
 
-import gr.demokritos.iit.eleon.authoring.QueryHashtable;
-
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.event.*;
+import gr.demokritos.iit.eleon.authoring.Mpiro;
 import java.awt.event.*;
-import javax.swing.table.*;
-import java.util.*;
-
 
 public class TextAreaListener extends FocusAdapter
 {
@@ -36,7 +29,7 @@ public class TextAreaListener extends FocusAdapter
 		String language = StoriesTableListener.foundLanguage;
 		String text = StoriesPanel.storyText.getText();
 		
-		QueryHashtable.updateHashtableStoryInfo(StoriesPanel.last.toString(),
+		Mpiro.win.struc.updateHashtableStoryInfo(StoriesPanel.last.toString(),
 		                                       language,
 		                                       text);
 	}
@@ -50,7 +43,7 @@ public class TextAreaListener extends FocusAdapter
 		String language = StoriesTableListener.foundLanguage;
 		String text = StoriesPanel.storyText.getText();
 		
-		QueryHashtable.updateHashtableStoryInfo(StoriesPanel.last.toString(),
+		Mpiro.win.struc.updateHashtableStoryInfo(StoriesPanel.last.toString(),
 		                                       language,
 		                                       text);
 	}

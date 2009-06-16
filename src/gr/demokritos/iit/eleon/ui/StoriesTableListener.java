@@ -9,8 +9,8 @@ package gr.demokritos.iit.eleon.ui;
 import gr.demokritos.iit.eleon.authoring.LangResources;
 import gr.demokritos.iit.eleon.authoring.Mpiro;
 import gr.demokritos.iit.eleon.authoring.NodeVector;
-import gr.demokritos.iit.eleon.authoring.QueryHashtable;
-import gr.demokritos.iit.eleon.authoring.QueryUsersHashtable;
+import gr.demokritos.iit.eleon.struct.QueryHashtable;
+import gr.demokritos.iit.eleon.struct.QueryProfileHashtable;
 import gr.demokritos.iit.eleon.authoring.TreePreviews;
 import gr.demokritos.iit.eleon.authoring.UserModelStoryDialog;
 
@@ -127,7 +127,7 @@ public class StoriesTableListener extends MouseAdapter
 			public void actionPerformed(ActionEvent e)
 			{
 				String node = StoriesPanel.last.toString();
-				NodeVector nv = (NodeVector)QueryHashtable.mainDBHashtable.get(node);
+				NodeVector nv = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(node);
 				StoriesVector sv = (StoriesVector)nv.elementAt(3);
 				
 				foundLanguage = "English";
@@ -158,7 +158,7 @@ public class StoriesTableListener extends MouseAdapter
 			public void actionPerformed(ActionEvent e)
 			{
 				String node = StoriesPanel.last.toString();
-				NodeVector nv = (NodeVector)QueryHashtable.mainDBHashtable.get(node);
+				NodeVector nv = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(node);
 				StoriesVector sv = (StoriesVector)nv.elementAt(3);
 				
 				foundLanguage = "Italian";
@@ -190,7 +190,7 @@ public class StoriesTableListener extends MouseAdapter
 			public void actionPerformed(ActionEvent e)
 			{
 				String node = StoriesPanel.last.toString();
-				NodeVector nv = (NodeVector)QueryHashtable.mainDBHashtable.get(node);
+				NodeVector nv = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(node);
 				StoriesVector sv = (StoriesVector)nv.elementAt(3);
 				
 				foundLanguage = "Greek";
@@ -221,7 +221,7 @@ public class StoriesTableListener extends MouseAdapter
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				Vector allExistingFieldsVector = (Vector)QueryHashtable.getExistingFieldnamesForStoryNode(StoriesPanel.last);
+				Vector allExistingFieldsVector = (Vector)Mpiro.win.struc.getExistingFieldnamesForStoryNode(StoriesPanel.last);
 				if (allExistingFieldsVector.contains("New-story"))
 				{
 					new MessageDialog(StoriesTable.storiesTable, MessageDialog.thereIsAnUnnamedStoryField_ETC_dialog);
@@ -265,16 +265,16 @@ public class StoriesTableListener extends MouseAdapter
 										StoriesTable.m_data, rowNo, rowNo, TableModelEvent.ALL_COLUMNS,
 										TableModelEvent.INSERT));
 					}
-					QueryHashtable.removeStoryFromHashtable(StoriesPanel.last.toString(), selectedField);
-					QueryUsersHashtable.removeStoryInUserModelStoryHashtable(StoriesPanel.last.toString(), selectedField);
+					Mpiro.win.struc.removeStoryFromHashtable(StoriesPanel.last.toString(), selectedField);
+					//QueryProfileHashtable.removeStoryInUserModelStoryHashtable(StoriesPanel.last.toString(), selectedField);
 					StoriesTable.storiesTable.revalidate();
 					StoriesTable.storiesTable.repaint();
 				}
 				else
 				{
-					QueryHashtable.removeStoryFromHashtable(StoriesPanel.last.toString(), selectedField);
-					QueryUsersHashtable.removeStoryInUserModelStoryHashtable(StoriesPanel.last.toString(), selectedField);
-					QueryHashtable.createStory(StoriesPanel.last.toString(), "New-story");
+					Mpiro.win.struc.removeStoryFromHashtable(StoriesPanel.last.toString(), selectedField);
+					//QueryProfileHashtable.removeStoryInUserModelStoryHashtable(StoriesPanel.last.toString(), selectedField);
+					Mpiro.win.struc.createStory(StoriesPanel.last.toString(), "New-story");
 					TreePreviews.setStoriesTable(StoriesPanel.last.toString());
 				}
 			}
@@ -316,7 +316,7 @@ public class StoriesTableListener extends MouseAdapter
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				Vector allExistingFieldsVector = (Vector)QueryHashtable.getExistingFieldnamesForStoryNode(StoriesPanel.last);
+				Vector allExistingFieldsVector = (Vector)Mpiro.win.struc.getExistingFieldnamesForStoryNode(StoriesPanel.last);
 				if (allExistingFieldsVector.contains("New-story"))
 				{
 					new MessageDialog(StoriesTable.storiesTable, MessageDialog.thereIsAnUnnamedStoryField_ETC_dialog);
@@ -360,16 +360,16 @@ public class StoriesTableListener extends MouseAdapter
 						StoriesTable.m_data, rowNo, rowNo, TableModelEvent.ALL_COLUMNS,
 						TableModelEvent.INSERT));
 					}
-					QueryHashtable.removeStoryFromHashtable(StoriesPanel.last.toString(), selectedField);
-					QueryUsersHashtable.removeStoryInUserModelStoryHashtable(StoriesPanel.last.toString(), selectedField);
+					Mpiro.win.struc.removeStoryFromHashtable(StoriesPanel.last.toString(), selectedField);
+					//QueryProfileHashtable.removeStoryInUserModelStoryHashtable(StoriesPanel.last.toString(), selectedField);
 					StoriesTable.storiesTable.revalidate();
 					StoriesTable.storiesTable.repaint();
 				}
 				else
 				{
-					QueryHashtable.removeStoryFromHashtable(StoriesPanel.last.toString(), selectedField);
-					QueryUsersHashtable.removeStoryInUserModelStoryHashtable(StoriesPanel.last.toString(), selectedField);
-					QueryHashtable.createStory(StoriesPanel.last.toString(), "New-story");
+					Mpiro.win.struc.removeStoryFromHashtable(StoriesPanel.last.toString(), selectedField);
+					//QueryProfileHashtable.removeStoryInUserModelStoryHashtable(StoriesPanel.last.toString(), selectedField);
+					Mpiro.win.struc.createStory(StoriesPanel.last.toString(), "New-story");
 					TreePreviews.setStoriesTable(StoriesPanel.last.toString());
 				}
 			}

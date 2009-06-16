@@ -7,7 +7,7 @@
 package gr.demokritos.iit.eleon.ui;
 
 import gr.demokritos.iit.eleon.authoring.DataBasePanel;
-import gr.demokritos.iit.eleon.authoring.QueryHashtable;
+import gr.demokritos.iit.eleon.authoring.Mpiro;
 
 import java.util.Vector;
 
@@ -23,7 +23,7 @@ public class DatatypeValue extends java.awt.Dialog {
         initComponents();
         //val=new Vector();
       //  Vector cell=new Vector();
-        Vector ent=(Vector) QueryHashtable.mainDBHashtable.get(QueryHashtable.nameWithoutOccur(DataBasePanel.last.toString()));
+        Vector ent=(Vector) Mpiro.win.struc.getEntityTypeOrEntity(Mpiro.win.struc.nameWithoutOccur(DataBasePanel.last.toString()));
         ent=(Vector) ent.elementAt(0);
         ent=(Vector) ent.elementAt(0);
         if (type.equalsIgnoreCase("number")){
@@ -115,7 +115,7 @@ public class DatatypeValue extends java.awt.Dialog {
    // public static void addValue(String value){
       //  Vector val=new Vector();
     /*    Vector cell=new Vector();
-        Vector ent=(Vector) QueryHashtable.mainDBHashtable.get(QueryHashtable.nameWithoutOccur(DataBasePanel.last.toString()));
+        Vector ent=(Vector) Mpiro.win.struc.getEntityTypeOrEntity(Mpiro.win.struc.nameWithoutOccur(DataBasePanel.last.toString()));
         ent=(Vector) ent.elementAt(0);
         ent=(Vector) ent.elementAt(0);
   //      if (type.equalsIgnoreCase("number")){

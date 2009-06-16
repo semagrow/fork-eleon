@@ -34,10 +34,10 @@ package gr.demokritos.iit.eleon.ui;
 import gr.demokritos.iit.eleon.authoring.LangResources;
 import gr.demokritos.iit.eleon.authoring.Mpiro;
 import gr.demokritos.iit.eleon.authoring.MpiroFileFilter;
-import gr.demokritos.iit.eleon.authoring.QueryHashtable;
-import gr.demokritos.iit.eleon.authoring.QueryLexiconHashtable;
-import gr.demokritos.iit.eleon.authoring.QueryOptionsHashtable;
-import gr.demokritos.iit.eleon.authoring.QueryUsersHashtable;
+import gr.demokritos.iit.eleon.struct.QueryHashtable;
+import gr.demokritos.iit.eleon.struct.QueryLexiconHashtable;
+import gr.demokritos.iit.eleon.struct.QueryOptionsHashtable;
+import gr.demokritos.iit.eleon.struct.QueryProfileHashtable;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -78,22 +78,8 @@ implements WindowListener
                     try {
                         FileOutputStream output = new FileOutputStream(fileName);
                         ObjectOutputStream p = new ObjectOutputStream(output);
-                        p.writeObject( (Hashtable) QueryOptionsHashtable.mainOptionsHashtable);
-                        p.writeObject( (Hashtable) QueryHashtable.mainDBHashtable);
+                        Mpiro.win.struc.writeStructureObjectToFile(p);
                         
-                        p.writeObject( (Hashtable) QueryLexiconHashtable.mainLexiconHashtable);
-                        p.writeObject( (Hashtable) QueryUsersHashtable.mainUsersHashtable);
-                        p.writeObject( (Hashtable) QueryUsersHashtable.mainUserModelHashtable);
-                        p.writeObject( (Hashtable) QueryUsersHashtable.mainUserModelStoryHashtable);
-                        p.writeObject( (Hashtable) QueryHashtable.propertiesHashtable);
-                        p.writeObject( (Hashtable) QueryHashtable.valueRestrictionsHashtable);
-                        p.writeObject( (Hashtable) QueryHashtable.equivalentClassesHashtable);
-                        p.writeObject( (Hashtable) QueryHashtable.superClassesHashtable);
-                        p.writeObject( (Hashtable) QueryHashtable.annotationPropertiesHashtable);
-                        p.writeObject( (Hashtable) QueryUsersHashtable.robotsHashtable);
-                        p.writeObject( (Hashtable) QueryUsersHashtable.mainRobotsModelHashtable);
-                        p.writeObject(QueryHashtable.robotCharVector);
-                        p.writeObject(QueryHashtable.robotCharValuesHashtable);
                         p.flush();
                         p.close();
                     }

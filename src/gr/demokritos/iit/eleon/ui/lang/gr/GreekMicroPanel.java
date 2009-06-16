@@ -13,7 +13,7 @@ import gr.demokritos.iit.eleon.authoring.LangCombo;
 import gr.demokritos.iit.eleon.authoring.LangResources;
 import gr.demokritos.iit.eleon.authoring.LexiconPanel;
 import gr.demokritos.iit.eleon.authoring.Mpiro;
-import gr.demokritos.iit.eleon.authoring.QueryHashtable;
+import gr.demokritos.iit.eleon.struct.QueryHashtable;
 import gr.demokritos.iit.eleon.authoring.TreePreviews;
 import gr.demokritos.iit.eleon.ui.KButton;
 import gr.demokritos.iit.eleon.ui.KComboBox;
@@ -544,23 +544,23 @@ public class GreekMicroPanel extends JPanel implements ActionListener, FocusList
 		getItalian.addActionListener(GreekMicroPanel.this);
 
 
-		if ((QueryHashtable.showValues2(DataBasePanel.last.toString(),
+		if ((Mpiro.win.struc.showValues(DataBasePanel.last.toString(),
 		                               microplanNumber,
 		                               TreePreviews.dbt.dbtl.selectedField.toString(),
 		                               "Greek")).isEmpty() == false)
 		{
-			showValues(QueryHashtable.showValues2(DataBasePanel.last.toString(),
+			showValues(Mpiro.win.struc.showValues(DataBasePanel.last.toString(),
                                            microplanNumber,
                                            TreePreviews.dbt.dbtl.selectedField.toString(),
                                            "Greek"));
 		}
 
-		if ((QueryHashtable.showSpecialValues2(DataBasePanel.last.toString(),
+		if ((Mpiro.win.struc.showSpecialValues2(DataBasePanel.last.toString(),
 		                                      microplanNumber,
 		                                      TreePreviews.dbt.dbtl.selectedField.toString(),
 		                                      "Greek")).isEmpty() == false)
 		{
-			showSpecialValues(QueryHashtable.showSpecialValues2(DataBasePanel.last.toString(),
+			showSpecialValues(Mpiro.win.struc.showSpecialValues2(DataBasePanel.last.toString(),
 	                                                       microplanNumber,
 	                                                       TreePreviews.dbt.dbtl.selectedField.toString(),
 	                                                       "Greek"));
@@ -784,7 +784,7 @@ public class GreekMicroPanel extends JPanel implements ActionListener, FocusList
 		}
 		// Update the Hashtable
 		//System.out.println("()---- " + node + " " + field + " " + label + " " + "Greek" + " " + item);
-		QueryHashtable.updateHashtable2(node, microplanNumber, field, label, "Greek", item);
+		Mpiro.win.struc.updateHashtable(node, microplanNumber, field, label, "Greek", item);
 		Mpiro.needExportToExprimo = true;		//maria         
 	}
 
@@ -952,7 +952,7 @@ public class GreekMicroPanel extends JPanel implements ActionListener, FocusList
 			// storing the selection
 			String node = DataBasePanel.last.toString();
 			String field = DataBaseTableListener.selectedField;
-			QueryHashtable.updateHashtable2(node, microplanNumber, field, "SELECTION", "Greek", "Clause");
+			Mpiro.win.struc.updateHashtable(node, microplanNumber, field, "SELECTION", "Greek", "Clause");
 			Mpiro.needExportToEmulator=true;			//maria
 			// the following 3 lines update the microplanning index of the dbtable
 			//if (microplanNumber.equalsIgnoreCase("1"))															//maria
@@ -976,7 +976,7 @@ public class GreekMicroPanel extends JPanel implements ActionListener, FocusList
 			// storing the selection
 			String node = DataBasePanel.last.toString();
 			String field = DataBaseTableListener.selectedField;
-			QueryHashtable.updateHashtable2(node, microplanNumber, field, "SELECTION", "Greek", "Template");
+			Mpiro.win.struc.updateHashtable(node, microplanNumber, field, "SELECTION", "Greek", "Template");
 			Mpiro.needExportToEmulator=true;		//maria
 			// the following 3 lines update the microplanning index of the dbtable
 			//if (microplanNumber.equalsIgnoreCase("1"))															//maria
@@ -1000,7 +1000,7 @@ public class GreekMicroPanel extends JPanel implements ActionListener, FocusList
 			// storing the selection
 			String node = DataBasePanel.last.toString();
 			String field = DataBaseTableListener.selectedField;
-			QueryHashtable.updateHashtable2(node, microplanNumber, field, "SELECTION", "Greek", "NoMicroPlanning");
+			Mpiro.win.struc.updateHashtable(node, microplanNumber, field, "SELECTION", "Greek", "NoMicroPlanning");
 			Mpiro.needExportToEmulator=true;			//maria
 			// the following 3 lines update the microplanning index of the dbtable
 			//if (microplanNumber.equalsIgnoreCase("1"))															//maria
@@ -1036,11 +1036,11 @@ public class GreekMicroPanel extends JPanel implements ActionListener, FocusList
 			//QueryHashtable.clearHashtableMicroplanningEntries(DataBasePanel.last.toString(),
 			//                                                  DataBaseTable.dbTable.getValueAt(DataBaseTable.dbTable.getSelectedRow(),0).toString(),
 			//                                                  "Greek");
-			showValues(QueryHashtable.getValuesFromEnglish2(DataBasePanel.last.toString(),
+			showValues(Mpiro.win.struc.getValuesFromEnglish2(DataBasePanel.last.toString(),
 			                                  microplanNumber,
 			                                  DataBaseTable.dbTable.getValueAt(DataBaseTableListener.rowNo,0).toString(),
 			                                  "Greek"));
-			showSpecialValuesVerbOnly(QueryHashtable.getSpecialValueVerbFromEnglish2(DataBasePanel.last.toString(),
+			showSpecialValuesVerbOnly(Mpiro.win.struc.getSpecialValueVerbFromEnglish2(DataBasePanel.last.toString(),
 			                                  microplanNumber,
 			                                  DataBaseTable.dbTable.getValueAt(DataBaseTableListener.rowNo,0).toString(),
 			                                  "Greek"));
@@ -1051,11 +1051,11 @@ public class GreekMicroPanel extends JPanel implements ActionListener, FocusList
 			//QueryHashtable.clearHashtableMicroplanningEntries(DataBasePanel.last.toString(),
 			//                                                  DataBaseTable.dbTable.getValueAt(DataBaseTable.dbTable.getSelectedRow(),0).toString(),
 			//                                                  "Greek");
-			showValues(QueryHashtable.getValuesFromItalian2(DataBasePanel.last.toString(),
+			showValues(Mpiro.win.struc.getValuesFromItalian2(DataBasePanel.last.toString(),
 			                                    microplanNumber,
 			                                    DataBaseTable.dbTable.getValueAt(DataBaseTableListener.rowNo,0).toString(),
 			                                    "Greek"));
-			showSpecialValuesVerbOnly(QueryHashtable.getSpecialValueVerbFromItalian2(DataBasePanel.last.toString(),
+			showSpecialValuesVerbOnly(Mpiro.win.struc.getSpecialValueVerbFromItalian2(DataBasePanel.last.toString(),
 			                                    microplanNumber,
 			                                    DataBaseTable.dbTable.getValueAt(DataBaseTableListener.rowNo,0).toString(),
 			                                   "Greek"));

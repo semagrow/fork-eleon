@@ -63,16 +63,14 @@ import gr.demokritos.iit.eleon.authoring.OwlExport;
 import gr.demokritos.iit.eleon.authoring.OwlFileFilter;
 import gr.demokritos.iit.eleon.authoring.OwlImport;
 import gr.demokritos.iit.eleon.authoring.Prepositions;
-import gr.demokritos.iit.eleon.authoring.QueryHashtable;
-import gr.demokritos.iit.eleon.authoring.QueryLexiconHashtable;
-import gr.demokritos.iit.eleon.authoring.QueryOptionsHashtable;
-import gr.demokritos.iit.eleon.authoring.QueryUsersHashtable;
-import gr.demokritos.iit.eleon.ui.KButton;
-import gr.demokritos.iit.eleon.ui.MessageDialog;
-import gr.demokritos.iit.eleon.ui.Reasoner;
-import gr.demokritos.iit.eleon.ui.RobotCharacteristicsPanel;
-import gr.demokritos.iit.eleon.ui.StoriesPanel;
-import gr.demokritos.iit.eleon.ui.UsersPanel;
+import gr.demokritos.iit.eleon.interfaces.OntoExtension;
+import gr.demokritos.iit.eleon.struct.EleonStruc;
+import gr.demokritos.iit.eleon.struct.ExplicitOntoData;
+import gr.demokritos.iit.eleon.struct.MicroReasoner;
+import gr.demokritos.iit.eleon.struct.QueryHashtable;
+import gr.demokritos.iit.eleon.struct.QueryLexiconHashtable;
+import gr.demokritos.iit.eleon.struct.QueryOptionsHashtable;
+import gr.demokritos.iit.eleon.struct.QueryProfileHashtable;
 import gr.demokritos.iit.eleon.ui.lang.LangChooser;
 
 
@@ -80,7 +78,28 @@ public class ELEONWindow extends JFrame
 implements ActionListener
 {
 
-    // A.I 28/10/02 don't create Structures here, do it via pageFactory later
+	/* this object holds all internal ELEON data structures
+	 * pertaining to the ontology, the ling annotations, and
+	 * the adaptivity annotations */ 
+	
+    public EleonStruc struc=new EleonStruc();
+    
+    /* a pipeline of objects that infer upon the raw
+     * ontological data. We only need to keep here
+     * a pointer the last object in the pipeline. 
+     */
+    public OntoExtension ontoPipe = null;  
+    	
+    /* TODO: a pipeline of objects that infer upon the raw
+     * annotations data. We only need to keep here
+     * a pointer the last object in the pipeline. 
+     */
+
+    //public LingExtension lingPipe =  
+    //public AttrExtension atttPipe =  
+    	
+    	
+        // A.I 28/10/02 don't create Structures here, do it via pageFactory later
     // public static Structures emulator = new Structures();
 
     public static String selectedFont = "Dialog";
@@ -89,10 +108,7 @@ implements ActionListener
     public static boolean resetInteractionHistory = true;
     public static boolean resetInteractionHistoryBeforeEachPreview = true;
     
-    //static final long serialVersionUID= 7753555422102686221L;
-    // public static MpiroRpcServer eeee;
-
-    public static Color colorG = new Color(100, 100, 100);
+   public static Color colorG = new Color(100, 100, 100);
     public static Font font = new Font(Mpiro.selectedFont, Font.BOLD, 10);
     public static Border border = new CompoundBorder(new EtchedBorder(EtchedBorder.RAISED),
         new EtchedBorder(EtchedBorder.LOWERED));
@@ -148,7 +164,11 @@ implements ActionListener
     
     public ELEONWindow()
     {
-        
+        ExplicitOntoData expl = new ExplicitOntoData( this.struc );
+        MicroReasoner microR = new MicroReasoner();
+        microR.setPrevious( expl );
+        microR.rebind();
+        this.ontoPipe = microR;
      /*   try{
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
             SwingUtilities.updateComponentTreeUI(this);
@@ -173,7 +193,7 @@ implements ActionListener
         /* A JTabbedPane */
         tabbedPane = new JTabbedPane(SwingConstants.TOP);
 
-        QueryHashtable.createRobotCharVectorAndHash();
+       // Mpiro.win.struc.createRobotCharVectorAndHash();
         /* Three JPanels and an instance of
            MpiroPanel, LexiconPanel and MicroPanel  */
         panelA = new UsersPanel();
@@ -338,7 +358,20 @@ implements ActionListener
         setVisible( true );
 
         /* Initialize the domain */
+        clearDomain();
         initializeDomain();
+        
+        // TODO: skeleton code, fix me!
+        
+        /* hard-wired using the ELEON microreasoner,
+         * this will be replaced by code that reads
+         * in properties to set-up an inference pipeline 
+         */
+
+        /* make the explicit data store */
+        
+        
+        
     } //constructor
 
     public void setLook(int look) {
@@ -380,26 +413,30 @@ implements ActionListener
                                                  optionButtons[1]);
 
             if (k == 0) {
-                DataBasePanel.microPlanPanel.setVisible(false);
-                // First, clear the two main hashtables and the corresponding panels
-                QueryHashtable.clearDomain();
-                // Then, create the default two NodeVectors
-
-                //QueryHashtable.createMainDBHashtable();
-                QueryLexiconHashtable.createMainLexiconHashtable();
-                QueryHashtable.createBasicEntityType("type", "Data Base");
-                QueryHashtable.createBasicEntityType("Data Base", "Basic-entity-types");
-
-                QueryHashtable.createDefaultUpperVector();
-
-                // Finally, clear all trees
                 DataBasePanel.clearTree();
                 LexiconPanel.clearTree();
                 StoriesPanel.clearTree();
                 UsersPanel.clearTree();
+                DataBasePanel.microPlanPanel.setVisible(false);
+                // First, clear the two main hashtables and the corresponding panels
+                clearDomain();
+                initializeDomain();
+                // Then, creatclearDomaine the default two NodeVectors
+
+                //QueryHashtable.createMainDBHashtable();
+                //QueryLexiconHashtable.createMainLexiconHashtable();
+                Mpiro.win.struc.createBasicEntityType("type", "Data Base");
+                Mpiro.win.struc.createBasicEntityType("Data Base", "Basic-entity-types");
+
+                Mpiro.win.struc.createDefaultUpperVector();
+
+                // Finally, clear all trees
+                
                 UsersPanel.robotsChar=new RobotCharacteristicsPanel();
                 UsersPanel.users.add(new DefaultMutableTreeNode(new IconData(UsersPanel.ICON_USER, "NewUserType")));
-                QueryUsersHashtable.createDefaultUser("NewUserType");
+                Mpiro.win.struc.createDefaultUser("NewUserType");
+                UsersPanel.robots.add(new DefaultMutableTreeNode(new IconData(UsersPanel.ICON_ROBOT, "NewProfile")));
+                Mpiro.win.struc.createDefaultRobot("NewProfile");
 
                 // put fileName on frame's titleBar
                 setTitle("ELEON authoring tool");
@@ -410,6 +447,7 @@ implements ActionListener
                 //resetInteractionHistoryItem.setEnabled(false);
                 //resetInteractionHistoryEmulatorItem.setEnabled(false);
                 panelB.fillComboBox();
+                Mpiro.win.ontoPipe.rebind();
             }
             else {}
         }
@@ -420,6 +458,14 @@ implements ActionListener
                 reas.setLocation(300,150);
                 reas.setTitle("Racer Connection");
             reas.setVisible(true);
+         }
+        
+        if( e.getSource() == this.menuBar.startPServer ) {
+            PServerPanel psp = new PServerPanel( getFrames()[0], true );
+            psp.setSize(350,300);
+                psp.setLocation(300,150);
+                psp.setTitle("Racer Connection");
+            psp.setVisible(true);
          }
         
         if( (e.getSource() == saveButton) || (e.getSource() == this.menuBar.saveFileItem) ) {
@@ -439,22 +485,8 @@ implements ActionListener
                     try {
                         FileOutputStream output = new FileOutputStream(fileName);
                         ObjectOutputStream p = new ObjectOutputStream(output);
-                        p.writeObject( (Hashtable) QueryOptionsHashtable.mainOptionsHashtable);
-                        p.writeObject( (Hashtable) QueryHashtable.mainDBHashtable);
+                        Mpiro.win.struc.writeStructureObjectToFile(p);
                         
-                        p.writeObject( (Hashtable) QueryLexiconHashtable.mainLexiconHashtable);
-                        p.writeObject( (Hashtable) QueryUsersHashtable.mainUsersHashtable);
-                        p.writeObject( (Hashtable) QueryUsersHashtable.mainUserModelHashtable);
-                        p.writeObject( (Hashtable) QueryUsersHashtable.mainUserModelStoryHashtable);
-                        p.writeObject( (Hashtable) QueryHashtable.propertiesHashtable);
-                        p.writeObject( (Hashtable) QueryHashtable.valueRestrictionsHashtable);
-                        p.writeObject( (Hashtable) QueryHashtable.equivalentClassesHashtable);
-                        p.writeObject( (Hashtable) QueryHashtable.superClassesHashtable);
-                        p.writeObject( (Hashtable) QueryHashtable.annotationPropertiesHashtable);
-                         p.writeObject( (Hashtable) QueryUsersHashtable.robotsHashtable);
-                          p.writeObject( (Hashtable) QueryUsersHashtable.mainRobotsModelHashtable);
-                           p.writeObject(QueryHashtable.robotCharVector);
-                        p.writeObject(QueryHashtable.robotCharValuesHashtable);
                         p.flush();
                         p.close();
                     }
@@ -475,7 +507,7 @@ implements ActionListener
                    ontName = d.getSelectedFile().getName().substring(0, d.getSelectedFile().getName().lastIndexOf('.'));
                     else
                         ontName = d.getSelectedFile().getName()+".rdf";
-                    dialogExportToOwl.jTextField1.setText(QueryOptionsHashtable.getBaseURI());
+                    dialogExportToOwl.jTextField1.setText(Mpiro.win.struc.getBaseURI());
                     dialogExportToOwl.show();
                     if (dialogExportToOwl.modalResult) {
                         File rdfFile = dialogExportToOwl.rdfFile;
@@ -550,7 +582,7 @@ OwlExport.exportRobotModelling(rdfFile.getAbsolutePath().substring(0, rdfFile.ge
 
             int k = 0;
             //if domain is not empty
-            if (QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type").size() != 2)
+            if (Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type").size() != 2)
                 k = JOptionPane.showOptionDialog(this,
                                                  LangResources.getString(Mpiro.selectedLocale, "youAreAboutToDeleteTheEntireDomain_dialog"),
                                                  LangResources.getString(Mpiro.selectedLocale, "warning_dialog"),
@@ -578,103 +610,19 @@ OwlExport.exportRobotModelling(rdfFile.getAbsolutePath().substring(0, rdfFile.ge
                         //if save to mpiro format
                         if(d.getFileFilter().getDescription().equals("Mpiro files (*.mpiro)")){
                             // First, clear the two main hashtables and the corresponding panels
-                            QueryHashtable.clearDomain();
+                            clearDomain();
 
                             FileInputStream input = new FileInputStream(fileName);
                             ObjectInputStream p = new ObjectInputStream(input);
                             
-                            try {
-                                Object o1 = p.readObject();
-                                QueryOptionsHashtable.mainOptionsHashtable = (Hashtable) o1;
-                                Object o2 = p.readObject();
-                                QueryHashtable.mainDBHashtable = (Hashtable) o2;
-   //                             Hashtable en=QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity");
-     ///                           en.put("olympic-games","current");
-        //                        en.put("virtual-reality","current");
-                                Object o3 = p.readObject();
-                                QueryLexiconHashtable.mainLexiconHashtable = (Hashtable) o3;
-                                Object o4 = p.readObject();
-                                QueryUsersHashtable.mainUsersHashtable = (Hashtable) o4;
-                                Object o5 = p.readObject();
-                                QueryUsersHashtable.mainUserModelHashtable = (Hashtable) o5;
-                                Object o6 = p.readObject();
-                                QueryUsersHashtable.mainUserModelStoryHashtable = (Hashtable) o6;
-                                
-                //                Object o7 = p.readObject();
-                //                QueryHashtable.propertiesHashtable= (Hashtable) o7;
-                            }
-                            catch (java.lang.ClassNotFoundException ce) {
-                                System.out.println("    |||| Open-domain Exception |||| " + ce);
-                            }
+                           Mpiro.win.struc.readStrucutreObjectsFromFile(p);
+
                             
-                            try{
-                                
-                            Object o7 = p.readObject();
-                                QueryHashtable.propertiesHashtable= (Hashtable) o7;
-                                Object o8 = p.readObject();
-                                QueryHashtable.valueRestrictionsHashtable= (Hashtable) o8;
-                                
-                              
-                            }
-                            catch (java.io.IOException ce1) {
-                                QueryHashtable.propertiesHashtable= new Hashtable();
-                                QueryHashtable.valueRestrictionsHashtable=new Hashtable();
-                               // QueryHashtable.equivalentClassesHashtable=new Hashtable();
-                                System.out.println("|||| old version mpiro file |||| " + ce1);
-                            }
-                            try{
-                            Object o9 = p.readObject();
-                                QueryHashtable.equivalentClassesHashtable= (Hashtable) o9;
-                            }
-                            catch (java.io.IOException ce1) {
-                             QueryHashtable.equivalentClassesHashtable=new Hashtable();
-                                System.out.println("|||| (not so) old version mpiro file |||| " + ce1);
-                            }
-                            try{
-                            Object o10 = p.readObject();
-                                QueryHashtable.superClassesHashtable= (Hashtable) o10;
-                            }
-                            catch (java.io.IOException ce1) {
-                             QueryHashtable.superClassesHashtable=new Hashtable();
-                                System.out.println("|||| (not so) old version mpiro file |||| " + ce1);
-                            }
-                            try{
-                            Object o11 = p.readObject();
-                                QueryHashtable.annotationPropertiesHashtable= (Hashtable) o11;
-                            }
-                            catch (java.io.IOException ce1) {
-                             QueryHashtable.annotationPropertiesHashtable=new Hashtable();
-                                System.out.println("|||| (not so) old version mpiro file |||| " + ce1);
-                            }
-                            try{
-                            Object o12 = p.readObject();
-                                QueryUsersHashtable.robotsHashtable= (Hashtable) o12;
-                            }
-                            catch (java.io.IOException ce1) {
-                             QueryUsersHashtable.robotsHashtable=new Hashtable();
-                                System.out.println("|||| (not so) old version mpiro file |||| " + ce1);
-                            }
-                            try{
-                            Object o13 = p.readObject();
-                                QueryUsersHashtable.mainRobotsModelHashtable= (Hashtable) o13;
-                               QueryHashtable.robotCharVector=(Vector)  p.readObject();
-                        QueryHashtable.robotCharValuesHashtable=(Hashtable)p.readObject();
-                            }
-                            catch (java.io.IOException ce1) {
-                             QueryUsersHashtable.mainRobotsModelHashtable=new Hashtable();
-                             QueryUsersHashtable.fillMainRobotsModelHashtable();
-                             
-                             QueryUsersHashtable.createDefaultRobot("NewProfile");
-                              QueryHashtable.robotCharVector=new Vector();
-                        QueryHashtable.robotCharValuesHashtable=new Hashtable();
-                                System.out.println("|||| (not so) old version mpiro file |||| " + ce1);
-                            }
-                            
-                            // p.writeObject( (Hashtable) QueryUsersHashtable.mainRobotsModelHashtable);
+                            // p.writeObject( (Hashtable) QueryProfileHashtable.mainRobotsModelHashtable);
                             p.close();
                             
                             
-                           //for(Enumeration properties=QueryHashtable.propertiesHashtable.elements();properties.hasMoreElements();)
+                           //for(Enumeration properties=Mpiro.win.struc.getProperties();properties.hasMoreElements();)
                           // {
                           //      Vector temp=(Vector)properties.nextElement();
                           //      temp.add("true");
@@ -691,17 +639,18 @@ OwlExport.exportRobotModelling(rdfFile.getAbsolutePath().substring(0, rdfFile.ge
                                 return;
                             }
                             //initialize file path for export (kallonis)
+                            Mpiro.win.ontoPipe.rebind();
                             DialogExportToOwl.jTextField2.setText(d.getSelectedFile().getAbsolutePath());
                             String ontName = fileName.getName().substring(0, fileName.getName().lastIndexOf('.'));
-                            DialogExportToOwl.jTextField1.setText(QueryOptionsHashtable.getBaseURI());
+                            DialogExportToOwl.jTextField1.setText(Mpiro.win.struc.getBaseURI());
                             //-------------
                         }
-//QueryHashtable.mainDBHashtable.remove("exhibit1");
+//Mpiro.win.struc.removeEntityTypeOrEntityFromDB("exhibit1");
                         // these methods clear all trees and redraw them
-                //       Object tttttt=QueryHashtable.mainDBHashtable.get("aaa");
+                //       Object tttttt=Mpiro.win.struc.getEntityTypeOrEntity("aaa");
                         DataBasePanel.reloadDBTree();
                         LexiconPanel.reloadLexiconTree();
-                        StoriesPanel.reloadStoriesTree();
+                       // StoriesPanel.reloadStoriesTree();
                         UsersPanel.reloadUsersTree();
                         this.menuBar.pserverAddressItem.setEnabled( true );
                         this.menuBar.activatePreviewLanguageMenu.setEnabled( true );
@@ -710,7 +659,7 @@ OwlExport.exportRobotModelling(rdfFile.getAbsolutePath().substring(0, rdfFile.ge
                         //resetInteractionHistoryEmulatorItem.setEnabled(true);
 
                         /*
-                           QueryOptionsHashtable.addPServerAddressToMainOptionsHashtable("143.233.6.3", "1111");
+                           Mpiro.win.struc.addPServerAddressToMainOptionsHashtable("143.233.6.3", "1111");
                          */
 
                         // put fileName on frame's titleBar
@@ -793,21 +742,7 @@ OwlExport.exportRobotModelling(rdfFile.getAbsolutePath().substring(0, rdfFile.ge
                     try {
                         FileOutputStream output = new FileOutputStream(fileName);
                         ObjectOutputStream p = new ObjectOutputStream(output);
-                        p.writeObject( (Hashtable) QueryOptionsHashtable.mainOptionsHashtable);
-                        p.writeObject( (Hashtable) QueryHashtable.mainDBHashtable);
-                        p.writeObject( (Hashtable) QueryLexiconHashtable.mainLexiconHashtable);
-                        p.writeObject( (Hashtable) QueryUsersHashtable.mainUsersHashtable);
-                        p.writeObject( (Hashtable) QueryUsersHashtable.mainUserModelHashtable);
-                        p.writeObject( (Hashtable) QueryUsersHashtable.mainUserModelStoryHashtable);
-                        p.writeObject( (Hashtable) QueryHashtable.propertiesHashtable);
-                        p.writeObject( (Hashtable) QueryHashtable.valueRestrictionsHashtable);
-                        p.writeObject( (Hashtable) QueryHashtable.equivalentClassesHashtable);
-                        p.writeObject( (Hashtable) QueryHashtable.superClassesHashtable);
-                        p.writeObject( (Hashtable) QueryHashtable.annotationPropertiesHashtable);
-                         p.writeObject( (Hashtable) QueryUsersHashtable.robotsHashtable);
-                          p.writeObject( (Hashtable) QueryUsersHashtable.mainRobotsModelHashtable);
-                           p.writeObject(QueryHashtable.robotCharVector);
-                        p.writeObject(QueryHashtable.robotCharValuesHashtable);
+                       Mpiro.win.struc.writeStructureObjectToFile(p);
                         p.flush();
                         p.close();
                     }
@@ -1058,6 +993,7 @@ OwlExport.exportRobotModelling(rdfFile.getAbsolutePath().substring(0, rdfFile.ge
      */
     public void initializeDomain() {
         /** Setting and checking on the LOCALE */
+
         Locale.setDefault(enLocale);
         Locale defaultLocale = Locale.getDefault();
         String country = defaultLocale.getCountry();
@@ -1066,78 +1002,7 @@ OwlExport.exportRobotModelling(rdfFile.getAbsolutePath().substring(0, rdfFile.ge
         /*
          * First: DataBase initialisation.
          */
-        QueryHashtable.createMainDBHashtable();
-        QueryHashtable.createPropertiesHashtable();
-        QueryHashtable.createValueRestrictionsHashtable();
-        QueryHashtable.createEquivalentClassesHashtable();
-        QueryHashtable.createSuperClassesHashtable();
-        QueryHashtable.createAnnotationPropertiesHashtable();
-                
-
-        // Make the default NodeVectors for every tree node except Root.
-        Enumeration enum1 = DataBasePanel.top.breadthFirstEnumeration();
-        DefaultMutableTreeNode tmp;
-        IconData id;
-        while (enum1.hasMoreElements()) {
-            tmp = (DefaultMutableTreeNode) enum1.nextElement();
-            Object o = (Object) (tmp.getUserObject());
-            id = (IconData) o;
-            Icon ii = id.getIcon();
-            ImageIcon ima = (ImageIcon) ii;
-            String node = tmp.toString();
-            TreeNode tn = (TreeNode) tmp;
-
-            if ( (ima != DataBasePanel.ICON_TOP_B) &&
-                (ima != DataBasePanel.ICON_BUILT) &&
-                (ima != DataBasePanel.ICON_GEI) &&
-                (ima != DataBasePanel.ICON_GENERIC)) {
-                if (tn.getParent() == null) {
-                    QueryHashtable.createBasicEntityType(node, "Data Base");
-                }
-                else {
-                    String parent = tn.getParent().toString();
-                    QueryHashtable.createBasicEntityType(parent, node);
-                    //QueryHashtable.createDefaultStory(node);  /// spiliot
-                }
-            }
-
-            if ( (ima == DataBasePanel.ICON_GEI) ||
-                (ima == DataBasePanel.ICON_GENERIC)) {
-                if (tn.getParent() == null) {
-                    // do nothing
-                    //System.out.println("Leaf's parent is tree's root!!!");
-                }
-                else {
-                    String parent = tn.getParent().toString();
-                    QueryHashtable.createEntity(parent, node);
-                    //QueryHashtable.createDefaultStory(node);  /// spiliot
-                }
-            }
-        }
-
-        /*
-         * Second: creating DefaultUpperVector
-         */
-        QueryHashtable.createDefaultUpperVector();
-
-        /*
-         * Third: Lexicon initialisation.
-         */
-        QueryLexiconHashtable.createMainLexiconHashtable();
-
-        /*
-         * Fourth: Users initialisation.
-         */
-        QueryUsersHashtable.createMainUserModelHashtable();
-        QueryUsersHashtable.createMainUserModelStoryHashtable();
-        QueryUsersHashtable.createMainUsersHashtable();
-        QueryUsersHashtable.createmainRobotsModelHashtable();
-        QueryUsersHashtable.createRobotsHashtable();
-
-        /*
-         * Fifth: Options initialisation.
-         */
-        QueryOptionsHashtable.createMainOptionsHashtable();
+        struc.initializeStructures();
 
     } // initializeDomain()
 
@@ -1212,6 +1077,41 @@ OwlExport.exportRobotModelling(rdfFile.getAbsolutePath().substring(0, rdfFile.ge
         Mpiro.obj = new Mpiro();
         new LangChooser();
         Mpiro.win = new ELEONWindow();
+    }
+
+    public void clearDomain() {
+        struc.clearStructs();
+                DataBasePanel.label01.setText("");
+        StoriesPanel.label01.setText("");
+        UsersPanel.label01.setText("");
+        
+        DataBasePanel.multiTable.removeAll();
+        DataBasePanel.multiNoun.removeAll();
+        DataBasePanel.multiFlagPanel.removeAll();
+        DataBasePanel.previewPanel.removeAll();
+        DataBasePanel.previewPanel.add("Center", DataBasePanel.htmlView);
+        
+        DataBasePanel.multiTable.revalidate();
+        DataBasePanel.multiNoun.revalidate();
+        DataBasePanel.multiFlagPanel.revalidate();
+        DataBasePanel.previewPanel.revalidate();
+        
+        DataBasePanel.multiTable.repaint();
+        DataBasePanel.multiNoun.repaint();
+        DataBasePanel.multiFlagPanel.repaint();
+        DataBasePanel.previewPanel.repaint();
+        
+        LexiconPanel.multipanel.removeAll();
+        LexiconPanel.multipanel.revalidate();
+        LexiconPanel.multipanel.repaint();
+        
+        StoriesPanel.multiPanel.removeAll();
+        StoriesPanel.multiPanel.revalidate();
+        StoriesPanel.multiPanel.repaint();
+        
+        UsersPanel.multipanel.removeAll();
+        UsersPanel.multipanel.revalidate();
+        UsersPanel.multipanel.repaint();
     }
 
 }

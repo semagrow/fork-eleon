@@ -11,7 +11,7 @@ import gr.demokritos.iit.eleon.authoring.LangResources;
 import gr.demokritos.iit.eleon.authoring.LexiconDefaultVector;
 import gr.demokritos.iit.eleon.authoring.LexiconPanel;
 import gr.demokritos.iit.eleon.authoring.Mpiro;
-import gr.demokritos.iit.eleon.authoring.QueryLexiconHashtable;
+import gr.demokritos.iit.eleon.struct.QueryLexiconHashtable;
 import gr.demokritos.iit.eleon.ui.KLabel;
 
 import java.awt.*;
@@ -168,11 +168,11 @@ public class EnglishNounPanel extends JPanel implements ActionListener, FocusLis
 
 
 		//System.out.println(QueryLexiconHashtable.currentValues);
-		//if ((QueryLexiconHashtable.showValues(DataBasePanel.last.toString(),
+		//if ((Mpiro.win.struc.showValues(DataBasePanel.last.toString(),
 		//    TreePreviews.dbt.dbtl.selectedField.toString(),
 		//    DataBaseTable.dbTable.getValueAt(currentRow,3).toString())).isEmpty() == false) {
 		//System.out.println("Current Values: " + QueryHashtable.currentValues);
-		showValues(QueryLexiconHashtable.showValues(LexiconPanel.parent.toString(), "English"));
+		showValues(Mpiro.win.struc.showValues(LexiconPanel.parent.toString(), "English"));
 		//}
 		
 		//System.out.println(QueryLexiconHashtable.currentValues);
@@ -227,7 +227,7 @@ public class EnglishNounPanel extends JPanel implements ActionListener, FocusLis
 		}
 
 		// Update the Hashtable
-		QueryLexiconHashtable.updateLexiconEntryNoun(node, "English", label, item);
+		Mpiro.win.struc.updateLexiconEntryNoun(node, "English", label, item);
 		Mpiro.needExportToExprimo = true;		//maria
 		
 		// Print some info

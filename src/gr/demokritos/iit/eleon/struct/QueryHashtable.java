@@ -1,13 +1,22 @@
-//  "M-PIRO AUTHORING TOOL v.4.4"
-//  Copyright (c) 2001, 2002, 2003, 2004
-//  Software and Knowledge Engineering Laboratory,
-//  Institute of Informatics and Telecommunications,
-//  National Centre for Scientific Research "Demokritos", Greece.
+/***************
 
-package gr.demokritos.iit.eleon.authoring;
+<p>Title: Generalized Profiles</p>
 
+<p>Description:
+This class holds the ontology, without any linguistic or adaptation annotations. 
+</p>
+
+<p>Copyright (c) 2001-2009 National Centre for Scientific Research "Demokritos"</p>
+
+@author Dimitris Bilidas (XENIOS & INDIGO, 2007-2009)
+
+***************/
+
+
+package gr.demokritos.iit.eleon.struct;
+
+import gr.demokritos.iit.eleon.authoring.*;
 import gr.demokritos.iit.eleon.ui.MessageDialog;
-import gr.demokritos.iit.eleon.ui.RobotCharacteristicsPanel;
 import gr.demokritos.iit.eleon.ui.StoriesPanel;
 import gr.demokritos.iit.eleon.ui.StoriesTable;
 import gr.demokritos.iit.eleon.ui.StoriesTableListener;
@@ -21,114 +30,59 @@ import java.io.*;
 import javax.swing.tree.*;
 
 public class QueryHashtable extends Object implements Serializable {
-    static Vector currentValues;
-    static Hashtable currentSpecialValues;
-    static Hashtable currentFieldValues;
-    static Hashtable currentStoryValues;
-    static Object currentStoryText;
-    static Vector currentStoriesVector;
+    Vector currentValues;
+    Hashtable currentSpecialValues;
+    Hashtable currentFieldValues;
+    Hashtable currentStoryValues;
+    Object currentStoryText;
+    Vector currentStoriesVector;
     
-    static String hashtableEntry;
-    static String field;
-    static String currentValue;
-    static String currentSpecialValue;
+    String hashtableEntry;
+    String field;
+    String currentValue;
+    String currentSpecialValue;
     
-    static Font panelFont = new Font(Mpiro.selectedFont,Font.BOLD,11);
-    static Dimension leftMargin = new Dimension(150,10);
-    public static Hashtable mainDBHashtable;
-    public static Hashtable propertiesHashtable;
-    public static Hashtable equivalentClassesHashtable;
-    public static Hashtable superClassesHashtable;
-    public static Hashtable valueRestrictionsHashtable;
-    static Hashtable currentHashtable;
-    static Hashtable defaultHashtable;
-    static Vector currentVector;
-    public static Hashtable annotationPropertiesHashtable;
+   // Font panelFont = new Font(Mpiro.selectedFont,Font.BOLD,11);
+   // Dimension leftMargin = new Dimension(150,10);
+    public Hashtable mainDBHashtable;
+    public Hashtable propertiesHashtable;
+    public Hashtable equivalentClassesHashtable;
+    public Hashtable superClassesHashtable;
+    public Hashtable valueRestrictionsHashtable;
+    Hashtable currentHashtable;
+    Hashtable defaultHashtable;
+    Vector currentVector;
+    public Hashtable annotationPropertiesHashtable;
     
     // used only in
-    static Vector allEntityTypesBeforeRemove = null;
-    static Vector allEntitiesAndGenericBeforeRemove = null;
+    Vector allEntityTypesBeforeRemove = null;
+    Vector allEntitiesAndGenericBeforeRemove = null;
 
-    public static Vector robotCharVector;
+    //public Vector robotCharVector;
 
-    public static Hashtable robotCharValuesHashtable;
+    //public Hashtable robotCharValuesHashtable;
     
     /** Create the main hashtable. As keys the entity types */
-    public static void createMainDBHashtable() {
+    public QueryHashtable() {
         mainDBHashtable = new Hashtable();
-    }
-    
-    public static void createPropertiesHashtable() {
         propertiesHashtable = new Hashtable();
-    }
-    
-    public static void createEquivalentClassesHashtable() {
         equivalentClassesHashtable = new Hashtable();
-    }
-    
-    public static void createSuperClassesHashtable() {
         superClassesHashtable = new Hashtable();
-    }
-    
-    public static void createValueRestrictionsHashtable() {
         valueRestrictionsHashtable = new Hashtable();
-    }
-    
-    public static void createAnnotationPropertiesHashtable() {
         annotationPropertiesHashtable = new Hashtable();
+       // robotCharValuesHashtable=new Hashtable();
+       // robotCharVector=new Vector();
     }
-    
-    /** Clear everything ... */
-    public static void clearDomain() {
-        // First, clear the two main hashtables and the corresponding panels
-        
-        System.out.println("propHashtable:  "+propertiesHashtable.toString());
-        mainDBHashtable.clear();
-        propertiesHashtable.clear();
-        equivalentClassesHashtable.clear();
-        superClassesHashtable.clear();
-        valueRestrictionsHashtable.clear();
-        annotationPropertiesHashtable.clear();
-        robotCharValuesHashtable.clear();
-        robotCharVector.clear();
-        QueryLexiconHashtable.mainLexiconHashtable.clear();
-        QueryUsersHashtable.mainUsersHashtable.clear();
-        QueryUsersHashtable.mainUserModelHashtable.clear();
-        QueryUsersHashtable.robotsHashtable.clear();
-        QueryUsersHashtable.mainRobotsModelHashtable.clear();
-        
-        
-        DataBasePanel.label01.setText("");
-        StoriesPanel.label01.setText("");
-        UsersPanel.label01.setText("");
-        
-        DataBasePanel.multiTable.removeAll();
-        DataBasePanel.multiNoun.removeAll();
-        DataBasePanel.multiFlagPanel.removeAll();
-        DataBasePanel.previewPanel.removeAll();
-        DataBasePanel.previewPanel.add("Center", DataBasePanel.htmlView);
-        
-        DataBasePanel.multiTable.revalidate();
-        DataBasePanel.multiNoun.revalidate();
-        DataBasePanel.multiFlagPanel.revalidate();
-        DataBasePanel.previewPanel.revalidate();
-        
-        DataBasePanel.multiTable.repaint();
-        DataBasePanel.multiNoun.repaint();
-        DataBasePanel.multiFlagPanel.repaint();
-        DataBasePanel.previewPanel.repaint();
-        
-        LexiconPanel.multipanel.removeAll();
-        LexiconPanel.multipanel.revalidate();
-        LexiconPanel.multipanel.repaint();
-        
-        StoriesPanel.multiPanel.removeAll();
-        StoriesPanel.multiPanel.revalidate();
-        StoriesPanel.multiPanel.repaint();
-        
-        UsersPanel.multipanel.removeAll();
-        UsersPanel.multipanel.revalidate();
-        UsersPanel.multipanel.repaint();
+
+     public QueryHashtable(Hashtable mainDBHashtable, Hashtable propertiesHashtable, Hashtable equivalentClassesHashtable, Hashtable superClassesHashtable, Hashtable valueRestrictionsHashtable, Hashtable annotationPropertiesHashtable) {
+        this.mainDBHashtable = mainDBHashtable;
+        this.propertiesHashtable = propertiesHashtable;
+        this.equivalentClassesHashtable = equivalentClassesHashtable;
+        this.superClassesHashtable = superClassesHashtable;
+        this.valueRestrictionsHashtable = valueRestrictionsHashtable;
+        this.annotationPropertiesHashtable = annotationPropertiesHashtable;
+     //   this.robotCharValuesHashtable=robotCharValuesHashtable;
+    //    this.robotCharVector=robotCharVector;
     }
     
     
@@ -136,7 +90,7 @@ public class QueryHashtable extends Object implements Serializable {
      * This method is used when renaming a node.
      * Checks the input name for invalid characters.
      */
-    public static String checkNameValidity(String nodeName) {
+    public String checkNameValidity(String nodeName) {
         Vector invalidEntriesVector = new Vector();
         StringBuffer invalidEntriesString = new StringBuffer();
         for (int k=0; k < nodeName.length(); k++) {
@@ -163,7 +117,7 @@ public class QueryHashtable extends Object implements Serializable {
      * Checks the input name for invalid characters.
      * It is used in: DDialog.DatePanel.getDate();
      */
-    public static String checkNameValidityNumberOnly(String nodeName) {
+    public String checkNameValidityNumberOnly(String nodeName) {
         Vector invalidEntriesVector = new Vector();
         StringBuffer invalidEntriesString = new StringBuffer();
         for (int k=0; k < nodeName.length(); k++) {
@@ -193,7 +147,7 @@ public class QueryHashtable extends Object implements Serializable {
      * createBasicEntityType(), createEntity(), createSubType()
      * and in KDialog (option: "rename").
      */
-    public static int checkName(String nodeName) {
+    public int checkName(String nodeName) {
         int check = 0;
         
         if (nodeName.indexOf(" ") >= 0) {
@@ -209,7 +163,7 @@ public class QueryHashtable extends Object implements Serializable {
             Enumeration enu = mainDBHashtable.keys();
             while (enu.hasMoreElements()) {
                 String keyName = enu.nextElement().toString();
-                if (keyName.equalsIgnoreCase(nodeName) ) {
+                if (keyName.equals(nodeName) ) {
                     check = 1;  // This node-name already exists!
                 }
             }
@@ -228,7 +182,7 @@ public class QueryHashtable extends Object implements Serializable {
     /**
      * This method is called when a basic-entity-type is created
      */
-    public static void createBasicEntityType(String parentNodeName ,String createdNodeName) {
+    public void createBasicEntityType(String parentNodeName ,String createdNodeName) {
         NodeVector nv = new NodeVector(parentNodeName);
         mainDBHashtable.put(createdNodeName, nv);
     }
@@ -236,7 +190,7 @@ public class QueryHashtable extends Object implements Serializable {
     /**
      * This method is called when a sub-type is created
      */
-    public static void createSubType(String parentNodeName, String createdNodeName) {
+    public void createSubType(String parentNodeName, String createdNodeName) {
         //System.out.println("parent:"+parentNodeName+"created>:"+createdNodeName);
         int start = new DefaultVector("x").size();
         int end = DataBaseTable.m_data.getRowCount();
@@ -255,6 +209,7 @@ public class QueryHashtable extends Object implements Serializable {
         }
         nv.setElementAt(tableVector, 0);
         mainDBHashtable.put(createdNodeName, nv);
+        //System.out.print(mainDBHashtable.toString());
         //System.out.println("nnnnnnnnnnnnnnnnnnnnnnnn"+nv.toString());
         // update children of parent (parentNodeName)
         for (int m=start; m<end; m++) {
@@ -270,7 +225,7 @@ public class QueryHashtable extends Object implements Serializable {
         for(int i=8;i<tableVector.size();i++){
             Vector temp=(Vector) tableVector.elementAt(i);
             String propertyName=temp.elementAt(0).toString();
-            QueryHashtable.valueRestrictionsHashtable.put(createdNodeName+":"+propertyName, QueryHashtable.valueRestrictionsHashtable.get(parentNodeName+":"+propertyName));
+            valueRestrictionsHashtable.put(createdNodeName+":"+propertyName, valueRestrictionsHashtable.get(parentNodeName+":"+propertyName));
         }
     }
     
@@ -278,7 +233,7 @@ public class QueryHashtable extends Object implements Serializable {
     /**
      * Following two methods are called when an entity is created
      */
-    public static void createEntity(String parentNodeName, String createdNodeName) {
+    public void createEntity(String parentNodeName, String createdNodeName) {
         NodeVector nv = new NodeVector(parentNodeName, createdNodeName);
         mainDBHashtable.put(createdNodeName, nv);
     }
@@ -287,12 +242,12 @@ public class QueryHashtable extends Object implements Serializable {
     /**
      * Following method updates an already created Entity
      */
-    public static void updateCreatedEntity(String parentNodeName, String createdNodeName) {//System.out.println("parent***:"+parentNodeName+"created:"+createdNodeName);
+    public void updateCreatedEntity(String parentNodeName, String createdNodeName) {//System.out.println("parent***:"+parentNodeName+"created:"+createdNodeName);
         int start = 1; //add all properties of the parent except type
         int end = DataBaseTable.m_data.getRowCount();
         int addedRows = end - start;
-        Vector ptv=QueryHashtable.getPropertiesForType(parentNodeName);
-       // NodeVector entityTypeParentNode = (NodeVector) QueryHashtable.mainDBHashtable.get(parentNodeName);
+        Vector ptv=getPropertiesForType(parentNodeName);
+       // NodeVector entityTypeParentNode = (NodeVector) mainDBHashtable.get(parentNodeName);
        // Vector parentDatabaseTableVector =(Vector) entityTypeParentNode.elementAt(0);
         //  parentDatabaseTableVector =(Vector) parentDatabaseTableVector.elementAt(0);
         end=ptv.size();
@@ -352,7 +307,7 @@ public class QueryHashtable extends Object implements Serializable {
      * This method is called when an entity type or sub-type is created
      * Initialises the currentStoriesVector and adds the default story text for the first (default) story
      */
-    public static void createStory(String nodeName, String fieldName) {
+    public void createStory(String nodeName, String fieldName) {
         NodeVector nv = (NodeVector)mainDBHashtable.get(nodeName);
         StoriesVector sv = (StoriesVector)nv.elementAt(3);
         Hashtable englishValues = (Hashtable)sv.elementAt(0);
@@ -370,7 +325,7 @@ public class QueryHashtable extends Object implements Serializable {
     /**
      * Following method creates DefaultUpperVector
      */
-    public static void createDefaultUpperVector() {
+    public void createDefaultUpperVector() {
         NodeVector nv = (NodeVector)mainDBHashtable.get("Data Base");
         Vector u = (Vector)nv.elementAt(1);
         
@@ -390,7 +345,7 @@ public class QueryHashtable extends Object implements Serializable {
      *  This method is invoked when an entity-type (name) field (fieldname) is first created
      *  Used in: DataBaseTableListener
      */
-    public static void createDefaultHashtableField(String name) {
+    public void createDefaultHashtableField(String name, Vector usersVector) {
         String fieldname = "New-user-field";
         
         NodeVector nv = (NodeVector)mainDBHashtable.get(name);
@@ -401,26 +356,26 @@ public class QueryHashtable extends Object implements Serializable {
         String[] allValuesEnglish = {"NoMicroPlanning", "Choose a verb identifier", "Active", "Past", "", "", "", "", "Indicative", "revFalse", "Auto", "Nominative", "Auto", "Accusative", "aggTrue"};
         String[] allValuesItalianGreek = {"NoMicroPlanning", "Choose a verb identifier", "Active", "Past", "Simple", "", "", "", "", "Indicative", "revFalse", "Auto", "Nominative", "Auto", "Accusative", "aggTrue"};
          PropertiesHashtableRecord prop=new PropertiesHashtableRecord();
-        QueryHashtable.propertiesHashtable.put(fieldname, prop);
+        propertiesHashtable.put(fieldname, prop);
         for (int k=1; k<6; k++) {
             String microplanNumber = new Integer(k).toString();
             for (int i=0; i<allAttributesEnglish.length; i++) {
-                QueryHashtable.updateHashtable(name, microplanNumber, fieldname, allAttributesEnglish[i], "English", allValuesEnglish[i]);
+                updateHashtable(name, microplanNumber, fieldname, allAttributesEnglish[i], "English", allValuesEnglish[i]);
             }
             
             for (int i=0; i<allAttributesItalianGreek.length; i++) {
-                QueryHashtable.updateHashtable(name, microplanNumber, fieldname, allAttributesItalianGreek[i], "Italian", allValuesItalianGreek[i]);
-                QueryHashtable.updateHashtable(name, microplanNumber, fieldname, allAttributesItalianGreek[i], "Greek", allValuesItalianGreek[i]);
+                updateHashtable(name, microplanNumber, fieldname, allAttributesItalianGreek[i], "Italian", allValuesItalianGreek[i]);
+                updateHashtable(name, microplanNumber, fieldname, allAttributesItalianGreek[i], "Greek", allValuesItalianGreek[i]);
             }
             
             // adding the default value "0" as appropriateness for every user
-            Vector usersVector = QueryUsersHashtable.getUsersVectorFromMainUsersHashtable();
+           
             Enumeration usersVectorEnum = usersVector.elements();
             while (usersVectorEnum.hasMoreElements()) {
                 String user = usersVectorEnum.nextElement().toString();
-                QueryHashtable.updateHashtable(name, microplanNumber, fieldname, user, "English", "0");
-                QueryHashtable.updateHashtable(name, microplanNumber, fieldname, user, "Italian", "0");
-                QueryHashtable.updateHashtable(name, microplanNumber, fieldname, user, "Greek", "0");
+                updateHashtable(name, microplanNumber, fieldname, user, "English", "0");
+                updateHashtable(name, microplanNumber, fieldname, user, "Italian", "0");
+                updateHashtable(name, microplanNumber, fieldname, user, "Greek", "0");
             }
         }
        
@@ -440,7 +395,7 @@ public class QueryHashtable extends Object implements Serializable {
          * And a third method to check where a table contains (if it does) a field:
          * tableVectorContainFieldAt()
          */
-    public static Hashtable getChildrenBasics(DefaultMutableTreeNode node) {
+    public Hashtable getChildrenBasics(DefaultMutableTreeNode node) {
         Hashtable hash = new Hashtable();
         
         Enumeration enumer = node.preorderEnumeration();
@@ -449,7 +404,7 @@ public class QueryHashtable extends Object implements Serializable {
             if (child.isNodeSibling(node)) {
             } else {
                 // A. get child's name
-                String key = QueryHashtable.nameWithoutOccur(child.toString());
+                String key = nameWithoutOccur(child.toString());
                 // B. get child's icon
                 Object obj = (Object)(child.getUserObject());
                 IconData id = (IconData)obj;
@@ -470,7 +425,7 @@ public class QueryHashtable extends Object implements Serializable {
     }
     
     
-    public static Hashtable getChildrenEntities(DefaultMutableTreeNode node) {
+    public Hashtable getChildrenEntities(DefaultMutableTreeNode node) {
         Hashtable hash = new Hashtable();
         
         Enumeration enumer = node.preorderEnumeration();
@@ -479,7 +434,7 @@ public class QueryHashtable extends Object implements Serializable {
             if (child.isNodeSibling(node)) {
             } else {
                 // A. get child's name
-                String key = QueryHashtable.nameWithoutOccur(child.toString());
+                String key = nameWithoutOccur(child.toString());
                 // B. get child's icon
                 Object obj = (Object)(child.getUserObject());
                 IconData id = (IconData)obj;
@@ -496,13 +451,13 @@ public class QueryHashtable extends Object implements Serializable {
                 }
             }
         } // while
-        //System.out.println("(QueryHashtable.getChildrenEntities)----node- " + node.toString());
-        //System.out.println("(QueryHashtable.getChildrenEntities)----children- " + hash.keySet().toString());
+        //System.out.println("(getChildrenEntities)----node- " + node.toString());
+        //System.out.println("(getChildrenEntities)----children- " + hash.keySet().toString());
         return hash;
     }
     
     
-    public static int tableVectorContainFieldAt(Vector entityTableVector, String f, int langID) {
+    public int tableVectorContainFieldAt(Vector entityTableVector, String f, int langID) {
         int x = -1;
         Vector langVector = (Vector)entityTableVector.elementAt(langID);
         for (int y = 0; y < langVector.size(); y++) {
@@ -524,7 +479,7 @@ public class QueryHashtable extends Object implements Serializable {
          * which are BasicTypes or EntityTypes.
          * ---------------------------------------------------------------------
          */
-    public static void updateChildrenBasicTableVectors(int rowChanged) {
+    public void updateChildrenBasicTableVectors(int rowChanged) {
         // First, get the row that has been changed as vector (FieldData).
         FieldData fd = (FieldData)DataBaseTable.m_data.m_vector.elementAt(rowChanged);
         String a = new String(fd.elementAt(0).toString());
@@ -564,7 +519,7 @@ public class QueryHashtable extends Object implements Serializable {
          * else english/italian/greek fields.
          * ---------------------------------------------------------------------
          */
-    public static void updateChildrenEntitiesFieldColumn(String oldValue, String newValue, String fillerType) {
+    public void updateChildrenEntitiesFieldColumn(String oldValue, String newValue, String fillerType) {
         // A first check!
         if (newValue.equalsIgnoreCase(oldValue)) {
         } else {
@@ -682,7 +637,7 @@ public class QueryHashtable extends Object implements Serializable {
     
     
     /*
-        public static void updateChildrenEntitiesFieldColumn(String oldValue, String newValue, String fillerType, DefaultMutableTreeNode parentNode)
+        public void updateChildrenEntitiesFieldColumn(String oldValue, String newValue, String fillerType, DefaultMutableTreeNode parentNode)
         {
                 // A first check!
                 if (newValue.equalsIgnoreCase(oldValue))
@@ -794,7 +749,7 @@ public class QueryHashtable extends Object implements Serializable {
      
      
      */
-    public static void updateChildrenEntitiesFieldColumn(String oldValue, String newValue, String fillerType, DefaultMutableTreeNode node) {
+    public void updateChildrenEntitiesFieldColumn(String oldValue, String newValue, String fillerType, DefaultMutableTreeNode node) {
         // A first check!
         if (newValue.equalsIgnoreCase(oldValue)) {
         } else {
@@ -900,12 +855,12 @@ public class QueryHashtable extends Object implements Serializable {
          * else english/italian/greek fields.
          * ---------------------------------------------------------------------
          */
-    public static void updateChildrenEntitiesFillerColumn(DefaultMutableTreeNode node, String oldValue, String newValue, String fieldName) {
+    public void updateChildrenEntitiesFillerColumn(DefaultMutableTreeNode node, String oldValue, String newValue, String fieldName) {
         if (newValue.equalsIgnoreCase("string") && oldValue.equalsIgnoreCase("string")) {
         } else {
             // The 2 in method getChildren() forces it to collect only Entities.
-            //Vector childrenEntititesAndGeneric = QueryHashtable.getChildrenVectorFromMainDBHashtable(node.toString(), "Entity+Generic");
-            Vector childrenEntititesAndGeneric = QueryHashtable.getFullPathChildrenVectorFromMainDBHashtable(node.toString(), "Entity+Generic");
+            //Vector childrenEntititesAndGeneric = getChildrenVectorFromMainDBHashtable(node.toString(), "Entity+Generic");
+            Vector childrenEntititesAndGeneric = getFullPathChildrenVectorFromMainDBHashtable(node.toString(), "Entity+Generic");
             //System.out.println("(Query583)---- " + "childrenEntititesAndGeneric: " + childrenEntititesAndGeneric);
             Enumeration enumeration2 = childrenEntititesAndGeneric.elements();
             //Enumeration enumeration2 = getChildrenEntities(node).keys();
@@ -1007,7 +962,7 @@ public class QueryHashtable extends Object implements Serializable {
          * This method is called when inserting a row in a DataBaseTable.
          * ---------------------------------------------------------------------
          */
-    public static void insertRowInDataBaseTable(String name,String prop,String domain, String range,int rowPosition) {
+    public void insertRowInDataBaseTable(String name,String prop,String domain, String range,int rowPosition) {
         Enumeration en=DataBasePanel.top.preorderEnumeration();
         DefaultMutableTreeNode dmtn=new DefaultMutableTreeNode();
         while(en.hasMoreElements()){
@@ -1028,7 +983,7 @@ public class QueryHashtable extends Object implements Serializable {
             if(key.substring(0,key.length()-1).endsWith("_occur")) {
                 key=key.substring(0, key.length()-7);
             }
-            Hashtable allEntityTypes6 = (Hashtable) QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+            Hashtable allEntityTypes6 = (Hashtable) getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
             Enumeration allTypesNames6=allEntityTypes6.keys();
             while(allTypesNames6.hasMoreElements()) {
                 DefaultMutableTreeNode nextNode6=null;
@@ -1048,7 +1003,7 @@ public class QueryHashtable extends Object implements Serializable {
                     }
                     
                     //System.out.println("sddssdsdfsdfsdfadasad"+nextNode.toString());
-                    NodeVector nd6=(NodeVector) QueryHashtable.mainDBHashtable.get(nextEl6);
+                    NodeVector nd6=(NodeVector) mainDBHashtable.get(nextEl6);
                     //    NodeVector nd= (NodeVector) nextEl;
                     Vector oneChild6 = (Vector)nd6.elementAt(0);
                     if (!oneChild6.contains(new FieldData(rowPosition+1)))
@@ -1163,7 +1118,7 @@ public class QueryHashtable extends Object implements Serializable {
         if(lastSelected.substring(0,lastSelected.length()-1).endsWith("_occur")) {
             lastSelected=lastSelected.substring(0, lastSelected.length()-7);
         }
-        Hashtable allEntityTypes = (Hashtable) QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+        Hashtable allEntityTypes = (Hashtable) getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
         Enumeration allTypesNames=allEntityTypes.keys();
         while(allTypesNames.hasMoreElements()) {
             DefaultMutableTreeNode nextNode=null;
@@ -1183,7 +1138,7 @@ public class QueryHashtable extends Object implements Serializable {
                 }
                 
                 //System.out.println("sddssdsdfsdfsdfadasad"+nextNode.toString());
-                NodeVector nd=(NodeVector) QueryHashtable.mainDBHashtable.get(nextEl);
+                NodeVector nd=(NodeVector) mainDBHashtable.get(nextEl);
                 //    NodeVector nd= (NodeVector) nextEl;
                 Vector oneChild = (Vector)nd.elementAt(0);
                 if (!oneChild.contains(new FieldData(rowPosition+1)))
@@ -1252,7 +1207,7 @@ public class QueryHashtable extends Object implements Serializable {
     } // method insertRowInDataBaseTable()
     
     
-    public static void insertRowInDataBaseTable(int rowPosition) {
+    public void insertRowInDataBaseTable(int rowPosition) {
         // insert element (1 row)in current table vector
         if (rowPosition < 0)
             rowPosition = 0;
@@ -1272,7 +1227,7 @@ public class QueryHashtable extends Object implements Serializable {
             if(key.substring(0,key.length()-1).endsWith("_occur")) {
                 key=key.substring(0, key.length()-7);
             }
-            Hashtable allEntityTypes6 = (Hashtable) QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+            Hashtable allEntityTypes6 = (Hashtable) getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
             Enumeration allTypesNames6=allEntityTypes6.keys();
             while(allTypesNames6.hasMoreElements()) {
                 DefaultMutableTreeNode nextNode6=null;
@@ -1292,7 +1247,7 @@ public class QueryHashtable extends Object implements Serializable {
                     }
                     
                     //System.out.println("sddssdsdfsdfsdfadasad"+nextNode.toString());
-                    NodeVector nd6=(NodeVector) QueryHashtable.mainDBHashtable.get(nextEl6);
+                    NodeVector nd6=(NodeVector) mainDBHashtable.get(nextEl6);
                     //    NodeVector nd= (NodeVector) nextEl;
                     Vector oneChild6 = (Vector)nd6.elementAt(0);
                     if (!oneChild6.contains(new FieldData(rowPosition+1)))
@@ -1409,7 +1364,7 @@ public class QueryHashtable extends Object implements Serializable {
         if(lastSelected.substring(0,lastSelected.length()-1).endsWith("_occur")) {
             lastSelected=lastSelected.substring(0, lastSelected.length()-7);
         }
-        Hashtable allEntityTypes = (Hashtable) QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+        Hashtable allEntityTypes = (Hashtable) getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
         Enumeration allTypesNames=allEntityTypes.keys();
         while(allTypesNames.hasMoreElements()) {
             DefaultMutableTreeNode nextNode=null;
@@ -1429,7 +1384,7 @@ public class QueryHashtable extends Object implements Serializable {
                 }
                 
                 //System.out.println("sddssdsdfsdfsdfadasad"+nextNode.toString());
-                NodeVector nd=(NodeVector) QueryHashtable.mainDBHashtable.get(nextEl);
+                NodeVector nd=(NodeVector) mainDBHashtable.get(nextEl);
                 //    NodeVector nd= (NodeVector) nextEl;
                 Vector oneChild = (Vector)nd.elementAt(0);
                 if (!oneChild.contains(new FieldData(rowPosition+1)))
@@ -1500,7 +1455,7 @@ public class QueryHashtable extends Object implements Serializable {
     
     
     
-    public static void insertExistingRowInDataBaseTable(FieldData fd, int rowPosition) {
+    public void insertExistingRowInDataBaseTable(FieldData fd, int rowPosition) {
         // insert element (1 row)in current table vector
         if (rowPosition < 0)
             rowPosition = 0;
@@ -1520,7 +1475,7 @@ public class QueryHashtable extends Object implements Serializable {
             if(key.substring(0,key.length()-1).endsWith("_occur")) {
                 key=key.substring(0, key.length()-7);
             }
-            Hashtable allEntityTypes6 = (Hashtable) QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+            Hashtable allEntityTypes6 = (Hashtable) getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
             Enumeration allTypesNames6=allEntityTypes6.keys();
             while(allTypesNames6.hasMoreElements()) {
                 DefaultMutableTreeNode nextNode6=null;
@@ -1540,7 +1495,7 @@ public class QueryHashtable extends Object implements Serializable {
                     }
                     
                     //System.out.println("sddssdsdfsdfsdfadasad"+nextNode.toString());
-                    NodeVector nd6=(NodeVector) QueryHashtable.mainDBHashtable.get(nextEl6);
+                    NodeVector nd6=(NodeVector) mainDBHashtable.get(nextEl6);
                     //    NodeVector nd= (NodeVector) nextEl;
                     Vector oneChild6 = (Vector)nd6.elementAt(0);
                     boolean contains=false;
@@ -1555,7 +1510,7 @@ public class QueryHashtable extends Object implements Serializable {
                     }
                     if (contains) continue;
                     oneChild6.insertElementAt(fd, rowPosition);
-                    QueryHashtable.valueRestrictionsHashtable.put(nextEl6.toString()+":"+fd.m_field,new ValueRestriction());
+                    valueRestrictionsHashtable.put(nextEl6.toString()+":"+fd.m_field,new ValueRestriction());
                     
                     NodeVector oneChildNode6 = (NodeVector)mainDBHashtable.get(nextEl6.toString());
                     //System.out.println(oneChildNode.toString()+"sdfsdfsdfs");
@@ -1581,7 +1536,7 @@ public class QueryHashtable extends Object implements Serializable {
                         }
                         if (!contains)
                             oneChildTableVector16.insertElementAt(fd, rowPosition);
-                        QueryHashtable.valueRestrictionsHashtable.put(key6.toString()+":"+fd.m_field,new ValueRestriction());
+                        valueRestrictionsHashtable.put(key6.toString()+":"+fd.m_field,new ValueRestriction());
                         NodeVector oneChildNodeVector16 = (NodeVector)mainDBHashtable.get(key6);
                         oneChildNodeVector16.setElementAt(oneChildTableVector16, 0);
                     }
@@ -1734,7 +1689,7 @@ public class QueryHashtable extends Object implements Serializable {
         if(lastSelected.substring(0,lastSelected.length()-1).endsWith("_occur")) {
             lastSelected=lastSelected.substring(0, lastSelected.length()-7);
         }
-        Hashtable allEntityTypes = (Hashtable) QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+        Hashtable allEntityTypes = (Hashtable) getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
         Enumeration allTypesNames=allEntityTypes.keys();
         while(allTypesNames.hasMoreElements()) {
             DefaultMutableTreeNode nextNode=null;
@@ -1754,7 +1709,7 @@ public class QueryHashtable extends Object implements Serializable {
                 }
                 
                 //System.out.println("sddssdsdfsdfsdfadasad"+nextNode.toString());
-                NodeVector nd=(NodeVector) QueryHashtable.mainDBHashtable.get(nextEl);
+                NodeVector nd=(NodeVector) mainDBHashtable.get(nextEl);
                 //    NodeVector nd= (NodeVector) nextEl;
                 Vector oneChild = (Vector)nd.elementAt(0);
                 contains=false;
@@ -1852,7 +1807,7 @@ public class QueryHashtable extends Object implements Serializable {
          * This method is called when inserting a row in a StoriesTable.
          * ---------------------------------------------------------------------
          */
-    public static void insertRowInStoriesTable(int rowPosition) {
+    public void insertRowInStoriesTable(int rowPosition) {
         // insert element (1 row)in current table vector
         if (rowPosition < 0)
             rowPosition = 0;
@@ -1867,7 +1822,7 @@ public class QueryHashtable extends Object implements Serializable {
          * This method is called when removing a row from a DataBaseTable.
          * ---------------------------------------------------------------------
          */
-    public static boolean removeRowFromDataBaseTable(String fieldName, String fillerType, int rowPosition) {
+    public boolean removeRowFromDataBaseTable(String fieldName, String fillerType, int rowPosition) {
         if (rowPosition < 0 || rowPosition >= DataBaseTable.m_data.m_vector.size()) {
             return false;
         }
@@ -1911,7 +1866,7 @@ public class QueryHashtable extends Object implements Serializable {
                 Vector property=(Vector) oneChildTableVector.elementAt(y-1);
                 if (property.elementAt(0).toString().equalsIgnoreCase(fieldName)||property==null){
                     oneChildTableVector.removeElementAt(y-1);
-                    oneChildNodeVector = (NodeVector)QueryHashtable.mainDBHashtable.get(key);
+                    oneChildNodeVector = (NodeVector)mainDBHashtable.get(key);
                     oneChildNodeVector.setElementAt(oneChildTableVector, 0);
                     System.out.println("BBBBB2"+key);}}
             // System.out.println(basicNodeVectors.get(key+String.valueOf().toString()));
@@ -1924,7 +1879,7 @@ public class QueryHashtable extends Object implements Serializable {
                     if (property.elementAt(0).toString().equalsIgnoreCase(fieldName)||property==null){
                         
                         oneChildTableVector.removeElementAt(y-1);
-                        oneChildNodeVector = (NodeVector)QueryHashtable.mainDBHashtable.get(key+"_occur"+String.valueOf(u));
+                        oneChildNodeVector = (NodeVector)mainDBHashtable.get(key+"_occur"+String.valueOf(u));
                         oneChildNodeVector.setElementAt(oneChildTableVector, 0);}}}
         }
         
@@ -1945,7 +1900,7 @@ public class QueryHashtable extends Object implements Serializable {
       
         
         
-//        Hashtable entityNodeVectors = QueryHashtable.getChildrenEntities(DataBasePanel.last);
+//        Hashtable entityNodeVectors = getChildrenEntities(DataBasePanel.last);
 //        Enumeration enum2 = entityNodeVectors.keys();
 //        while (enum2.hasMoreElements()) {
 //            String key = (String)enum2.nextElement();
@@ -1994,7 +1949,7 @@ public class QueryHashtable extends Object implements Serializable {
     
     
     
-    public static boolean removeRowFromDataBaseTable(String fieldName, String fillerType, int rowPosition, String node) {
+    public boolean removeRowFromDataBaseTable(String fieldName, String fillerType, int rowPosition, String node) {
         if (rowPosition < 0 || rowPosition >= DataBaseTable.m_data.m_vector.size()) {
             return false;
         }
@@ -2028,7 +1983,7 @@ public class QueryHashtable extends Object implements Serializable {
         // remove element (1 row) from current table's vector
         //DataBaseTable.m_data.m_vector.remove(rowPosition);
         
-        NodeVector entityTypeParentNode = (NodeVector) QueryHashtable.mainDBHashtable.get(node);
+        NodeVector entityTypeParentNode = (NodeVector) mainDBHashtable.get(node);
         Vector parentDatabaseTableVector =(Vector) entityTypeParentNode.elementAt(0);
         //   parentDatabaseTableVector=(Vector) parentDatabaseTableVector.elementAt(0);
         int l=0;
@@ -2049,21 +2004,21 @@ public class QueryHashtable extends Object implements Serializable {
             NodeVector oneChildVector = (NodeVector)basicNodeVectors.get(key);
             Vector oneChildTableVector = (Vector)oneChildVector.elementAt(0);
             oneChildTableVector.removeElementAt(rowPosition);
-            NodeVector oneChildNodeVector = (NodeVector)QueryHashtable.mainDBHashtable.get(key);
+            NodeVector oneChildNodeVector = (NodeVector)mainDBHashtable.get(key);
             oneChildNodeVector.setElementAt(oneChildTableVector, 0);
             for(int u=1;basicNodeVectors.get(key+String.valueOf(u))!=null;u++){
                 System.out.println("BBBBB1"+key+String.valueOf(u));
                 oneChildVector = (NodeVector)basicNodeVectors.get(key+String.valueOf(u));
                 oneChildTableVector = (Vector)oneChildVector.elementAt(0);
                 oneChildTableVector.removeElementAt(rowPosition);
-                oneChildNodeVector = (NodeVector)QueryHashtable.mainDBHashtable.get(key+String.valueOf(u));
+                oneChildNodeVector = (NodeVector)mainDBHashtable.get(key+String.valueOf(u));
                 oneChildNodeVector.setElementAt(oneChildTableVector, 0);
                 
             }
         }
         
         // 2. Get Entities
-        Hashtable entityNodeVectors = QueryHashtable.getChildrenEntities(nextNode);
+        Hashtable entityNodeVectors = getChildrenEntities(nextNode);
         Enumeration enum2 = entityNodeVectors.keys();
         while (enum2.hasMoreElements()) {
             String key = (String)enum2.nextElement();
@@ -2115,7 +2070,7 @@ public class QueryHashtable extends Object implements Serializable {
          * This method is called when removing a row from a StoriesTable.
          * ---------------------------------------------------------------------
          */
-    public static boolean removeRowFromStoriesTable(String fieldName, int rowPosition) {
+    public boolean removeRowFromStoriesTable(String fieldName, int rowPosition) {
         if (rowPosition < 0 || rowPosition >= StoriesTable.m_data.m_vector.size()) {
             return false;
         }
@@ -2153,7 +2108,7 @@ public class QueryHashtable extends Object implements Serializable {
          * for Entities, first row (entity, ...) and second row (type, ...).
          * ---------------------------------------------------------------------
          */
-    public static void updateChildrenTableVectorsWithNewParentName(String newName,String parent) {
+    public void updateChildrenTableVectorsWithNewParentName(String newName,String parent) {
         int nodeCount = 0;  // count nodes other than leafs
         int leafCount = 0;  // count leaf-nodes
         
@@ -2167,7 +2122,7 @@ public class QueryHashtable extends Object implements Serializable {
             Icon ii = id.getIcon();
             ImageIcon im = (ImageIcon)ii;
             
-            NodeVector childVector = (NodeVector)QueryHashtable.mainDBHashtable.get(child.toString());
+            NodeVector childVector = (NodeVector)mainDBHashtable.get(child.toString());
             
             Vector childTable = (Vector)childVector.elementAt(0);
             
@@ -2205,7 +2160,7 @@ public class QueryHashtable extends Object implements Serializable {
     
     
     
-    public static void updateChildrenTableVectorsWithNewParentName(String newName) {
+    public void updateChildrenTableVectorsWithNewParentName(String newName) {
         int nodeCount = 0;  // count nodes other than leafs
         int leafCount = 0;  // count leaf-nodes
         
@@ -2219,7 +2174,7 @@ public class QueryHashtable extends Object implements Serializable {
             Icon ii = id.getIcon();
             ImageIcon im = (ImageIcon)ii;
             
-            NodeVector childVector = (NodeVector)QueryHashtable.mainDBHashtable.get(child.toString());
+            NodeVector childVector = (NodeVector)mainDBHashtable.get(child.toString());
             
             Vector childTable = (Vector)childVector.elementAt(0);
             
@@ -2256,7 +2211,7 @@ public class QueryHashtable extends Object implements Serializable {
     }
     
     
-    public static void updateChildrenTableVectorsWithNewParentName(String newName,DefaultMutableTreeNode parent) {
+    public void updateChildrenTableVectorsWithNewParentName(String newName,DefaultMutableTreeNode parent) {
         int nodeCount = 0;  // count nodes other than leafs
         int leafCount = 0;  // count leaf-nodes
 //System.out.println("ppppppp"+parent.toString());
@@ -2270,7 +2225,7 @@ public class QueryHashtable extends Object implements Serializable {
             Icon ii = id.getIcon();
             ImageIcon im = (ImageIcon)ii;
             
-            NodeVector childVector = (NodeVector)QueryHashtable.mainDBHashtable.get(child.toString());
+            NodeVector childVector = (NodeVector)mainDBHashtable.get(child.toString());
             
             Vector childTable = (Vector)childVector.elementAt(0);
             
@@ -2311,7 +2266,7 @@ public class QueryHashtable extends Object implements Serializable {
          * its children's nounVectors with the new values
          * ---------------------------------------------------------------------
          */
-    public static void updateChildrenNounVectors(DefaultMutableTreeNode treeNode,Vector beforeVector, Vector newNounVector) {
+    public void updateChildrenNounVectors(DefaultMutableTreeNode treeNode,Vector beforeVector, Vector newNounVector) {
         Vector clone = new Vector(newNounVector); // for not changing newNounVector
         
         Hashtable h = getChildrenBasics(treeNode);
@@ -2372,7 +2327,7 @@ public class QueryHashtable extends Object implements Serializable {
             clone = new Vector(newNounVector);
         }}
     
-    public static void updateChildrenNounVectors(Vector beforeVector, Vector newNounVector) {
+    public void updateChildrenNounVectors(Vector beforeVector, Vector newNounVector) {
         Vector clone = new Vector(newNounVector); // for not changing newNounVector
         
         Hashtable h = getChildrenBasics(DataBasePanel.last);
@@ -2396,7 +2351,7 @@ public class QueryHashtable extends Object implements Serializable {
          * This method is called when changing a node's stories.
          * ---------------------------------------------------------------------
          */
-    public static void updateHashtableStoryInfo(String nodeName, String language, String storyString) {
+    public void updateHashtableStoryInfo(String nodeName, String language, String storyString) {
         NodeVector currentVector = (NodeVector)mainDBHashtable.get(nodeName);
         StoriesVector currentStoriesVector = (StoriesVector)currentVector.elementAt(3);
         
@@ -2426,7 +2381,7 @@ public class QueryHashtable extends Object implements Serializable {
          *  This method is invoked when an entity-type (name) story is removed)
          * ---------------------------------------------------------------------
          */
-    public static void removeStoryFromHashtable(String nodeName, String fieldName) {
+    public void removeStoryFromHashtable(String nodeName, String fieldName) {
         NodeVector nv = (NodeVector)mainDBHashtable.get(nodeName);
         StoriesVector sv = (StoriesVector)nv.elementAt(3);
         Hashtable englishValues = (Hashtable)sv.elementAt(0);
@@ -2449,39 +2404,39 @@ public class QueryHashtable extends Object implements Serializable {
          *  storing the attribute value (attributeValue). {(microplanning info)}
          * ----------------------------------------------------------------------
          */
-    public static void updateHashtable(String name, String microplanNumber, String field, String attribute, String language, String attributeValue) {
-       // Hashtable temp=QueryHashtable.propertiesHashtable;
-        //System.out.println(QueryHashtable.propertiesHashtable.get(field));
-                String nodename=((Vector)((Vector)QueryHashtable.propertiesHashtable.get(field)).elementAt(0)).elementAt(0).toString();
-	  Vector nodenameVector = (Vector)QueryHashtable.mainDBHashtable.get(nodename);
-	  Hashtable microplanningHashtable = (Hashtable)nodenameVector.get(5);
-          
-     /*   if(name.substring(0,name.length()-1).endsWith("_occur")) {
-            name=name.substring(0, name.length()-7);
-        }
-        Hashtable allEntityTypes = (Hashtable) QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
-        Enumeration allTypesNames=allEntityTypes.keys();
-        while(allTypesNames.hasMoreElements()) {//DefaultMutableTreeNode nextNode=null;
-            Object nextEl=allTypesNames.nextElement();
-            
-            
-            
-            if (nextEl.toString().startsWith(name+"_occur")||nextEl.toString().equalsIgnoreCase(name)) {
-                String tempHashtableName = nextEl.toString();
-                currentVector = (Vector)mainDBHashtable.get(tempHashtableName);
-                currentHashtable = (Hashtable)currentVector.get(5);
-                */
-                microplanningHashtable.put(microplanNumber + ":" + field + ":" + attribute + ":" + language, attributeValue);
-                
-          //  }
-       // }
-        
-        
-        //System.out.println("*****name: "+name+" micropnanumber: "+microplanNumber+" field: "+field+" attribute: "+attribute+" lang: "+language+" attributeValue: "+attributeValue);
-        
-    }
+//    public void updateHashtable(String name, String microplanNumber, String field, String attribute, String language, String attributeValue) {
+//       // Hashtable temp=propertiesHashtable;
+//        //System.out.println(propertiesHashtable.get(field));
+//                String nodename=((Vector)((Vector)propertiesHashtable.get(field)).elementAt(0)).elementAt(0).toString();
+//	  Vector nodenameVector = (Vector)mainDBHashtable.get(nodename);
+//	  Hashtable microplanningHashtable = (Hashtable)nodenameVector.get(5);
+//          
+//     /*   if(name.substring(0,name.length()-1).endsWith("_occur")) {
+//            name=name.substring(0, name.length()-7);
+//        }
+//        Hashtable allEntityTypes = (Hashtable) getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+//        Enumeration allTypesNames=allEntityTypes.keys();
+//        while(allTypesNames.hasMoreElements()) {//DefaultMutableTreeNode nextNode=null;
+//            Object nextEl=allTypesNames.nextElement();
+//            
+//            
+//            
+//            if (nextEl.toString().startsWith(name+"_occur")||nextEl.toString().equalsIgnoreCase(name)) {
+//                String tempHashtableName = nextEl.toString();
+//                currentVector = (Vector)mainDBHashtable.get(tempHashtableName);
+//                currentHashtable = (Hashtable)currentVector.get(5);
+//                */
+//                microplanningHashtable.put(microplanNumber + ":" + field + ":" + attribute + ":" + language, attributeValue);
+//                
+//          //  }
+//       // }
+//        
+//        
+//        //System.out.println("*****name: "+name+" micropnanumber: "+microplanNumber+" field: "+field+" attribute: "+attribute+" lang: "+language+" attributeValue: "+attributeValue);
+//        
+//    }
     
-    public static void updateHashtable2(String name, String microplanNumber, String field, String attribute, String language, String attributeValue) {
+    public void updateHashtable(String name, String microplanNumber, String field, String attribute, String language, String attributeValue) {
         
         
         Vector property=(Vector) propertiesHashtable.get(field);
@@ -2505,7 +2460,7 @@ public class QueryHashtable extends Object implements Serializable {
      *  language (language), storing the stringfield (stringfield), semantics (semantics), type (type).
      *                                  {(microplanning info)}
      */
-        /*public static void updateHashtableTemplateInfo(String name, String fieldname, String language,
+        /*public void updateHashtableTemplateInfo(String name, String fieldname, String language,
                                                    String stringfield, String semantics, String type) {
          
         String tempHashtableName = name;
@@ -2532,7 +2487,7 @@ public class QueryHashtable extends Object implements Serializable {
      *  UPDATE 12
      *  This method is invoked when an entity-type (name) is removed
      */
-    public static void renameNodesGenericEntity(String oldname, String newname) {
+    public void renameNodesGenericEntity(String oldname, String newname) {
         NodeVector newGeneric = (NodeVector)mainDBHashtable.get(oldname);
         mainDBHashtable.put(newname, newGeneric);
         mainDBHashtable.remove(oldname);//////////////////added
@@ -2542,9 +2497,12 @@ public class QueryHashtable extends Object implements Serializable {
     /**
      *  This method is invoked when an entity-type (name) field (oldfieldname) is renamed (newfieldname)
      */
-    public static void renameHashtableField(String name, String oldfieldname, String newfieldname) {
-        currentVector = (Vector)mainDBHashtable.get(name);
-        currentHashtable = (Hashtable)currentVector.get(5);
+    public void renameHashtableField(String name, String oldfieldname, String newfieldname) {
+        if(!propertiesHashtable.containsKey(oldfieldname))
+             currentVector = (Vector)propertiesHashtable.get(newfieldname);
+        else
+            currentVector = (Vector)propertiesHashtable.get(oldfieldname);
+        currentHashtable = (Hashtable)currentVector.get(10);
         
         int oldKeylength = oldfieldname.length();
         int newKeyLength = newfieldname.length();
@@ -2570,7 +2528,7 @@ public class QueryHashtable extends Object implements Serializable {
     /**
      *  This method is invoked when an entity-type (name) is removed
      */
-    public static void removeHashtable(String name) {
+    public void removeHashtable(String name) {
         mainDBHashtable.remove(name);
     }
     
@@ -2578,7 +2536,7 @@ public class QueryHashtable extends Object implements Serializable {
     /**
      *  This method is invoked when an entity-type (name) field (fieldname) is removed)
      */
-    public static void removeHashtableField(String name, String fieldname) { // removeHashtableField
+    public void removeHashtableField(String name, String fieldname) { // removeHashtableField
         currentVector = (Vector)mainDBHashtable.get(name);
         currentHashtable = (Hashtable)currentVector.get(5);
         
@@ -2603,7 +2561,7 @@ public class QueryHashtable extends Object implements Serializable {
      *  The method that gets the values from "English" for a field (field) of
      *  an entity type (name) and adds them to the current language (language) field
      */
-    public static Vector getValuesFromEnglish(String name, String number, String field, String language) {
+    public Vector getValuesFromEnglish(String name, String number, String field, String language) {
         currentValues.clear();
         String tempHashtableName = name;
         currentVector = (Vector)mainDBHashtable.get(tempHashtableName);
@@ -2636,7 +2594,7 @@ public class QueryHashtable extends Object implements Serializable {
                         currentValue = (String)currentHashtable.get(keyStringNumber + ":" + keyStringField + ":" + keyStringAttribute + ":" + "English");
                         //currentValue = (String)currentHashtable.get(keyStringFieldAndAttribute + "English");
                         currentValues.addElement(currentValue);
-                        QueryHashtable.updateHashtable(DataBasePanel.last.toString(),
+                        updateHashtable(DataBasePanel.last.toString(),
                                 number,
                                 field,
                                 keyStringAttribute,
@@ -2656,7 +2614,7 @@ public class QueryHashtable extends Object implements Serializable {
      *  The method that gets the values from "Italian" for a field (field) of
      *  an entity type (name) and adds them to the current language (language) field
      */
-    public static Vector getValuesFromItalian(String name, String number, String field, String language) {
+    public Vector getValuesFromItalian(String name, String number, String field, String language) {
         currentValues.clear();
         String tempHashtableName = name;
         currentVector = (Vector)mainDBHashtable.get(tempHashtableName);
@@ -2688,7 +2646,7 @@ public class QueryHashtable extends Object implements Serializable {
                         //currentValue = (String)currentHashtable.get(keyStringFieldAndAttribute + "Italian");
                         if (!(keyStringAttribute.compareTo("Aspect") == 0 && language.compareTo("English") == 0)) {
                             currentValues.addElement(currentValue);
-                            QueryHashtable.updateHashtable(DataBasePanel.last.toString(),
+                            updateHashtable(DataBasePanel.last.toString(),
                                     number,
                                     field,
                                     keyStringAttribute,
@@ -2709,7 +2667,7 @@ public class QueryHashtable extends Object implements Serializable {
      *  The method that gets the values from "Greek" for a field (field) of
      *  an entity type (name) and adds them to the current language (language) field
      */
-    public static Vector getValuesFromGreek(String name, String number, String field, String language) {
+    public Vector getValuesFromGreek(String name, String number, String field, String language) {
         currentValues.clear();
         String tempHashtableName = name;
         currentVector = (Vector)mainDBHashtable.get(tempHashtableName);
@@ -2741,7 +2699,7 @@ public class QueryHashtable extends Object implements Serializable {
                         //currentValue = (String)currentHashtable.get(keyStringFieldAndAttribute + "Greek");
                         if (!(keyStringAttribute.compareTo("Aspect") == 0 && language.compareTo("English") == 0)) {
                             currentValues.addElement(currentValue);
-                            QueryHashtable.updateHashtable(DataBasePanel.last.toString(),
+                            updateHashtable(DataBasePanel.last.toString(),
                                     number,
                                     field,
                                     keyStringAttribute,
@@ -2758,7 +2716,7 @@ public class QueryHashtable extends Object implements Serializable {
     } //getValuesFromGreek
     
     
-    public static Vector getValuesFromEnglish2(String name, String number, String field, String language) {
+    public Vector getValuesFromEnglish2(String name, String number, String field, String language) {
         currentValues.clear();
         //String tempHashtableName = name;
         currentVector = (Vector)propertiesHashtable.get(field);
@@ -2791,7 +2749,7 @@ public class QueryHashtable extends Object implements Serializable {
                         currentValue = (String)currentHashtable.get(keyStringNumber + ":" + keyStringField + ":" + keyStringAttribute + ":" + "English");
                         //currentValue = (String)currentHashtable.get(keyStringFieldAndAttribute + "English");
                         currentValues.addElement(currentValue);
-                        QueryHashtable.updateHashtable2(DataBasePanel.last.toString(),
+                        updateHashtable(DataBasePanel.last.toString(),
                                 number,
                                 field,
                                 keyStringAttribute,
@@ -2811,7 +2769,7 @@ public class QueryHashtable extends Object implements Serializable {
      *  The method that gets the values from "Italian" for a field (field) of
      *  an entity type (name) and adds them to the current language (language) field
      */
-    public static Vector getValuesFromItalian2(String name, String number, String field, String language) {
+    public Vector getValuesFromItalian2(String name, String number, String field, String language) {
         currentValues.clear();
         //String tempHashtableName = name;
         currentVector = (Vector)propertiesHashtable.get(field);
@@ -2843,7 +2801,7 @@ public class QueryHashtable extends Object implements Serializable {
                         //currentValue = (String)currentHashtable.get(keyStringFieldAndAttribute + "Italian");
                         if (!(keyStringAttribute.compareTo("Aspect") == 0 && language.compareTo("English") == 0)) {
                             currentValues.addElement(currentValue);
-                            QueryHashtable.updateHashtable2(DataBasePanel.last.toString(),
+                            updateHashtable(DataBasePanel.last.toString(),
                                     number,
                                     field,
                                     keyStringAttribute,
@@ -2864,7 +2822,7 @@ public class QueryHashtable extends Object implements Serializable {
      *  The method that gets the values from "Greek" for a field (field) of
      *  an entity type (name) and adds them to the current language (language) field
      */
-    public static Vector getValuesFromGreek2(String name, String number, String field, String language) {
+    public Vector getValuesFromGreek2(String name, String number, String field, String language) {
         currentValues.clear();
         //String tempHashtableName = name;
         currentVector = (Vector)propertiesHashtable.get(field);
@@ -2896,7 +2854,7 @@ public class QueryHashtable extends Object implements Serializable {
                         //currentValue = (String)currentHashtable.get(keyStringFieldAndAttribute + "Greek");
                         if (!(keyStringAttribute.compareTo("Aspect") == 0 && language.compareTo("English") == 0)) {
                             currentValues.addElement(currentValue);
-                            QueryHashtable.updateHashtable2(DataBasePanel.last.toString(),
+                            updateHashtable(DataBasePanel.last.toString(),
                                     number,
                                     field,
                                     keyStringAttribute,
@@ -2913,68 +2871,68 @@ public class QueryHashtable extends Object implements Serializable {
     } //getValuesFromGreek
     
     
-    public static String getSpecialValueVerbFromEnglish(String name, String number, String field, String language) {
+    public String getSpecialValueVerbFromEnglish(String name, String number, String field, String language) {
         String tempHashtableName = name;
         currentVector = (Vector)mainDBHashtable.get(tempHashtableName);
         currentHashtable = (Hashtable)currentVector.get(5);
         
         String verb = currentHashtable.get(number + ":" + field + ":Verb:English").toString();
-        QueryHashtable.updateHashtable(name, number, field, "Verb", language, verb);
+        updateHashtable(name, number, field, "Verb", language, verb);
         return verb;
     } //getSpecialValueVerbFromEnglish
     
     
-    public static String getSpecialValueVerbFromItalian(String name, String number, String field, String language) {
+    public String getSpecialValueVerbFromItalian(String name, String number, String field, String language) {
         String tempHashtableName = name;
         currentVector = (Vector)mainDBHashtable.get(tempHashtableName);
         currentHashtable = (Hashtable)currentVector.get(5);
         
         String verb = currentHashtable.get(number + ":" + field + ":Verb:Italian").toString();
-        QueryHashtable.updateHashtable(name, number, field, "Verb", language, verb);
+        updateHashtable(name, number, field, "Verb", language, verb);
         return verb;
     } //getSpecialValueVerbFromItalian
     
     
-    public static String getSpecialValueVerbFromGreek(String name, String number, String field, String language) {
+    public String getSpecialValueVerbFromGreek(String name, String number, String field, String language) {
         String tempHashtableName = name;
         currentVector = (Vector)mainDBHashtable.get(tempHashtableName);
         currentHashtable = (Hashtable)currentVector.get(5);
         
         String verb = currentHashtable.get(number + ":" + field + ":Verb:Greek").toString();
-        QueryHashtable.updateHashtable(name, number, field, "Verb", language, verb);
+        updateHashtable(name, number, field, "Verb", language, verb);
         return verb;
     } //getSpecialValueVerbFromGreek
     
     
-    public static String getSpecialValueVerbFromEnglish2(String name, String number, String field, String language) {
+    public String getSpecialValueVerbFromEnglish2(String name, String number, String field, String language) {
         //String tempHashtableName = name;
         currentVector = (Vector)propertiesHashtable.get(field);
         currentHashtable = (Hashtable)currentVector.get(10);
         
         String verb = currentHashtable.get(number + ":" + field + ":Verb:English").toString();
-        QueryHashtable.updateHashtable(name, number, field, "Verb", language, verb);
+        updateHashtable(name, number, field, "Verb", language, verb);
         return verb;
     } //getSpecialValueVerbFromEnglish
     
     
-    public static String getSpecialValueVerbFromItalian2(String name, String number, String field, String language) {
+    public String getSpecialValueVerbFromItalian2(String name, String number, String field, String language) {
         //String tempHashtableName = name;
         currentVector = (Vector)propertiesHashtable.get(field);
         currentHashtable = (Hashtable)currentVector.get(10);
         
         String verb = currentHashtable.get(number + ":" + field + ":Verb:Italian").toString();
-        QueryHashtable.updateHashtable(name, number, field, "Verb", language, verb);
+        updateHashtable(name, number, field, "Verb", language, verb);
         return verb;
     } //getSpecialValueVerbFromItalian
     
     
-    public static String getSpecialValueVerbFromGreek2(String name, String number, String field, String language) {
+    public String getSpecialValueVerbFromGreek2(String name, String number, String field, String language) {
         //String tempHashtableName = name;
         currentVector = (Vector)propertiesHashtable.get(field);
         currentHashtable = (Hashtable)currentVector.get(10);
         
         String verb = currentHashtable.get(number + ":" + field + ":Verb:Greek").toString();
-        QueryHashtable.updateHashtable(name, number, field, "Verb", language, verb);
+        updateHashtable(name, number, field, "Verb", language, verb);
         return verb;
     } //getSpecialValueVerbFromGreek
     
@@ -2985,51 +2943,51 @@ public class QueryHashtable extends Object implements Serializable {
      *  for a specific field (field) and shows them.
      *  It is displayed on the micro-planning space for the specific language (language)
      */
-    public static Vector showValues(String name, String number, String field, String language) {
-        String tempHashtableName = name;
-        currentVector = (Vector)mainDBHashtable.get(tempHashtableName);
-        currentHashtable = (Hashtable)currentVector.get(5);
-        currentValues = new Vector();
-        
-        for (Enumeration k = currentHashtable.keys(), e = currentHashtable.elements(); k.hasMoreElements(); ) {
-            String keyString = k.nextElement().toString();
-            String valueString = e.nextElement().toString();
-            StringTokenizer keyStringTokens = new StringTokenizer(keyString, ":");
-            String keyStringNumber = keyStringTokens.nextToken();
-            String keyStringField = keyStringTokens.nextToken();
-            String keyStringAttribute = keyStringTokens.nextToken();
-            String keyStringLanguage = keyStringTokens.nextToken();
-                        /*
-                        String keyStringField = keyString.substring(0, keyString.indexOf(":", 0));
-                        String keyStringAttribute = keyString.substring(keyString.indexOf(":", keyString.indexOf(":"))+1, keyString.indexOf(":", keyString.indexOf(":")+1));
-                        String keyStringFieldAndAttribute = keyString.substring(0, keyString.indexOf(":", keyString.indexOf(":")+1)+1);
-                        String keyStringLanguage = keyString.substring(keyString.indexOf(":", keyString.indexOf(":")+1)+1, keyString.length());
-                         */
-            if (number.compareTo(keyStringNumber) == 0) //if 1
-            {
-                if (field.compareTo(keyStringField) == 0) { // if 2
-                    if (keyStringLanguage.compareTo(language) == 0) { // if 3
-                        if (keyStringAttribute.compareTo("Voice") == 0 |
-                                keyStringAttribute.compareTo("Tense") == 0 |
-                                keyStringAttribute.compareTo("Aspect") == 0 |
-                                keyStringAttribute.compareTo("Mood") == 0 |
-                                keyStringAttribute.compareTo("Reversible") == 0 |
-                                keyStringAttribute.compareTo("Aggreg") == 0 ) { // if 4
-                            currentValue = (String)currentHashtable.get(keyStringNumber + ":" + keyStringField + ":" + keyStringAttribute + ":" + language);
-                            currentValues.addElement(currentValue);
-                        } // if 4
-                    } else {
-                    } // if 3
-                } else {
-                } // if 2
-            }// if 1
-        } // for
-        return currentValues;
-    } //showValues
+//    public Vector showValues(String name, String number, String field, String language) {
+//        String tempHashtableName = name;
+//        currentVector = (Vector)mainDBHashtable.get(tempHashtableName);
+//        currentHashtable = (Hashtable)currentVector.get(5);
+//        currentValues = new Vector();
+//        
+//        for (Enumeration k = currentHashtable.keys(), e = currentHashtable.elements(); k.hasMoreElements(); ) {
+//            String keyString = k.nextElement().toString();
+//            String valueString = e.nextElement().toString();
+//            StringTokenizer keyStringTokens = new StringTokenizer(keyString, ":");
+//            String keyStringNumber = keyStringTokens.nextToken();
+//            String keyStringField = keyStringTokens.nextToken();
+//            String keyStringAttribute = keyStringTokens.nextToken();
+//            String keyStringLanguage = keyStringTokens.nextToken();
+//                        /*
+//                        String keyStringField = keyString.substring(0, keyString.indexOf(":", 0));
+//                        String keyStringAttribute = keyString.substring(keyString.indexOf(":", keyString.indexOf(":"))+1, keyString.indexOf(":", keyString.indexOf(":")+1));
+//                        String keyStringFieldAndAttribute = keyString.substring(0, keyString.indexOf(":", keyString.indexOf(":")+1)+1);
+//                        String keyStringLanguage = keyString.substring(keyString.indexOf(":", keyString.indexOf(":")+1)+1, keyString.length());
+//                         */
+//            if (number.compareTo(keyStringNumber) == 0) //if 1
+//            {
+//                if (field.compareTo(keyStringField) == 0) { // if 2
+//                    if (keyStringLanguage.compareTo(language) == 0) { // if 3
+//                        if (keyStringAttribute.compareTo("Voice") == 0 |
+//                                keyStringAttribute.compareTo("Tense") == 0 |
+//                                keyStringAttribute.compareTo("Aspect") == 0 |
+//                                keyStringAttribute.compareTo("Mood") == 0 |
+//                                keyStringAttribute.compareTo("Reversible") == 0 |
+//                                keyStringAttribute.compareTo("Aggreg") == 0 ) { // if 4
+//                            currentValue = (String)currentHashtable.get(keyStringNumber + ":" + keyStringField + ":" + keyStringAttribute + ":" + language);
+//                            currentValues.addElement(currentValue);
+//                        } // if 4
+//                    } else {
+//                    } // if 3
+//                } else {
+//                } // if 2
+//            }// if 1
+//        } // for
+//        return currentValues;
+//    } //showValues
+//    
     
     
-    
-    public static Vector showValues2(String name, String number, String field, String language) {
+    public Vector showValues(String name, String number, String field, String language) {
         //String tempHashtableName = name;
         currentVector = (Vector) propertiesHashtable.get(field);
         currentHashtable = (Hashtable)currentVector.get(10);
@@ -3073,7 +3031,7 @@ public class QueryHashtable extends Object implements Serializable {
     } //showValues
     
     
-    public static Hashtable showSpecialValues2(String name, String number, String field, String language) {
+    public Hashtable showSpecialValues2(String name, String number, String field, String language) {
         // String tempHashtableName = name;
         currentVector = (Vector) propertiesHashtable.get(field);
         currentHashtable = (Hashtable)currentVector.get(10);
@@ -3118,7 +3076,7 @@ public class QueryHashtable extends Object implements Serializable {
         return currentSpecialValues;
     }
     
-    public static Hashtable showSpecialValues(String name, String number, String field, String language) {
+    public Hashtable showSpecialValues(String name, String number, String field, String language) {
         String tempHashtableName = name;
         currentVector = (Vector)mainDBHashtable.get(tempHashtableName);
         currentHashtable = (Hashtable)currentVector.get(5);
@@ -3167,7 +3125,7 @@ public class QueryHashtable extends Object implements Serializable {
     /**
      *  This method is invoked when an entity-type (name) story (oldstoryname) is renamed (newstoryname)
      */
-    public static void renameHashtableStory(String name, String oldstoryname, String newstoryname) {
+    public void renameHashtableStory(String name, String oldstoryname, String newstoryname) {
         currentVector = (Vector)mainDBHashtable.get(name);
         Vector storiesVector = (Vector)currentVector.get(3);
         Hashtable enValues = (Hashtable)storiesVector.elementAt(0);
@@ -3186,7 +3144,7 @@ public class QueryHashtable extends Object implements Serializable {
     /**
      * ?
      */
-    public static void clearHashtableMicroplanningEntries(String name, String number, String field, String language) {
+    public void clearHashtableMicroplanningEntries(String name, String number, String field, String language) {
         currentValues.clear();
         String tempHashtableName = name;
         currentVector = (Vector)mainDBHashtable.get(tempHashtableName);
@@ -3224,16 +3182,16 @@ public class QueryHashtable extends Object implements Serializable {
      *  It is used in: DataBasePanel.reloadDBPanel();
      *                 ExportUtilsIlex.createTypesGram();
      */
-    public static Vector getChildrenVectorFromMainDBHashtable(String nodename, String entityTypeOrEntity) {
+    public Vector getChildrenVectorFromMainDBHashtable(String nodename, String entityTypeOrEntity) {
         Hashtable currentHashtable = new Hashtable();
         if (entityTypeOrEntity.equalsIgnoreCase("Entity type")) {
-            currentHashtable = (Hashtable)QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+            currentHashtable = (Hashtable)getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
         } else if (entityTypeOrEntity.equalsIgnoreCase("Entity")) {
-            currentHashtable = (Hashtable)QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity");
+            currentHashtable = (Hashtable)getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity");
         } else if (entityTypeOrEntity.equalsIgnoreCase("Generic")) {
-            currentHashtable = (Hashtable)QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Generic");
+            currentHashtable = (Hashtable)getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Generic");
         } else if (entityTypeOrEntity.equalsIgnoreCase("Entity+Generic")) {
-            currentHashtable = (Hashtable)QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity+Generic");
+            currentHashtable = (Hashtable)getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity+Generic");
         }
         
         Vector tempVector = new Vector();
@@ -3261,10 +3219,10 @@ public class QueryHashtable extends Object implements Serializable {
      *  alphabetical order) currently saved * for a particular
      *  entity type node (nodename) * It is used in:
      *  ExportUtilsExprimo.createTypesGram; the hashtable can be
-     *  passed through as it be static during the export
+     *  passed through as it be during the export
      *  process (A.I. 12/02/02)
      */
-    public static Vector getChildrenVectorFromMainDBHashtable(String nodename, String entityTypeOrEntity, Hashtable currentHashtable) {
+    public Vector getChildrenVectorFromMainDBHashtable(String nodename, String entityTypeOrEntity, Hashtable currentHashtable) {
         Vector tempVector = new Vector();
         
         for (Enumeration k = currentHashtable.keys(), e = currentHashtable.elements(); k.hasMoreElements();) {
@@ -3292,7 +3250,7 @@ public class QueryHashtable extends Object implements Serializable {
      *  Returns a hashtable of all entity types and their parent currently saved
      *  It is used when loading a new domain
      */
-    public static Hashtable getEntityTypesAndEntitiesHashtableFromMainDBHashtable(String entityTypeOrEntity) {
+    public Hashtable getEntityTypesAndEntitiesHashtableFromMainDBHashtable(String entityTypeOrEntity) {
         //Hashtable tempMainDBHashtable = new Hashtable();
         //tempMainDBHashtable = (Hashtable)mainDBHashtable.clone();
         
@@ -3314,6 +3272,7 @@ public class QueryHashtable extends Object implements Serializable {
                 FieldData fd = (FieldData)tableVector.elementAt(0);
                 String[] subtypeof = fd.elementAt(1).toString().split(" ");
                 for (int i=0;i<subtypeof.length;i++)
+               // if(getParents(name).size()==0) continue;
                     entityTypesHashtable.put(name, subtypeof[i]);  // collect the pairs [nodeName,subtypeof]
                 
             } else if (test.toString().equalsIgnoreCase("class gr.demokritos.iit.eleon.authoring.DefaultVector")) {
@@ -3350,63 +3309,63 @@ public class QueryHashtable extends Object implements Serializable {
      *  It is used in:  DataBaseTableModel (to check a new field name against all existing field names for an entity-type node and all its entity-type children)
      *
      */
-    public static Vector getExistingFieldnamesForEntityTypeAndChildren(DefaultMutableTreeNode entityType) {
-        //Getting all entity types in a Vector
-        Hashtable allEntityTypes = (Hashtable)QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
-        Vector allEntityTypesVector = new Vector();
-        
-        for (Enumeration k = allEntityTypes.keys() ; k.hasMoreElements();) {
-            String name = k.nextElement().toString();
-            allEntityTypesVector.addElement(name);
-        }
-        ////System.out.println("allEntityTypesVector" + allEntityTypesVector);
-        //Using "all entity types in a Vector" to construct a vector of all children (entity types) for our node
-        Vector childrenEntityTypesVector = new Vector();
-        
-        Enumeration allChildrenEnum = entityType.preorderEnumeration();
-        while (allChildrenEnum.hasMoreElements()) {
-            String nodeName = allChildrenEnum.nextElement().toString();
-            if (allEntityTypesVector.contains(nodeName)) {
-                childrenEntityTypesVector.addElement(nodeName);
-            }
-        }
-        ////System.out.println("childrenEntityTypesVector" + childrenEntityTypesVector);
-        
-        Vector allFieldNamesVector = new Vector();
-        
-        //Enumeration allChildrenFieldNamesEnum = childrenEntityTypesVector.elements();
-        Enumeration allChildrenFieldNamesEnum = allEntityTypesVector.elements();
-        while (allChildrenFieldNamesEnum.hasMoreElements()) {
-            String nodeName = allChildrenFieldNamesEnum.nextElement().toString();
-            NodeVector nodeVector = (NodeVector)QueryHashtable.mainDBHashtable.get(nodeName);
-            Vector dbTableVector = (Vector)nodeVector.get(0);
-            
-            // //System.out.println("dbTableVector= "+ dbTableVector);
-            Enumeration dbTableVectorEnum = dbTableVector.elements();
-            while (dbTableVectorEnum.hasMoreElements()) {
-                Vector rowVector = (Vector)dbTableVectorEnum.nextElement();
-                String field = rowVector.get(0).toString();
-                if (!allFieldNamesVector.contains(field)) {
-                    allFieldNamesVector.add(field);
-                }
-            }
-        }
-        ////System.out.println("allFieldNamesVector= "+ allFieldNamesVector);
-        return allFieldNamesVector;
-    }
+//    public Vector getExistingFieldnamesForEntityTypeAndChildren(DefaultMutableTreeNode entityType) {
+//        //Getting all entity types in a Vector
+//        Hashtable allEntityTypes = (Hashtable)getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+//        Vector allEntityTypesVector = new Vector();
+//
+//        for (Enumeration k = allEntityTypes.keys() ; k.hasMoreElements();) {
+//            String name = k.nextElement().toString();
+//            allEntityTypesVector.addElement(name);
+//        }
+//        ////System.out.println("allEntityTypesVector" + allEntityTypesVector);
+//        //Using "all entity types in a Vector" to construct a vector of all children (entity types) for our node
+//        Vector childrenEntityTypesVector = new Vector();
+//
+//        Enumeration allChildrenEnum = entityType.preorderEnumeration();
+//        while (allChildrenEnum.hasMoreElements()) {
+//            String nodeName = allChildrenEnum.nextElement().toString();
+//            if (allEntityTypesVector.contains(nodeName)) {
+//                childrenEntityTypesVector.addElement(nodeName);
+//            }
+//        }
+//        ////System.out.println("childrenEntityTypesVector" + childrenEntityTypesVector);
+//
+//        Vector allFieldNamesVector = new Vector();
+//
+//        //Enumeration allChildrenFieldNamesEnum = childrenEntityTypesVector.elements();
+//        Enumeration allChildrenFieldNamesEnum = allEntityTypesVector.elements();
+//        while (allChildrenFieldNamesEnum.hasMoreElements()) {
+//            String nodeName = allChildrenFieldNamesEnum.nextElement().toString();
+//            NodeVector nodeVector = (NodeVector)mainDBHashtable.get(nodeName);
+//            Vector dbTableVector = (Vector)nodeVector.get(0);
+//
+//            // //System.out.println("dbTableVector= "+ dbTableVector);
+//            Enumeration dbTableVectorEnum = dbTableVector.elements();
+//            while (dbTableVectorEnum.hasMoreElements()) {
+//                Vector rowVector = (Vector)dbTableVectorEnum.nextElement();
+//                String field = rowVector.get(0).toString();
+//                if (!allFieldNamesVector.contains(field)) {
+//                    allFieldNamesVector.add(field);
+//                }
+//            }
+//        }
+//        ////System.out.println("allFieldNamesVector= "+ allFieldNamesVector);
+//        return allFieldNamesVector;
+//    }
     
     
     /**
      *  Returns a vector of all children for an entity-type
-     *  It is used in:  QueryHashtable.updateExistingFieldsAfterRemovingANode();
+     *  It is used in:  updateExistingFieldsAfterRemovingANode();
      *                  ExportUtilsIlex.createTypesGram();
      *
      */
-    public static Vector getFullPathChildrenVectorFromMainDBHashtable(String nodename, String entityTypeOrEntity) {//System.out.println("50");
+    public Vector getFullPathChildrenVectorFromMainDBHashtable(String nodename, String entityTypeOrEntity) {//System.out.println("50");
         Vector fullPathChildrenVector = new Vector();
         
         Vector allChildrenEntitiesVector = new Vector();
-        Hashtable allEntityTypes = QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+        Hashtable allEntityTypes = getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
 //System.out.println("51");
         for (Enumeration k = allEntityTypes.keys(), e = allEntityTypes.elements(); k.hasMoreElements(); ) {//System.out.println("511");
             try{
@@ -3429,12 +3388,12 @@ public class QueryHashtable extends Object implements Serializable {
                     allChildrenEntitiesVector.addElement(node);
                     ////System.out.println(allChildrenEntitiesVector);
                 } else {//System.out.println("515");
-                    ////System.out.println("(QueryHashtable.getFullPathChildrenVectorFromMainDBHashtable)---- ALERT)");
+                    ////System.out.println("(getFullPathChildrenVectorFromMainDBHashtable)---- ALERT)");
                 }
             } catch(NullPointerException w){w.printStackTrace();}
         }
         allChildrenEntitiesVector.addElement(nodename);
-        ////System.out.println("(QueryHashtable.getFullPathChildrenVectorFromMainDBHashtable)---fullChildrenEntities- )" + allChildrenEntitiesVector);
+        ////System.out.println("(getFullPathChildrenVectorFromMainDBHashtable)---fullChildrenEntities- )" + allChildrenEntitiesVector);
 //System.out.println("53");
         if (entityTypeOrEntity.equalsIgnoreCase("Entity type")) {
             allChildrenEntitiesVector.remove(nodename);
@@ -3443,7 +3402,7 @@ public class QueryHashtable extends Object implements Serializable {
             Enumeration enumer = allChildrenEntitiesVector.elements();
             while (enumer.hasMoreElements()) {
                 String element = enumer.nextElement().toString();
-                Vector children = QueryHashtable.getChildrenVectorFromMainDBHashtable(element, "Entity");
+                Vector children = getChildrenVectorFromMainDBHashtable(element, "Entity");
                 if (!children.isEmpty()) {
                     Enumeration enum2 = children.elements();
                     while (enum2.hasMoreElements()) {
@@ -3458,7 +3417,7 @@ public class QueryHashtable extends Object implements Serializable {
             Enumeration enumer = allChildrenEntitiesVector.elements();
             while (enumer.hasMoreElements()) {
                 String element = enumer.nextElement().toString();
-                Vector children = QueryHashtable.getChildrenVectorFromMainDBHashtable(element, "Generic");
+                Vector children = getChildrenVectorFromMainDBHashtable(element, "Generic");
                 if (!children.isEmpty()) {
                     Enumeration enum2 = children.elements();
                     while (enum2.hasMoreElements()) {
@@ -3473,7 +3432,7 @@ public class QueryHashtable extends Object implements Serializable {
             Enumeration enumer = allChildrenEntitiesVector.elements();
             while (enumer.hasMoreElements()) {
                 String element = enumer.nextElement().toString();
-                Vector children = QueryHashtable.getChildrenVectorFromMainDBHashtable(element, "Entity+Generic");
+                Vector children = getChildrenVectorFromMainDBHashtable(element, "Entity+Generic");
                 if (!children.isEmpty()) {
                     Enumeration enum2 = children.elements();
                     while (enum2.hasMoreElements()) {
@@ -3483,7 +3442,7 @@ public class QueryHashtable extends Object implements Serializable {
                 }
             }
         }
-        ////System.out.println("(QueryHashtable.getFullPathChildrenVectorFromMainDBHashtable)---fullPathChildrenVector- )" + fullPathChildrenVector);
+        ////System.out.println("(getFullPathChildrenVectorFromMainDBHashtable)---fullPathChildrenVector- )" + fullPathChildrenVector);
         return fullPathChildrenVector;
     }
     
@@ -3494,7 +3453,7 @@ public class QueryHashtable extends Object implements Serializable {
      *  hashtables can be passed through as they will be static
      *  during the export process (A.I. 12/02/02)
      */
-    public static Vector getFullPathChildrenVectorFromMainDBHashtable(String nodename, String entityTypeOrEntity, Hashtable allEntityTypes, Hashtable currentHash) {
+    public Vector getFullPathChildrenVectorFromMainDBHashtable(String nodename, String entityTypeOrEntity, Hashtable allEntityTypes, Hashtable currentHash) {
         Vector fullPathChildrenVector = new Vector();
         Vector allChildrenEntitiesVector = new Vector();
         
@@ -3511,11 +3470,11 @@ public class QueryHashtable extends Object implements Serializable {
                 allChildrenEntitiesVector.addElement(node);
                 ////System.out.println(allChildrenEntitiesVector);
             } else {
-                ////System.out.println("(QueryHashtable.getFullPathChildrenVectorFromMainDBHashtable)---- ALERT)");
+                ////System.out.println("(getFullPathChildrenVectorFromMainDBHashtable)---- ALERT)");
             }
         }
         allChildrenEntitiesVector.addElement(nodename);
-        ////System.out.println("(QueryHashtable.getFullPathChildrenVectorFromMainDBHashtable)---fullChildrenEntities- )" + allChildrenEntitiesVector);
+        ////System.out.println("(getFullPathChildrenVectorFromMainDBHashtable)---fullChildrenEntities- )" + allChildrenEntitiesVector);
         
         if (entityTypeOrEntity.equalsIgnoreCase("Entity type")) {
             allChildrenEntitiesVector.remove(nodename);
@@ -3526,7 +3485,7 @@ public class QueryHashtable extends Object implements Serializable {
             Enumeration enumer = allChildrenEntitiesVector.elements();
             while (enumer.hasMoreElements()) {
                 String element = enumer.nextElement().toString();
-                Vector children = QueryHashtable.getChildrenVectorFromMainDBHashtable(element, "Entity", currentHash);
+                Vector children = getChildrenVectorFromMainDBHashtable(element, "Entity", currentHash);
                 if (!children.isEmpty()) {
                     Enumeration enum2 = children.elements();
                     while (enum2.hasMoreElements()) {
@@ -3541,7 +3500,7 @@ public class QueryHashtable extends Object implements Serializable {
             Enumeration enumer = allChildrenEntitiesVector.elements();
             while (enumer.hasMoreElements()) {
                 String element = enumer.nextElement().toString();
-                Vector children = QueryHashtable.getChildrenVectorFromMainDBHashtable(element, "Generic", currentHash);
+                Vector children = getChildrenVectorFromMainDBHashtable(element, "Generic", currentHash);
                 if (!children.isEmpty()) {
                     Enumeration enum2 = children.elements();
                     while (enum2.hasMoreElements()) {
@@ -3556,7 +3515,7 @@ public class QueryHashtable extends Object implements Serializable {
             Enumeration enumer = allChildrenEntitiesVector.elements();
             while (enumer.hasMoreElements()) {
                 String element = enumer.nextElement().toString();
-                Vector children = QueryHashtable.getChildrenVectorFromMainDBHashtable(element, "Entity+Generic", currentHash);
+                Vector children = getChildrenVectorFromMainDBHashtable(element, "Entity+Generic", currentHash);
                 if (!children.isEmpty()) {
                     Enumeration enum2 = children.elements();
                     while (enum2.hasMoreElements()) {
@@ -3566,7 +3525,7 @@ public class QueryHashtable extends Object implements Serializable {
                 }
             }
         }
-        ////System.out.println("(QueryHashtable.getFullPathChildrenVectorFromMainDBHashtable)---fullPathChildrenVector- )" + fullPathChildrenVector);
+        ////System.out.println("(getFullPathChildrenVectorFromMainDBHashtable)---fullPathChildrenVector- )" + fullPathChildrenVector);
         return fullPathChildrenVector;
     }
     
@@ -3577,11 +3536,11 @@ public class QueryHashtable extends Object implements Serializable {
      *  It is used in:  ExportUtilsWebinfo.createImagesInfo();
      *
      */
-    public static Vector getFullPathParentsVectorFromMainDBHashtable(String nodename, String entityTypeOrEntity) {
+    public Vector getFullPathParentsVectorFromMainDBHashtable(String nodename, String entityTypeOrEntity) {
         Vector fullPathParentsVector = new Vector();
         
-        Hashtable allEntitiesHashtable = QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity+Generic");
-        Hashtable allEntityTypesHashtable = QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+        Hashtable allEntitiesHashtable = getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity+Generic");
+        Hashtable allEntityTypesHashtable = getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
         allEntityTypesHashtable.remove("Data Base");
         allEntityTypesHashtable.remove("Basic-entity-types");
         
@@ -3613,7 +3572,7 @@ public class QueryHashtable extends Object implements Serializable {
      *  It is used in:  arrayListReturnAllEntityTypesContainingThisNoun;
      *
      */
-    public static ArrayList getFullPathParentsVectorFromMainDBHashtable(String nodename, Hashtable allEntityTypesHashtable) {
+    public ArrayList getFullPathParentsVectorFromMainDBHashtable(String nodename, Hashtable allEntityTypesHashtable) {
         ArrayList fullPathParentsList = new ArrayList();
         
         allEntityTypesHashtable.remove("Data Base");
@@ -3640,11 +3599,11 @@ public class QueryHashtable extends Object implements Serializable {
      *  Returns a vector of all field names a story table of a story node "storyNode"
      *  It is used in:  StoriesTableListener (when adding a new story)
      */
-    public static Vector getExistingFieldnamesForStoryNode(DefaultMutableTreeNode storyNode) {
+    public Vector getExistingFieldnamesForStoryNode(DefaultMutableTreeNode storyNode) {
         Vector allStoryFieldsVector = new Vector();
         
         String nodeName = storyNode.toString();
-        NodeVector nodeVector = (NodeVector)QueryHashtable.mainDBHashtable.get(nodeName);
+        NodeVector nodeVector = (NodeVector)mainDBHashtable.get(nodeName);
         Vector storiesVector = (Vector)nodeVector.get(3);
         Hashtable englishStoriesHashtable = (Hashtable)storiesVector.get(0);
         
@@ -3666,12 +3625,12 @@ public class QueryHashtable extends Object implements Serializable {
      *  It is used in:  DataBasePanel (when removing a node (and consequently all its children)
      *
      */
-    public static void updateExistingFieldsAfterRemovingANode(Vector deletedEntityTypes, Vector deletedEntities) {
+    public void updateExistingFieldsAfterRemovingANode(Vector deletedEntityTypes, Vector deletedEntities) {
         if (deletedEntityTypes.isEmpty()) // ONLY an entity was deleted
         {
             //Getting all *entities* in a Vector
-            Hashtable allEntities = (Hashtable)QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity");
-            Hashtable allGeneric = (Hashtable)QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Generic");
+            Hashtable allEntities = (Hashtable)getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity");
+            Hashtable allGeneric = (Hashtable)getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Generic");
             Vector allEntitiesAndGenericVector = new Vector();
             
             for (Enumeration k = allEntities.keys() ; k.hasMoreElements();) {
@@ -3689,7 +3648,7 @@ public class QueryHashtable extends Object implements Serializable {
             Enumeration allEntitiesChildrenFieldNamesEnum = allEntitiesAndGenericVector.elements();
             while (allEntitiesChildrenFieldNamesEnum.hasMoreElements()) {
                 String nodeName = allEntitiesChildrenFieldNamesEnum.nextElement().toString();
-                NodeVector nodeVector = (NodeVector)QueryHashtable.mainDBHashtable.get(nodeName);
+                NodeVector nodeVector = (NodeVector)mainDBHashtable.get(nodeName);
                 Vector dbTablesVector = (Vector)nodeVector.get(0);
                 Vector independentVector = (Vector)dbTablesVector.get(0);
                 
@@ -3750,11 +3709,11 @@ public class QueryHashtable extends Object implements Serializable {
         // Search all entity-types' fields and find all that have used the
         // deleted entity-types as fillers.
         // Those fillers should be turned to "String"
-        Vector allEntityTypesVector = QueryHashtable.getFullPathChildrenVectorFromMainDBHashtable("Basic-entity-types", "Entity type");
+        Vector allEntityTypesVector = getFullPathChildrenVectorFromMainDBHashtable("Basic-entity-types", "Entity type");
         Enumeration allEntityTypesVectorEnum = allEntityTypesVector.elements();
         while (allEntityTypesVectorEnum.hasMoreElements()) {
             String entityType = allEntityTypesVectorEnum.nextElement().toString();
-            NodeVector entityTypeVector = (NodeVector)QueryHashtable.mainDBHashtable.get(entityType);
+            NodeVector entityTypeVector = (NodeVector)mainDBHashtable.get(entityType);
             Vector databaseTableVector = (Vector)entityTypeVector.get(0);
             
             for (int rowNo=0; rowNo< databaseTableVector.size(); rowNo++) {
@@ -3777,11 +3736,11 @@ public class QueryHashtable extends Object implements Serializable {
         // Search all entities' and generic-entities' fields and find all that have used the
         // deleted entities as fillers.
         // Those fillers should be turned to "String"
-        Vector allEntitiesAndGenericVector = QueryHashtable.getFullPathChildrenVectorFromMainDBHashtable("Basic-entity-types", "Entity+Generic");
+        Vector allEntitiesAndGenericVector = getFullPathChildrenVectorFromMainDBHashtable("Basic-entity-types", "Entity+Generic");
         Enumeration allEntitiesAndGenericVectorEnum = allEntitiesAndGenericVector.elements();
         while (allEntitiesAndGenericVectorEnum.hasMoreElements()) {
             String entity = allEntitiesAndGenericVectorEnum.nextElement().toString();
-            NodeVector entityVector = (NodeVector)QueryHashtable.mainDBHashtable.get(entity);
+            NodeVector entityVector = (NodeVector)mainDBHashtable.get(entity);
             Vector dbTablesVector = (Vector)entityVector.get(0);
             Vector independentTableVector = (Vector)dbTablesVector.get(0);
             Vector englishTableVector = (Vector)dbTablesVector.get(1);
@@ -3836,7 +3795,7 @@ public class QueryHashtable extends Object implements Serializable {
      *  It is used in:  DataBasePanel (when renaming a node)
      *
      */
-    public static void updateExistingFieldsAfterRenamingANode(DefaultMutableTreeNode renamedNode, String newName) {
+    public void updateExistingFieldsAfterRenamingANode(DefaultMutableTreeNode renamedNode, String newName) {
         // Break up the deletedNodes vector into three Vectors containing
         // the deleted Entity-types, Entities, and Generic-entities respectively
         String renamedNodeName = renamedNode.toString();
@@ -3847,8 +3806,8 @@ public class QueryHashtable extends Object implements Serializable {
         ImageIcon im = (ImageIcon)ii;
         
         //Getting all *entities* in a Vector
-        Hashtable allEntities = (Hashtable)QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity");
-        Hashtable allGeneric = (Hashtable)QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Generic");
+        Hashtable allEntities = (Hashtable)getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity");
+        Hashtable allGeneric = (Hashtable)getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Generic");
         Vector allEntitiesAndGenericVector = new Vector();
         
         for (Enumeration k = allEntities.keys() ; k.hasMoreElements();) {
@@ -3861,7 +3820,7 @@ public class QueryHashtable extends Object implements Serializable {
         }
         
         //Getting all *entity types* in a Vector
-        Hashtable allEntityTypes = (Hashtable)QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+        Hashtable allEntityTypes = (Hashtable)getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
         Vector allEntityTypesVector = new Vector();
         
         for (Enumeration k = allEntityTypes.keys() ; k.hasMoreElements();) {
@@ -3877,7 +3836,7 @@ public class QueryHashtable extends Object implements Serializable {
             Enumeration allEntitiesChildrenFieldNamesEnum = allEntitiesAndGenericVector.elements();
             while (allEntitiesChildrenFieldNamesEnum.hasMoreElements()) {
                 String nodeName = allEntitiesChildrenFieldNamesEnum.nextElement().toString();
-                NodeVector nodeVector = (NodeVector)QueryHashtable.mainDBHashtable.get(nodeName);
+                NodeVector nodeVector = (NodeVector)mainDBHashtable.get(nodeName);
                 Vector dbTablesVector = (Vector)nodeVector.get(0);
                 Vector independentVector = (Vector)dbTablesVector.get(0);
                 
@@ -3922,7 +3881,7 @@ public class QueryHashtable extends Object implements Serializable {
             Enumeration allEntityTypesChildrenFieldNamesEnum = allEntityTypesVector.elements();
             while (allEntityTypesChildrenFieldNamesEnum.hasMoreElements()) {
                 String nodeName = allEntityTypesChildrenFieldNamesEnum.nextElement().toString();
-                NodeVector nodeVector = (NodeVector)QueryHashtable.mainDBHashtable.get(nodeName);
+                NodeVector nodeVector = (NodeVector)mainDBHashtable.get(nodeName);
                 Vector dbTableVector = (Vector)nodeVector.get(0);
                 
                 for (int i=0; i < dbTableVector.size(); i++) {
@@ -3945,7 +3904,7 @@ public class QueryHashtable extends Object implements Serializable {
             Enumeration allEntitiesChildrenFieldNamesEnum = allEntitiesAndGenericVector.elements();
             while (allEntitiesChildrenFieldNamesEnum.hasMoreElements()) {
                 String nodeName = allEntitiesChildrenFieldNamesEnum.nextElement().toString();
-                NodeVector nodeVector = (NodeVector)QueryHashtable.mainDBHashtable.get(nodeName);
+                NodeVector nodeVector = (NodeVector)mainDBHashtable.get(nodeName);
                 Vector dbTablesVector = (Vector)nodeVector.get(0);
                 Vector independentVector = (Vector)dbTablesVector.get(0);
                 ////System.out.println("independentVector= "+ independentVector);
@@ -3974,7 +3933,7 @@ public class QueryHashtable extends Object implements Serializable {
                 } // for
             } // while
         } else {
-            System.out.println("(QueryHashtable.updateExistingFieldsAfterRenamingANode)---- ERROR!!!!");
+            System.out.println("(updateExistingFieldsAfterRenamingANode)---- ERROR!!!!");
         }
     } // updateExistingFieldsAfterRenamingANode
     
@@ -3984,10 +3943,10 @@ public class QueryHashtable extends Object implements Serializable {
      *  It is used in: ExportUtilsIlex
      *
      */
-    public static String returnAllEntityTypesContainingThisNoun(String noun) {
+    public String returnAllEntityTypesContainingThisNoun(String noun) {
         Vector returnVector = new Vector();
         StringBuffer stringBuffer = new StringBuffer();
-        Hashtable allEntityTypesHashtable = (Hashtable)QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+        Hashtable allEntityTypesHashtable = (Hashtable)getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
         for (Enumeration k = allEntityTypesHashtable.keys(), e = allEntityTypesHashtable.elements(); k.hasMoreElements(); ) {
             String entitytype = k.nextElement().toString();
             String parent = e.nextElement().toString();
@@ -4008,7 +3967,7 @@ public class QueryHashtable extends Object implements Serializable {
     
     
     //A.I. 06/12/02 trying to optimize, new method signature
-    public static String returnAllEntityTypesContainingThisNoun(String noun, Hashtable allEntTypesHash) {
+    public String returnAllEntityTypesContainingThisNoun(String noun, Hashtable allEntTypesHash) {
         Vector returnVector = new Vector();
         StringBuffer stringBuffer = new StringBuffer();
         Hashtable allEntityTypesHashtable = allEntTypesHash;
@@ -4031,7 +3990,7 @@ public class QueryHashtable extends Object implements Serializable {
     }
     
     
-    public static ArrayList arrayListReturnAllEntityTypesContainingThisNoun(String noun, Hashtable allEntTypesHash) {
+    public ArrayList arrayListReturnAllEntityTypesContainingThisNoun(String noun, Hashtable allEntTypesHash) {
         ArrayList returnList = new ArrayList();
         Hashtable allEntityTypesHashtable = allEntTypesHash;
         Enumeration k = allEntityTypesHashtable.keys();
@@ -4072,62 +4031,70 @@ public class QueryHashtable extends Object implements Serializable {
      *  It is used in: ExportUtilsPServer (setMicroplanningAppropriateness)
      *
      */
-    public static Hashtable returnAllFieldsAndContainingEntityTypes() {
+    public Hashtable returnAllFieldsAndContainingEntityTypes() {
         Hashtable returnHashtable = new Hashtable();
-        
-        Hashtable allEntityTypesHashtable = QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
-        allEntityTypesHashtable.remove("Data Base");
-        allEntityTypesHashtable.remove("Basic-entity-types");
-        
-        for (Enumeration k = allEntityTypesHashtable.keys(), e = allEntityTypesHashtable.elements(); k.hasMoreElements(); ) {
-            String entitytype = k.nextElement().toString();
-            String parent = e.nextElement().toString();
-            NodeVector env = (NodeVector)QueryHashtable.mainDBHashtable.get(entitytype);
-            if (entitytype.substring(0,entitytype.length()-1).endsWith("_occur"))
-                entitytype=entitytype.substring(0,entitytype.length()-7);
-            NodeVector pnv = (NodeVector)QueryHashtable.mainDBHashtable.get(allEntityTypesHashtable.get(entitytype));
-            Vector parentDBTable1 = (Vector)pnv.elementAt(0);
-            Vector parentDBTable= (Vector) parentDBTable1.clone();
-            
-            for(int i=2;i<10;i++){
-                
-                if (allEntityTypesHashtable.get(entitytype+"_occur"+String.valueOf(i))==null) break;
-                pnv = (NodeVector)QueryHashtable.mainDBHashtable.get(allEntityTypesHashtable.get(entitytype+"_occur"+String.valueOf(i)));
-                Vector fields=(Vector) pnv.elementAt(0);
-                for (int o=8;o<fields.size();o++){
-                    parentDBTable.add(fields.elementAt(o));
-                }
-                
-            }
-            //NodeVector pnv = (NodeVector)QueryHashtable.mainDBHashtable.get(parent);
-            Vector entitytypeDBTable = (Vector)env.elementAt(0);
-            //Vector parentDBTable = (Vector)pnv.elementAt(0);
-            
-            // create a vector containing all fields for the parent entity-type
-            Vector allFieldsInParent = new Vector();
-            Enumeration parentDBTableEnum = parentDBTable.elements();
-            while (parentDBTableEnum.hasMoreElements()) {
-                Vector rowVector = (Vector)parentDBTableEnum.nextElement();
-                String field = rowVector.get(0).toString();
-                allFieldsInParent.addElement(field);
-            }
-            
-            // export all fields that are not contained in the parent entity-type
-            Enumeration entitytypeDBTableEnum = entitytypeDBTable.elements();
-            while (entitytypeDBTableEnum.hasMoreElements()) {
-                Vector rowVector = (Vector)entitytypeDBTableEnum.nextElement();
-                String field = rowVector.get(0).toString();
-                
-                if (!allFieldsInParent.contains(field)) {
-                    returnHashtable.put(field, entitytype);
-                }
-            }
+        Enumeration propNames=propertiesHashtable.keys();
+        Enumeration properties=propertiesHashtable.elements();
+        while(propNames.hasMoreElements()){
+            String name=propNames.nextElement().toString();
+            String domain=((PropertiesHashtableRecord)properties.nextElement()).getDomain().elementAt(0).toString();
+             returnHashtable.put(name, domain);
         }
-        return returnHashtable;
+       return returnHashtable;
+        
+//        Hashtable allEntityTypesHashtable = getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+//        allEntityTypesHashtable.remove("Data Base");
+//        allEntityTypesHashtable.remove("Basic-entity-types");
+//        
+//        for (Enumeration k = allEntityTypesHashtable.keys(), e = allEntityTypesHashtable.elements(); k.hasMoreElements(); ) {
+//            String entitytype = k.nextElement().toString();
+//            String parent = e.nextElement().toString();
+//            NodeVector env = (NodeVector)mainDBHashtable.get(entitytype);
+//            if (entitytype.substring(0,entitytype.length()-1).endsWith("_occur"))
+//                entitytype=entitytype.substring(0,entitytype.length()-7);
+//            NodeVector pnv = (NodeVector)mainDBHashtable.get(allEntityTypesHashtable.get(entitytype));
+//            Vector parentDBTable1 = (Vector)pnv.elementAt(0);
+//            Vector parentDBTable= (Vector) parentDBTable1.clone();
+//            
+//            for(int i=2;i<10;i++){
+//                
+//                if (allEntityTypesHashtable.get(entitytype+"_occur"+String.valueOf(i))==null) break;
+//                pnv = (NodeVector)mainDBHashtable.get(allEntityTypesHashtable.get(entitytype+"_occur"+String.valueOf(i)));
+//                Vector fields=(Vector) pnv.elementAt(0);
+//                for (int o=8;o<fields.size();o++){
+//                    parentDBTable.add(fields.elementAt(o));
+//                }
+//                
+//            }
+//            //NodeVector pnv = (NodeVector)mainDBHashtable.get(parent);
+//            Vector entitytypeDBTable = (Vector)env.elementAt(0);
+//            //Vector parentDBTable = (Vector)pnv.elementAt(0);
+//            
+//            // create a vector containing all fields for the parent entity-type
+//            Vector allFieldsInParent = new Vector();
+//            Enumeration parentDBTableEnum = parentDBTable.elements();
+//            while (parentDBTableEnum.hasMoreElements()) {
+//                Vector rowVector = (Vector)parentDBTableEnum.nextElement();
+//                String field = rowVector.get(0).toString();
+//                allFieldsInParent.addElement(field);
+//            }
+//            
+//            // export all fields that are not contained in the parent entity-type
+//            Enumeration entitytypeDBTableEnum = entitytypeDBTable.elements();
+//            while (entitytypeDBTableEnum.hasMoreElements()) {
+//                Vector rowVector = (Vector)entitytypeDBTableEnum.nextElement();
+//                String field = rowVector.get(0).toString();
+//                
+//                if (!allFieldsInParent.contains(field)) {
+//                    returnHashtable.put(field, entitytype);
+//                }
+//            }
+//        }
+//        return returnHashtable;
     } // returnAllFieldsAndContainingEntityTypes()
     
     
-    public static Vector getParents(String nodename){
+    public Vector getParents(String nodename){
         Vector parents=new Vector();
         if(nodename.contains("_occur"))
             nodename=nodename.substring(0,nodename.indexOf("_occur"));
@@ -4145,30 +4112,30 @@ public class QueryHashtable extends Object implements Serializable {
         return parents;
     }
     
-    //public static String[] getParents2(String nodename){
+    //public String[] getParents2(String nodename){
         // Object ob =mainDBHashtable.get(nodename);
         
         //Object h= ((Vector)(((NodeVector)mainDBHashtable.get(nodename)).databaseTableVector.elementAt(0))).elementAt(1).toString().split(" ");
     //    return ((Vector)(((NodeVector)mainDBHashtable.get(nodename)).databaseTableVector.elementAt(0))).elementAt(1).toString().split(" ");
    // }
     
-    public static String nameWithoutOccur(String name){
+    public String nameWithoutOccur(String name){
         return  name.contains("_occur") ? name.substring(0,name.indexOf("_occur")) : name ;
     }
     
-    public static Vector getAllOccurrences(String name){
+    public Vector getAllOccurrences(String name){
         name=nameWithoutOccur(name);
         Vector all=new Vector();
         all.add(name);
         for(int i=2;;i++){
-            if((QueryHashtable.mainDBHashtable.get(name+"_occur"+String.valueOf(1)))==null)
+            if((mainDBHashtable.get(name+"_occur"+String.valueOf(1)))==null)
                 break;
             all.add(name+"_occur"+String.valueOf(1));
         }
         return all;
     }
     
-    public static void renameFieldInRestrictionsHashtable(String oldname, String newname){
+    public void renameFieldInRestrictionsHashtable(String oldname, String newname){
         Enumeration allTypes=getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity type").keys();
         while(allTypes.hasMoreElements()){
             String next=allTypes.nextElement().toString();
@@ -4182,15 +4149,15 @@ public class QueryHashtable extends Object implements Serializable {
         }
     }
     
-    public static void removeFieldFromDomain(String field,String entityType){
+    public void removeFieldFromDomain(String field,String entityType){
         Vector property=(Vector) propertiesHashtable.get(field);
         Vector Domain=(Vector) property.elementAt(0);
         Domain.remove((Object) entityType);
         if(Domain.size()==0)
-            DeletePropertyFromPropertiesHashtable(field);
+            deletePropertyFromPropertiesHashtable(field);
     }
     
-    public static void DeletePropertyFromPropertiesHashtable(String propName){
+    public void deletePropertyFromPropertiesHashtable(String propName){
         Vector propVector=(Vector)propertiesHashtable.get((propName));
         Vector subproperties=(Vector) propVector.elementAt(2);
         for(int j=0;j<subproperties.size();j++){
@@ -4212,9 +4179,9 @@ public class QueryHashtable extends Object implements Serializable {
         propertiesHashtable.remove(propName);
     }
     
-    public static void addValuesFromHasValueRestrictions(String EntityName, String Parent){
+    public void addValuesFromHasValueRestrictions(String entityName, String Parent){
         Parent=nameWithoutOccur(Parent);
-        NodeVector entity=(NodeVector) mainDBHashtable.get(EntityName);
+        NodeVector entity=(NodeVector) mainDBHashtable.get(entityName);
         Vector db=(Vector) entity.elementAt(0);
         Vector subdb=(Vector) db.elementAt(0);
         for(int h=3;h<subdb.size();h++){
@@ -4242,21 +4209,21 @@ public class QueryHashtable extends Object implements Serializable {
         }
     }
     
-    public static Vector getPropertyImportanceAndRepetitions(String property,String username){
+    public Vector getPropertyImportanceAndRepetitions(String property,String username){
         Vector prop=(Vector) propertiesHashtable.get(property);
         Hashtable users=(Hashtable) prop.elementAt(12);
         Vector user=(Vector) users.get((username));
         return user;
     }
     
-    public static Vector getPropertyRobotsImportanceAndRepetitions(String property,String robotname){
+    public Vector getPropertyRobotsImportanceAndRepetitions(String property,String robotname, Vector allRobotTypesVector){
         Vector prop=(Vector) propertiesHashtable.get(property);
         Hashtable robots;
         try {
             robots = (Hashtable) prop.elementAt(15);
         } catch(java.lang.ArrayIndexOutOfBoundsException aooi) {
              Hashtable robotsHashtable=new Hashtable();
-                Vector allRobotTypesVector = QueryUsersHashtable.getRobotsVectorFromRobotsHashtable();
+                
 		Enumeration allRobotTypesVectorEnum = allRobotTypesVector.elements();
 		while (allRobotTypesVectorEnum.hasMoreElements())
 		{
@@ -4272,21 +4239,21 @@ public class QueryHashtable extends Object implements Serializable {
         return robot;
     }
     
-    public static void updateImportanceOrRepetitionsForProperty(String property, String username, int valueID, String value) {
+    public void updateImportanceOrRepetitionsForProperty(String property, String username, int valueID, String value) {
         Vector prop = (Vector)propertiesHashtable.get(property);
         Hashtable users = (Hashtable)prop.elementAt(12);
         Vector usernameVector = (Vector)users.get(username);
         usernameVector.setElementAt(value, valueID);
     }
     
-    public static void updateRobotsPreferenceForProperty(String property, String robotname, int valueID, String value) {
+    public void updateRobotsPreferenceForProperty(String property, String robotname, int valueID, String value) {
         Vector prop = (Vector)propertiesHashtable.get(property);
         Hashtable robots = (Hashtable)prop.elementAt(15);
         Vector robotnameVector = (Vector)robots.get(robotname);
         robotnameVector.setElementAt(value, valueID);
     }
     
-    public static void renameUserInPropertiesHashtable(String oldName, String newName){
+    public void renameUserInPropertiesHashtable(String oldName, String newName){
         Enumeration properties= propertiesHashtable.elements();
         while(properties.hasMoreElements()){
             Vector nextProp=(Vector) properties.nextElement();
@@ -4297,7 +4264,7 @@ public class QueryHashtable extends Object implements Serializable {
         }
     }
     
-    public static void renameRobotInPropertiesHashtable(String oldName, String newName){
+    public void renameRobotInPropertiesHashtable(String oldName, String newName){
         Enumeration properties= propertiesHashtable.elements();
         while(properties.hasMoreElements()){
             Vector nextProp=(Vector) properties.nextElement();
@@ -4308,7 +4275,7 @@ public class QueryHashtable extends Object implements Serializable {
         }
     }
     
-    public static void deleteUserFromPropertiesHashtable(String oldName){
+    public void deleteUserFromPropertiesHashtable(String oldName){
         Enumeration properties= propertiesHashtable.elements();
         while(properties.hasMoreElements()){
             Vector nextProp=(Vector) properties.nextElement();
@@ -4317,7 +4284,7 @@ public class QueryHashtable extends Object implements Serializable {
         }
     }
     
-    public static void deleteRobotFromPropertiesHashtable(String oldName){
+    public void deleteRobotFromPropertiesHashtable(String oldName){
         Enumeration properties= propertiesHashtable.elements();
         while(properties.hasMoreElements()){
             Vector nextProp=(Vector) properties.nextElement();
@@ -4326,7 +4293,7 @@ public class QueryHashtable extends Object implements Serializable {
         }
     }
     
-    public static void addUserInPropertiesHashtable(String name){
+    public void addUserInPropertiesHashtable(String name){
         Enumeration properties= propertiesHashtable.elements();
         while(properties.hasMoreElements()){
             Vector nextProp=(Vector) properties.nextElement();
@@ -4339,7 +4306,7 @@ public class QueryHashtable extends Object implements Serializable {
         }
     }
     
-    public static int getMinOfMaxCardinalities(String node,String property){
+    public int getMinOfMaxCardinalities(String node,String property){
         Vector prop=(Vector) valueRestrictionsHashtable.get(node+":"+property);
         prop=(Vector) prop.elementAt(3);
         int minOfMax=Integer.MAX_VALUE;
@@ -4349,7 +4316,7 @@ public class QueryHashtable extends Object implements Serializable {
         return minOfMax;
     }
     
-    public static int getCardinality(String node,String property){
+    public int getCardinality(String node,String property){
         Vector prop=(Vector) valueRestrictionsHashtable.get(node+":"+property);
         prop=(Vector) prop.elementAt(5);
         if(prop.size()>0)
@@ -4358,7 +4325,7 @@ public class QueryHashtable extends Object implements Serializable {
             return -1;
     }
     
-    public static void removeFillerFromInverseProperty(String Entity, String Value, String Field){
+    public void removeFillerFromInverseProperty(String Entity, String Value, String Field){
         Vector property=(Vector) propertiesHashtable.get(Field);
         if (!property.elementAt(5).toString().equalsIgnoreCase("")){
             String inverseProp=property.elementAt(5).toString();
@@ -4378,7 +4345,7 @@ public class QueryHashtable extends Object implements Serializable {
         }
     }
     
-        public static void addFillerToInverseProperty(String Entity, String Value, String Field){
+        public void addFillerToInverseProperty(String Entity, String Value, String Field){
         Vector property=(Vector) propertiesHashtable.get(Field);
         if (!property.elementAt(5).toString().equalsIgnoreCase("")){
             String inverseProp=property.elementAt(5).toString();
@@ -4406,7 +4373,7 @@ public class QueryHashtable extends Object implements Serializable {
         }
     }
         
-        public static void addRestriction(String type, String property, String entitytype, String value){
+        public void addRestriction(String type, String property, String entitytype, String value){
            
             if(!valueRestrictionsHashtable.contains(nameWithoutOccur(entitytype)+":"+property));
                     valueRestrictionsHashtable.put(nameWithoutOccur(entitytype)+":"+property, new ValueRestriction());
@@ -4435,7 +4402,7 @@ public class QueryHashtable extends Object implements Serializable {
            subVector.add(value);
         }
 
-    public static void addRobotInPropertiesHashtable(String name) {
+    public void addRobotInPropertiesHashtable(String name, Vector allRobotTypesVector) {
         for(Enumeration props=propertiesHashtable.elements();props.hasMoreElements();){
             Vector prop=(Vector)props.nextElement();
              Hashtable robots;
@@ -4443,7 +4410,7 @@ public class QueryHashtable extends Object implements Serializable {
             robots = (Hashtable) prop.elementAt(15);
         } catch(java.lang.ArrayIndexOutOfBoundsException aooi) {
              Hashtable robotsHashtable=new Hashtable();
-                Vector allRobotTypesVector = QueryUsersHashtable.getRobotsVectorFromRobotsHashtable();
+                
 		Enumeration allRobotTypesVectorEnum = allRobotTypesVector.elements();
 		while (allRobotTypesVectorEnum.hasMoreElements())
 		{
@@ -4463,7 +4430,7 @@ public class QueryHashtable extends Object implements Serializable {
         }
     }
 
-    public static void renameUserInAnnotationsHashtable(String oldName, String newName) {
+    public void renameUserInAnnotationsHashtable(String oldName, String newName) {
         Enumeration an=annotationPropertiesHashtable.elements();
         while(an.hasMoreElements()){
             Vector vec1=(Vector)an.nextElement();
@@ -4483,226 +4450,16 @@ public class QueryHashtable extends Object implements Serializable {
         }
     }
 
-    public static void createRobotCharVectorAndHash() {
-        robotCharValuesHashtable=new Hashtable();
-        
-        robotCharVector=new Vector();
-    }
 
-    static Vector getRobotsCharValues(String field,String node, String username) {
-        if(!robotCharValuesHashtable.containsKey(node))
-            robotCharValuesHashtable.put(node, new Hashtable());
-        
-        Hashtable h1=(Hashtable)robotCharValuesHashtable.get(node);
-        
-        if(!h1.containsKey(username)){
-            Vector v=new Vector();
-            String value="";
-            for(int i=0;i<robotCharVector.size();i++){
-               Vector rob=(Vector)robotCharVector.get(i);
-               if (rob.elementAt(0).toString().equals(username)){
-                   value=rob.elementAt(1).toString();
-                   break;
-               }
-            }
-            String[] values=value.split(" ");
-            Object[] robots=QueryUsersHashtable.robotsHashtable.keySet().toArray();
-            for(int i=0;i<robots.length;i++){
-                boolean belongs=false;
-                for(int j=0;j<values.length;j++){
-                    if(robots[i].equals(values[j]))
-                    {
-                        belongs=true;
-                        break;
-                    }
-                }
-                if(belongs)
-                    v.add("");
-                else
-                    v.add("-1");
-            }
-            
-            
-            h1.put(username, v);
-        }
-        return (Vector)h1.get(username);
-        
-        
-    }
-
-    static void updateRobotsCharPreferenceForProperty(String field, String username, int i, String string) {
-       // throw new UnsupportedOperationException("Not yet implemented");
-    }
-
-    public static void addChangesInRobotCharValuesHashtable(Vector selectedItems) {
-        Enumeration en=robotCharValuesHashtable.elements();
-        Object[] robots=QueryUsersHashtable.robotsHashtable.keySet().toArray();
-        while(en.hasMoreElements()){
-            Hashtable h1=(Hashtable)en.nextElement();
-            String username=RobotCharacteristicsPanel.jTable1.getValueAt(RobotCharacteristicsPanel.jTable1.getSelectedRow(),0).toString();
-            if(!h1.containsKey(username)){
-            Vector v=new Vector();
-            String value="";
-            for(int i=0;i<robotCharVector.size();i++){
-               Vector rob=(Vector)robotCharVector.get(i);
-               if (rob.elementAt(0).toString().equals(username)){
-                   value=rob.elementAt(1).toString();
-                   break;
-               }
-            }
-            String[] values=value.split(" ");
-            Object[] robots1=QueryUsersHashtable.robotsHashtable.keySet().toArray();
-            for(int i=0;i<robots1.length;i++){
-                boolean belongs=false;
-                for(int j=0;j<values.length;j++){
-                    if(robots1[i].equals(values[j]))
-                    {
-                        belongs=true;
-                        break;
-                    }
-                }
-                if(belongs)
-                    v.add("");
-                else
-                    v.add("-1");
-            }
-            
-            
-            h1.put(username, v);
-        }
-            
-            
-            Vector values=(Vector)h1.get(username);
-            for(int i=0;i<values.size();i++){
-                if  (!selectedItems.contains(robots[i].toString()))
-                    values.set(i,"-1");
-            }
-            for(int i=0;i<values.size();i++){
-                if  (selectedItems.contains(robots[i].toString())&&values.elementAt(i).toString().equals("-1"))
-                    values.set(i,"");
-            }
-                    
-            }
-        }
-
-    static void setValueAtRobotCharValuesHash(String node, String username, int i, String value) {
-        Hashtable h1=(Hashtable)robotCharValuesHashtable.get(node);
-        Vector v=(Vector)h1.get(username);
-        
-//        boolean universal=false;
-//        for(int j=0;j<robotCharVector.size();j++){
-//            if(((Vector)robotCharVector.elementAt(j)).elementAt(0).toString().equalsIgnoreCase(username)){
-//                universal=(Boolean)((Vector)robotCharVector.elementAt(j)).elementAt(2);
-//                break;
-//            }
-//        }
-//        if(universal){
-//            for(int h=0;h<v.size();h++){
-//                v.setElementAt(value,h);
-//            }
-//        }
-    //    else{
-            v.setElementAt(value,i);
-      //  }
-    }
-
-     static String getValueFromRobotCharValuesHash(String node, String username, int i) {
-        Hashtable h1=(Hashtable)robotCharValuesHashtable.get(node);
-        Vector v=(Vector)h1.get(username);
-        return v.elementAt(i).toString();
-    }
-    
-    static void addRobotInRobotCharValuesHashtable(String name) {
-        Enumeration en=robotCharValuesHashtable.elements();
-        while(en.hasMoreElements()){
-            Enumeration chars=((Hashtable)en.nextElement()).elements();
-            while(chars.hasMoreElements()){
-                Vector v=(Vector) chars.nextElement();
-                v.add("-1");
-            }
-        }
-    }
-
-    public static void renameRobotInRobotCharVector(String old, String newname) {
-
-        for(int i=0;i<robotCharVector.size();i++){
-            Vector nextProf=(Vector)robotCharVector.elementAt(i);
-            String robottypes=(String)nextProf.elementAt(1);
-            robottypes=robottypes.replace(" "+old," "+newname);
-            robottypes=robottypes.replace(old+" ",newname+" ");
-            if(robottypes.equals(old))
-                robottypes=newname;
-            nextProf.setElementAt(robottypes,1);
-        }
-    }
-
-    public static void removeRobotFromRobotCharVector(String name) {
-        int pos=0;
-        Object[] r=QueryUsersHashtable.robotsHashtable.keySet().toArray();
-        for(int i=0;i<r.length;i++){
-            if(r[i].toString().equalsIgnoreCase("name"))
-                pos=i;
-        }
-        
-       
-        for(int i=0;i<robotCharVector.size();i++){
-            Vector nextProf=(Vector)robotCharVector.elementAt(i);
-            
-            String robottypes[]=nextProf.elementAt(1).toString().split(" ");
-            String toR="";
-            for(int j=0;j<robottypes.length;j++){
-                if(!robottypes[j].equals(name))
-                    toR=robottypes[j]+" ";
-            }
-            nextProf.setElementAt(toR, 1);
-        }
-       
-        Enumeration els=robotCharValuesHashtable.elements();
-        while(els.hasMoreElements()){
-            Hashtable profiles=(Hashtable)els.nextElement();
-            
-            Enumeration vectors=profiles.elements();
-            while(vectors.hasMoreElements()){
-                Vector v=(Vector)vectors.nextElement();
-                v.removeElementAt(pos);
-            }
-        }
-        
-    }
-
-   public static void renameAttributeInRobotCharValuesHashtable(String oldname, String newName) {
-        Enumeration elements=robotCharValuesHashtable.elements();
-        while(elements.hasMoreElements()){
-            Hashtable node=(Hashtable)elements.nextElement();
-            if(node.containsKey(oldname))
-            {
-                Vector temp=(Vector) node.get(oldname);
-                node.put(newName, temp);
-                node.remove(oldname);
-            }
-        }
-    }
-
-    public static void removeAttributeFromHashtable(String name) {
-       Enumeration elements=robotCharValuesHashtable.elements();
-        while(elements.hasMoreElements()){
-            Hashtable node=(Hashtable)elements.nextElement();
-            if(node.containsKey(name))
-            {
-               
-                node.remove(name);
-            }
-        }
-    }
     
     /*It is used when subproperties or superproperties of a property are modified to check
      if the domain of the subproperty is less general than the domain of the superproperty*/
-     private static boolean checkDomains(String nextDomain,String nextSuperdomain){
+     private boolean checkDomains(String nextDomain,String nextSuperdomain){
     
     if (nextSuperdomain.equalsIgnoreCase(nextDomain))
         return true;
     else {
-        Vector children=QueryHashtable.getChildrenVectorFromMainDBHashtable(nextDomain,"entity type");
+        Vector children=getChildrenVectorFromMainDBHashtable(nextDomain,"entity type");
         for (int d=0;d<children.size();d++){
             if (checkDomains(children.elementAt(d).toString(),nextSuperdomain))
                 return true;
@@ -4712,44 +4469,9 @@ public class QueryHashtable extends Object implements Serializable {
     return false;
 }
 
-     /* It is used when subproperties or superproperties of a property are modified to add
-      the subroperty values to the superproperty*/
-      private static void addSubpropertyValueToProperty(String Property, String Subproperty){
-    Vector SubVector=(Vector) QueryHashtable.propertiesHashtable.get(Subproperty);
-    Vector domainSub=(Vector) SubVector.elementAt(0);
-    for(int h=0;h<domainSub.size();h++){
-        String domain=domainSub.elementAt(h).toString();
-        Enumeration en=DataBasePanel.last.preorderEnumeration();
-        DefaultMutableTreeNode node=new DefaultMutableTreeNode();
-        while(en.hasMoreElements()){
-            node=(DefaultMutableTreeNode) en.nextElement();
-            if (node.toString().equalsIgnoreCase(domain)) break;
-        }
-        Hashtable ht=QueryHashtable.getChildrenEntities(node);
-        Enumeration entities= ht.elements();
-        Vector propVec=new Vector();
-        String value="";
-        while(entities.hasMoreElements()){
-            NodeVector nv=(NodeVector) entities.nextElement();
-            Vector propVector=(Vector) nv.elementAt(0);
-            propVector=(Vector) propVector.elementAt(0);
-            for(int j=3;j<propVector.size();j++){
-                Vector property=(Vector) propVector.elementAt(j);
-                if (property.elementAt(0).toString().equalsIgnoreCase(Subproperty)){
-                    value=property.elementAt(1).toString();
-                }
-                if(property.elementAt(0).toString().equalsIgnoreCase(Property)){
-                    propVec=property;
-                }
-            }
-            propVec.setElementAt(value,1);
-        }
-        
-    }
     
-}
      
-    public static void addSubpropertiesToProperty(Vector selectedSubProp, String propName) {
+    public void addSubpropertiesToProperty(Vector selectedSubProp, String propName) {
         Vector propVector=(Vector) propertiesHashtable.get(propName);
                     Vector sub= (Vector) propVector.elementAt(2);
                     sub=(Vector) sub.clone();
@@ -4760,7 +4482,7 @@ public class QueryHashtable extends Object implements Serializable {
                 if (!sub.contains(selectedSubProp.elementAt(n))){
                     boolean domainOK=false;
                     boolean rangeOK=false;
-                    Vector subprop= (Vector) QueryHashtable.propertiesHashtable.get(selectedSubProp.elementAt(n).toString());
+                    Vector subprop= (Vector) propertiesHashtable.get(selectedSubProp.elementAt(n).toString());
                     Vector subDomain=(Vector) subprop.elementAt(0);
                     Vector domainsuper=(Vector) propVector.elementAt(0);
                     for(int j=0;j<domainsuper.size();j++){
@@ -4789,7 +4511,7 @@ public class QueryHashtable extends Object implements Serializable {
                                         optionButtons[0]);
                                 
                             }
-                            //  Vector children=QueryHashtable.getChildrenVectorFromMainDBHashtable(nextSuperdomain,"entity type");
+                            //  Vector children=getChildrenVectorFromMainDBHashtable(nextSuperdomain,"entity type");
                             
                         }
                         /*           */
@@ -4797,7 +4519,7 @@ public class QueryHashtable extends Object implements Serializable {
                     
                     
                     
-                    //  Vector subprop= (Vector) QueryHashtable.propertiesHashtable.get(selectedSubProp.elementAt(n).toString());
+                    //  Vector subprop= (Vector) propertiesHashtable.get(selectedSubProp.elementAt(n).toString());
                     Vector subRange=(Vector) subprop.elementAt(1);
                     Vector rangesuper=(Vector) propVector.elementAt(1);
                     for(int j=0;j<rangesuper.size();j++){
@@ -4826,15 +4548,15 @@ public class QueryHashtable extends Object implements Serializable {
                                         optionButtons[0]);
                                 
                             }
-                            //  Vector children=QueryHashtable.getChildrenVectorFromMainDBHashtable(nextSuperdomain,"entity type");
+                            //  Vector children=getChildrenVectorFromMainDBHashtable(nextSuperdomain,"entity type");
                             
                         }
                         /*           */
                     }
                     
                     if(domainOK && rangeOK){ finalSub.add(selectedSubProp.elementAt(n));
-                    addSubpropertyValueToProperty(propName,selectedSubProp.elementAt(n).toString());
-                    Vector subPropVector=(Vector) QueryHashtable.propertiesHashtable.get(selectedSubProp.elementAt(n).toString());
+                    
+                    Vector subPropVector=(Vector) propertiesHashtable.get(selectedSubProp.elementAt(n).toString());
                     subPropVector= (Vector) subPropVector.elementAt(3);
                     subPropVector.add(propName);
                     }
@@ -4848,7 +4570,7 @@ public class QueryHashtable extends Object implements Serializable {
             
             for(int y=0;y<sub.size();y++){
                 if(!finalSub.contains(sub.elementAt(y))){
-                    Vector deletedSubroperty=(Vector)QueryHashtable.propertiesHashtable.get(sub.elementAt(y).toString());
+                    Vector deletedSubroperty=(Vector)propertiesHashtable.get(sub.elementAt(y).toString());
                     Vector superpropertiesOfdeletedSubroperty=(Vector)deletedSubroperty.elementAt(3);
                     superpropertiesOfdeletedSubroperty.remove(propName);
                 }
@@ -4858,9 +4580,9 @@ public class QueryHashtable extends Object implements Serializable {
 }
     }
 
-    public static void addSuperpropertiesToProperty(Vector selectedSuperProp, String propName) {
+    public void addSuperpropertiesToProperty(Vector selectedSuperProp, String propName) {
        Vector finalSuper=new Vector();
-                            Vector propVector=(Vector) QueryHashtable.propertiesHashtable.get(propName);
+                            Vector propVector=(Vector) propertiesHashtable.get(propName);
                             
                             Vector superp=(Vector) propVector.elementAt(3);
                             superp=(Vector) superp.clone();
@@ -4871,7 +4593,7 @@ public class QueryHashtable extends Object implements Serializable {
                 if (!superp.contains(selectedSuperProp.elementAt(n))){
                     boolean domainOK=false;
                     boolean rangeOK=false;
-                    Vector subprop= (Vector) QueryHashtable.propertiesHashtable.get(selectedSuperProp.elementAt(n).toString());
+                    Vector subprop= (Vector) propertiesHashtable.get(selectedSuperProp.elementAt(n).toString());
                     Vector subDomain=(Vector) subprop.elementAt(0);
                     Vector domainsuper=(Vector) propVector.elementAt(0);
                     for(int j=0;j<domainsuper.size();j++){
@@ -4900,7 +4622,7 @@ public class QueryHashtable extends Object implements Serializable {
                                         optionButtons[0]);
                                 
                             }
-                            //  Vector children=QueryHashtable.getChildrenVectorFromMainDBHashtable(nextSuperdomain,"entity type");
+                            //  Vector children=getChildrenVectorFromMainDBHashtable(nextSuperdomain,"entity type");
                             
                         }
                         /*           */
@@ -4908,7 +4630,7 @@ public class QueryHashtable extends Object implements Serializable {
                     
                     
                     
-                    //  Vector subprop= (Vector) QueryHashtable.propertiesHashtable.get(selectedSuperProp.elementAt(n).toString());
+                    //  Vector subprop= (Vector) propertiesHashtable.get(selectedSuperProp.elementAt(n).toString());
                     Vector subRange=(Vector) subprop.elementAt(1);
                     Vector rangesuper=(Vector) propVector.elementAt(1);
                     for(int j=0;j<rangesuper.size();j++){
@@ -4937,15 +4659,15 @@ public class QueryHashtable extends Object implements Serializable {
                                         optionButtons[0]);
                                 
                             }
-                            //  Vector children=QueryHashtable.getChildrenVectorFromMainDBHashtable(nextSuperdomain,"entity type");
+                            //  Vector children=getChildrenVectorFromMainDBHashtable(nextSuperdomain,"entity type");
                             
                         }
                         /*           */
                     }
                     
                     if(domainOK && rangeOK){ finalSuper.add(selectedSuperProp.elementAt(n));
-                    addSubpropertyValueToProperty(selectedSuperProp.elementAt(n).toString(),propName);
-                    Vector superPropVector=(Vector) QueryHashtable.propertiesHashtable.get(selectedSuperProp.elementAt(n).toString());
+                    //addSubpropertyValueToProperty(selectedSuperProp.elementAt(n).toString(),propName);
+                    Vector superPropVector=(Vector) propertiesHashtable.get(selectedSuperProp.elementAt(n).toString());
                     superPropVector= (Vector) superPropVector.elementAt(2);
                     superPropVector.add(propName);
                     
@@ -4960,7 +4682,7 @@ public class QueryHashtable extends Object implements Serializable {
         }
                             for(int y=0;y<superp.size();y++){
                 if(!finalSuper.contains(superp.elementAt(y))){
-                    Vector deletedSuperroperty=(Vector)QueryHashtable.propertiesHashtable.get(superp.elementAt(y).toString());
+                    Vector deletedSuperroperty=(Vector)propertiesHashtable.get(superp.elementAt(y).toString());
                     Vector subpropertiesOfdeletedSuperroperty=(Vector)deletedSuperroperty.elementAt(2);
                     subpropertiesOfdeletedSuperroperty.remove(propName);
                 }
@@ -4969,13 +4691,13 @@ public class QueryHashtable extends Object implements Serializable {
     
     /* It is used when the fillers of a property for a given entity are modified, to
      *check if some cardinality restriction is violated*/
-        private static Vector checkCardinalities(Vector values, String entityName, String fieldName)
+        private Vector checkCardinalities(Vector values, String entityName, String fieldName)
     {
         
         int total=values.size();
                     // The total number of items in the list
            //         int total = chboli.list.getModel().getSize();
-                    Vector restrictions=(Vector) QueryHashtable.valueRestrictionsHashtable.get(DataBasePanel.getNode(entityName).getParent().toString()+":"+fieldName);
+                    Vector restrictions=(Vector) valueRestrictionsHashtable.get(DataBasePanel.getNode(entityName).getParent().toString()+":"+fieldName);
                     //String[] card=textFieldLabel.getText().split(" ");
                    Vector maxCardinalities=(Vector) restrictions.elementAt(3);
                    Vector Cardinality=(Vector) restrictions.elementAt(5);
@@ -5047,7 +4769,7 @@ public class QueryHashtable extends Object implements Serializable {
                         return null;
                     }}//catch(NumberFormatException m){};
                     
-                    Vector property=(Vector)QueryHashtable.propertiesHashtable.get(fieldName);
+                    Vector property=(Vector)propertiesHashtable.get(fieldName);
                     if(property.elementAt(6).toString().equalsIgnoreCase("true")){
                         if(total+v.size()>1)
                     {
@@ -5073,20 +4795,20 @@ public class QueryHashtable extends Object implements Serializable {
 
 /*It is used to modify the fillers of a property for a given instance.
  *setVector contains the fillers before the operation*/
-    public static void setPropertyFillers(Vector fillers, Vector setVector) {
-        String propName=DataBaseEntityTable.m_data.getValueAt(DataBaseEntityTable.dbetl.rowNo,0).toString();
-                    fillers=checkCardinalities(fillers, DataBasePanel.last.toString(), propName);
-                    try{
-                    fillers.size();
-                    }catch(java.lang.NullPointerException npe){
-                       // dialog.dispose();
-                        return;
-                    }
-                  
-                    int total=fillers.size();
+    public void setPropertyFillers(Vector fillers, Vector setVector) {
+//        String propName=DataBaseEntityTable.m_data.getValueAt(DataBaseEntityTable.dbetl.rowNo,0).toString();
+//                    fillers=checkCardinalities(fillers, DataBasePanel.last.toString(), propName);
+//                    try{
+//                    fillers.size();
+//                    }catch(java.lang.NullPointerException npe){
+//                       // dialog.dispose();
+//                        return;
+//                    }
+//
+//                    int total=fillers.size();
                     // The total number of items in the list
            //         int total = chboli.list.getModel().getSize();
-  /*                  Vector restrictions=(Vector) QueryHashtable.valueRestrictionsHashtable.get(QueryHashtable.nameWithoutOccur(DataBasePanel.last.getParent().toString())+":"+DataBaseEntityTable.m_data.getValueAt(DataBaseEntityTable.dbetl.rowNo,0));
+  /*                  Vector restrictions=(Vector) valueRestrictionsHashtable.get(nameWithoutOccur(DataBasePanel.last.getParent().toString())+":"+DataBaseEntityTable.m_data.getValueAt(DataBaseEntityTable.dbetl.rowNo,0));
                     //String[] card=textFieldLabel.getText().split(" ");
                    Vector maxCardinalities=(Vector) restrictions.elementAt(3);
                    Vector Cardinality=(Vector) restrictions.elementAt(5);
@@ -5158,7 +4880,7 @@ public class QueryHashtable extends Object implements Serializable {
                         return;
                     }}//catch(NumberFormatException m){};
                     
-                    Vector property=(Vector)QueryHashtable.propertiesHashtable.get(DataBaseEntityTable.m_data.getValueAt(DataBaseEntityTable.dbetl.rowNo,0));
+                    Vector property=(Vector)propertiesHashtable.get(DataBaseEntityTable.m_data.getValueAt(DataBaseEntityTable.dbetl.rowNo,0));
                     if(property.elementAt(6).toString().equalsIgnoreCase("true")){
                         if(total+v.size()>1)
                     {
@@ -5194,54 +4916,54 @@ public class QueryHashtable extends Object implements Serializable {
 */
                     // Update the entity table with the new value
                     
-                     for(int h=0;h<fillers.size();h++){
-                        boolean setVectorContains=false;
-                        for(int k=0;k<setVector.size();k++){
-                            if(setVector.elementAt(k).toString().equalsIgnoreCase(fillers.elementAt(h).toString()))
-                            {setVectorContains=true;
-                            break;
-                            }
-                        }
-                         if(!setVectorContains){
-                             Vector propVector=(Vector)QueryHashtable.propertiesHashtable.get(propName);
-                             if(propVector.elementAt(7).toString().equals("true")){
-                                 Vector domain=(Vector)propVector.elementAt(0);
-                                 for(int j=0;j<domain.size();j++){
-                                     Enumeration entities=QueryHashtable.getChildrenEntities(DataBasePanel.getNode(domain.elementAt(j).toString())).elements();
-                                     while(entities.hasMoreElements()){
-                                         Vector nextEntity=(Vector) entities.nextElement();
-                                         Vector temp=(Vector) nextEntity.elementAt(0);
-                                         temp=(Vector) temp.elementAt(0);
-                                         for(int k=3;k<temp.size();k++){
-                                             Vector field=(Vector)temp.elementAt(k);
-                                             if(field.elementAt(0).toString().equalsIgnoreCase(propName)){
-                                                 if(field.elementAt(1).toString().contains(" "+fillers.elementAt(h).toString())||field.elementAt(1).toString().contains(fillers.elementAt(h).toString()+" ")||field.elementAt(1).toString().equalsIgnoreCase(fillers.elementAt(h).toString()))
-                                                 {
-                                                     Object[] optionButtons = {
-				"OK", 
-				};
-
-			JOptionPane.showOptionDialog(Mpiro.win.getFrames()[0],
-                                                                                                 "Error:Inverse functional property "+propName+" can't have the same filler ("+fillers.elementAt(h).toString()+") for more than one entity.", 
-												 LangResources.getString(Mpiro.selectedLocale, "warning_dialog"),
-												 JOptionPane.WARNING_MESSAGE,
-												 JOptionPane.OK_OPTION,
-												 null, 
-												 optionButtons, 
-												 optionButtons[0]);
-                       // System.out.println("CARDINALITY ERROR");
-                                                    // dialog.dispose();
-                                                     return;
-                                                 }
-                                             }
-                                         }
-                                     }
-                                 }
-                             }
-                             
-                             QueryHashtable.addFillerToInverseProperty(DataBasePanel.last.toString(),fillers.elementAt(h).toString(),DataBaseEntityTable.m_data.getValueAt(DataBaseEntityTable.dbetl.rowNo, 0).toString());
-                         }
-                    }
+//                     for(int h=0;h<fillers.size();h++){
+//                        boolean setVectorContains=false;
+//                        for(int k=0;k<setVector.size();k++){
+//                            if(setVector.elementAt(k).toString().equalsIgnoreCase(fillers.elementAt(h).toString()))
+//                            {setVectorContains=true;
+//                            break;
+//                            }
+//                        }
+//                         if(!setVectorContains){
+//                             Vector propVector=(Vector)propertiesHashtable.get(propName);
+//                             if(propVector.elementAt(7).toString().equals("true")){
+//                                 Vector domain=(Vector)propVector.elementAt(0);
+//                                 for(int j=0;j<domain.size();j++){
+//                                     Enumeration entities=getChildrenEntities(DataBasePanel.getNode(domain.elementAt(j).toString())).elements();
+//                                     while(entities.hasMoreElements()){
+//                                         Vector nextEntity=(Vector) entities.nextElement();
+//                                         Vector temp=(Vector) nextEntity.elementAt(0);
+//                                         temp=(Vector) temp.elementAt(0);
+//                                         for(int k=3;k<temp.size();k++){
+//                                             Vector field=(Vector)temp.elementAt(k);
+//                                             if(field.elementAt(0).toString().equalsIgnoreCase(propName)){
+//                                                 if(field.elementAt(1).toString().contains(" "+fillers.elementAt(h).toString())||field.elementAt(1).toString().contains(fillers.elementAt(h).toString()+" ")||field.elementAt(1).toString().equalsIgnoreCase(fillers.elementAt(h).toString()))
+//                                                 {
+//                                                     Object[] optionButtons = {
+//				"OK",
+//				};
+//
+//			JOptionPane.showOptionDialog(Mpiro.win.getFrames()[0],
+//                                                                                                 "Error:Inverse functional property "+propName+" can't have the same filler ("+fillers.elementAt(h).toString()+") for more than one entity.",
+//												 LangResources.getString(Mpiro.selectedLocale, "warning_dialog"),
+//												 JOptionPane.WARNING_MESSAGE,
+//												 JOptionPane.OK_OPTION,
+//												 null,
+//												 optionButtons,
+//												 optionButtons[0]);
+//                       // System.out.println("CARDINALITY ERROR");
+//                                                    // dialog.dispose();
+//                                                     return;
+//                                                 }
+//                                             }
+//                                         }
+//                                     }
+//                                 }
+//                             }
+//
+//                             addFillerToInverseProperty(DataBasePanel.last.toString(),fillers.elementAt(h).toString(),DataBaseEntityTable.m_data.getValueAt(DataBaseEntityTable.dbetl.rowNo, 0).toString());
+//                         }
+//                    }
                     
                     
                     StringBuffer newItems = new StringBuffer("");
@@ -5256,297 +4978,126 @@ public class QueryHashtable extends Object implements Serializable {
                     if (trimmedNewValue.length() == 0) {
                         trimmedNewValue = "Select ...";
                     }
+                    Vector p=Mpiro.win.struc.getPropertyForEntity(DataBasePanel.last.toString(),FlagPanel.langID, DataBaseTable.dbtl.selectedField );
                     if(setVector.size()>0){
                     if(!setVector.elementAt(0).toString().startsWith("Select ")&&!setVector.elementAt(0).toString().equalsIgnoreCase("")){
                     for(int k=0;k<setVector.size();k++){
-                        if(!fillers.contains(setVector.elementAt(k).toString()))
-                            QueryHashtable.removeFillerFromInverseProperty(DataBasePanel.last.toString(),setVector.elementAt(k).toString(),DataBaseEntityTable.m_data.getValueAt(DataBaseEntityTable.dbetl.rowNo, 0).toString());
+                        if(!fillers.contains(setVector.elementAt(k).toString())){
+
+                            
+                            if (!p.contains(setVector.elementAt(k).toString())){
+
+                             Object[] optionButtons = {
+				"OK",
+				};
+
+			JOptionPane.showOptionDialog(Mpiro.win.getFrames()[0],
+                                                 "Filler "+setVector.elementAt(k).toString()+" doesn't exist in explicit model",
+												 LangResources.getString(Mpiro.selectedLocale, "warning_dialog"),
+												 JOptionPane.WARNING_MESSAGE,
+												 JOptionPane.OK_OPTION,
+												 null,
+												 optionButtons,
+												 optionButtons[0]);
+                                                     return;
+
+                    }}
+                    
                     }}}
                     
-                    
+                    p.setElementAt(trimmedNewValue, 1);
                    
                     
                     
                     DataBaseEntityTable.m_data.setValueAt(trimmedNewValue, DataBaseEntityTable.dbetl.rowNo, 1);
     }
-    
-       public static void setInverseProperty(String propName, String inversePropName){
-           Vector propVector=(Vector)propertiesHashtable.get(propName);
-            Enumeration names=QueryHashtable.propertiesHashtable.keys();
-            Enumeration allprop=QueryHashtable.propertiesHashtable.elements();
-        //remove the inverse declaration from the ex-inverse of the modified property
-        while(allprop.hasMoreElements()){
-            String nextProp=names.nextElement().toString();
-            Vector next=(Vector) allprop.nextElement();
-            if(!nextProp.equalsIgnoreCase(propName)&&!nextProp.equalsIgnoreCase(inversePropName)){
-                if(next.elementAt(5).toString().equalsIgnoreCase(propName)){
-                    next.setElementAt("",5);
-                    break;
-                }}
-        }
-        if(!inversePropName.equalsIgnoreCase("")){
-                Hashtable backup=new Hashtable();
-            Vector domain1=new Vector((Vector) propVector.elementAt(0));
-            Vector range1=new Vector((Vector) propVector.elementAt(1));
-            Vector inversePropVector=(Vector) QueryHashtable.propertiesHashtable.get(inversePropName);
-            Vector inverseDomain1=new Vector((Vector) inversePropVector.elementAt(0));
-            Vector inverseRange1=new Vector((Vector) inversePropVector.elementAt(1));
-            if (!(domain1.equals(inverseRange1)&&range1.equals(inverseDomain1))){
-                Object[] optionButtons = {
-                    "ok",
-                };
-                
-                JOptionPane.showOptionDialog(null, //theofilos
-                        "To set two properties as inverse, the domain of the first must be the same with the range of the second and vice-versa.",
-                        LangResources.getString(Mpiro.selectedLocale, "warning_dialog"),
-                        JOptionPane.WARNING_MESSAGE,
-                        JOptionPane.OK_OPTION,
-                        null,
-                        optionButtons,
-                        optionButtons[0]);
-                
-            } else{
-                if (!(inversePropVector.elementAt(5).toString().equalsIgnoreCase(""))){
-                    Object[] optionButtons = {
-                        "ok",
-                    };
-                    
-                    JOptionPane.showOptionDialog(null, //theofilos
-                            "The property you have chosen has already another property defined as its inverse.",
-                            LangResources.getString(Mpiro.selectedLocale, "warning_dialog"),
-                            JOptionPane.WARNING_MESSAGE,
-                            JOptionPane.OK_OPTION,
-                            null,
-                            optionButtons,
-                            optionButtons[0]);
 
-                } else{
-                     
-                    //Hashtable backup=(Hashtable)QueryHashtable.mainDBHashtable;
-                    //QueryHashtable.mainDBHashtable=backup;
-                    
-                    
-                    for(int y=0;y<domain1.size();y++){
-                        Enumeration en1=DataBasePanel.top.preorderEnumeration();
-                        DefaultMutableTreeNode dmtn=new  DefaultMutableTreeNode();
-                        while (en1.hasMoreElements()) {
-                            Object ob1=en1.nextElement();
-                            if(ob1.toString().equalsIgnoreCase(domain1.elementAt(y).toString())) {
-                                dmtn=(DefaultMutableTreeNode) ob1;
-                                break;
-                            }
-                        }
-                        //  Vector children=QueryHashtable.getChildrenVectorFromMainDBHashtable(domain.elementAt(y).toString(),"entity");
-                        Enumeration elems= QueryHashtable.getChildrenEntities(dmtn).elements();
-                        Enumeration keys= QueryHashtable.getChildrenEntities(dmtn).keys();
-                        System.out.println("DDDDDd"+QueryHashtable.getChildrenEntities(dmtn).toString());
-                        //  System.out.println("CCCCC"+childVector.toString());
-                       
-                        while(elems.hasMoreElements()){
-                            Vector childVec1=(Vector) elems.nextElement();
-                            Object obj=keys.nextElement();
-                            Vector childVec=(Vector) childVec1.elementAt(0);
-                            childVec=(Vector) childVec.elementAt(0);
-                            for(int r=3;r<childVec.size();r++) {
-                                Vector propVec= (Vector) childVec.elementAt(r);
-                                System.out.println("childVec.elementAt(r)"+childVec.elementAt(r).toString());
-                                if(propVec.elementAt(0).toString().equalsIgnoreCase(propName)) {
-                                    String rangeVec= propVec.elementAt(1).toString();
-                                    System.out.println("rangeVec"+rangeVec);
-                                    String[] j=rangeVec.split(" ");
-                                    for (int f=0;f<j.length;f++) {
-                                        String domainf= j[f];
-                                        System.out.println(domainf);
-                                        if (domainf.equalsIgnoreCase("Select")||domainf.equalsIgnoreCase(""))
-                                            break;
-                                       Vector vecDomUnchanged=(Vector) QueryHashtable.mainDBHashtable.get(domainf);
-                                        Vector vecDom=(Vector)vecDomUnchanged.clone();
-                                        vecDom.setElementAt(((Vector) vecDomUnchanged.elementAt(0)).clone(),0);
-                                        if(!backup.containsKey(domainf))
-                                        backup.put(domainf,new NodeVector(vecDom));
-                                        System.out.println("{ffffff"+vecDom);
-                                        Vector vecDom1=(Vector) vecDom.elementAt(0);
-                                         Vector vecDomUnchanged1=(Vector) vecDomUnchanged.elementAt(0);
-                                         vecDom1.setElementAt(((Vector) vecDomUnchanged1.elementAt(0)).clone(),0);
-                                        Vector vecDom2=(Vector) vecDom1.elementAt(0);
-                                         Vector vecDomUnchanged2=(Vector) vecDomUnchanged1.elementAt(0);
-                                        System.out.println(vecDom2.toString());
-                                        for(int a=3;a<vecDom2.size();a++) {
-                                            Vector nextEl=(Vector) vecDom2.elementAt(a);
-                                            System.out.println(nextEl.toString());
-                                            if(nextEl.elementAt(0).toString().equalsIgnoreCase(inversePropName)) {
-                                                //nextEl=((Vector)(Vector) ((Vector)((Vector)((Vector)vecDomUnchanged.elementAt(0)).elementAt(0)).elementAt(a)).clone());
-                                                vecDom2.setElementAt(((Vector) vecDomUnchanged2.elementAt(a)).clone(),a);
-                                                String rangeVec2=nextEl.elementAt(1).toString();
-                                                if (rangeVec2.startsWith("Select")) rangeVec2="";
-                                                String[] k=rangeVec2.split(" ");
-                                                for (int p=0;p<k.length;p++) {
-                                                    if (k[p].equalsIgnoreCase(obj.toString()))
-                                                        break;
-                                                    else{
-                                                        if(p<k.length-1) continue;
-                                                        else {
-                                                            if(nextEl.elementAt(1).toString().startsWith("Select"))
-                                                                nextEl.set(1, obj.toString());
-                                                            else
-                                                                nextEl.set(1, obj.toString()+" "+nextEl.elementAt(1).toString());
-                                                            //Object obj1=QueryHashtable.mainDBHashtable.get(obj);
-                                                            //obj1=(Object) nextEl;
-                                                            if(QueryHashtable.getMinOfMaxCardinalities(QueryHashtable.getParents(domainf).elementAt(0).toString() ,inversePropName)<nextEl.elementAt(1).toString().split(" ").length){
-                                                              
-                                                                MessageDialog error=new MessageDialog(null, "Entity "+domainf+" has more fillers than "+QueryHashtable.getMinOfMaxCardinalities(QueryHashtable.getParents(domainf).elementAt(0).toString(),inversePropName.toString())+"(from maxCardinality restriction");
-                                                                //QueryHashtable.mainDBHashtable=backup;
-                                                                 Enumeration backupKeys=backup.keys();
-                                                                Enumeration backupElements=backup.elements();
-                                                                while(backupKeys.hasMoreElements()){
-                                                                    QueryHashtable.mainDBHashtable.put(backupKeys.nextElement(),(NodeVector)backupElements.nextElement());
-                                                                }
-                                                                return;
-                                                        
-                                                            }
-                                                             if(QueryHashtable.getCardinality(QueryHashtable.getParents(domainf).elementAt(0).toString() ,inversePropName)<nextEl.elementAt(1).toString().split(" ").length && QueryHashtable.getCardinality(QueryHashtable.getParents(domainf).elementAt(0).toString() ,inversePropName)!=-1){ 
-                                                                
-                                                                MessageDialog error=new MessageDialog(null, "Entity "+domainf+" has more fillers than "+QueryHashtable.getCardinality(QueryHashtable.getParents(domainf).elementAt(0).toString(),inversePropName.toString())+"(from Cardinality restriction)");
-                                                                //QueryHashtable.mainDBHashtable=backup;
-                                                                Enumeration backupKeys=backup.keys();
-                                                                Enumeration backupElements=backup.elements();
-                                                                while(backupKeys.hasMoreElements()){
-                                                                    QueryHashtable.mainDBHashtable.put(backupKeys.nextElement(),(NodeVector)backupElements.nextElement());
-                                                                }
-                                                                return;
-                                                        
-                                                        }
-                                                            
-                                                        }}
-                                                    
-                                                    
-                                                    
-                                                }}}}}}}}
-                
-                
-                
-                for(int y=0;y<inverseDomain1.size();y++){
-                        Enumeration en1=DataBasePanel.top.preorderEnumeration();
-                        DefaultMutableTreeNode dmtn=new  DefaultMutableTreeNode();
-                        while (en1.hasMoreElements()) {
-                            Object ob1=en1.nextElement();
-                            if(ob1.toString().equalsIgnoreCase(inverseDomain1.elementAt(y).toString())) {
-                                dmtn=(DefaultMutableTreeNode) ob1;
-                                break;
-                            }
-                        }
-                        //  Vector children=QueryHashtable.getChildrenVectorFromMainDBHashtable(domain.elementAt(y).toString(),"entity");
-                        Enumeration elems= QueryHashtable.getChildrenEntities(dmtn).elements();
-                        Enumeration keys= QueryHashtable.getChildrenEntities(dmtn).keys();
-                        System.out.println("DDDDDd"+QueryHashtable.getChildrenEntities(dmtn).toString());
-                        //  System.out.println("CCCCC"+childVector.toString());
-                        while(elems.hasMoreElements()){
-                            Vector childVec1=(Vector) elems.nextElement();
-                            Object obj=keys.nextElement();
-                            Vector childVec=(Vector) childVec1.elementAt(0);
-                            childVec=(Vector) childVec.elementAt(0);
-                            for(int r=3;r<childVec.size();r++) {
-                                Vector propVec= (Vector) childVec.elementAt(r);
-                                System.out.println("childVec.elementAt(r)"+childVec.elementAt(r).toString());
-                                if(propVec.elementAt(0).toString().equalsIgnoreCase(inversePropName)) {
-                                    String rangeVec= propVec.elementAt(1).toString();
-                                    System.out.println("rangeVec"+rangeVec);
-                                    String[] j=rangeVec.split(" ");
-                                    for (int f=0;f<j.length;f++) {
-                                        String domainf= j[f];
-                                        System.out.println(domainf);
-                                        if (domainf.equalsIgnoreCase("Select")||domainf.equalsIgnoreCase(""))
-                                            break;
-                                        Vector vecDomUnchanged=(Vector) QueryHashtable.mainDBHashtable.get(domainf);
-                                        Vector vecDom=(Vector)vecDomUnchanged.clone();
-                                        vecDom.setElementAt(((Vector) vecDomUnchanged.elementAt(0)).clone(),0);
-                                        if(!backup.containsKey(domainf))
-                                        backup.put(domainf,new NodeVector(vecDom));
-                                        System.out.println("{ffffff"+vecDom);
-                                        Vector vecDom1=(Vector) vecDom.elementAt(0);
-                                         Vector vecDomUnchanged1=(Vector) vecDomUnchanged.elementAt(0);
-                                         vecDom1.setElementAt(((Vector) vecDomUnchanged1.elementAt(0)).clone(),0);
-                                        Vector vecDom2=(Vector) vecDom1.elementAt(0);
-                                         Vector vecDomUnchanged2=(Vector) vecDomUnchanged1.elementAt(0);
-                                        System.out.println(vecDom2.toString());
-                                        for(int a=3;a<vecDom2.size();a++) {
-                                            //vecDom.setElementAt((Vector)((Vector)((Vector)((Vector)vecDomUnchanged.elementAt(0)).elementAt(0)).elementAt(a)).clone(),a);
-                                            Vector nextEl=(Vector) vecDom2.elementAt(a);
-                                            System.out.println(nextEl.toString());
-                                            if(nextEl.elementAt(0).toString().equalsIgnoreCase(propName)) {
-                                                //nextEl=((Vector)(Vector) ((Vector)((Vector)((Vector)vecDomUnchanged.elementAt(0)).elementAt(0)).elementAt(a)).clone());
-                                                vecDom2.setElementAt(((Vector) vecDomUnchanged2.elementAt(a)).clone(),a);
-                                                String rangeVec2=nextEl.elementAt(1).toString();
-                                                if (rangeVec2.startsWith("Select")) rangeVec2="";
-                                                String[] k=rangeVec2.split(" ");
-                                                for (int p=0;p<k.length;p++) {
-                                                    if (k[p].equalsIgnoreCase(obj.toString()))
-                                                        break;
-                                                    else{
-                                                        if(p<k.length-1) continue;
-                                                        else {
-                                                            if(nextEl.elementAt(1).toString().startsWith("Select"))
-                                                                nextEl.set(1, obj.toString());
-                                                            else
-                                                                nextEl.set(1, obj.toString()+" "+nextEl.elementAt(1).toString());
-                                                            //Object obj1=QueryHashtable.mainDBHashtable.get(obj);
-                                                            //obj1=(Object) nextEl;
-                                                            if(QueryHashtable.getMinOfMaxCardinalities(QueryHashtable.getParents(domainf).elementAt(0).toString() ,propName)<nextEl.elementAt(1).toString().split(" ").length){
-                                                                MessageDialog error=new MessageDialog(null, "Entity "+domainf+" has more fillers than "+QueryHashtable.getMinOfMaxCardinalities(QueryHashtable.getParents(domainf).elementAt(0).toString(),propName)+" (from maxCardinality restriction)");
-                                                                //QueryHashtable.mainDBHashtable=backup;
-                                                                 Enumeration backupKeys=backup.keys();
-                                                                Enumeration backupElements=backup.elements();
-                                                                while(backupKeys.hasMoreElements()){
-                                                                    QueryHashtable.mainDBHashtable.put(backupKeys.nextElement(),(NodeVector)backupElements.nextElement());
-                                                                }
-                                                                return;
-                                                            }
-                                                            if(QueryHashtable.getCardinality(QueryHashtable.getParents(domainf).elementAt(0).toString() ,propName)<nextEl.elementAt(1).toString().split(" ").length && QueryHashtable.getCardinality(QueryHashtable.getParents(domainf).elementAt(0).toString() ,propName)!=-1){ 
-                                                                
-                                                                MessageDialog error=new MessageDialog(null, "Entity "+domainf+" has more fillers than "+QueryHashtable.getCardinality(QueryHashtable.getParents(domainf).elementAt(0).toString(),propName)+"(from Cardinality restriction)");
-                                                                //QueryHashtable.mainDBHashtable=backup;
-                                                              /*   Enumeration backupKeys=backup.keys();
-                                                                Enumeration backupElements=backup.elements();
-                                                                while(backupKeys.hasMoreElements()){
-                                                                    QueryHashtable.mainDBHashtable.put(backupKeys.nextElement(),(NodeVector)backupElements.nextElement());
-                                                                }*/
-                                                                Enumeration backupKeys=backup.keys();
-                                                               Enumeration backupElements=backup.elements();
-                                                               while(backupKeys.hasMoreElements()){
-                                                                    QueryHashtable.mainDBHashtable.put(backupKeys.nextElement(),(NodeVector)backupElements.nextElement());
+    /*This method sets the inverse property of the given property. It does not use any reasoning and makes no checks to
+     *ensure that the ontology remains consistent. This functionality has been transfered to
+     *MicroReasoner*/
+       public void setInverseProperty(String propName, String inversePropName){
+         ((Vector)propertiesHashtable.get(propName)).setElementAt(inversePropName, 5);
         }
-                                                                return;
-                                                        
-                                                        }
-                                                        }}
-                                                    
-                                                    
-                                                    
-                                                }}}}}}}}
-                
-                
-                propVector.setElementAt(inversePropName,5);
-                    inversePropVector.setElementAt(propName,5);
-                    if(propVector.elementAt(7).toString().equalsIgnoreCase("true"))
-                        inversePropVector.setElementAt("true",6);
-                    if(inversePropVector.elementAt(7).toString().equalsIgnoreCase("true"))
-                        propVector.setElementAt("true",6);
-                    if (inversePropName.equalsIgnoreCase(propName)) propVector.setElementAt("true",9);
-                
-                }
-                
-            }
+
+    public void setPropertyTransitive(String propName) {
+       Vector propVector=(Vector)propertiesHashtable.get(propName);
+        propVector.setElementAt("true",8);}
+
+    /*This method sets the given property symmetric. It does not use any reasoning and makes no checks to
+     *ensure that the ontology remains consistent. This functionality has been transfered to 
+     *MicroReasoner*/
+    public void setPropertySymmetric(String propName) { 
         
-        }
-        else
-            propVector.setElementAt("",5);
-        }
-
-    public static void setPropertyTransitive(String propName) {
         Vector propVector=(Vector) propertiesHashtable.get(propName);
-         boolean restriction=false;
-            Enumeration restrictionKeys=QueryHashtable.valueRestrictionsHashtable.keys();
-            Enumeration restrictions=QueryHashtable.valueRestrictionsHashtable.elements();
+        propVector.setElementAt("true",9);
+        
+    }
+    
+    
+     
+    
+
+    
+  
+            public boolean setFunctional(String name){
+         boolean canSet=true;
+
+            Enumeration keys=valueRestrictionsHashtable.keys();
+            Enumeration elements=valueRestrictionsHashtable.elements();
+            while(keys.hasMoreElements()){
+                String nextKey=keys.nextElement().toString();
+                Vector nextElement=(Vector)elements.nextElement();
+                if(nextKey.endsWith(":"+name)){
+                    Vector minCard=(Vector)nextElement.elementAt(4);
+                    for (int y=0;y<minCard.size();y++){
+                    if (!minCard.elementAt(y).toString().equalsIgnoreCase("0")&&!minCard.elementAt(y).toString().equalsIgnoreCase("1")){
+                        MessageDialog error=new MessageDialog(null, "Error. "+name+" has minCardinality "+minCard.elementAt(y).toString()+" for type " +nextKey.split(":")[0]);
+                            canSet=false;
+                            break;
+                    }
+                }
+
+                    Vector card=(Vector)nextElement.elementAt(5);
+                    for (int y=0;y<card.size();y++){
+                    if (!card.elementAt(y).toString().equalsIgnoreCase("0")&&!card.elementAt(y).toString().equalsIgnoreCase("1")){
+                        //ERROR
+                        MessageDialog error=new MessageDialog(null, "Error. "+name+" has Cardinality "+card.elementAt(y).toString()+" for type " +nextKey.split(":")[0]);
+                            canSet=false;
+                            break;
+                    }
+                }
+            }}
+
+
+
+            Vector dom=(Vector)((Vector)propertiesHashtable.get(name)).elementAt(0);
+            for (int i=0;i<dom.size();i++)
+            {
+                if(!canSetFunctional(dom.elementAt(i).toString(), name))
+                {
+                    canSet=false;
+                    break;
+                }
+            }
+
+            if(((Vector)propertiesHashtable.get(name)).elementAt(8).toString().equalsIgnoreCase("true")){
+                canSet=false;
+                 Object[] optionButtons = {
+                "ok",
+            };
+
+            JOptionPane.showOptionDialog(null, //theofilos
+                    "Property "+name+" is transitive. It cannot be set functional(OWL FULL element)",
+                    LangResources.getString(Mpiro.selectedLocale, "warning_dialog"),
+                    JOptionPane.WARNING_MESSAGE,
+                    JOptionPane.OK_OPTION,
+                    null,
+                    optionButtons,
+                    optionButtons[0]);
+            }
+
+    /*                    Enumeration restrictionKeys=valueRestrictionsHashtable.keys();
+            Enumeration restrictions=valueRestrictionsHashtable.elements();
             while(restrictionKeys.hasMoreElements()){
                 Vector nextRes=(Vector) restrictions.nextElement();
                 if(restrictionKeys.nextElement().toString().split(":")[1].equalsIgnoreCase(propName)){
@@ -5554,202 +5105,70 @@ public class QueryHashtable extends Object implements Serializable {
                          Object[] optionButtons = {
                 "ok",
             };
-            
-            JOptionPane.showOptionDialog(null, //theofilos
-                    "There is already a cardinality restriction. The property cannot be declared transitive(OWL FULL element)",
+
+            JOptionPane.showOptionDialog(EditFieldProperties.this, //theofilos
+                    "οΏ½οΏ½οΏ½οΏ½οΏ½οΏ½οΏ½ οΏ½οΏ½οΏ½οΏ½οΏ½οΏ½οΏ½οΏ½οΏ½ οΏ½οΏ½οΏ½οΏ½οΏ½οΏ½οΏ½οΏ½οΏ½οΏ½οΏ½ οΏ½οΏ½οΏ½οΏ½οΏ½οΏ½οΏ½οΏ½οΏ½οΏ½οΏ½",
                     LangResources.getString(Mpiro.selectedLocale, "warning_dialog"),
                     JOptionPane.WARNING_MESSAGE,
                     JOptionPane.OK_OPTION,
                     null,
                     optionButtons,
                     optionButtons[0]);
-            restriction=true;
+            canSet=false;
             break;
                     }
                 }
-            }
-            if(propVector.elementAt(6).toString().equalsIgnoreCase("true")){
-                 Object[] optionButtons = {
+            }*/
+          //  if(canSet)
+        //propVector.setElementAt("true",6);
+            return(canSet);
+    }
+        
+    private boolean canSetInverseFunctional(String propName){
+            Vector propVector=(Vector)propertiesHashtable.get(propName);
+         Vector Domain=(Vector)propVector.elementAt(0);
+            Vector fillers=new Vector();
+            for(int k=0;k<Domain.size();k++){
+                Enumeration entities=getChildrenEntities(DataBasePanel.getNode(Domain.elementAt(k).toString())).elements();
+                while(entities.hasMoreElements()){
+                  //  Vector nextEntity=(Vector)mainDBHashtable.get(entities.nextElement().toString());
+                    Vector db=(Vector) entities.nextElement();
+                    db=(Vector) db.elementAt(0);
+                    Vector ind=(Vector) db.elementAt(0);
+                    for(int h=3;h<ind.size();h++){
+                        Vector field=(Vector) ind.elementAt(h);
+                        if(field.elementAt(1).toString().startsWith("Select"))
+                            break;
+                        String[] values=field.elementAt(1).toString().split(" ");
+                        if(field.elementAt(0).toString().equalsIgnoreCase(propName)){
+                            for(int l=0;l<values.length;l++){
+                                if(fillers.contains(values[l])){
+                                    Object[] optionButtons = {
                 "ok",
             };
-            
+
             JOptionPane.showOptionDialog(null, //theofilos
-                    "This property is functional. It cannot be declared transitive(OWL FULL element)",
+                    "This property cannot be set inverse functional, because "+values[l]+" is filler of this property for more than one entities",
                     LangResources.getString(Mpiro.selectedLocale, "warning_dialog"),
                     JOptionPane.WARNING_MESSAGE,
                     JOptionPane.OK_OPTION,
                     null,
                     optionButtons,
                     optionButtons[0]);
-            restriction=true;
-            }
-            if(!restriction){
-        Vector domain=new Vector((Vector) propVector.elementAt(0));
-        for(int y=0;y<domain.size();y++){
-            Enumeration en1=DataBasePanel.top.preorderEnumeration();
-            DefaultMutableTreeNode dmtn=new  DefaultMutableTreeNode();
-            while (en1.hasMoreElements()) {
-                Object ob1=en1.nextElement();
-                if(ob1.toString().equalsIgnoreCase(domain.elementAt(y).toString())) {
-                    dmtn=(DefaultMutableTreeNode) ob1;
-                    break;
-                }
-            }
-            //  Vector children=QueryHashtable.getChildrenVectorFromMainDBHashtable(domain.elementAt(y).toString(),"entity");
-            Enumeration elems= QueryHashtable.getChildrenEntities(dmtn).elements();
-            Enumeration keys= QueryHashtable.getChildrenEntities(dmtn).keys();
-            System.out.println("DDDDDd"+QueryHashtable.getChildrenEntities(dmtn).toString());
-            //  System.out.println("CCCCC"+childVector.toString());
-            while(elems.hasMoreElements()){
-                Vector childVec1=(Vector) elems.nextElement();
-                Object obj=keys.nextElement();
-                Vector childVec=(Vector) childVec1.elementAt(0);
-                childVec=(Vector) childVec.elementAt(0);
-                for(int r=3;r<childVec.size();r++) {
-                    Vector propVec= (Vector) childVec.elementAt(r);
-                    System.out.println("childVec.elementAt(r)"+childVec.elementAt(r).toString());
-                    if(propVec.elementAt(0).toString().equalsIgnoreCase(propName)) {
-                        String rangeVec= propVec.elementAt(1).toString();
-                        System.out.println("rangeVec"+rangeVec);
-                        String[] j=rangeVec.split(" ");
-                        for (int f=0;f<j.length;f++) {
-                            String domainf= j[f];
-                            System.out.println(domainf);
-                            if (domainf.startsWith("Select")||domainf.equalsIgnoreCase(""))
-                                break;
-                            Vector vecDom=(Vector) QueryHashtable.mainDBHashtable.get(domainf);
-                            vecDom=(Vector) vecDom.elementAt(0);
-                            vecDom=(Vector) vecDom.elementAt(0);
-                            System.out.println(vecDom.toString());
-                            for(int a=3;a<vecDom.size();a++) {
-                                Vector nextEl=(Vector) vecDom.elementAt(a);
-                                System.out.println(nextEl.toString());
-                                if(nextEl.elementAt(0).toString().equalsIgnoreCase(propName)&&(!nextEl.elementAt(1).toString().startsWith("Select"))) {
-                                    System.out.println(nextEl.elementAt(0).toString());
-                                    for(int b=0;b<j.length;b++){
-                                        if(j[b].equalsIgnoreCase(nextEl.elementAt(1).toString())) break;
-                                        else{
-                                            if(b<j.length-1) continue;
-                                            else {propVec.set(1, rangeVec+" "+nextEl.elementAt(1).toString());
-                                            Object obj1=QueryHashtable.mainDBHashtable.get(obj);
-                                            obj1=(Object) childVec;
-                                            //System.out.println("kkk"+propVec.elementAt(1));
-                                            //System.out.println("ddddd"+QueryHashtable.mainDBHashtable.get(obj));
-                                            }}
-                                    }
-                                    
+                                    return false;
                                 }
+                                else
+                                    fillers.add(values[l]);
                             }
-                            
                         }
                     }
                 }
-                
             }
-        }
-        propVector.setElementAt("true",8);}}
-
-    public static void setPropertySymmetric(String propName) {
-        Vector propVector=(Vector) propertiesHashtable.get(propName);
-        if (!propVector.elementAt(0).equals(propVector.elementAt(1))){
-            Object[] optionButtons = {
-                "ok",
-            };
-            
-            JOptionPane.showOptionDialog(null, //theofilos
-                    "This property cannot be symmetric, because its domain and its range are not the same",
-                    LangResources.getString(Mpiro.selectedLocale, "warning_dialog"),
-                    JOptionPane.WARNING_MESSAGE,
-                    JOptionPane.OK_OPTION,
-                    null,
-                    optionButtons,
-                    optionButtons[0]);
-            
-            //WARNING
-        } else{
-            propVector.setElementAt(propName,5);
-            Vector domain=new Vector((Vector) propVector.elementAt(0));
-            for(int y=0;y<domain.size();y++){
-                Enumeration en1=DataBasePanel.top.preorderEnumeration();
-                DefaultMutableTreeNode dmtn=new  DefaultMutableTreeNode();
-                while (en1.hasMoreElements()) {
-                    Object ob1=en1.nextElement();
-                    if(ob1.toString().equalsIgnoreCase(domain.elementAt(y).toString())) {
-                        dmtn=(DefaultMutableTreeNode) ob1;
-                        break;
-                    }
-                }
-                //  Vector children=QueryHashtable.getChildrenVectorFromMainDBHashtable(domain.elementAt(y).toString(),"entity");
-                Enumeration elems= QueryHashtable.getChildrenEntities(dmtn).elements();
-                Enumeration keys= QueryHashtable.getChildrenEntities(dmtn).keys();
-                System.out.println("DDDDDd"+QueryHashtable.getChildrenEntities(dmtn).toString());
-                //  System.out.println("CCCCC"+childVector.toString());
-                while(elems.hasMoreElements()){
-                    Vector childVec1=(Vector) elems.nextElement();
-                    Object obj=keys.nextElement();
-                    Vector childVec=(Vector) childVec1.elementAt(0);
-                    childVec=(Vector) childVec.elementAt(0);
-                    for(int r=3;r<childVec.size();r++) {
-                        Vector propVec= (Vector) childVec.elementAt(r);
-                        System.out.println("childVec.elementAt(r)"+childVec.elementAt(r).toString());
-                        if(propVec.elementAt(0).toString().equalsIgnoreCase(propName)) {
-                            String rangeVec= propVec.elementAt(1).toString();
-                            System.out.println("rangeVec"+rangeVec);
-                            String[] j=rangeVec.split(" ");
-                            for (int f=0;f<j.length;f++) {
-                                String domainf= j[f];
-                                System.out.println(domainf);
-                                if (domainf.equalsIgnoreCase("Select")||domainf.equalsIgnoreCase(""))
-                                    break;
-                                Vector vecDom=(Vector) QueryHashtable.mainDBHashtable.get(domainf);
-                                System.out.println("{ffffff"+vecDom);
-                                vecDom=(Vector) vecDom.elementAt(0);
-                                vecDom=(Vector) vecDom.elementAt(0);
-                                System.out.println(vecDom.toString());
-                                for(int a=3;a<vecDom.size();a++) {
-                                    Vector nextEl=(Vector) vecDom.elementAt(a);
-                                    System.out.println(nextEl.toString());
-                                    if(nextEl.elementAt(0).toString().equalsIgnoreCase(propName)) {
-                                        String rangeVec2=nextEl.elementAt(1).toString();
-                                        if (rangeVec2.startsWith("Select")) rangeVec2="";
-                                        String[] k=rangeVec2.split(" ");
-                                        for (int p=0;p<k.length;p++) {
-                                            if (k[p].equalsIgnoreCase(obj.toString()))
-                                                break;
-                                            else{
-                                                if(p<k.length-1) continue;
-                                                else {
-                                                    if(nextEl.elementAt(1).toString().startsWith("Select"))
-                                                        nextEl.set(1, obj.toString());
-                                                    else
-                                                        nextEl.set(1, obj.toString()+" "+nextEl.elementAt(1).toString());
-                                                    Object obj1=QueryHashtable.mainDBHashtable.get(obj);
-                                                    obj1=(Object) nextEl;
-                                                    
-                                                }}
-                                            
-                                            
-                                            
-                                        }}}}}}}}
-            
-            propVector.setElementAt("true",9);}
-        Enumeration names=QueryHashtable.propertiesHashtable.keys();
-        Enumeration allprop=QueryHashtable.propertiesHashtable.elements();
-        //remove the inverse declaration from the ex-inverse of the modified property
-        while(allprop.hasMoreElements()){
-            String nextProp=names.nextElement().toString();
-            Vector next=(Vector) allprop.nextElement();
-            if(!nextProp.equalsIgnoreCase(propName)){
-                if(next.elementAt(5).toString().equalsIgnoreCase(propName)){
-                    next.setElementAt("",5);
-                    break;
-                }}
-        }
+            return true;
     }
     
-    
-     private static boolean canSetFunctional(String node, String name){
-        Hashtable childrenEntities= QueryHashtable.getChildrenEntities(DataBasePanel.getNode(node));
+     private boolean canSetFunctional(String node, String name){
+        Hashtable childrenEntities= getChildrenEntities(DataBasePanel.getNode(node));
         Enumeration keys=childrenEntities.keys();
         Enumeration values=childrenEntities.elements();
         while(keys.hasMoreElements()){
@@ -5772,144 +5191,15 @@ public class QueryHashtable extends Object implements Serializable {
     }
     
 
-    
-    public static boolean setFunctional(String name){
-         boolean canSet=true;
-            
-            Enumeration keys=QueryHashtable.valueRestrictionsHashtable.keys();
-            Enumeration elements=QueryHashtable.valueRestrictionsHashtable.elements();
-            while(keys.hasMoreElements()){
-                String nextKey=keys.nextElement().toString();
-                Vector nextElement=(Vector)elements.nextElement();
-                if(nextKey.endsWith(":"+name)){
-                    Vector minCard=(Vector)nextElement.elementAt(4);
-                    for (int y=0;y<minCard.size();y++){
-                    if (!minCard.elementAt(y).toString().equalsIgnoreCase("0")&&!minCard.elementAt(y).toString().equalsIgnoreCase("1")){
-                        MessageDialog error=new MessageDialog(null, "Error. "+name+" has minCardinality "+minCard.elementAt(y).toString()+" for type " +nextKey.split(":")[0]);
-                            canSet=false;
-                            break;
-                    }
-                }
-                    
-                    Vector card=(Vector)nextElement.elementAt(5);
-                    for (int y=0;y<card.size();y++){
-                    if (!card.elementAt(y).toString().equalsIgnoreCase("0")&&!card.elementAt(y).toString().equalsIgnoreCase("1")){
-                        //ERROR
-                        MessageDialog error=new MessageDialog(null, "Error. "+name+" has Cardinality "+card.elementAt(y).toString()+" for type " +nextKey.split(":")[0]);
-                            canSet=false;
-                            break;
-                    }
-                }
-            }}
-            
-            
-                        
-            Vector dom=(Vector)((Vector)QueryHashtable.propertiesHashtable.get(name)).elementAt(0);
-            for (int i=0;i<dom.size();i++)
-            {
-                if(!canSetFunctional(dom.elementAt(i).toString(), name))
-                {
-                    canSet=false;
-                    break;
-                }
-            }
-            
-            if(((Vector)QueryHashtable.propertiesHashtable.get(name)).elementAt(8).toString().equalsIgnoreCase("true")){
-                canSet=false;
-                 Object[] optionButtons = {
-                "ok",
-            };
-            
-            JOptionPane.showOptionDialog(null, //theofilos
-                    "Property "+name+" is transitive. It cannot be set functional(OWL FULL element)",
-                    LangResources.getString(Mpiro.selectedLocale, "warning_dialog"),
-                    JOptionPane.WARNING_MESSAGE,
-                    JOptionPane.OK_OPTION,
-                    null,
-                    optionButtons,
-                    optionButtons[0]);
-            }
-            
-    /*                    Enumeration restrictionKeys=QueryHashtable.valueRestrictionsHashtable.keys();
-            Enumeration restrictions=QueryHashtable.valueRestrictionsHashtable.elements();
-            while(restrictionKeys.hasMoreElements()){
-                Vector nextRes=(Vector) restrictions.nextElement();
-                if(restrictionKeys.nextElement().toString().split(":")[1].equalsIgnoreCase(propName)){
-                    if(!((Vector)nextRes.elementAt(3)).isEmpty()||!((Vector)nextRes.elementAt(4)).isEmpty()||!((Vector)nextRes.elementAt(5)).isEmpty()){
-                         Object[] optionButtons = {
-                "ok",
-            };
-            
-            JOptionPane.showOptionDialog(EditFieldProperties.this, //theofilos
-                    "������� ��������� ����������� �����������",
-                    LangResources.getString(Mpiro.selectedLocale, "warning_dialog"),
-                    JOptionPane.WARNING_MESSAGE,
-                    JOptionPane.OK_OPTION,
-                    null,
-                    optionButtons,
-                    optionButtons[0]);
-            canSet=false;
-            break;
-                    }
-                }
-            }*/
-          //  if(canSet)
-        //propVector.setElementAt("true",6);
-            return(canSet);
-    }
-    
-    
-        private static boolean canSetInverseFunctional(String propName){
-            Vector propVector=(Vector)propertiesHashtable.get(propName);
-         Vector Domain=(Vector)propVector.elementAt(0);
-            Vector fillers=new Vector();
-            for(int k=0;k<Domain.size();k++){
-                Enumeration entities=QueryHashtable.getChildrenEntities(DataBasePanel.getNode(Domain.elementAt(k).toString())).elements();
-                while(entities.hasMoreElements()){
-                  //  Vector nextEntity=(Vector)QueryHashtable.mainDBHashtable.get(entities.nextElement().toString());
-                    Vector db=(Vector) entities.nextElement();
-                    db=(Vector) db.elementAt(0);
-                    Vector ind=(Vector) db.elementAt(0);
-                    for(int h=3;h<ind.size();h++){
-                        Vector field=(Vector) ind.elementAt(h);
-                        if(field.elementAt(1).toString().startsWith("Select"))
-                            break;
-                        String[] values=field.elementAt(1).toString().split(" ");
-                        if(field.elementAt(0).toString().equalsIgnoreCase(propName)){
-                            for(int l=0;l<values.length;l++){
-                                if(fillers.contains(values[l])){
-                                    Object[] optionButtons = {
-                "ok",
-            };
-            
-            JOptionPane.showOptionDialog(null, //theofilos
-                    "This property cannot be set inverse functional, because "+values[l]+" is filler of this property for more than one entities",
-                    LangResources.getString(Mpiro.selectedLocale, "warning_dialog"),
-                    JOptionPane.WARNING_MESSAGE,
-                    JOptionPane.OK_OPTION,
-                    null,
-                    optionButtons,
-                    optionButtons[0]);
-                                    return false;
-                                }
-                                else
-                                    fillers.add(values[l]);
-                            }
-                        }                                                                             
-                    }
-                }
-            }
-            return true;
-    }
 
-    public static void setInverseFunctional(String propName) {
+     public void setInverseFunctional(String propName) {
         if(canSetInverseFunctional(propName)){
             Vector propVector=(Vector)propertiesHashtable.get(propName);
              propVector.setElementAt("true",7);
      //  if(setFunctional(propVector.elementAt(5).toString())){
        //    propVector.setElementAt("true",7);
             if(!propVector.elementAt(5).toString().equals("")){
-       Vector inverse=(Vector) QueryHashtable.propertiesHashtable.get(propVector.elementAt(5).toString());
+       Vector inverse=(Vector) propertiesHashtable.get(propVector.elementAt(5).toString());
        inverse.setElementAt("true",6);}
         }
     }
@@ -5917,9 +5207,9 @@ public class QueryHashtable extends Object implements Serializable {
     /*returns all the properties of a type along with the filler types
      *for each property. The returned vector is the data for the
      *databasetable model*/
-    static Vector getPropertiesForType(String nodeName) {
+    public Vector getPropertiesForType(String nodeName) {
         Vector result=new Vector();
-        result.add(new FieldData("type", VectorAsStringForDBTable((Vector)QueryHashtable.getParents(nodeName)), true, ""));
+        result.add(new FieldData("type", VectorAsStringForDBTable((Vector)getParents(nodeName)), true, ""));
        // Enumeration propNames=;
         Vector sortedPropNames=new Vector(propertiesHashtable.keySet());
         if(sortedPropNames.size()==0) return result;
@@ -5938,13 +5228,13 @@ public class QueryHashtable extends Object implements Serializable {
         return result;
     }
     
-    public static String VectorAsStringForDBTable(Vector v){
+    public String VectorAsStringForDBTable(Vector v){
         return v.toString().substring(1,v.toString().length()-1);
     }
 
     /*returns all the supertypes of the given type.
      *Both direct and indirect parents*/
-    static Vector getAllSupertypes(String type) {
+    public Vector getAllSupertypes(String type) {
         Vector allSuperTypes=new Vector();
         Vector parents=getParents(type);
         for(int i=0;i<parents.size();i++){
@@ -5957,9 +5247,11 @@ public class QueryHashtable extends Object implements Serializable {
         return allSuperTypes;
     }
 
-    public static void setPropertyDomain(Vector selectedDomains, String property) {
+    public void setPropertyDomain(Vector selectedDomains, String property) {
         PropertiesHashtableRecord prop=(PropertiesHashtableRecord) propertiesHashtable.get(property);
         prop.setElementAt(selectedDomains,0);
+        
+
         
         Hashtable entitiesHash=getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity");
         Enumeration entities=entitiesHash.keys();
@@ -6004,5 +5296,39 @@ public class QueryHashtable extends Object implements Serializable {
 					DataBaseTable.dbTable.repaint(); 
     }
     
+    /*adds the given filler to the the property of the given entity*/
+    public void addFillerToProperty(String property, String entity, String filler, int vector){
+        NodeVector nv=(NodeVector)mainDBHashtable.get(entity);
+        Vector fieldVector=new Vector();
+        if(vector==1)
+            fieldVector=nv.getIndependentFieldsVector();
+        if(vector==2)
+            fieldVector=nv.getEnglishFieldsVector();
+        if(vector==1)
+            fieldVector=nv.getGreekFieldsVector();
+        if(vector==1)
+            fieldVector=nv.getItalianFieldsVector();
+        for(int i=0;i<fieldVector.size();i++){
+            Vector propertyOfEntity=(Vector) fieldVector.elementAt(i);
+            if(propertyOfEntity.elementAt(0).toString().equals(property)){
+                if(propertyOfEntity.elementAt(1).toString().equals("")||propertyOfEntity.elementAt(1).toString().startsWith("Select")){
+                    propertyOfEntity.setElementAt(filler, 1);
+                    return;}
+                else
+                {
+                    String[] existingFillers=propertyOfEntity.elementAt(1).toString().split(" ");
+                    for(int j=0; j<existingFillers.length;j++){
+                        if(existingFillers[j].equals(filler))
+                            return;
+                        
+                    }
+                    propertyOfEntity.setElementAt(filler+" "+propertyOfEntity.elementAt(1).toString(), 1);
+                }
+            }
+        }
+            
+    }
+    
+   
     
 }//QueryHashTable

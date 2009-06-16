@@ -6,6 +6,10 @@
 
 package gr.demokritos.iit.eleon.authoring;
 
+import gr.demokritos.iit.eleon.profiles.User;
+import gr.demokritos.iit.eleon.struct.QueryHashtable;
+import gr.demokritos.iit.eleon.struct.QueryLexiconHashtable;
+import gr.demokritos.iit.eleon.struct.QueryProfileHashtable;
 import java.net.URL;
 import java.io.IOException;
 import java.awt.*;
@@ -123,17 +127,17 @@ public class ExportUtilsPServer
 	 */
   public static void exportToServer(String pserverIP, String pserverPort) throws UMException 
 	{
-		Hashtable allNounsHashtable = (Hashtable)QueryLexiconHashtable.mainLexiconHashtable.get("Nouns");
-		Hashtable allVerbsHashtable = (Hashtable)QueryLexiconHashtable.mainLexiconHashtable.get("Verbs");
-		Vector allNounsVector = QueryLexiconHashtable.getNounsVectorFromMainLexiconHashtable();
-		Vector allVerbsVector = QueryLexiconHashtable.getVerbsVectorFromMainLexiconHashtable();
-		Hashtable allFieldsAndContainingEntityTypesHashtable = QueryHashtable.returnAllFieldsAndContainingEntityTypes();
+		Hashtable allNounsHashtable = Mpiro.win.struc.getNounsHashtable();
+		Hashtable allVerbsHashtable = Mpiro.win.struc.getVerbsHashtable();
+		Vector allNounsVector = Mpiro.win.struc.getNounsVectorFromMainLexiconHashtable();
+		Vector allVerbsVector = Mpiro.win.struc.getVerbsVectorFromMainLexiconHashtable();
+		Hashtable allFieldsAndContainingEntityTypesHashtable = Mpiro.win.struc.returnAllFieldsAndContainingEntityTypes();
 		
-		Vector entitynamesVector = QueryHashtable.getFullPathChildrenVectorFromMainDBHashtable("Basic-entity-types", "Entity+Generic");
-		Vector allUserTypesVector = (Vector)QueryUsersHashtable.getUsersVectorFromMainUsersHashtable();
-		Vector allEntityTypesVector = QueryHashtable.getFullPathChildrenVectorFromMainDBHashtable("Basic-entity-types", "Entity type");
-		Vector allEntitiesVector = QueryHashtable.getFullPathChildrenVectorFromMainDBHashtable("Basic-entity-types", "Entity");
-		Vector allGenericEntitiesVector = QueryHashtable.getFullPathChildrenVectorFromMainDBHashtable("Basic-entity-types", "Generic");
+		Vector entitynamesVector = Mpiro.win.struc.getFullPathChildrenVectorFromMainDBHashtable("Basic-entity-types", "Entity+Generic");
+		Vector allUserTypesVector = (Vector)Mpiro.win.struc.getUsersVectorFromMainUsersHashtable();
+		Vector allEntityTypesVector = Mpiro.win.struc.getFullPathChildrenVectorFromMainDBHashtable("Basic-entity-types", "Entity type");
+		Vector allEntitiesVector = Mpiro.win.struc.getFullPathChildrenVectorFromMainDBHashtable("Basic-entity-types", "Entity");
+		Vector allGenericEntitiesVector = Mpiro.win.struc.getFullPathChildrenVectorFromMainDBHashtable("Basic-entity-types", "Generic");
 		
 		InetAddress serverIP = null;
     try
@@ -160,8 +164,8 @@ public class ExportUtilsPServer
 		maximumValue = maximumValue + allNounsVector.size();
 		//	maximumValue = maximumValue + allVerbsVector.size();
 		maximumValue = maximumValue + allFieldsAndContainingEntityTypesHashtable.size();
-		maximumValue = maximumValue + QueryUsersHashtable.mainUserModelHashtable.size();
-		//maximumValue = maximumValue + QueryUsersHashtable.mainUserModelStoryHashtable.size();
+		maximumValue = maximumValue + Mpiro.win.struc.mainUserModelHashtableSize();
+		//maximumValue = maximumValue + QueryProfileHashtable.mainUserModelStoryHashtable.size();
 
 		// Show the export progress monitor frame
 		ExportProgressMonitor progress = new ExportProgressMonitor(0, maximumValue, 0);
@@ -198,11 +202,11 @@ public class ExportUtilsPServer
 
     progress.updateProgressBar(++counter, 3);		//maria
     // (1)  Get all fields' fieldnames from the entities in mainUserModelHashtable
-    Enumeration mainUserModelHashtableEnumKeys = QueryUsersHashtable.mainUserModelHashtable.keys();
+    Enumeration mainUserModelHashtableEnumKeys = Mpiro.win.struc.mainUserModelHashtableKeys();
     while (mainUserModelHashtableEnumKeys.hasMoreElements())
     {
       String fieldname = mainUserModelHashtableEnumKeys.nextElement().toString();
-      Hashtable fieldnameHashtable = (Hashtable)QueryUsersHashtable.mainUserModelHashtable.get(fieldname);
+      Hashtable fieldnameHashtable = (Hashtable)Mpiro.win.struc.getPropertyFromMainUserModelHashtable(fieldname);
       Enumeration fieldnameHashtableEnumKeys = fieldnameHashtable.keys();
       while (fieldnameHashtableEnumKeys.hasMoreElements())
       {
@@ -229,11 +233,11 @@ public class ExportUtilsPServer
 		/*
     // (2)  Get all stories' storynames from the entity-types AND entities in mainUserModelStoryHashtable
 
-    Enumeration mainUserModelStoryHashtableEnumKeys = QueryUsersHashtable.mainUserModelStoryHashtable.keys();
+    Enumeration mainUserModelStoryHashtableEnumKeys = QueryProfileHashtable.mainUserModelStoryHashtable.keys();
     while (mainUserModelStoryHashtableEnumKeys.hasMoreElements())
     {
       String entitytypeOrEntityName = mainUserModelStoryHashtableEnumKeys.nextElement().toString();
-      Hashtable entitytypeOrEntityNameHashtable = (Hashtable)QueryUsersHashtable.mainUserModelStoryHashtable.get(entitytypeOrEntityName);
+      Hashtable entitytypeOrEntityNameHashtable = (Hashtable)QueryProfileHashtable.mainUserModelStoryHashtable.get(entitytypeOrEntityName);
       Enumeration entitytypeOrEntityNameHashtableEnumKeys = entitytypeOrEntityNameHashtable.keys();
       while (entitytypeOrEntityNameHashtableEnumKeys.hasMoreElements())
       {
@@ -259,7 +263,7 @@ public class ExportUtilsPServer
 		{
 			String field = k.nextElement().toString();
 			String nodename = allFieldsAndContainingEntityTypesHashtable.get(field).toString();
-			Vector entitytypeVector = (Vector)QueryHashtable.mainDBHashtable.get(nodename);
+			Vector entitytypeVector = (Vector)Mpiro.win.struc.getEntityTypeOrEntity(nodename);
 			Hashtable microplanHashtable = (Hashtable)entitytypeVector.get(5);
 			microPlanFieldsAndHashtables.put(field, microplanHashtable);
 			for (int i=1; i<6; i++) 
@@ -320,7 +324,7 @@ public class ExportUtilsPServer
 		// Create the user types
 		///////////////////////////////////////////////////////////
 		
-		//Vector allUserTypesVector = (Vector)QueryUsersHashtable.getUsersVectorFromMainUsersHashtable();
+		//Vector allUserTypesVector = (Vector)Mpiro.win.struc.getUsersVectorFromMainUsersHashtable();
 		Enumeration allUserTypesVectorEnum1 = allUserTypesVector.elements();
 		while (allUserTypesVectorEnum1.hasMoreElements())
 		{
@@ -347,12 +351,12 @@ public class ExportUtilsPServer
 		while (allUserTypesVectorEnum2.hasMoreElements())
 		{
 		  String usertype = allUserTypesVectorEnum2.nextElement().toString();
-		  Vector userVector = (Vector)QueryUsersHashtable.mainUsersHashtable.get(usertype);
+		  User userVector = (User)Mpiro.win.struc.getUser(usertype);
 		
-		  Integer maxFactsPerSentence = new Integer(userVector.elementAt(0).toString());
-		  Integer numberOfFacts = new Integer(userVector.elementAt(1).toString());
-		  Integer numberOfForwardPointers = new Integer(userVector.elementAt(2).toString());
-		  String voice = userVector.elementAt(3).toString();
+		  Integer maxFactsPerSentence = new Integer(userVector.getMaxFactsPerSentence());
+		  Integer numberOfFacts = new Integer(userVector.getFactsPerPage());
+		  Integer numberOfForwardPointers = new Integer(userVector.getLinks());
+		  String voice = userVector.getSynthVoice();
 		
 		  input.setMaxFactsPerSentence(maxFactsPerSentence.intValue(), "ut:" + usertype);
 		  input.setNumberOfFacts(numberOfFacts.intValue(), "ut:" + usertype);
@@ -431,7 +435,7 @@ public class ExportUtilsPServer
 				String usertype = allUserTypesVectorEnum3.nextElement().toString();		
 				String microplanNumber = (String)thisMicroplanVector.get(1);
 				//String microplanNumber = new Integer(i).toString();
-				Vector valuesVector = QueryUsersHashtable.getAppropriatenessValuesVector(oldFieldName, microplanNumber, usertype, microplanHashtable);
+				Vector valuesVector = Mpiro.win.struc.getAppropriatenessValuesVector(oldFieldName, microplanNumber, usertype, microplanHashtable);
 				if (((String)thisMicroplanVector.get(2)).equals("en")) 
 				{
 				  Integer englishAppropriateness = new Integer(valuesVector.get(0).toString());
@@ -481,14 +485,14 @@ public class ExportUtilsPServer
 		}
 
 
-		Enumeration mainUserModelHashtableEnum = QueryUsersHashtable.mainUserModelHashtable.keys();
+		Enumeration mainUserModelHashtableEnum = Mpiro.win.struc.mainUserModelHashtableKeys();
 		while (mainUserModelHashtableEnum.hasMoreElements()) // while 1
 		{
 		  String field = mainUserModelHashtableEnum.nextElement().toString();
 		  //progress.updateProgressLabel("Setting user modelling values for: " + field, 3);	//maria
 		  progress.updateProgressBar(++counter, 3);										//maria
 
-      Hashtable fieldHashtable = (Hashtable)QueryUsersHashtable.mainUserModelHashtable.get(field);
+      Hashtable fieldHashtable = (Hashtable)Mpiro.win.struc.getPropertyFromMainUserModelHashtable(field);
       Enumeration fieldHashtableEnum = fieldHashtable.keys();
       while (fieldHashtableEnum.hasMoreElements()) // while 2
       {
@@ -679,12 +683,12 @@ public class ExportUtilsPServer
 		}
 
 		// the stories fields (facts)
-		Enumeration mainUserModelStoryHashtableEnum = QueryUsersHashtable.mainUserModelStoryHashtable.keys();
+		Enumeration mainUserModelStoryHashtableEnum = QueryProfileHashtable.mainUserModelStoryHashtable.keys();
 		while (mainUserModelStoryHashtableEnum.hasMoreElements()) // while 1
 		{
 		  // "owner" is an entity-type or entity
 		  String owner = mainUserModelStoryHashtableEnum.nextElement().toString();
-		  Hashtable ownerHashtable = (Hashtable)QueryUsersHashtable.mainUserModelStoryHashtable.get(owner);
+		  Hashtable ownerHashtable = (Hashtable)QueryProfileHashtable.mainUserModelStoryHashtable.get(owner);
 		  Enumeration ownerHashtableEnum = ownerHashtable.keys();
 		  while (ownerHashtableEnum.hasMoreElements()) // while 2
 		  {
@@ -732,7 +736,7 @@ public class ExportUtilsPServer
 
 	public static void resetInteractionHistory(String pserverIP, String pserverPort) throws UMException 
 	{
-		Vector allUserTypesVector = (Vector)QueryUsersHashtable.getUsersVectorFromMainUsersHashtable();
+		Vector allUserTypesVector = (Vector)Mpiro.win.struc.getUsersVectorFromMainUsersHashtable();
 		InetAddress serverIP = null;
     try
     {
@@ -752,7 +756,7 @@ public class ExportUtilsPServer
 		
 		// Calculate the maximum value for the progress bar
 		int maximumValue = 2;
-		// maximumValue = maximumValue + QueryUsersHashtable.getUsersVectorFromMainUsersHashtable().size();
+		// maximumValue = maximumValue + Mpiro.win.struc.getUsersVectorFromMainUsersHashtable().size();
 		maximumValue = maximumValue + allUserTypesVector.size();
 		
 		// Show the export progress monitor frame ////////////////////////////
@@ -768,7 +772,7 @@ public class ExportUtilsPServer
 		//progress.updateProgressLabel("Resetting user types", 3);	//maria
 		progress.updateProgressBar(++counter, 3);					//maria
 		
-		//Vector allUserTypesVector = (Vector)QueryUsersHashtable.getUsersVectorFromMainUsersHashtable();
+		//Vector allUserTypesVector = (Vector)Mpiro.win.struc.getUsersVectorFromMainUsersHashtable();
 		Enumeration allUserTypesVectorEnum1 = allUserTypesVector.elements();
 		while (allUserTypesVectorEnum1.hasMoreElements())
 		{

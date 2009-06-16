@@ -7,6 +7,8 @@
 package gr.demokritos.iit.eleon.ui;
 
 import gr.demokritos.iit.eleon.authoring.*;
+import gr.demokritos.iit.eleon.struct.QueryHashtable;
+import gr.demokritos.iit.eleon.struct.QueryProfileHashtable;
 
 import java.awt.*;
 import javax.swing.*;
@@ -379,22 +381,22 @@ robotsChar = new RobotCharacteristicsPanel();
 	{
 		if (e.getSource() == maxFactsCombo) 
 		{
-			QueryUsersHashtable.updateUserInfo(UsersPanel.last.toString(), 0, maxFactsCombo.getSelectedItem().toString());
+			Mpiro.win.struc.updateUserInfo(UsersPanel.last.toString(), 0, maxFactsCombo.getSelectedItem().toString());
 			//Mpiro.needExportToEmulator=true;		//maria
 		}
 		else if (e.getSource() == factsPerPageCombo) 
 		{
-			QueryUsersHashtable.updateUserInfo(UsersPanel.last.toString(), 1, factsPerPageCombo.getSelectedItem().toString());
+			Mpiro.win.struc.updateUserInfo(UsersPanel.last.toString(), 1, factsPerPageCombo.getSelectedItem().toString());
 			//Mpiro.needExportToEmulator=true;		//maria
 		}
 		else if (e.getSource() == linksPerPageCombo) 
 		{
-			QueryUsersHashtable.updateUserInfo(UsersPanel.last.toString(), 2, linksPerPageCombo.getSelectedItem().toString());
+			Mpiro.win.struc.updateUserInfo(UsersPanel.last.toString(), 2, linksPerPageCombo.getSelectedItem().toString());
 			//Mpiro.needExportToEmulator=true;		//maria
 		}
 		else if (e.getSource() == synthVoiceCombo) 
 		{
-			QueryUsersHashtable.updateUserInfo(UsersPanel.last.toString(), 3, synthVoiceCombo.getSelectedItem().toString());
+			Mpiro.win.struc.updateUserInfo(UsersPanel.last.toString(), 3, synthVoiceCombo.getSelectedItem().toString());
 			//Mpiro.needExportToEmulator=true;		//maria
 		}
 	}
@@ -656,12 +658,12 @@ robotsChar = new RobotCharacteristicsPanel();
 	    if (parent != null) 
 	    {
 	      treeModel.removeNodeFromParent(currentNode);
-	      QueryUsersHashtable.removeUser(currentNode.toString());
-              QueryHashtable.removeRobotFromRobotCharVector(currentNode.toString());
-	      QueryUsersHashtable.updateIndependentLexiconHashtable(currentNode.toString(), "", "REMOVE");
-	      QueryUsersHashtable.updateAppropriatenessValuesInMicroplanningOfFields(currentNode.toString(), "", "REMOVE");
-	      QueryUsersHashtable.removeUserInUserModelHashtable(currentNode.toString());
-	      QueryUsersHashtable.removeUserInUserModelStoryHashtable(currentNode.toString());
+	      Mpiro.win.struc.removeUser(currentNode.toString());
+              Mpiro.win.struc.removeRobotFromRobotCharVector(currentNode.toString());
+	      Mpiro.win.struc.updateIndependentLexiconHashtable(currentNode.toString(), "", "REMOVE");
+	      Mpiro.win.struc.updateAppropriatenessValuesInMicroplanningOfFields(currentNode.toString(), "", "REMOVE");
+	      Mpiro.win.struc.removeUserInUserOrRobotModelHashtable(currentNode.toString());
+	     // QueryProfileHashtable.removeUserInUserModelStoryHashtable(currentNode.toString());
 	      TreePreviews.setLexPanel();
 	      TreePreviews.generalDataBasePreview();
 	      TreePreviews.generalUsersPreview();
@@ -683,13 +685,13 @@ robotsChar = new RobotCharacteristicsPanel();
 	    if (parent != null) 
 	    {
 	      treeModel.removeNodeFromParent(currentNode);
-	      QueryUsersHashtable.removeRobot(currentNode.toString());
-              QueryHashtable.removeRobotFromRobotCharVector(currentNode.toString());
-	     // QueryUsersHashtable.updateIndependentLexiconHashtable(currentNode.toString(), "", "REMOVE");
-	     // QueryUsersHashtable.updateAppropriatenessValuesInMicroplanningOfFields(currentNode.toString(), "", "REMOVE");
-	      QueryUsersHashtable.removeRobotInRobotsModelHashtable(currentNode.toString());
+	      Mpiro.win.struc.removeRobot(currentNode.toString());
+              Mpiro.win.struc.removeRobotFromRobotCharVector(currentNode.toString());
+	     // QueryProfileHashtable.updateIndependentLexiconHashtable(currentNode.toString(), "", "REMOVE");
+	     // Mpiro.win.struc.updateAppropriatenessValuesInMicroplanningOfFields(currentNode.toString(), "", "REMOVE");
+	      Mpiro.win.struc.removeUserInUserOrRobotModelHashtable(currentNode.toString());
               //QueryHashtable.removeRobotFromPropertiesHashtable(currentNode.toString());
-	   //   QueryUsersHashtable.removeRobotInRobotModelStoryHashtable(currentNode.toString());
+	   //   QueryProfileHashtable.removeRobotInRobotModelStoryHashtable(currentNode.toString());
 	    //  TreePreviews.setLexPanel();
 	      TreePreviews.generalDataBasePreview();
 	      TreePreviews.generalUsersPreview();
@@ -761,7 +763,7 @@ robotsChar = new RobotCharacteristicsPanel();
 
 
 	public static boolean addUser(String nodeName)
-	{//Hashtable test=(Hashtable)((Vector)QueryHashtable.mainDBHashtable.get("item")).elementAt(5);
+	{//Hashtable test=(Hashtable)((Vector)Mpiro.win.struc.getEntityTypeOrEntity("item")).elementAt(5);
 		DefaultMutableTreeNode node = null;
 		node = (DefaultMutableTreeNode)(userstree.getLastSelectedPathComponent());
 		Object obj = node.getUserObject();
@@ -774,12 +776,12 @@ robotsChar = new RobotCharacteristicsPanel();
 		userstree.scrollPathToVisible(new TreePath(h.getPath()));
 		userstree.repaint();
                 
-		QueryUsersHashtable.createDefaultUser(h.toString());
-		QueryUsersHashtable.updateIndependentLexiconHashtable(nodeName, "", "ADD");
-		QueryUsersHashtable.updateAppropriatenessValuesInMicroplanningOfFields(nodeName, "", "ADD");
-		QueryUsersHashtable.addUserInUserModelHashtable(nodeName);//==
-		QueryUsersHashtable.addUserInUserModelStoryHashtable(nodeName);//==
-                QueryHashtable.addUserInPropertiesHashtable(nodeName);
+		Mpiro.win.struc.createDefaultUser(h.toString());
+		Mpiro.win.struc.updateIndependentLexiconHashtable(nodeName, "", "ADD");
+		Mpiro.win.struc.updateAppropriatenessValuesInMicroplanningOfFields(nodeName, "", "ADD");
+		Mpiro.win.struc.addUserInUserModelHashtable(nodeName);//==
+		//QueryProfileHashtable.addUserInUserModelStoryHashtable(nodeName);//==
+                Mpiro.win.struc.addUserInPropertiesHashtable(nodeName);
 		TreePreviews.setLexPanel();
 		TreePreviews.generalDataBasePreview();
 		reloadUsersTree();
@@ -789,7 +791,7 @@ robotsChar = new RobotCharacteristicsPanel();
 
         
         public static boolean addRobot(String nodeName)
-	{//Hashtable test=(Hashtable)((Vector)QueryHashtable.mainDBHashtable.get("item")).elementAt(5);
+	{//Hashtable test=(Hashtable)((Vector)Mpiro.win.struc.getEntityTypeOrEntity("item")).elementAt(5);
 		DefaultMutableTreeNode node = null;
 		node = (DefaultMutableTreeNode)(userstree.getLastSelectedPathComponent());
 		Object obj = node.getUserObject();
@@ -802,12 +804,12 @@ robotsChar = new RobotCharacteristicsPanel();
 		userstree.scrollPathToVisible(new TreePath(h.getPath()));
 		userstree.repaint();
                 
-		QueryUsersHashtable.createDefaultRobot(h.toString());
-		//QueryUsersHashtable.updateIndependentLexiconHashtable(nodeName, "", "ADD");
-		//QueryUsersHashtable.updateAppropriatenessValuesInMicroplanningOfFields(nodeName, "", "ADD");
-		QueryUsersHashtable.addRobotInRobotsModelHashtable(nodeName);//==
-		//QueryUsersHashtable.addUserInUserModelStoryHashtable(nodeName);//==
-                QueryHashtable.addRobotInPropertiesHashtable(nodeName);
+		Mpiro.win.struc.createDefaultRobot(h.toString());
+		//QueryProfileHashtable.updateIndependentLexiconHashtable(nodeName, "", "ADD");
+		//Mpiro.win.struc.updateAppropriatenessValuesInMicroplanningOfFields(nodeName, "", "ADD");
+		Mpiro.win.struc.addRobotInUserModelHashtable(nodeName);//==
+		//QueryProfileHashtable.addUserInUserModelStoryHashtable(nodeName);//==
+                Mpiro.win.struc.addRobotInPropertiesHashtable(nodeName);
 		//TreePreviews.setLexPanel();
 		//TreePreviews.generalDataBasePreview();
 		reloadUsersTree();
@@ -819,14 +821,14 @@ robotsChar = new RobotCharacteristicsPanel();
 	{
 		clearTree();
 		
-		Vector usersVector = QueryUsersHashtable.getUsersVectorFromMainUsersHashtable();
+		Vector usersVector = Mpiro.win.struc.getUsersVectorFromMainUsersHashtable();
 		Enumeration enm = usersVector.elements();
 		while (enm.hasMoreElements())
 		{
 			String user = enm.nextElement().toString();
 			users.add(new DefaultMutableTreeNode(new IconData(UsersPanel.ICON_USER, user)));
 		}
-                Vector robotsVector = QueryUsersHashtable.getRobotsVectorFromRobotsHashtable();
+                Vector robotsVector = Mpiro.win.struc.getRobotsVectorFromUsersHashtable();
 		Enumeration enmRob = robotsVector.elements();
 		while (enmRob.hasMoreElements())
 		{
@@ -843,7 +845,7 @@ robotsChar = new RobotCharacteristicsPanel();
 	//{
 	//	clearTree();
 	//	
-	//	Vector usersVector = QueryUsersHashtable.getUsersVectorFromMainUsersHashtable();
+	//	Vector usersVector = Mpiro.win.struc.getUsersVectorFromMainUsersHashtable();
 	//	Enumeration enm = usersVector.elements();
 	//	while (enm.hasMoreElements())
 	//	{
@@ -871,23 +873,23 @@ robotsChar = new RobotCharacteristicsPanel();
 	}
         
         private void opennessStateChanged(javax.swing.event.ChangeEvent evt) {
-            			QueryUsersHashtable.updateRobotInfo(UsersPanel.last.toString(), 0, String.valueOf(openness.getValue()));
+            			Mpiro.win.struc.updateRobotInfo(UsersPanel.last.toString(), 0, String.valueOf(openness.getValue()));
 
     }
         private void conscientiousnessStateChanged(javax.swing.event.ChangeEvent evt) {
-QueryUsersHashtable.updateRobotInfo(UsersPanel.last.toString(), 1, String.valueOf(conscientiousness.getValue()));
+Mpiro.win.struc.updateRobotInfo(UsersPanel.last.toString(), 1, String.valueOf(conscientiousness.getValue()));
     }
         private void extraversionStateChanged(javax.swing.event.ChangeEvent evt) {
-QueryUsersHashtable.updateRobotInfo(UsersPanel.last.toString(), 2, String.valueOf(extraversion.getValue()));
+Mpiro.win.struc.updateRobotInfo(UsersPanel.last.toString(), 2, String.valueOf(extraversion.getValue()));
     }
         private void naturalReactionsStateChanged(javax.swing.event.ChangeEvent evt) {
-QueryUsersHashtable.updateRobotInfo(UsersPanel.last.toString(), 4, String.valueOf(naturalReactions.getValue()));
+Mpiro.win.struc.updateRobotInfo(UsersPanel.last.toString(), 4, String.valueOf(naturalReactions.getValue()));
     }
      //   private void openessStateChanged(javax.swing.event.ChangeEvent evt) {
-//QueryUsersHashtable.updateRobotInfo(UsersPanel.last.toString(), 0, String.valueOf(openness.getValue()));
+//Mpiro.win.struc.updateRobotInfo(UsersPanel.last.toString(), 0, String.valueOf(openness.getValue()));
  //   }
         private void agreeablenessStateChanged(javax.swing.event.ChangeEvent evt) {
-QueryUsersHashtable.updateRobotInfo(UsersPanel.last.toString(), 3, String.valueOf(agreeableness.getValue()));
+Mpiro.win.struc.updateRobotInfo(UsersPanel.last.toString(), 3, String.valueOf(agreeableness.getValue()));
     }
         
        public static void setPersonalityValues(Integer at1, Integer at2, Integer at3, String at4){

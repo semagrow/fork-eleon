@@ -6,6 +6,7 @@
 
 package gr.demokritos.iit.eleon.authoring;
 
+import gr.demokritos.iit.eleon.struct.QueryHashtable;
 import gr.demokritos.iit.eleon.ui.StoriesPanel;
 
 import java.awt.event.*;
@@ -125,7 +126,7 @@ public class LangCombo extends JComboBox
 			else if ((int)Mpiro.tabbedPane.getSelectedIndex() == 4) // stories-tab
 			{
 				String node = StoriesPanel.last.toString();
-				NodeVector nv = (NodeVector)QueryHashtable.mainDBHashtable.get(node);
+				NodeVector nv = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(node);
 				StoriesVector sv = (StoriesVector)nv.elementAt(3);
 				
 				if (getSelectedItem() == "English")
@@ -263,7 +264,7 @@ public class LangCombo extends JComboBox
 		int numberOfGreekMicroplans = 0;																		//maria
 		String result = new String("");																			//maria
 		String entityType = DataBasePanel.last.toString();														//maria
-		Vector entityTypeVector = (Vector)QueryHashtable.mainDBHashtable.get(entityType);						//maria
+		Vector entityTypeVector = (Vector)Mpiro.win.struc.getEntityTypeOrEntity(entityType);						//maria
 		Hashtable mpHashtable = (Hashtable)entityTypeVector.get(5);												//maria
 		String selectionEnglish = new String("");																//maria
 		String selectionItalian = new String("");																//maria
@@ -298,7 +299,7 @@ public class LangCombo extends JComboBox
 		int numberOfGreekMicroplans = 0;																		//maria
 		String result = new String("");																			//maria
 		//String entityType = DataBasePanel.last.toString();														//maria
-		Vector property = (Vector) QueryHashtable.propertiesHashtable.get(fieldName);						//maria
+		Vector property = (Vector) Mpiro.win.struc.getProperty(fieldName);						//maria
 		Hashtable mpHashtable = (Hashtable) property.get(10);												//maria
 		String selectionEnglish = new String("");																//maria
 		String selectionItalian = new String("");																//maria
@@ -306,7 +307,10 @@ public class LangCombo extends JComboBox
 		for (int i=1; i<=5; i++)																				//maria
 		{																										//maria
 	  	selectionEnglish = mpHashtable.get(i + ":" + fieldName + ":" + "SELECTION:English").toString();		//maria
-	  	selectionItalian = mpHashtable.get(i + ":" + fieldName + ":" + "SELECTION:Italian").toString();		//maria
+	  	if(!mpHashtable.containsKey(i + ":" + fieldName + ":" + "SELECTION:Italian")){
+            mpHashtable.put(i + ":" + fieldName + ":" + "SELECTION:Italian", "NoMicroPlanning");
+        }
+        selectionItalian = mpHashtable.get(i + ":" + fieldName + ":" + "SELECTION:Italian").toString();		//maria
 	  	selectionGreek   = mpHashtable.get(i + ":" + fieldName + ":" + "SELECTION:Greek").toString();		//maria
 	  	if(!selectionEnglish.equalsIgnoreCase("NoMicroPlanning"))											//maria
 	  	{																									//maria
@@ -328,7 +332,7 @@ public class LangCombo extends JComboBox
 	public static String updateMicroplanningIndex(String microplanNumber, String fieldName)
 	{
 		String entityType = DataBasePanel.last.toString();
-		Vector entityTypeVector = (Vector)QueryHashtable.mainDBHashtable.get(entityType);
+		Vector entityTypeVector = (Vector)Mpiro.win.struc.getEntityTypeOrEntity(entityType);
 		//System.out.println("entitytypevector-----"+entityTypeVector);
 		Hashtable mpHashtable = (Hashtable)entityTypeVector.get(5);
 		String selectionEnglish = mpHashtable.get(microplanNumber + ":" + fieldName + ":" + "SELECTION:English").toString();
@@ -395,7 +399,7 @@ public class LangCombo extends JComboBox
 	public static String updateStoriesIndex(String fieldName)
 	{
 		String entityType = StoriesPanel.last.toString();
-		Vector entityTypeVector = (Vector)QueryHashtable.mainDBHashtable.get(entityType);
+		Vector entityTypeVector = (Vector)Mpiro.win.struc.getEntityTypeOrEntity(entityType);
 		Vector storiesVector = (Vector)entityTypeVector.get(3);
 		Hashtable englishStoryHashtable = (Hashtable)storiesVector.get(0);
 		Hashtable italianStoryHashtable = (Hashtable)storiesVector.get(1);

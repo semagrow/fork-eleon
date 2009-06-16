@@ -6,6 +6,8 @@
 
 package gr.demokritos.iit.eleon.authoring;
 
+import gr.demokritos.iit.eleon.struct.QueryHashtable;
+import gr.demokritos.iit.eleon.struct.QueryLexiconHashtable;
 import java.awt.*;
 import java.awt.image.*;
 import java.awt.event.*;
@@ -113,8 +115,7 @@ class MpiroMenu extends JMenuBar implements ActionListener
 				{
 			    FileOutputStream output = new FileOutputStream(fileName);
 			    ObjectOutputStream p = new ObjectOutputStream(output);
-			    p.writeObject((Hashtable)QueryHashtable.mainDBHashtable);
-			    p.writeObject((Hashtable)QueryLexiconHashtable.mainLexiconHashtable);
+			    Mpiro.win.struc.writeStructureObjectToFile(p);
 			    p.flush();
 			    p.close();
 				}

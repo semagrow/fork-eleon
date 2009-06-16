@@ -6,6 +6,7 @@
 
 package gr.demokritos.iit.eleon.authoring;
 
+import gr.demokritos.iit.eleon.struct.QueryOptionsHashtable;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -59,7 +60,7 @@ public class IPChooser extends JFrame implements ActionListener
 		dialog = new JDialog(this, LangResources.getString(Mpiro.selectedLocale, "mpiroExportSelection_text"), true);
 		super.setIconImage( Mpiro.obj.image_corner );
 		
-		Vector pserverAddressVector = QueryOptionsHashtable.getPServerAddressFromMainOptionsHashtable();
+		Vector pserverAddressVector = Mpiro.win.struc.getPServerAddressFromMainOptionsHashtable();
 		
 		selectionLabel = new KLabel(LangResources.getString(Mpiro.selectedLocale, "pleaseSelectAnIPAddressAndPort_text"));
 		selectionLabel.setPreferredSize(new Dimension(230, 20));
@@ -113,7 +114,7 @@ public class IPChooser extends JFrame implements ActionListener
 		dialog = new JDialog(this, LangResources.getString(Mpiro.selectedLocale, "mpiroExportSelection_text"), true);
 		super.setIconImage( Mpiro.obj.image_corner );
 		
-		Vector pserverAddressVector = QueryOptionsHashtable.getPServerAddressFromMainOptionsHashtable();
+		Vector pserverAddressVector = Mpiro.win.struc.getPServerAddressFromMainOptionsHashtable();
 		
 		selectionLabel = new KLabel(LangResources.getString(Mpiro.selectedLocale, "pleaseSelectAnIPAddressAndPort_text"));
 		selectionLabel.setPreferredSize(new Dimension(230, 20));

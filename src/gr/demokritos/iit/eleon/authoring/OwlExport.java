@@ -5,6 +5,12 @@ import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.vocabulary.OWL;
 
 import gr.demokritos.iit.eleon.parser.ClassParser;
+import gr.demokritos.iit.eleon.profiles.Robot;
+import gr.demokritos.iit.eleon.profiles.User;
+import gr.demokritos.iit.eleon.struct.QueryHashtable;
+import gr.demokritos.iit.eleon.struct.QueryLexiconHashtable;
+import gr.demokritos.iit.eleon.struct.QueryOptionsHashtable;
+import gr.demokritos.iit.eleon.struct.QueryProfileHashtable;
 
 import java.io.*;
 import java.util.Vector;
@@ -13,7 +19,6 @@ import java.util.Enumeration;
 import java.util.StringTokenizer;
 import org.w3c.dom.*;
 import javax.xml.parsers.*;
-import javax.swing.tree.DefaultMutableTreeNode;
 
 public class OwlExport {
     public static void ExportToOwlFile(File rdfFile, String format, String url, String ontname, boolean exportlexicon) throws Exception {
@@ -51,10 +56,10 @@ public class OwlExport {
         Ontology ontology = ontModel.createOntology(mpiroPath);
         
         //add Upper Model Classes
-      //  addUpperModelClasses(ontModel, mpiroNS);
+        //  addUpperModelClasses(ontModel, mpiroNS);
         
         // Adding the entity types
-        Hashtable allEntityTypes = (Hashtable) QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+        Hashtable allEntityTypes = (Hashtable) Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
         // Remove the 2 entries that are not needed
         allEntityTypes.remove("Data Base");
         allEntityTypes.remove("Basic-entity-types");
@@ -80,172 +85,192 @@ public class OwlExport {
                 OntClass parentClass = ontModel.createClass(getNSFor(convertToClassName(entityTypeParentName), mpiroNS));
                 childClass.addSuperClass(parentClass);
             } //else {
-                //childClass.addSuperClass(ontModel.getOntClass(mpiroNS+"Basic-Entity-Types"));
-       //         NodeVector entityTypeNode = (NodeVector) QueryHashtable.mainDBHashtable.get(entityTypeName);
-       //         Vector upperVector = (Vector) entityTypeNode.get(1);
-       //         for (int i = 0; i < upperVector.size(); i++) {
-       //             childClass.addSuperClass(ontModel.getOntClass(mpiroNS + convertToUpperModelName(upperVector.get(i).toString())));
-              //  }
-        //    }
+            //childClass.addSuperClass(ontModel.getOntClass(mpiroNS+"Basic-Entity-Types"));
+            //         NodeVector entityTypeNode = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(entityTypeName);
+            //         Vector upperVector = (Vector) entityTypeNode.get(1);
+            //         for (int i = 0; i < upperVector.size(); i++) {
+            //             childClass.addSuperClass(ontModel.getOntClass(mpiroNS + convertToUpperModelName(upperVector.get(i).toString())));
+            //  }
+            //    }
         }
         // END Adding the entity types
         
-      //  allEntityTypeNames = allEntityTypes.keys();
-      //  allEntityTypeParentNames = allEntityTypes.elements();
+        //  allEntityTypeNames = allEntityTypes.keys();
+        //  allEntityTypeParentNames = allEntityTypes.elements();
         
         //add properties
-        Enumeration propNames=QueryHashtable.propertiesHashtable.keys();
-        Enumeration propVectors=QueryHashtable.propertiesHashtable.elements();
+        Enumeration propNames=Mpiro.win.struc.getPropertyNames();
+        Enumeration propVectors=Mpiro.win.struc.getProperties();
         while (propNames.hasMoreElements()) {
             String propName=propNames.nextElement().toString();
             PropertiesHashtableRecord propVector=(PropertiesHashtableRecord)propVectors.nextElement();
-                  
-                Vector range=(Vector)propVector.elementAt(1);
-                //if range is a class then create an ObjectProperty
-                if ((!range.contains("String")) && (!range.contains("Dimension")) && (!range.contains("Number")) && (!range.contains("Date"))) {
-                    
-                    //Create Property and Add Domain
-                   // if  (ontModel.getOntProperty(getNSFor(convertToPropertyName(property.m_field), mpiroNS))==null){
-                        
-                        ObjectProperty  newProp = ontModel.createObjectProperty(getNSFor(convertToPropertyName(propName), mpiroNS));
-                      
-                        
-                       
-                        Vector domain=(Vector) propVector.elementAt(0);
-                       
-                       RDFNode[] union=new RDFNode[domain.size()];
-                        for(int o=0;o<domain.size();o++){
-                            if(domain.elementAt(o).toString().equalsIgnoreCase("Basic-entity-types")){
-                                union[o]=OWL.Thing;
-                            }else{
-                                OntClass dom1 = ontModel.getOntClass(getNSFor(convertToClassName(domain.elementAt(o).toString()), mpiroNS));
-                           union[o]=dom1;
-                            }
-                            
-                        }
-                        UnionClass dom=ontModel.createUnionClass(null, ontModel.createList(union));
-                        newProp.addDomain(dom);
-                       
-                        for(int o=0;o<range.size();o++){
-                            if(range.elementAt(o).toString().equalsIgnoreCase("Basic-entity-types")) continue;
-                            OntClass rang = ontModel.getOntClass(getNSFor(convertToClassName(range.elementAt(o).toString()), mpiroNS));
-                            newProp.addRange(rang);
+            
+            Vector range=(Vector)propVector.elementAt(1);
+            //if range is a class then create an ObjectProperty
+            if ((!range.contains("String")) && (!range.contains("Dimension")) && (!range.contains("Number")) && (!range.contains("Date"))) {
+                
+                //Create Property and Add Domain
+                // if  (ontModel.getOntProperty(getNSFor(convertToPropertyName(property.m_field), mpiroNS))==null){
+                
+                ObjectProperty  newProp = ontModel.createObjectProperty(getNSFor(convertToPropertyName(propName), mpiroNS));
+                
+                
+                
+                Vector domain=(Vector) propVector.elementAt(0);
+                
+                if(domain.size()>1){
+                    RDFNode[] union=new RDFNode[domain.size()];
+                    for(int o=0;o<domain.size();o++){
+                        if(domain.elementAt(o).toString().equalsIgnoreCase("Basic-entity-types")){
+                            union[o]=OWL.Thing;
+                        }else{
+                            OntClass dom1 = ontModel.getOntClass(getNSFor(convertToClassName(domain.elementAt(o).toString()), mpiroNS));
+                            union[o]=dom1;
                         }
                         
-                        Vector superp=(Vector) propVector.elementAt(3);
-                        for(int o=0;o<superp.size();o++){
-                            OntProperty superprop= ontModel.getOntProperty(getNSFor(convertToPropertyName(superp.elementAt(o).toString()), mpiroNS));
-                            if(superprop!=null)
-                            newProp.addSuperProperty(superprop);
-                        }
-                        Vector subp=(Vector) propVector.elementAt(2);
-                        for(int o=0;o<subp.size();o++){
-                            OntProperty subprop= ontModel.getOntProperty(getNSFor(convertToPropertyName(subp.elementAt(o).toString()),mpiroNS));
-                            if(subprop!=null)
-                            subprop.addSuperProperty(newProp);
-                        }
-                        
-                        if(ontModel.getProperty(getNSFor(propVector.elementAt(5).toString(), mpiroNS))!=null&&!propVector.elementAt(5).toString().equalsIgnoreCase("")){
-                            Property inverse=ontModel.getProperty(getNSFor(propVector.elementAt(5).toString(), mpiroNS));
-                            newProp.setInverseOf(inverse);
-                        }
-                        
-                        if(propVector.elementAt(6).toString().equalsIgnoreCase("true")){
-                            newProp.convertToFunctionalProperty();
-                        }
-                        
-                        if(propVector.elementAt(7).toString().equalsIgnoreCase("true")){
-                            newProp.convertToInverseFunctionalProperty();
-                        }
-                        
-                        if(propVector.elementAt(8).toString().equalsIgnoreCase("true")){
-                            newProp.convertToTransitiveProperty();
-                        }
-                        
-                        if(propVector.elementAt(9).toString().equalsIgnoreCase("true")){
-                            newProp.convertToSymmetricProperty();
-                        }
-                        
+                    }
+                    UnionClass dom=ontModel.createUnionClass(null, ontModel.createList(union));
+                    newProp.addDomain(dom);} else{
+                    Resource dom;
+                    if(domain.elementAt(0).toString().equalsIgnoreCase("Basic-entity-types")){
+                        dom=OWL.Thing;
+                    }else{
+                        dom = ontModel.getOntClass(getNSFor(convertToClassName(domain.elementAt(0).toString()), mpiroNS));
+                    }
+                    newProp.addDomain(dom);
+                    }
+                
+                
+                for(int o=0;o<range.size();o++){
+                    if(range.elementAt(o).toString().equalsIgnoreCase("Basic-entity-types")) continue;
+                    OntClass rang = ontModel.getOntClass(getNSFor(convertToClassName(range.elementAt(o).toString()), mpiroNS));
+                    newProp.addRange(rang);
+                }
+                
+                Vector superp=(Vector) propVector.elementAt(3);
+                for(int o=0;o<superp.size();o++){
+                    OntProperty superprop= ontModel.getOntProperty(getNSFor(convertToPropertyName(superp.elementAt(o).toString()), mpiroNS));
+                    if(superprop!=null)
+                        newProp.addSuperProperty(superprop);
+                }
+                Vector subp=(Vector) propVector.elementAt(2);
+                for(int o=0;o<subp.size();o++){
+                    OntProperty subprop= ontModel.getOntProperty(getNSFor(convertToPropertyName(subp.elementAt(o).toString()),mpiroNS));
+                    if(subprop!=null)
+                        subprop.addSuperProperty(newProp);
+                }
+                
+                if(ontModel.getProperty(getNSFor(propVector.elementAt(5).toString(), mpiroNS))!=null&&!propVector.elementAt(5).toString().equalsIgnoreCase("")){
+                    Property inverse=ontModel.getProperty(getNSFor(propVector.elementAt(5).toString(), mpiroNS));
+                    newProp.setInverseOf(inverse);
+                }
+                
+                if(propVector.elementAt(6).toString().equalsIgnoreCase("true")){
+                    newProp.convertToFunctionalProperty();
+                }
+                
+                if(propVector.elementAt(7).toString().equalsIgnoreCase("true")){
+                    newProp.convertToInverseFunctionalProperty();
+                }
+                
+                if(propVector.elementAt(8).toString().equalsIgnoreCase("true")){
+                    newProp.convertToTransitiveProperty();
+                }
+                
+                if(propVector.elementAt(9).toString().equalsIgnoreCase("true")){
+                    newProp.convertToSymmetricProperty();
+                }
+                
              /*           if (!property.m_approved.booleanValue()) {
                             OntClass domain = ontModel.getOntClass(mpiroNS + convertToClassName(entityTypeName));
                             MaxCardinalityRestriction restriction = ontModel.createMaxCardinalityRestriction(null, (Property) newProp, 1);
                             domain.addSuperClass(restriction);
                         }*/
-                    } //else{
-                        //ObjectProperty newProp=ontModel.getOntProperty(getNSFor(convertToPropertyName(property.m_field), mpiroNS)).asObjectProperty();
+            } //else{
+            //ObjectProperty newProp=ontModel.getOntProperty(getNSFor(convertToPropertyName(property.m_field), mpiroNS)).asObjectProperty();
                      /*   if (!property.m_approved.booleanValue()) {
                             OntClass domain = ontModel.getOntClass(mpiroNS + convertToClassName(entityTypeName));
                             MaxCardinalityRestriction restriction = ontModel.createMaxCardinalityRestriction(null, (Property) newProp, 1);
                             domain.addSuperClass(restriction);
                         }*/
-                   // }
-                    
-                    // newProp.addDomain(domain);
-                    //Add Range
-                    //newProp.addRange(ontModel.getOntClass(mpiroNS + convertToClassName(property.m_filler)));
-                    
-                    //if cardinality is 1
-                    
-                 else { //create a DatatypeProperty
-                    DatatypeProperty newProp;
-                    
-                    newProp = ontModel.createDatatypeProperty(getNSFor(convertToPropertyName(propName), mpiroNS));
-                   
-                    //add domain
-                    Vector domain=(Vector) propVector.elementAt(0);
-                  RDFNode[] union=new RDFNode[domain.size()];
-                        for(int o=0;o<domain.size();o++){
-                            if(domain.elementAt(o).toString().equalsIgnoreCase("Basic-entity-types")){
-                                union[o]=OWL.Thing;
-                            }else{
-                                OntClass dom1 = ontModel.getOntClass(getNSFor(convertToClassName(domain.elementAt(o).toString()), mpiroNS));
-                           union[o]=dom1;
-                            }
-                            
-                        }
-                        UnionClass dom=ontModel.createUnionClass(null, ontModel.createList(union));
-                        newProp.addDomain(dom);
-                     
-                      Vector superp=(Vector) propVector.elementAt(3);
-                        for(int o=0;o<superp.size();o++){
-                            OntProperty superprop= ontModel.getOntProperty(getNSFor(convertToPropertyName(superp.elementAt(o).toString()), mpiroNS));
-                            if(superprop!=null)
-                            newProp.addSuperProperty(superprop);
-                        }
-                        Vector subp=(Vector) propVector.elementAt(2);
-                        for(int o=0;o<subp.size();o++){
-                            OntProperty subprop= ontModel.getOntProperty(getNSFor(convertToPropertyName(subp.elementAt(o).toString()),mpiroNS));
-                            if(subprop!=null)
-                            subprop.addSuperProperty(newProp);
+            // }
+            
+            // newProp.addDomain(domain);
+            //Add Range
+            //newProp.addRange(ontModel.getOntClass(mpiroNS + convertToClassName(property.m_filler)));
+            
+            //if cardinality is 1
+            
+            else { //create a DatatypeProperty
+                DatatypeProperty newProp;
+                
+                newProp = ontModel.createDatatypeProperty(getNSFor(convertToPropertyName(propName), mpiroNS));
+                
+                //add domain
+                Vector domain=(Vector) propVector.elementAt(0);
+                if(domain.size()>1){
+                    RDFNode[] union=new RDFNode[domain.size()];
+                    for(int o=0;o<domain.size();o++){
+                        if(domain.elementAt(o).toString().equalsIgnoreCase("Basic-entity-types")){
+                            union[o]=OWL.Thing;
+                        }else{
+                            OntClass dom1 = ontModel.getOntClass(getNSFor(convertToClassName(domain.elementAt(o).toString()), mpiroNS));
+                            union[o]=dom1;
                         }
                         
-                        
-                        if(propVector.elementAt(6).toString().equalsIgnoreCase("true")){
-                            newProp.convertToFunctionalProperty();
-                        }
-                        
-                    
-                    //Add Range
-                    if (range.contains("String"))
-                        newProp.addRange(com.hp.hpl.jena.vocabulary.XSD.xstring);
-                    else if (range.contains("Number"))
-                        newProp.addRange(ontModel.getResource("http://www.mpiro.gr/Mpiro-Schema#mpiroNumber"));
-                    else if (range.contains("Date"))
-                        newProp.addRange(ontModel.getResource("http://www.mpiro.gr/Mpiro-Schema#mpiroDate"));
-                    else if (range.contains("Dimension"))
-                        newProp.addRange(ontModel.getResource("http://www.mpiro.gr/Mpiro-Schema#mpiroDimension"));
-                    
-                    //if cardinality is 1
+                    }
+                    UnionClass dom=ontModel.createUnionClass(null, ontModel.createList(union));
+                    newProp.addDomain(dom);
+                } else{
+                    Resource dom;
+                    if(domain.elementAt(0).toString().equalsIgnoreCase("Basic-entity-types")){
+                        dom=OWL.Thing;
+                    }else{
+                        dom = ontModel.getOntClass(getNSFor(convertToClassName(domain.elementAt(0).toString()), mpiroNS));
+                    }
+                    newProp.addDomain(dom);
+                }
+                
+                Vector superp=(Vector) propVector.elementAt(3);
+                for(int o=0;o<superp.size();o++){
+                    OntProperty superprop= ontModel.getOntProperty(getNSFor(convertToPropertyName(superp.elementAt(o).toString()), mpiroNS));
+                    if(superprop!=null)
+                        newProp.addSuperProperty(superprop);
+                }
+                Vector subp=(Vector) propVector.elementAt(2);
+                for(int o=0;o<subp.size();o++){
+                    OntProperty subprop= ontModel.getOntProperty(getNSFor(convertToPropertyName(subp.elementAt(o).toString()),mpiroNS));
+                    if(subprop!=null)
+                        subprop.addSuperProperty(newProp);
+                }
+                
+                
+                if(propVector.elementAt(6).toString().equalsIgnoreCase("true")){
+                    newProp.convertToFunctionalProperty();
+                }
+                
+                
+                //Add Range
+                if (range.contains("String"))
+                    newProp.addRange(com.hp.hpl.jena.vocabulary.XSD.xstring);
+                else if (range.contains("Number"))
+                    newProp.addRange(ontModel.getResource("http://www.mpiro.gr/Mpiro-Schema#mpiroNumber"));
+                else if (range.contains("Date"))
+                    newProp.addRange(ontModel.getResource("http://www.mpiro.gr/Mpiro-Schema#mpiroDate"));
+                else if (range.contains("Dimension"))
+                    newProp.addRange(ontModel.getResource("http://www.mpiro.gr/Mpiro-Schema#mpiroDimension"));
+                
+                //if cardinality is 1
                     /*if (!property.m_approved.booleanValue()) {
                         MaxCardinalityRestriction restriction = ontModel.createMaxCardinalityRestriction(null, (Property) newProp, 1);
                         domain.addSuperClass(restriction);
                     }*/
-                    
-                }
+                
+            }
         } //END add  properties
         
         //add entities
-        Hashtable allEntities = (Hashtable) QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity+Generic");
+        Hashtable allEntities = (Hashtable) Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity+Generic");
         Enumeration allEntityNames;
         Enumeration allEntitySubtypeOfNames;
         
@@ -268,7 +293,7 @@ public class OwlExport {
             Individual entity = ontModel.createIndividual(getNSFor(entityName, mpiroNS),
                     ontModel.getOntClass(getNSFor(convertToClassName(entitySubtypeOfName), mpiroNS)));
             
-            NodeVector entityNode = (NodeVector) QueryHashtable.mainDBHashtable.get(entityName);
+            NodeVector entityNode = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(entityName);
             Vector entityIndependentFieldsVector = entityNode.getIndependentFieldsVector();
         }
         
@@ -288,7 +313,7 @@ public class OwlExport {
             
             
             
-            NodeVector entityNode = (NodeVector) QueryHashtable.mainDBHashtable.get(entityName);
+            NodeVector entityNode = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(entityName);
             Vector fileds=(Vector) entityNode.elementAt(0);
             //Language indepedent properties
             Vector entityIndependentFieldsVector =(Vector) fileds.elementAt(0);
@@ -307,11 +332,11 @@ public class OwlExport {
                     }
                 } else if (datatypeProperty != null) {
                     //System.out.println(entityName+"..."+propertyFieldData);
-                     if (!propertyFieldData.m_filler.equals("")&&!propertyFieldData.m_filler.startsWith("Select")){
-                    ontModel.getIndividual(getNSFor(entityName, mpiroNS)).addProperty(datatypeProperty,
-                            ontModel.createTypedLiteral(propertyFieldData.m_filler,
-                            com.hp.hpl.jena.datatypes.TypeMapper.getInstance().getTypeByName(datatypeProperty.getRange().getURI())));
-                }}
+                    if (!propertyFieldData.m_filler.equals("")&&!propertyFieldData.m_filler.startsWith("Select")){
+                        ontModel.getIndividual(getNSFor(entityName, mpiroNS)).addProperty(datatypeProperty,
+                                ontModel.createTypedLiteral(propertyFieldData.m_filler,
+                                com.hp.hpl.jena.datatypes.TypeMapper.getInstance().getTypeByName(datatypeProperty.getRange().getURI())));
+                    }}
             }
             
             //English Properties
@@ -319,19 +344,19 @@ public class OwlExport {
             for (int i = 0; i < entityEnglishFieldsVector.size(); i++) {
                 FieldData propertyFieldData = (FieldData) entityEnglishFieldsVector.get(i);
                 if(propertyFieldData.m_filler.equals("String")){
-                DatatypeProperty datatypeProperty = ontModel.getDatatypeProperty(getNSFor(convertToPropertyName(propertyFieldData.m_field), mpiroNS));
-                if (datatypeProperty != null) {
-                    if (!propertyFieldData.m_filler.equals(""))
-                        ontModel.getIndividual(getNSFor(entityName, mpiroNS)).addProperty(datatypeProperty,
-                                ontModel.createLiteral(propertyFieldData.m_filler, "EN"));
-                } else {
-                    datatypeProperty = ontModel.getDatatypeProperty(getNSFor(convertMpiroToOwlPropertyName(propertyFieldData.m_field), mpiroNS));
-                    if (datatypeProperty != null)
+                    DatatypeProperty datatypeProperty = ontModel.getDatatypeProperty(getNSFor(convertToPropertyName(propertyFieldData.m_field), mpiroNS));
+                    if (datatypeProperty != null) {
                         if (!propertyFieldData.m_filler.equals(""))
                             ontModel.getIndividual(getNSFor(entityName, mpiroNS)).addProperty(datatypeProperty,
                                     ontModel.createLiteral(propertyFieldData.m_filler, "EN"));
+                    } else {
+                        datatypeProperty = ontModel.getDatatypeProperty(getNSFor(convertMpiroToOwlPropertyName(propertyFieldData.m_field), mpiroNS));
+                        if (datatypeProperty != null)
+                            if (!propertyFieldData.m_filler.equals(""))
+                                ontModel.getIndividual(getNSFor(entityName, mpiroNS)).addProperty(datatypeProperty,
+                                        ontModel.createLiteral(propertyFieldData.m_filler, "EN"));
+                    }
                 }
-            }
             }
             
             //ontModel.createIntersectionClass(null, ontModel.createList(new RDFNode[] {ontModel.createSomeValuesFromRestriction(null, ontModel.getOntProperty("cost"), ontModel.getOntClass("Money")),ontModel.getOntClass("Computer")} ));
@@ -340,65 +365,65 @@ public class OwlExport {
             for (int i = 0; i < entityItalianFieldsVector.size(); i++) {
                 FieldData propertyFieldData = (FieldData) entityItalianFieldsVector.get(i);
                 if(propertyFieldData.m_filler.equals("String")){
-                DatatypeProperty datatypeProperty = ontModel.getDatatypeProperty(getNSFor(convertToPropertyName(propertyFieldData.m_field), mpiroNS));
-                if (datatypeProperty != null) {
-                    if (!propertyFieldData.m_filler.equals(""))
-                        ontModel.getIndividual(getNSFor(entityName, mpiroNS)).addProperty(datatypeProperty,
-                                ontModel.createLiteral(propertyFieldData.m_filler, "IT"));
-                } else {
-                    datatypeProperty = ontModel.getDatatypeProperty(getNSFor(convertMpiroToOwlPropertyName(propertyFieldData.m_field), mpiroNS));
-                    if (datatypeProperty != null)
+                    DatatypeProperty datatypeProperty = ontModel.getDatatypeProperty(getNSFor(convertToPropertyName(propertyFieldData.m_field), mpiroNS));
+                    if (datatypeProperty != null) {
                         if (!propertyFieldData.m_filler.equals(""))
                             ontModel.getIndividual(getNSFor(entityName, mpiroNS)).addProperty(datatypeProperty,
                                     ontModel.createLiteral(propertyFieldData.m_filler, "IT"));
+                    } else {
+                        datatypeProperty = ontModel.getDatatypeProperty(getNSFor(convertMpiroToOwlPropertyName(propertyFieldData.m_field), mpiroNS));
+                        if (datatypeProperty != null)
+                            if (!propertyFieldData.m_filler.equals(""))
+                                ontModel.getIndividual(getNSFor(entityName, mpiroNS)).addProperty(datatypeProperty,
+                                        ontModel.createLiteral(propertyFieldData.m_filler, "IT"));
+                    }
                 }
-            }
             }
             //Greek Properties
             Vector entityGreekFieldsVector = (Vector) fileds.elementAt(3);
             for (int i = 0; i < entityGreekFieldsVector.size(); i++) {
                 FieldData propertyFieldData = (FieldData) entityGreekFieldsVector.get(i);
                 if(propertyFieldData.m_filler.equals("String")){
-                DatatypeProperty datatypeProperty = ontModel.getDatatypeProperty(getNSFor(convertToPropertyName(propertyFieldData.m_field), mpiroNS));
-                if (datatypeProperty != null) {
-                    if (!propertyFieldData.m_filler.equals(""))
-                        ontModel.getIndividual(getNSFor(entityName, mpiroNS)).addProperty(datatypeProperty,
-                                ontModel.createLiteral(propertyFieldData.m_filler, "GRC"));
-                } else {
-                    datatypeProperty = ontModel.getDatatypeProperty(getNSFor(convertMpiroToOwlPropertyName(propertyFieldData.m_field), mpiroNS));
-                    if (datatypeProperty != null)
+                    DatatypeProperty datatypeProperty = ontModel.getDatatypeProperty(getNSFor(convertToPropertyName(propertyFieldData.m_field), mpiroNS));
+                    if (datatypeProperty != null) {
                         if (!propertyFieldData.m_filler.equals(""))
                             ontModel.getIndividual(getNSFor(entityName, mpiroNS)).addProperty(datatypeProperty,
                                     ontModel.createLiteral(propertyFieldData.m_filler, "GRC"));
+                    } else {
+                        datatypeProperty = ontModel.getDatatypeProperty(getNSFor(convertMpiroToOwlPropertyName(propertyFieldData.m_field), mpiroNS));
+                        if (datatypeProperty != null)
+                            if (!propertyFieldData.m_filler.equals(""))
+                                ontModel.getIndividual(getNSFor(entityName, mpiroNS)).addProperty(datatypeProperty,
+                                        ontModel.createLiteral(propertyFieldData.m_filler, "GRC"));
+                    }
                 }
-            }
             }
         }
         
-        Hashtable restrictions=QueryHashtable.valueRestrictionsHashtable;
-        Enumeration keys=restrictions.keys();
-        Enumeration elements=restrictions.elements();
+        // Hashtable restrictions=QueryHashtable.valueRestrictionsHashtable;
+        Enumeration keys=Mpiro.win.struc.restrictionKeys();
+        Enumeration elements=Mpiro.win.struc.restrictions();
         while(keys.hasMoreElements()){
             String[] nextKey=keys.nextElement().toString().split(":");
             Vector nextElement=(Vector) elements.nextElement();
             Vector subVector=(Vector) nextElement.elementAt(0);
             for(int r=0;r<subVector.size();r++){
-                 try {
-                //    OntProperty p=ontModel.getOntProperty(mpiroNS + convertToPropertyName(nextKey[1]));
-                AllValuesFromRestriction allVal= ontModel.createAllValuesFromRestriction(null,ontModel.getOntProperty(mpiroNS + convertToPropertyName(nextKey[1])),ontModel.getOntClass(mpiroNS + convertToClassName(subVector.elementAt(r).toString())));
-                ontModel.getOntClass(getNSFor(convertToClassName(nextKey[0]), mpiroNS)).addSuperClass(allVal);
-            }catch(java.lang.IllegalArgumentException h){
-                continue;
+                try {
+                    //    OntProperty p=ontModel.getOntProperty(mpiroNS + convertToPropertyName(nextKey[1]));
+                    AllValuesFromRestriction allVal= ontModel.createAllValuesFromRestriction(null,ontModel.getOntProperty(mpiroNS + convertToPropertyName(nextKey[1])),ontModel.getOntClass(mpiroNS + convertToClassName(subVector.elementAt(r).toString())));
+                    ontModel.getOntClass(getNSFor(convertToClassName(nextKey[0]), mpiroNS)).addSuperClass(allVal);
+                }catch(java.lang.IllegalArgumentException h){
+                    continue;
                 }}
             subVector=(Vector) nextElement.elementAt(1);
             for(int r=0;r<subVector.size();r++){
-                 try {
-            
-                //    OntProperty p=ontModel.getOntProperty(mpiroNS + convertToPropertyName(nextKey[1]));
-                SomeValuesFromRestriction allVal= ontModel.createSomeValuesFromRestriction(null,ontModel.getOntProperty(mpiroNS + convertToPropertyName(nextKey[1])),ontModel.getOntClass(mpiroNS + convertToClassName(subVector.elementAt(r).toString())));
-                ontModel.getOntClass(getNSFor(convertToClassName(nextKey[0]), mpiroNS)).addSuperClass(allVal);
-            }catch(java.lang.IllegalArgumentException h){
-                continue;
+                try {
+                    
+                    //    OntProperty p=ontModel.getOntProperty(mpiroNS + convertToPropertyName(nextKey[1]));
+                    SomeValuesFromRestriction allVal= ontModel.createSomeValuesFromRestriction(null,ontModel.getOntProperty(mpiroNS + convertToPropertyName(nextKey[1])),ontModel.getOntClass(mpiroNS + convertToClassName(subVector.elementAt(r).toString())));
+                    ontModel.getOntClass(getNSFor(convertToClassName(nextKey[0]), mpiroNS)).addSuperClass(allVal);
+                }catch(java.lang.IllegalArgumentException h){
+                    continue;
                 }}
             
             subVector=(Vector) nextElement.elementAt(2);
@@ -407,9 +432,9 @@ public class OwlExport {
                 //    OntProperty p=ontModel.getOntProperty(mpiroNS + convertToPropertyName(nextKey[1]));
                 HasValueRestriction allVal= ontModel.createHasValueRestriction(null,ontModel.getOntProperty(mpiroNS + convertToPropertyName(nextKey[1])),ontModel.createLiteral(subVector.elementAt(r).toString()));
                 try{
-                allVal= ontModel.createHasValueRestriction(null,ontModel.getOntProperty(getNSFor(convertToPropertyName(nextKey[1]), mpiroNS)),ontModel.getIndividual(getNSFor(subVector.elementAt(r).toString(), mpiroNS)));
+                    allVal= ontModel.createHasValueRestriction(null,ontModel.getOntProperty(getNSFor(convertToPropertyName(nextKey[1]), mpiroNS)),ontModel.getIndividual(getNSFor(subVector.elementAt(r).toString(), mpiroNS)));
                 }catch(java.lang.IllegalArgumentException h){
-                continue;
+                    continue;
                 }
                 
                 ontModel.getOntClass(getNSFor(convertToClassName(nextKey[0]),mpiroNS)).addSuperClass(allVal);
@@ -429,22 +454,22 @@ public class OwlExport {
             
             subVector=(Vector) nextElement.elementAt(4);
             for(int r=0;r<subVector.size();r++){
-                 try {
-                //    OntProperty p=ontModel.getOntProperty(mpiroNS + convertToPropertyName(nextKey[1]));
-                MinCardinalityRestriction allVal= ontModel.createMinCardinalityRestriction(null,ontModel.getOntProperty(mpiroNS + convertToPropertyName(nextKey[1])),Integer.parseInt(subVector.elementAt(r).toString()));
-                ontModel.getOntClass(getNSFor(convertToClassName(nextKey[0]), mpiroNS)).addSuperClass(allVal);
-                 } catch (java.lang.IllegalArgumentException ex) {
+                try {
+                    //    OntProperty p=ontModel.getOntProperty(mpiroNS + convertToPropertyName(nextKey[1]));
+                    MinCardinalityRestriction allVal= ontModel.createMinCardinalityRestriction(null,ontModel.getOntProperty(mpiroNS + convertToPropertyName(nextKey[1])),Integer.parseInt(subVector.elementAt(r).toString()));
+                    ontModel.getOntClass(getNSFor(convertToClassName(nextKey[0]), mpiroNS)).addSuperClass(allVal);
+                } catch (java.lang.IllegalArgumentException ex) {
                     continue;
                 }
             }
             
             subVector=(Vector) nextElement.elementAt(5);
             for(int r=0;r<subVector.size();r++){
-                 try {
-                //    OntProperty p=ontModel.getOntProperty(mpiroNS + convertToPropertyName(nextKey[1]));
-                CardinalityRestriction allVal= ontModel.createCardinalityRestriction(null,ontModel.getOntProperty(mpiroNS + convertToPropertyName(nextKey[1])),Integer.parseInt(subVector.elementAt(r).toString()));
-                ontModel.getOntClass(getNSFor(convertToClassName(nextKey[0]), mpiroNS)).addSuperClass(allVal);
-                 } catch (java.lang.IllegalArgumentException ex) {
+                try {
+                    //    OntProperty p=ontModel.getOntProperty(mpiroNS + convertToPropertyName(nextKey[1]));
+                    CardinalityRestriction allVal= ontModel.createCardinalityRestriction(null,ontModel.getOntProperty(mpiroNS + convertToPropertyName(nextKey[1])),Integer.parseInt(subVector.elementAt(r).toString()));
+                    ontModel.getOntClass(getNSFor(convertToClassName(nextKey[0]), mpiroNS)).addSuperClass(allVal);
+                } catch (java.lang.IllegalArgumentException ex) {
                     continue;
                 }
             }
@@ -452,100 +477,99 @@ public class OwlExport {
         
         
         
-        Enumeration echk=QueryHashtable.equivalentClassesHashtable.keys();
+        Enumeration echk=Mpiro.win.struc.equivalentClassesHashtableKeys();
         while(echk.hasMoreElements()){
             String cl=echk.nextElement().toString();
-            Vector eqClasses=(Vector) QueryHashtable.equivalentClassesHashtable.get(cl);
+            Vector eqClasses=(Vector) Mpiro.win.struc.getEquivalentClasses(cl);
             for(int i=0;i<eqClasses.size();i++){
                 ontModel.getOntClass(getNSFor(convertToClassName(cl), mpiroNS)).addEquivalentClass((OntClass)ClassParser.parsing(eqClasses.elementAt(i).toString(), ontModel, mpiroNS));
             }
         }
         
-        Enumeration complexSuperClasses=QueryHashtable.superClassesHashtable.keys();
+        Enumeration complexSuperClasses=Mpiro.win.struc.superClassesHashtableKeys();
         while(complexSuperClasses.hasMoreElements()){
             String cl=complexSuperClasses.nextElement().toString();
-            Vector superClasses=(Vector) QueryHashtable.superClassesHashtable.get(cl);
+            Vector superClasses=(Vector) Mpiro.win.struc.getSuperClasses(cl);
             for(int i=0;i<superClasses.size();i++){
                 ontModel.getOntClass(getNSFor(convertToClassName(cl), mpiroNS)).addSuperClass((OntClass)ClassParser.parsing(superClasses.elementAt(i).toString(), ontModel, mpiroNS));
             }
         }
         
-        for(Enumeration anKeys=QueryHashtable.annotationPropertiesHashtable.keys(), anElements=QueryHashtable.annotationPropertiesHashtable.elements();anKeys.hasMoreElements();){
-            Hashtable temp=QueryHashtable.annotationPropertiesHashtable;
+        for(Enumeration anKeys=Mpiro.win.struc.annotationPropertiesHashtableKeys(), anElements=Mpiro.win.struc.annotationPropertiesHashtableElements();anKeys.hasMoreElements();){
+            /// Hashtable temp=QueryHashtable.annotationPropertiesHashtable;
             Vector anProps=(Vector) anElements.nextElement();
             String className=anKeys.nextElement().toString();
             for(int l=0;l<anProps.size();l++){
                 Vector anProp=(Vector)anProps.elementAt(l);
                 if(anProp.elementAt(1)==null) continue;
-           // System.out.println("  ::::: "+ontModel.getOntResource(mpiroNS+convertToClassName(className)).getLocalName());
-            OntResource ontRes=ontModel.getOntResource(getNSFor(convertToClassName(className),mpiroNS));
+                // System.out.println("  ::::: "+ontModel.getOntResource(mpiroNS+convertToClassName(className)).getLocalName());
+                OntResource ontRes=ontModel.getOntResource(getNSFor(convertToClassName(className),mpiroNS));
                 try {
                     ontRes.toString();
                 } catch(java.lang.NullPointerException npe) {
                     ontRes=ontModel.getOntResource(getNSFor(className, mpiroNS));
                 }
-            
-            try {
+                
+                try {
                     ontRes.toString();
                 } catch(java.lang.NullPointerException npe) {
                     break;
                 }
-            Object type=anProp.elementAt(0);
-           // System.out.println("^^^^^^ "+type.toString()+" ^^^^ "+className+" ^^^^  "+anProp.toString());
-            if(type.equals("rdfs:isDefinedBy"))
-            ontRes.addIsDefinedBy(ontModel.getResource(getNSFor(anProp.elementAt(1).toString(), mpiroNS)));
-            if(type.equals("rdfs:seeAlso"))
-            ontRes.addSeeAlso(ontModel.getResource(getNSFor(anProp.elementAt(1).toString(), mpiroNS)));
-            if(type.equals("rdfs:label"))
-            ontRes.addLabel(anProp.elementAt(1).toString(), anProp.elementAt(2).toString());
-            if(type.equals("rdfs:comment"))
-            ontRes.addComment(anProp.elementAt(1).toString(), anProp.elementAt(2).toString());
-            if(type.equals("owl:versionInfo"))
-            ontRes.addVersionInfo(anProp.elementAt(1).toString());
-        }}
+                Object type=anProp.elementAt(0);
+                // System.out.println("^^^^^^ "+type.toString()+" ^^^^ "+className+" ^^^^  "+anProp.toString());
+                if(type.equals("rdfs:isDefinedBy"))
+                    ontRes.addIsDefinedBy(ontModel.getResource(getNSFor(anProp.elementAt(1).toString(), mpiroNS)));
+                if(type.equals("rdfs:seeAlso"))
+                    ontRes.addSeeAlso(ontModel.getResource(getNSFor(anProp.elementAt(1).toString(), mpiroNS)));
+                if(type.equals("rdfs:label"))
+                    ontRes.addLabel(anProp.elementAt(1).toString(), anProp.elementAt(2).toString());
+                if(type.equals("rdfs:comment"))
+                    ontRes.addComment(anProp.elementAt(1).toString(), anProp.elementAt(2).toString());
+                if(type.equals("owl:versionInfo"))
+                    ontRes.addVersionInfo(anProp.elementAt(1).toString());
+            }}
         
         
-     //  Resource test=ontModel.createResource();
-      //  classParser.parsing("((= 666 Property:area)v(-({Individual:educational1, Individual:educational2, Individual:educational3})))", ontModel, mpiroNS);
+        //  Resource test=ontModel.createResource();
+        //  classParser.parsing("((= 666 Property:area)v(-({Individual:educational1, Individual:educational2, Individual:educational3})))", ontModel, mpiroNS);
         
         //write the OWL file
-       // OntClass temp=(OntClass)ontModel.listClasses().next();
+        // OntClass temp=(OntClass)ontModel.listClasses().next();
         
         RDFWriter w = ontModel.getWriter(format);
         w.setProperty("xmlbase", mpiroNS);
         w.setProperty("showXmlDeclaration","true");
         w.setProperty("showXmlDeclaration","true");
         w.write(ontModel, output, mpiroPath);
-      if(exportlexicon){  
-        if (rdfFile.getAbsolutePath().indexOf(".")!=-1)
-            exportLexiconToXmlFile(rdfFile.getAbsolutePath().substring(0, rdfFile.getAbsolutePath().lastIndexOf('.')) + "_mpiro.xml");
-        else
-            exportLexiconToXmlFile(rdfFile.getAbsolutePath() + "_mpiro.xml");
-         }
-        else{
+        if(exportlexicon){
+            if (rdfFile.getAbsolutePath().indexOf(".")!=-1)
+                exportLexiconToXmlFile(rdfFile.getAbsolutePath().substring(0, rdfFile.getAbsolutePath().lastIndexOf('.')) + "_mpiro.xml");
+            else
+                exportLexiconToXmlFile(rdfFile.getAbsolutePath() + "_mpiro.xml");
+        } else{
             
-           // ExtendedIterator ei=ontModel.listIndividuals();
-         //   while(ei.hasNext()){
-          //      Mpiro.comparTree.addElement(((Individual)ei.next()).getURI(),ontModel);
-          //  }
-         //   Mpiro.comparTree.print();
-     //   Mpiro.comparTree.sortAttributes();
-      }
+            // ExtendedIterator ei=ontModel.listIndividuals();
+            //   while(ei.hasNext()){
+            //      Mpiro.comparTree.addElement(((Individual)ei.next()).getURI(),ontModel);
+            //  }
+            //   Mpiro.comparTree.print();
+            //   Mpiro.comparTree.sortAttributes();
+        }
         
         
         
         
         
-       // galanis(rdfFile.getAbsolutePath().substring(0, rdfFile.getAbsolutePath().lastIndexOf(ontname)), url);
-       
+        // galanis(rdfFile.getAbsolutePath().substring(0, rdfFile.getAbsolutePath().lastIndexOf(ontname)), url);
+        
  /*   State s1=new State(new String("k1"),true, false);
     State s2=new State(new String("k2"));
     State s3=new State(new String("k3"),false, true);
     State[] st = {s1,s2,s3};
-    
+  
     Bottom B = new Bottom();
    // Word E = new Word();
-
+  
     Object ob[] = {
     new String("("),
     new String("E"),
@@ -555,9 +579,9 @@ public class OwlExport {
     new String(")"),
     new String("C"),
     new String("P"),
-    new String("$")  
+    new String("$")
     };
-    
+  
     Alphabet alph=new Alphabet(ob);
     OntStackElement P=new OntStackElement("Property",null);
     OntStackElement C=new OntStackElement("Class",null);
@@ -571,10 +595,10 @@ public class OwlExport {
     };
     Object pp[] = {
     P,
-    new String("(")    
+    new String("(")
     };
-    
-    
+  
+  
     PDAI i[] = {
     new PDAI(s1, "(", "$", s1, new Word("$ (".split(" "))),
     new PDAI(s1, "(", P, s1, new Word(pp)),
@@ -592,7 +616,7 @@ public class OwlExport {
     new PDAI(s2, new Word(), "E", s2, new Word()),
     new PDAI(s2, new Word(), P, s2, new Word()),
    // new PDAI(s2, ")", "(", s1, new Word("( )".split(" "))),
-    new PDAI(s2, new Word(), "$", s3, new Word())  
+    new PDAI(s2, new Word(), "$", s3, new Word())
     };
     Object input[] = {
     new String("("),
@@ -605,8 +629,8 @@ public class OwlExport {
     new String(")"),
     new String(")")
     };
-    
-    
+  
+  
    // try {
       PDA ka = new PDA(alph,alph,"$",st,i);
       Word inp=new Word(input);
@@ -636,7 +660,7 @@ public class OwlExport {
       System.out.println("[BRANCH CRASHED]");
       System.out.println("Choices: ");
       for(int g=0;g<ins.length;g++) System.out.println(ins[g]);
-   
+  
       for(int x=0;x<ins.length;x++) {
         System.out.println("Starting: "+ins[x]+"\n");
         Computer com = new Computer(branch[x],ins[x]);
@@ -644,15 +668,15 @@ public class OwlExport {
       }
     }
       System.out.println("Automaton:OK");
-      */
-    
-    
-    
+  */
+        
+        
+        
     }
-   //   Computer com = new Computer(ka);
-   //   com.compute();
-  //  }
-   // catch(Exception e) { e.printStackTrace(); }
+    //   Computer com = new Computer(ka);
+    //   com.compute();
+    //  }
+    // catch(Exception e) { e.printStackTrace(); }
     
     
     
@@ -735,7 +759,7 @@ public class OwlExport {
         
         //end add prop
         
-        NodeVector rootVector = (NodeVector) QueryHashtable.mainDBHashtable.get("Data Base");
+        NodeVector rootVector = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity("Data Base");
         Vector upperVector = (Vector) rootVector.elementAt(1);
         
         for (int i = 0; i < upperVector.size(); i++) {
@@ -765,11 +789,11 @@ public class OwlExport {
     public static String convertToClassName(String name) {
         if(name.matches("(?i).*http://.*"))
             return name;
-        else{  
-  
-        if (name != null && name.length() > 0)
-            name = name.substring(0, 1).toUpperCase() + name.substring(1);
-        return name;}
+        else{
+            
+            if (name != null && name.length() > 0)
+                name = name.substring(0, 1).toUpperCase() + name.substring(1);
+            return name;}
     }
     
     private static String convertToUpperModelName(String name) {
@@ -806,16 +830,16 @@ public class OwlExport {
     }
     
     public static void exportLexicon(String fileName,String uri) throws Exception {
-       // Mpiro.comparTree = new ComparisonTree();
-       // Mpiro.statisticalTree = new ComparisonTree();
+        // Mpiro.comparTree = new ComparisonTree();
+        // Mpiro.statisticalTree = new ComparisonTree();
         DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-    Document doc = docBuilder.newDocument();
+        Document doc = docBuilder.newDocument();
         Element RDF=doc.createElement("rdf:RDF");
         doc.appendChild(RDF);
-      //  RDF.setAttribute("xmlns:owlnl","http://www.aueb.gr/users/ion/owlnl#");
-      //  RDF.setAttribute("xmlns:rdf","http://www.w3.org/1999/02/22-rdf-syntax-ns#");
-     //   RDF.setAttribute("xmlns","http://www.aueb.gr/users/ion/owlnl/UserModelling#");
-     //   RDF.setAttribute("xml:base","http://www.aueb.gr/users/ion/owlnl/UserModelling");
+        //  RDF.setAttribute("xmlns:owlnl","http://www.aueb.gr/users/ion/owlnl#");
+        //  RDF.setAttribute("xmlns:rdf","http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+        //   RDF.setAttribute("xmlns","http://www.aueb.gr/users/ion/owlnl/UserModelling#");
+        //   RDF.setAttribute("xml:base","http://www.aueb.gr/users/ion/owlnl/UserModelling");
         RDF.setAttribute("xmlns:owlnl","http://www.aueb.gr/users/ion/owlnl#");
         RDF.setAttribute("xmlns:rdf","http://www.w3.org/1999/02/22-rdf-syntax-ns#");
         RDF.setAttribute("xmlns","http://www.aueb.gr/users/ion/owlnl/UserModelling#");
@@ -844,18 +868,18 @@ public class OwlExport {
         Element entries=doc.createElement("owlnl:Entries");
         entries.setAttribute("rdf:parseType","Collection");
         Mapping.appendChild(entries);
-        Hashtable allTypes=QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity type");
+        Hashtable allTypes=Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity type");
         Enumeration keys=allTypes.keys();
         //   Enumeration elements=allTypes.elements();
         while(keys.hasMoreElements()){
             try {
                 String key=keys.nextElement().toString();
                 
-                NodeVector nv= (NodeVector) QueryHashtable.mainDBHashtable.get(key);
+                NodeVector nv= (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(key);
                 Vector nouns=(Vector) nv.nounVector.clone();
-                Vector parents=QueryHashtable.getParents(key);
+                Vector parents=Mpiro.win.struc.getParents(key);
                 for(int i=0;i<parents.size();i++){
-                    NodeVector parent=(NodeVector) QueryHashtable.mainDBHashtable.get(parents.elementAt(i));
+                    NodeVector parent=(NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(parents.elementAt(i).toString());
                     Vector parentNouns=parent.nounVector;
                     for(int j=0;j<parentNouns.size();j++){
                         if(nouns.contains(parentNouns.elementAt(j)))
@@ -875,16 +899,16 @@ public class OwlExport {
             }
             
         }
-        Hashtable allEntities=QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity+generic");
+        Hashtable allEntities=Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity+generic");
         Enumeration Entkeys=allEntities.keys();
         //    Enumeration Entelements=allTypes.elements();
         while(Entkeys.hasMoreElements()){
             //for(int i = 0; i < Instances.length; i++)
-                    
+            
             //Mpiro.statisticalTree.addElement(((OntObject)Instances[i]).getURI(),ontModel);
-        
+            
             String key=Entkeys.nextElement().toString();
-            NodeVector nv=(NodeVector) QueryHashtable.mainDBHashtable.get(key);
+            NodeVector nv=(NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(key);
             Element owlInstance=doc.createElement("owlnl:owlInstance");
             owlInstance.setAttribute("rdf:about",uri+'#'+key);
             Element hasNP=doc.createElement("owlnl:hasNP");
@@ -915,9 +939,9 @@ public class OwlExport {
             Element gender=doc.createElement("owlnl:gender");
             temp=(Vector) english.elementAt(4);
             if(temp.elementAt(1).toString().equalsIgnoreCase("neuter"))
-            gender.appendChild(doc.createTextNode("nonpersonal"));
+                gender.appendChild(doc.createTextNode("nonpersonal"));
             else
-            gender.appendChild(doc.createTextNode(temp.elementAt(1).toString()));
+                gender.appendChild(doc.createTextNode(temp.elementAt(1).toString()));
             englishNP.appendChild(gender);
             Element singular=doc.createElement("owlnl:singular");
             singular.setAttribute("xml:lang","en");
@@ -950,9 +974,9 @@ public class OwlExport {
             Element gender1=doc.createElement("owlnl:gender");
             temp=(Vector) greek.elementAt(4);
             if(temp.elementAt(1).toString().equalsIgnoreCase("neuter"))
-            gender1.appendChild(doc.createTextNode("neuter"));
+                gender1.appendChild(doc.createTextNode("neuter"));
             else
-               gender1.appendChild(doc.createTextNode(temp.elementAt(1).toString())); 
+                gender1.appendChild(doc.createTextNode(temp.elementAt(1).toString()));
             greekNP.appendChild(gender1);
             Element singular1=doc.createElement("owlnl:singular");
             Element plural1=doc.createElement("owlnl:plural");
@@ -1008,8 +1032,8 @@ public class OwlExport {
         //          style1.setAttribute("xmlns:xsl","http://www.w3.org/1999/XSL/Transform");
         //       style1.appendChild(nounsElement1);
         //              doc1.appendChild(nounsElement1);
-        Hashtable allNounHashTable = (Hashtable) QueryLexiconHashtable.mainLexiconHashtable.get("Nouns");
-        //    Hashtable allVerbHashTable = (Hashtable) QueryLexiconHashtable.mainLexiconHashtable.get("Verbs");
+        Hashtable allNounHashTable =  Mpiro.win.struc.getNounsHashtable();
+        //    Hashtable allVerbHashTable = (Hashtable) Mpiro.win.struc.getVerbsHashtable();
         
         //nouns
         Enumeration nounNameEnu = allNounHashTable.keys();
@@ -1111,7 +1135,7 @@ public class OwlExport {
             if(greekNouns.get("grgender").toString().equalsIgnoreCase("neuter"))
                 gender1.appendChild(doc.createTextNode("neuter"));
             else
-            gender1.appendChild(doc.createTextNode(greekNouns.get("grgender").toString().toLowerCase()));
+                gender1.appendChild(doc.createTextNode(greekNouns.get("grgender").toString().toLowerCase()));
             greekNP.appendChild(gender1);
             Element singular1=doc.createElement("owlnl:singular");
             Element plural1=doc.createElement("owlnl:plural");
@@ -1129,15 +1153,18 @@ public class OwlExport {
             genPlu.setAttribute("xml:lang","el");
             accSin.setAttribute("xml:lang","el");
             accPlu.setAttribute("xml:lang","el");
-            nominSin.appendChild(doc.createTextNode(greekNouns.get("grbasetext").toString()));
+            if(greekNouns.containsKey("grbasetext"))
+                nominSin.appendChild(doc.createTextNode(greekNouns.get("grbasetext").toString()));
             if(greekNouns.containsKey("grpluraltext"))
-            nominPlu.appendChild(doc.createTextNode(greekNouns.get("grpluraltext").toString()));
-            genSin.appendChild(doc.createTextNode(greekNouns.get("grsgtext").toString()));
+                nominPlu.appendChild(doc.createTextNode(greekNouns.get("grpluraltext").toString()));
+            if(greekNouns.containsKey("grsgtext"))
+                genSin.appendChild(doc.createTextNode(greekNouns.get("grsgtext").toString()));
             if(greekNouns.containsKey("grpgtext"))
-            genPlu.appendChild(doc.createTextNode(greekNouns.get("grpgtext").toString()));
-            accSin.appendChild(doc.createTextNode(greekNouns.get("grsatext").toString()));
+                genPlu.appendChild(doc.createTextNode(greekNouns.get("grpgtext").toString()));
+            if(greekNouns.containsKey("grsatext"))
+                accSin.appendChild(doc.createTextNode(greekNouns.get("grsatext").toString()));
             if(greekNouns.containsKey("grpatext"))
-            accPlu.appendChild(doc.createTextNode(greekNouns.get("grpatext").toString()));
+                accPlu.appendChild(doc.createTextNode(greekNouns.get("grpatext").toString()));
             singForms.appendChild(nominSin);
             singForms.appendChild(genSin);
             singForms.appendChild(accSin);
@@ -1154,8 +1181,8 @@ public class OwlExport {
         
         
         
-        Enumeration annotationKeys=QueryHashtable.annotationPropertiesHashtable.keys();
-        Enumeration annotationElements=QueryHashtable.annotationPropertiesHashtable.elements();
+        Enumeration annotationKeys=Mpiro.win.struc.annotationPropertiesHashtableKeys();
+        Enumeration annotationElements=Mpiro.win.struc.annotationPropertiesHashtableElements();
         while(annotationKeys.hasMoreElements()){
             String entity=annotationKeys.nextElement().toString();
             Vector elements=(Vector) annotationElements.nextElement();
@@ -1163,42 +1190,41 @@ public class OwlExport {
                 Vector nextElement=(Vector) elements.elementAt(i);
                 if (nextElement.elementAt(1)==null) continue;
                 if(!nextElement.elementAt(0).equals("rdfs:seeAlso")&&!nextElement.elementAt(0).equals("rdfs:isDefinedBy")){
-         Element cannedText = doc.createElement("owlnl:CannedText");
-           cannedText.setAttribute("rdf:ID",entity+"-canned-text"+String.valueOf(i));//nounName to be replaced with namespace!!!!!
-            
-            Element val=doc.createElement("owlnl:Val");
-            Element nullVal=doc.createElement("owlnl:Val");
-            
-            if(nextElement.elementAt(2).equals("greek")){
-             //   continue;
-                val.setAttribute("xml:lang","el");
-                nullVal.setAttribute("xml:lang","en");
+                    Element cannedText = doc.createElement("owlnl:CannedText");
+                    cannedText.setAttribute("rdf:ID",entity+"-canned-text"+String.valueOf(i));//nounName to be replaced with namespace!!!!!
+                    
+                    Element val=doc.createElement("owlnl:Val");
+                    Element nullVal=doc.createElement("owlnl:Val");
+                    
+                    if(nextElement.elementAt(2).equals("greek")){
+                        //   continue;
+                        val.setAttribute("xml:lang","el");
+                        nullVal.setAttribute("xml:lang","en");
+                    } else{
+                        val.setAttribute("xml:lang","en");
+                        nullVal.setAttribute("xml:lang","el");
+                    }
+                    nounsElement.appendChild(cannedText);
+                    val.appendChild(doc.createTextNode(nextElement.elementAt(1).toString()));
+                    nullVal.appendChild(doc.createTextNode(""));
+                    cannedText.appendChild(val);
+                    cannedText.appendChild(nullVal);
+                    
+                    String[] users=nextElement.elementAt(4).toString().split(" ");
+                    for(int j=0;j<users.length;j++){
+                        Element user=doc.createElement("owlnl:forUserType");
+                        user.setAttribute("rdf:resource", "http://www.aueb.gr/users/ion/owlnl/UserModelling#"+users[j]);
+                        cannedText.appendChild(user);
+                    }
+                    Element inst=doc.createElement("owlnl:owlInstance");
+                    inst.setAttribute("rdf:about", uri+"#"+entity);
+                    Element hasCannedText=doc.createElement("owlnl:hasCannedText");
+                    hasCannedText.setAttribute("rdf:resource", "#"+entity+"-canned-text"+String.valueOf(i));
+                    inst.appendChild(hasCannedText);
+                    entries.appendChild(inst);
+                    
+                }
             }
-            else{
-                val.setAttribute("xml:lang","en");
-                nullVal.setAttribute("xml:lang","el");
-            }
-            nounsElement.appendChild(cannedText);
-            val.appendChild(doc.createTextNode(nextElement.elementAt(1).toString()));
-            nullVal.appendChild(doc.createTextNode(""));
-            cannedText.appendChild(val);
-            cannedText.appendChild(nullVal);
-
-            String[] users=nextElement.elementAt(4).toString().split(" ");
-            for(int j=0;j<users.length;j++){
-                Element user=doc.createElement("owlnl:forUserType");
-                user.setAttribute("rdf:resource", "http://www.aueb.gr/users/ion/owlnl/UserModelling#"+users[j]);
-                cannedText.appendChild(user);
-            }
-            Element inst=doc.createElement("owlnl:owlInstance");
-            inst.setAttribute("rdf:about", uri+"#"+entity);
-            Element hasCannedText=doc.createElement("owlnl:hasCannedText");
-            hasCannedText.setAttribute("rdf:resource", "#"+entity+"-canned-text"+String.valueOf(i));
-            inst.appendChild(hasCannedText);
-            entries.appendChild(inst);
-            
-        }
-        }
         }
         
         File xmlFile1 = new File(fileName+"Lexicon.rdf");
@@ -1206,11 +1232,11 @@ public class OwlExport {
         Writer writer = new Writer();
         writer.setOutput(output1,null);
         writer.write(doc);
-}
-     public static void exportUserModelling(String fileName,String uri) throws Exception {
-         String base= "http://www.aueb.gr/users/ion/owlnl/UserModelling";
-     File xmlFile2 = new File(fileName+"UserModelling.rdf");
-             DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+    }
+    public static void exportUserModelling(String fileName,String uri) throws Exception {
+        String base= "http://www.aueb.gr/users/ion/owlnl/UserModelling";
+        File xmlFile2 = new File(fileName+"UserModelling.rdf");
+        DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document doc2 = docBuilder.newDocument();
         FileOutputStream output2 = new FileOutputStream(xmlFile2);
         Element RDF2=doc2.createElement("rdf:RDF");
@@ -1222,7 +1248,7 @@ public class OwlExport {
         //RDF2.setAttribute("xmlns:rdfs","http://www.w3.org/2000/01/rdf-schema#");
         
         
-        Hashtable entityTypesHashtables=QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+        Hashtable entityTypesHashtables=Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
         
         Element UserModelling=doc2.createElement("owlnl:UserModelling");
         RDF2.appendChild(UserModelling);
@@ -1230,25 +1256,25 @@ public class OwlExport {
         usersElement.setAttribute("rdf:parseType","Collection");
         UserModelling.appendChild(usersElement);
         
-        Enumeration userNamesEnu = QueryUsersHashtable.mainUsersHashtable.keys();
-        Enumeration userValuesEnu = QueryUsersHashtable.mainUsersHashtable.elements();
+        Enumeration userNamesEnu = Mpiro.win.struc.getUserNames();
+        Enumeration userValuesEnu = Mpiro.win.struc.getUserElements();
         Vector usersVector = new Vector();
         while (userNamesEnu.hasMoreElements()) {
             String userName = (String) userNamesEnu.nextElement();
-            Vector userVector = (Vector) userValuesEnu.nextElement();
+            User userVector = (User) userValuesEnu.nextElement();
             usersVector.add(userName);
             Element currentUserElement = doc2.createElement("owlnl:UserType");
             currentUserElement.setAttribute("rdf:ID",userName);
             usersElement.appendChild(currentUserElement);
             
             Element sentenceElement = doc2.createElement("owlnl:MaxFactsPerSentence");
-            sentenceElement.appendChild(doc2.createTextNode(userVector.get(0).toString()));
+            sentenceElement.appendChild(doc2.createTextNode(userVector.getMaxFactsPerSentence()));
             Element paragraphElement = doc2.createElement("owlnl:FactsPerPage");
-            paragraphElement.appendChild(doc2.createTextNode(userVector.get(1).toString()));
+            paragraphElement.appendChild(doc2.createTextNode(userVector.getFactsPerPage()));
             //   Element conjunctionElement = doc2.createElement("Link-Number");
             // conjunctionElement.appendChild(doc2.createTextNode(userVector.get(2).toString()));
             Element voiceElement = doc2.createElement("owlnl:SynthesizerVoice");
-            voiceElement.appendChild(doc2.createTextNode(userVector.get(3).toString()));
+            voiceElement.appendChild(doc2.createTextNode(userVector.getSynthVoice()));
             
             currentUserElement.appendChild(sentenceElement);
             currentUserElement.appendChild(paragraphElement);
@@ -1262,8 +1288,8 @@ public class OwlExport {
         Element PropertiesInterests  = doc2.createElement("owlnl:PropertiesInterestsRepetitions");
         PropertiesInterests.setAttribute("rdf:parseType","Collection");
         UserModelling.appendChild(PropertiesInterests);
-        Enumeration properties=QueryHashtable.propertiesHashtable.keys();
-        Enumeration propVectors1=QueryHashtable.propertiesHashtable.elements();
+        Enumeration properties=Mpiro.win.struc.getPropertyNames();
+        Enumeration propVectors1=Mpiro.win.struc.getProperties();
         
         while(properties.hasMoreElements()){
             //   Vector property=(Vector) properties.nextElement();
@@ -1287,39 +1313,40 @@ public class OwlExport {
                 if(value.elementAt(1).toString().equalsIgnoreCase(""))
                     InterestValue.appendChild(doc2.createTextNode("-1"));
                 else
-                InterestValue.appendChild(doc2.createTextNode(value.elementAt(1).toString()));
+                    InterestValue.appendChild(doc2.createTextNode(value.elementAt(1).toString()));
                 DPInterest.appendChild(InterestValue);
                 Element InterestValue1= doc2.createElement("owlnl:Repetitions");
-               // Vector value=(Vector) values.nextElement();
+                // Vector value=(Vector) values.nextElement();
                 if(value.elementAt(2).toString().equalsIgnoreCase(""))
                     InterestValue1.appendChild(doc2.createTextNode("-1"));
                 else
-                InterestValue1.appendChild(doc2.createTextNode(value.elementAt(2).toString()));
+                    InterestValue1.appendChild(doc2.createTextNode(value.elementAt(2).toString()));
                 DPInterest.appendChild(InterestValue1);
             }
-            if(!QueryUsersHashtable.mainUserModelHashtable.containsKey(nextProp))
-                QueryUsersHashtable.mainUserModelHashtable.put(nextProp, new Hashtable());
-            Hashtable np=(Hashtable) QueryUsersHashtable.mainUserModelHashtable.get(nextProp);
+            if(!Mpiro.win.struc.mainUserModelHashtableContainsProperty(nextProp))
+                Mpiro.win.struc.putPropertyInMainUserModelHashtable(nextProp, new Hashtable());
+            Hashtable np=(Hashtable) Mpiro.win.struc.getPropertyFromMainUserModelHashtable(nextProp);
             Enumeration npkeys=np.keys();
             Enumeration npelems=np.elements();
             while(npkeys.hasMoreElements()){
                 String nextDomain=npkeys.nextElement().toString();
-                Hashtable nextElem=(Hashtable) npelems.nextElement();
+                
                 if(entityTypesHashtables.containsKey(nextDomain)){
                     
-                    Enumeration users1=nextElem.keys();
-                    Enumeration values1=nextElem.elements();
+                    Vector modelling_values=Mpiro.win.struc.getUserModelling(nextProp, nextDomain);
+                    Enumeration users1=(Enumeration)modelling_values.elementAt(0);
+                    Enumeration values1=(Enumeration)modelling_values.elementAt(1);
                     while(users1.hasMoreElements()){
                         String nextuser=users1.nextElement().toString();
                         Vector usersValue=(Vector) values1.nextElement();
-                       // if(usersValue.elementAt(1).toString().equalsIgnoreCase("")) continue;
+                        // if(usersValue.elementAt(1).toString().equalsIgnoreCase("")) continue;
                         Element CDPInterest  = doc2.createElement("owlnl:CDPInterestRepetitions");
-                    CDPInterest.setAttribute("rdf:parseType","Resource");
-                    Property.appendChild(CDPInterest);
-                    //Hashtable usersHash=(Hashtable) nextPropVector.elementAt(12);
-                    Element forClass=doc2.createElement("owlnl:forOwlClass");
-                    forClass.setAttribute("rdf:resource",uri+"#"+nextDomain);
-                    CDPInterest.appendChild(forClass);
+                        CDPInterest.setAttribute("rdf:parseType","Resource");
+                        Property.appendChild(CDPInterest);
+                        //Hashtable usersHash=(Hashtable) nextPropVector.elementAt(12);
+                        Element forClass=doc2.createElement("owlnl:forOwlClass");
+                        forClass.setAttribute("rdf:resource",uri+"#"+nextDomain);
+                        CDPInterest.appendChild(forClass);
                         //String nextuser=users1.nextElement().toString();
                         //Vector usersValue=(Vector) values1.nextElement();
                         Element forUserType = doc2.createElement("owlnl:forUserType");
@@ -1327,39 +1354,39 @@ public class OwlExport {
                         CDPInterest.appendChild(forUserType);
                         Element InterestValue= doc2.createElement("owlnl:InterestValue");
                         // Vector value=(Vector) values.nextElement();usersValue.elementAt(1).toString()
-                         if(usersValue.elementAt(1).toString().equalsIgnoreCase(""))
-                             InterestValue.appendChild(doc2.createTextNode(QueryUsersHashtable.getParentValuesVectorForOWLExport(nextProp, nextuser, nextDomain, 1)));
-                    //InterestValue.appendChild(doc2.createTextNode("-1"));
-                         else
-                        InterestValue.appendChild(doc2.createTextNode(usersValue.elementAt(1).toString()));
+                        if(usersValue.elementAt(1).toString().equalsIgnoreCase(""))
+                            InterestValue.appendChild(doc2.createTextNode(Mpiro.win.struc.getParentValuesVectorForOWLExport(nextProp, nextuser, nextDomain, 1)));
+                        //InterestValue.appendChild(doc2.createTextNode("-1"));
+                        else
+                            InterestValue.appendChild(doc2.createTextNode(usersValue.elementAt(1).toString()));
                         CDPInterest.appendChild(InterestValue);
                         
                         Element Repetitions= doc2.createElement("owlnl:Repetitions");
                         // Vector value=(Vector) values.nextElement();usersValue.elementAt(1).toString()
-                         if(usersValue.elementAt(2).toString().equalsIgnoreCase(""))
-                   // Repetitions.appendChild(doc2.createTextNode("-1"));
-                             Repetitions.appendChild(doc2.createTextNode(QueryUsersHashtable.getParentValuesVectorForOWLExport(nextProp, nextuser, nextDomain, 2)));
-                         else
-                        Repetitions.appendChild(doc2.createTextNode(usersValue.elementAt(2).toString()));
+                        if(usersValue.elementAt(2).toString().equalsIgnoreCase(""))
+                            // Repetitions.appendChild(doc2.createTextNode("-1"));
+                            Repetitions.appendChild(doc2.createTextNode(Mpiro.win.struc.getParentValuesVectorForOWLExport(nextProp, nextuser, nextDomain, 2)));
+                        else
+                            Repetitions.appendChild(doc2.createTextNode(usersValue.elementAt(2).toString()));
                         CDPInterest.appendChild(Repetitions);
                     }
-                }
-                else
-                if(QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity").containsKey(nextDomain)){
-                     
-                    Enumeration users1=nextElem.keys();
-                    Enumeration values1=nextElem.elements();
+                } else
+                    if(Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity").containsKey(nextDomain)){
+                    
+                    Vector modelling_values=Mpiro.win.struc.getUserModelling(nextProp, nextDomain);
+                    Enumeration users1=(Enumeration)modelling_values.elementAt(0);
+                    Enumeration values1=(Enumeration)modelling_values.elementAt(1);
                     while(users1.hasMoreElements()){
                         String nextuser=users1.nextElement().toString();
                         Vector usersValue=(Vector) values1.nextElement();
-                      //  if(usersValue.elementAt(1).toString().equalsIgnoreCase("")) continue;
+                        //  if(usersValue.elementAt(1).toString().equalsIgnoreCase("")) continue;
                         Element IPInterest  = doc2.createElement("owlnl:IPInterestRepetitions");
-                    IPInterest.setAttribute("rdf:parseType","Resource");
-                    Property.appendChild(IPInterest);
-                    //Hashtable usersHash=(Hashtable) nextPropVector.elementAt(12);
-                    Element forInstance =doc2.createElement("owlnl:forInstance");
-                    forInstance.setAttribute("rdf:resource",uri+"#"+nextDomain);
-                    IPInterest.appendChild(forInstance );
+                        IPInterest.setAttribute("rdf:parseType","Resource");
+                        Property.appendChild(IPInterest);
+                        //Hashtable usersHash=(Hashtable) nextPropVector.elementAt(12);
+                        Element forInstance =doc2.createElement("owlnl:forInstance");
+                        forInstance.setAttribute("rdf:resource",uri+"#"+nextDomain);
+                        IPInterest.appendChild(forInstance );
                         
                         Element forUserType = doc2.createElement("owlnl:forUserType");
                         forUserType.setAttribute("rdf:resource",base+"#"+nextuser);
@@ -1368,20 +1395,20 @@ public class OwlExport {
                         // Vector value=(Vector) values.nextElement();
                         if(usersValue.elementAt(1).toString().equalsIgnoreCase(""))
                             //InterestValue.appendChild(doc2.createTextNode("-1"));
-                            InterestValue.appendChild(doc2.createTextNode(QueryUsersHashtable.getParentValuesVectorForOWLExport(nextProp, nextuser, nextDomain, 1)));
+                            InterestValue.appendChild(doc2.createTextNode(Mpiro.win.struc.getParentValuesVectorForOWLExport(nextProp, nextuser, nextDomain, 1)));
                         else
-                        InterestValue.appendChild(doc2.createTextNode(usersValue.elementAt(1).toString()));
+                            InterestValue.appendChild(doc2.createTextNode(usersValue.elementAt(1).toString()));
                         IPInterest.appendChild(InterestValue);
                         Element Repetitions= doc2.createElement("owlnl:Repetitions");
                         // Vector value=(Vector) values.nextElement();
                         if(usersValue.elementAt(2).toString().equalsIgnoreCase(""))
-                           // Repetitions.appendChild(doc2.createTextNode("-1"));
-                            Repetitions.appendChild(doc2.createTextNode(QueryUsersHashtable.getParentValuesVectorForOWLExport(nextProp, nextuser, nextDomain, 2)));
+                            // Repetitions.appendChild(doc2.createTextNode("-1"));
+                            Repetitions.appendChild(doc2.createTextNode(Mpiro.win.struc.getParentValuesVectorForOWLExport(nextProp, nextuser, nextDomain, 2)));
                         else
-                        Repetitions.appendChild(doc2.createTextNode(usersValue.elementAt(2).toString()));
+                            Repetitions.appendChild(doc2.createTextNode(usersValue.elementAt(2).toString()));
                         IPInterest.appendChild(Repetitions);
                     }
-                }
+                    }
             }
             
         }
@@ -1394,7 +1421,7 @@ public class OwlExport {
 //            Property.setAttribute("rdf:about",uri+'#'+nextProp);
 //            PropertiesInterests.appendChild(Property);
 //            //Hashtable usersHash=(Hashtable) nextPropVector.elementAt(12);
-//            Enumeration users=QueryUsersHashtable.mainUsersHashtable.keys();
+//            Enumeration users=Mpiro.win.struc.getUserNames();
 //           // Enumeration values=usersHash.elements();
 //            while(users.hasMoreElements()){
 //                Element DPInterest  = doc2.createElement("owlnl:DPInterestRepetitions");
@@ -1418,8 +1445,8 @@ public class OwlExport {
      /*    Element PropertiesRepetitions  = doc2.createElement("owlnl:PropertiesRepetitions");
         PropertiesRepetitions.setAttribute("rdf:parseType","Collection");
         UserModelling.appendChild(PropertiesRepetitions);
-        properties=QueryHashtable.propertiesHashtable.keys();
-        propVectors1=QueryHashtable.propertiesHashtable.elements();
+        properties=Mpiro.win.struc.getPropertyNames();
+        propVectors1=Mpiro.win.struc.getProperties();
         while(properties.hasMoreElements()){
             //   Vector property=(Vector) properties.nextElement();
             String nextProp=properties.nextElement().toString();
@@ -1442,14 +1469,14 @@ public class OwlExport {
                 Repetitions.appendChild(doc2.createTextNode(value.elementAt(2).toString()));
                 DPRepetitions.appendChild(Repetitions);
             }
-            Hashtable np=(Hashtable) QueryUsersHashtable.mainUserModelHashtable.get(nextProp);
+            Hashtable np=(Hashtable) Mpiro.win.struc.getPropertyFromMainUserModelHashtable(nextProp);
             Enumeration npkeys=np.keys();
             Enumeration npelems=np.elements();
             while(npkeys.hasMoreElements()){
                 String nextDomain=npkeys.nextElement().toString();
                 Hashtable nextElem=(Hashtable) npelems.nextElement();
-                if(QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type").containsKey(nextDomain)){
-                    
+                if(Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type").containsKey(nextDomain)){
+      
                     Enumeration users1=nextElem.keys();
                     Enumeration values1=nextElem.elements();
                     while(users1.hasMoreElements()){
@@ -1470,13 +1497,13 @@ public class OwlExport {
                         CDPRepetitions.appendChild(forUserType);
                         Element Repetitions= doc2.createElement("owlnl:Repetitions");
                         // Vector value=(Vector) values.nextElement();usersValue.elementAt(1).toString()
-                        
+      
                         Repetitions.appendChild(doc2.createTextNode(usersValue.elementAt(2).toString()));
                         CDPRepetitions.appendChild(Repetitions);
                     }
                 }
                 else{
-                     
+      
                     Enumeration users1=nextElem.keys();
                     Enumeration values1=nextElem.elements();
                     while(users1.hasMoreElements()){
@@ -1490,7 +1517,7 @@ public class OwlExport {
                     Element forInstance =doc2.createElement("owlnl:forInstance");
                     forInstance .setAttribute("rdf:resource",uri+"#"+nextDomain);
                     IPRepetitions.appendChild(forInstance );
-                        
+      
                         Element forUserType = doc2.createElement("owlnl:forUserType");
                         forUserType.setAttribute("rdf:resource","#"+nextuser);
                         IPRepetitions.appendChild(forUserType);
@@ -1504,88 +1531,88 @@ public class OwlExport {
                     }
                 }
             }
-            
+      
         }*/
         
         
-     //   Hashtable test=(Hashtable)((Vector)QueryHashtable.mainDBHashtable.get("item")).elementAt(5);
+        //   Hashtable test=(Hashtable)((Vector)Mpiro.win.struc.getEntityTypeOrEntity("item")).elementAt(5);
         Element Appropriateness = doc2.createElement("owlnl:Appropriateness");
         Appropriateness.setAttribute("rdf:parseType","Collection");
         UserModelling.appendChild(Appropriateness);
         
         
-     //   Hashtable hash=entityTypesHashtables;
+        //   Hashtable hash=entityTypesHashtables;
         entityTypesHashtables.remove("Data Base");
         entityTypesHashtables.remove("Basic-entity-types");
         
-        properties=QueryHashtable.propertiesHashtable.keys();
+        properties=Mpiro.win.struc.getPropertyNames();
         while(properties.hasMoreElements()){
-         //   Enumeration allEntityTypeParentNames = entityTypesHashtables.keys();
+            //   Enumeration allEntityTypeParentNames = entityTypesHashtables.keys();
             
             String propName=properties.nextElement().toString();
-                        String domain=((Vector)((Vector)QueryHashtable.propertiesHashtable.get(propName)).elementAt(0)).elementAt(0).toString();
-         //   while(allEntityTypeParentNames.hasMoreElements()){
+            String domain=((Vector)((Vector)Mpiro.win.struc.getProperty(propName)).elementAt(0)).elementAt(0).toString();
+            //   while(allEntityTypeParentNames.hasMoreElements()){
+            
+            //     String entityTypeName = allEntityTypeParentNames.nextElement().toString();
+            // NodeVector nodeEntityType = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(entityTypeName);
+            Vector vec= (Vector) Mpiro.win.struc.getEntityTypeOrEntity(domain);
+            // TemplateVector templateVector = (TemplateVector) vec.elementAt(4);
+            Hashtable microPlanningValues = (Hashtable) vec.get(5);
+            
+            
+            for(int j=1;j<6;j++){
+                Element MicroplanApprop=doc2.createElement("owlnl:MicroplanApprop");
+                MicroplanApprop.setAttribute("rdf:about",uri+'#'+propName+"-templ"+String.valueOf(j)+"-el");
                 
-           //     String entityTypeName = allEntityTypeParentNames.nextElement().toString();
-                // NodeVector nodeEntityType = (NodeVector) QueryHashtable.mainDBHashtable.get(entityTypeName);
-                Vector vec= (Vector) QueryHashtable.mainDBHashtable.get(domain);
-                // TemplateVector templateVector = (TemplateVector) vec.elementAt(4);
-                Hashtable microPlanningValues = (Hashtable) vec.get(5);
-                
-                
-                for(int j=1;j<6;j++){
-                    Element MicroplanApprop=doc2.createElement("owlnl:MicroplanApprop");
-                    MicroplanApprop.setAttribute("rdf:about",uri+'#'+propName+"-templ"+String.valueOf(j)+"-el");
+                for(int i=0;i<usersVector.size();i++){
                     
-                    for(int i=0;i<usersVector.size();i++){
+                    Element Approp=doc2.createElement("owlnl:Approp");
+                    Approp.setAttribute("rdf:parseType","Resource");
+                    
+                    Element forUserType = doc2.createElement("owlnl:forUserType");
+                    forUserType.setAttribute("rdf:resource",base+"#"+usersVector.elementAt(i).toString());
+                    Approp.appendChild(forUserType);
+                    Element AppropValue= doc2.createElement("owlnl:AppropValue");
+                    String value="";
+                    try{
                         
-                        Element Approp=doc2.createElement("owlnl:Approp");
-                        Approp.setAttribute("rdf:parseType","Resource");
-                        
-                        Element forUserType = doc2.createElement("owlnl:forUserType");
-                        forUserType.setAttribute("rdf:resource",base+"#"+usersVector.elementAt(i).toString());
-                        Approp.appendChild(forUserType);
-                        Element AppropValue= doc2.createElement("owlnl:AppropValue");
-                        String value="";
-                            try{
-                            
-                            value= microPlanningValues.get(String.valueOf(j)+":"+propName+":"+usersVector.elementAt(i).toString()+":"+"Greek").toString();
-                            } catch(NullPointerException c){
+                        value= microPlanningValues.get(String.valueOf(j)+":"+propName+":"+usersVector.elementAt(i).toString()+":"+"Greek").toString();
+                    } catch(NullPointerException c){
                         value= "0";
-                        }
-                            MicroplanApprop.appendChild(Approp);
-                            AppropValue.appendChild(doc2.createTextNode(value));
-                            Approp.appendChild(AppropValue);
-                            Appropriateness.appendChild(MicroplanApprop);
-                        
-                        
-                    }}
-                
-                for(int j=1;j<6;j++){
-                    Element MicroplanApprop=doc2.createElement("owlnl:MicroplanApprop");
-                    MicroplanApprop.setAttribute("rdf:about",uri+'#'+propName+"-templ"+String.valueOf(j)+"-en");
+                    }
+                    MicroplanApprop.appendChild(Approp);
+                    AppropValue.appendChild(doc2.createTextNode(value));
+                    Approp.appendChild(AppropValue);
+                    Appropriateness.appendChild(MicroplanApprop);
                     
-                    for(int i=0;i<usersVector.size();i++){
-                        Element Approp=doc2.createElement("owlnl:Approp");
-                        Approp.setAttribute("rdf:parseType","Resource");
+                    
+                }}
+            
+            for(int j=1;j<6;j++){
+                Element MicroplanApprop=doc2.createElement("owlnl:MicroplanApprop");
+                MicroplanApprop.setAttribute("rdf:about",uri+'#'+propName+"-templ"+String.valueOf(j)+"-en");
+                
+                for(int i=0;i<usersVector.size();i++){
+                    Element Approp=doc2.createElement("owlnl:Approp");
+                    Approp.setAttribute("rdf:parseType","Resource");
+                    
+                    Element forUserType = doc2.createElement("owlnl:forUserType");
+                    forUserType.setAttribute("rdf:resource",base+"#"+usersVector.elementAt(i).toString());
+                    Approp.appendChild(forUserType);
+                    Element AppropValue= doc2.createElement("owlnl:AppropValue");
+                    String value="";
+                    try{
                         
-                        Element forUserType = doc2.createElement("owlnl:forUserType");
-                        forUserType.setAttribute("rdf:resource",base+"#"+usersVector.elementAt(i).toString());
-                        Approp.appendChild(forUserType);
-                        Element AppropValue= doc2.createElement("owlnl:AppropValue");
-                        String value="";
-                        try{
-                            
-                            
-                            value= microPlanningValues.get(String.valueOf(j)+":"+propName+":"+usersVector.elementAt(i).toString()+":"+"English").toString();
-                            } catch(NullPointerException c){continue;}
-                        MicroplanApprop.appendChild(Approp);
-                            AppropValue.appendChild(doc2.createTextNode(value));
-                            Approp.appendChild(AppropValue);
-                            Appropriateness.appendChild(MicroplanApprop);
                         
-                        
-                    }//}
+                        value= microPlanningValues.get(String.valueOf(j)+":"+propName+":"+usersVector.elementAt(i).toString()+":"+"English").toString();
+                    } catch(NullPointerException c){continue;}
+                    MicroplanApprop.appendChild(Approp);
+                    AppropValue.appendChild(doc2.createTextNode(value));
+                    Approp.appendChild(AppropValue);
+                    Appropriateness.appendChild(MicroplanApprop);
+                    
+                    
+                }//}
                 
             }}
         
@@ -1619,7 +1646,7 @@ public class OwlExport {
         UserModelling.appendChild(InstancesInterests);
   
 Hashtable allElements=new Hashtable();
-        Enumeration allEntities1=QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity+generic").keys();
+        Enumeration allEntities1=Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity+generic").keys();
         while(allEntities1.hasMoreElements()){
             String next=allEntities1.nextElement().toString();
             Element el=doc2.createElement("owlnl:owlInstance");
@@ -1636,8 +1663,8 @@ Hashtable allElements=new Hashtable();
         }*/
         
         
-        Enumeration mainUserModelHashtableEnumKeys = QueryUsersHashtable.mainUserModelHashtable.keys();
-        Enumeration mainUserModelHashtableEnumElements = QueryUsersHashtable.mainUserModelHashtable.elements();
+        Enumeration mainUserModelHashtableEnumKeys = Mpiro.win.struc.mainUserModelHashtableKeys();
+        Enumeration mainUserModelHashtableEnumElements = Mpiro.win.struc.mainUserModelHashtableElements();
         while (mainUserModelHashtableEnumKeys.hasMoreElements()) {
             String fieldname = mainUserModelHashtableEnumKeys.nextElement().toString();
             
@@ -1646,20 +1673,21 @@ Hashtable allElements=new Hashtable();
             // Element fieldElement = doc2.createElement(fieldname);
             // userModelElement.appendChild(fieldElement);
             
+            
             Enumeration fieldnameHashtableEnumKeys = fieldnameHashtable.keys();
             Enumeration fieldnameHashtableEnumElements = fieldnameHashtable.elements();
             while (fieldnameHashtableEnumKeys.hasMoreElements()) {
                 String entityname = fieldnameHashtableEnumKeys.nextElement().toString();
-                Hashtable entitynameHashtable = (Hashtable) fieldnameHashtableEnumElements.nextElement();
+                //  Hashtable entitynameHashtable = (Hashtable) fieldnameHashtableEnumElements.nextElement();
                 //Hashtable temp=QueryHashtable.mainDBHashtable;
-                if(!QueryHashtable.mainDBHashtable.containsKey(entityname)) continue;
-                NodeVector nodeVector = (NodeVector)QueryHashtable.mainDBHashtable.get(entityname);
+                if(!Mpiro.win.struc.mainDBcontainsEntityOrEntityType(entityname)) continue;
+                NodeVector nodeVector = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(entityname);
                 //System.out.println(entityname);
                 if(entityname.equalsIgnoreCase("Data Base")||entityname.equalsIgnoreCase("Basic-entity-types")) continue;
                 if(nodeVector.size() != 6){
                     // entityname = convertToClassName(entityname);
                     
-                    String ctcn=convertToClassName(QueryHashtable.getParents(entityname).elementAt(0).toString());
+                    String ctcn=convertToClassName(Mpiro.win.struc.getParents(entityname).elementAt(0).toString());
                     Element propert =(Element) alltypes.get(ctcn);//other parents?
                     //       fieldElement.appendChild(entityElement);
                     //if(!fieldname.equalsIgnoreCase("type")){
@@ -1667,8 +1695,11 @@ Hashtable allElements=new Hashtable();
                     //Element Property =doc2.createElement("owlnl:Property");
                     //propert.appendChild(Property);
                     //Property.setAttribute("rdf:about",uri+'/'+fieldname);
-                    Enumeration entityNameKeys = entitynameHashtable.keys();
-                    Enumeration entityNameVectors = entitynameHashtable.elements();
+                    Vector modelling_values=Mpiro.win.struc.getUserModelling(fieldname, entityname);
+                    Enumeration entityNameKeys=(Enumeration)modelling_values.elementAt(0);
+                    Enumeration entityNameVectors=(Enumeration)modelling_values.elementAt(1);
+                    //  Enumeration entityNameKeys = entitynameHashtable.keys();
+                    //  Enumeration entityNameVectors = entitynameHashtable.elements();
                     while(entityNameKeys.hasMoreElements()){
                         String key = (String)entityNameKeys.nextElement();
                         Vector valueVector = (Vector)entityNameVectors.nextElement();
@@ -1682,16 +1713,16 @@ Hashtable allElements=new Hashtable();
                         forInstance.setAttribute("rdf:resource",uri+'#'+entityname);
                         Element InterestValue=doc2.createElement("owlnl:InterestValue");
                         if(valueVector.get(0).toString().equalsIgnoreCase(""))
-                    //InterestValue.appendChild(doc2.createTextNode("-1"));
-                            InterestValue.appendChild(doc2.createTextNode(QueryUsersHashtable.getParentTypeOfVectorForOWLExport(key, entityname, 0)));
-                         else
-                        InterestValue.appendChild(doc2.createTextNode(valueVector.get(0).toString()));
+                            //InterestValue.appendChild(doc2.createTextNode("-1"));
+                            InterestValue.appendChild(doc2.createTextNode(Mpiro.win.struc.getParentTypeOfVectorForOWLExport(key, entityname, 0)));
+                        else
+                            InterestValue.appendChild(doc2.createTextNode(valueVector.get(0).toString()));
                         Element InterestValue1=doc2.createElement("owlnl:Repetitions");
                         if(valueVector.get(2).toString().equalsIgnoreCase(""))
-                    //InterestValue1.appendChild(doc2.createTextNode("-1"));
-                            InterestValue1.appendChild(doc2.createTextNode(QueryUsersHashtable.getParentTypeOfVectorForOWLExport(key, entityname, 2)));
-                         else
-                        InterestValue1.appendChild(doc2.createTextNode(valueVector.get(2).toString()));
+                            //InterestValue1.appendChild(doc2.createTextNode("-1"));
+                            InterestValue1.appendChild(doc2.createTextNode(Mpiro.win.struc.getParentTypeOfVectorForOWLExport(key, entityname, 2)));
+                        else
+                            InterestValue1.appendChild(doc2.createTextNode(valueVector.get(2).toString()));
                         
                         Interest.appendChild(forInstance);
                         Interest.appendChild(forUserType);
@@ -1732,14 +1763,17 @@ Hashtable allElements=new Hashtable();
          
                 }}*/
                 } else{
-                    entityname = convertToClassName(entityname);
-                    Element propert =(Element) alltypes.get(entityname);
+                    Vector modelling_values=Mpiro.win.struc.getUserModelling(fieldname, entityname);
+                    String entitynameConverted = convertToClassName(entityname);
+                    
+                    Element propert =(Element) alltypes.get(entitynameConverted);
                     //    Element propert=(Element) entityElement.getFirstChild();
                     // Element Property =doc2.createElement("owlnl:Property");
                     // propert.appendChild(Property);
                     // Property.setAttribute("rdf:about",uri+'/'+fieldname);
-                    Enumeration entityNameKeys = entitynameHashtable.keys();
-                    Enumeration entityNameVectors = entitynameHashtable.elements();
+                    
+                    Enumeration entityNameKeys=(Enumeration)modelling_values.elementAt(0);
+                    Enumeration entityNameVectors=(Enumeration)modelling_values.elementAt(1);
                     while(entityNameKeys.hasMoreElements()){
                         String key = (String)entityNameKeys.nextElement();
                         Vector valueVector = (Vector)entityNameVectors.nextElement();
@@ -1751,17 +1785,17 @@ Hashtable allElements=new Hashtable();
                         forUserType.setAttribute("rdf:resource",base+"#"+key);
                         Element InterestValue=doc2.createElement("owlnl:InterestValue");
                         if(valueVector.get(0).toString().equalsIgnoreCase(""))
-                    //InterestValue.appendChild(doc2.createTextNode("-1"));
-                            InterestValue.appendChild(doc2.createTextNode(QueryUsersHashtable.getParentTypeOfVectorForOWLExport(key, entityname, 0)));
-                         else
-                        InterestValue.appendChild(doc2.createTextNode(valueVector.get(0).toString()));
+                            //InterestValue.appendChild(doc2.createTextNode("-1"));
+                            InterestValue.appendChild(doc2.createTextNode(Mpiro.win.struc.getParentTypeOfVectorForOWLExport(key, entityname, 0)));
+                        else
+                            InterestValue.appendChild(doc2.createTextNode(valueVector.get(0).toString()));
                         Element InterestValue1=doc2.createElement("owlnl:Repetitions");
-                    if(valueVector.get(2).toString().equalsIgnoreCase(""))
-                    //InterestValue1.appendChild(doc2.createTextNode("-1"));
-                        InterestValue1.appendChild(doc2.createTextNode(QueryUsersHashtable.getParentTypeOfVectorForOWLExport(key, entityname, 2)));
-                         else
-                        InterestValue1.appendChild(doc2.createTextNode(valueVector.get(2).toString()));
-                       // Interest.appendChild(forUserType);
+                        if(valueVector.get(2).toString().equalsIgnoreCase(""))
+                            //InterestValue1.appendChild(doc2.createTextNode("-1"));
+                            InterestValue1.appendChild(doc2.createTextNode(Mpiro.win.struc.getParentTypeOfVectorForOWLExport(key, entityname, 2)));
+                        else
+                            InterestValue1.appendChild(doc2.createTextNode(valueVector.get(2).toString()));
+                        // Interest.appendChild(forUserType);
                         
                         Interest.appendChild(forUserType);
                         Interest.appendChild(InterestValue);
@@ -1776,9 +1810,9 @@ Hashtable allElements=new Hashtable();
  /*       Element ClassRepetitions = doc2.createElement("owlnl:ClassRepetitions");
         ClassRepetitions.setAttribute("rdf:parseType","Collection");
         UserModelling.appendChild(ClassRepetitions);
-        
+  
         alltypes=new Hashtable();
-        allTypes1=QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity type").keys();
+        allTypes1=Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity type").keys();
         while(allTypes1.hasMoreElements()){
             String next=convertToClassName(allTypes1.nextElement().toString());
             Element el=doc2.createElement("owlnl:owlClass");
@@ -1790,16 +1824,16 @@ Hashtable allElements=new Hashtable();
             alltypes.put(next,el);
             ClassRepetitions.appendChild(el);
         }
-        
-        
-        
-        
+  
+  
+  
+  
  /*       Element InstancesInterests = doc2.createElement("owlnl:InstancesInterests");
          InstancesInterests.setAttribute("rdf:parseType","Collection");
         UserModelling.appendChild(InstancesInterests);
   
 Hashtable allElements=new Hashtable();
-        Enumeration allEntities1=QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity+generic").keys();
+        Enumeration allEntities1=Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity+generic").keys();
         while(allEntities1.hasMoreElements()){
             String next=allEntities1.nextElement().toString();
             Element el=doc2.createElement("owlnl:owlInstance");
@@ -1816,29 +1850,29 @@ Hashtable allElements=new Hashtable();
         }*/
         
         
-  /*      mainUserModelHashtableEnumKeys = QueryUsersHashtable.mainUserModelHashtable.keys();
-        mainUserModelHashtableEnumElements = QueryUsersHashtable.mainUserModelHashtable.elements();
+  /*      mainUserModelHashtableEnumKeys = Mpiro.win.struc.mainUserModelHashtableKeys();
+        mainUserModelHashtableEnumElements = Mpiro.win.struc.mainUserModelHashtableElements();
         while (mainUserModelHashtableEnumKeys.hasMoreElements()) {
             String fieldname = mainUserModelHashtableEnumKeys.nextElement().toString();
-            
+   
             Hashtable fieldnameHashtable = (Hashtable) mainUserModelHashtableEnumElements.nextElement();
             if(!fieldname.equalsIgnoreCase("Subtype-of")&&!fieldname.equalsIgnoreCase("type")) continue;
             // Element fieldElement = doc2.createElement(fieldname);
             // userModelElement.appendChild(fieldElement);
-            
+   
             Enumeration fieldnameHashtableEnumKeys = fieldnameHashtable.keys();
             Enumeration fieldnameHashtableEnumElements = fieldnameHashtable.elements();
             while (fieldnameHashtableEnumKeys.hasMoreElements()) {
                 String entityname = fieldnameHashtableEnumKeys.nextElement().toString();
                 Hashtable entitynameHashtable = (Hashtable) fieldnameHashtableEnumElements.nextElement();
-                
-                
-                NodeVector nodeVector = (NodeVector)QueryHashtable.mainDBHashtable.get(entityname);
+   
+   
+                NodeVector nodeVector = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(entityname);
                 if(entityname.equalsIgnoreCase("Data Base")||entityname.equalsIgnoreCase("Basic-entity-types")) continue;
                 if(nodeVector.size() != 6){
                     // entityname = convertToClassName(entityname);
-                    
-                    String ctcn=convertToClassName(QueryHashtable.getParents(entityname).elementAt(0).toString());
+   
+                    String ctcn=convertToClassName(Mpiro.win.struc.getParents(entityname).elementAt(0).toString());
                     Element propert =(Element) alltypes.get(ctcn);//other parents?
                     //       fieldElement.appendChild(entityElement);
                     //if(!fieldname.equalsIgnoreCase("type")){
@@ -1851,7 +1885,7 @@ Hashtable allElements=new Hashtable();
                     while(entityNameKeys.hasMoreElements()){
                         String key = (String)entityNameKeys.nextElement();
                         Vector valueVector = (Vector)entityNameVectors.nextElement();
-                        
+   
                         Element Interest = doc2.createElement("owlnl:IRepetitions");
                         propert.appendChild(Interest);
                         Interest.setAttribute("rdf:parseType","Resource");
@@ -1871,7 +1905,7 @@ Hashtable allElements=new Hashtable();
                         //}
                     }//}
         /*        else{
-         
+   
                     Element classes=(Element) entityElement.getLastChild();
                 Element cl =doc2.createElement("owlnl:owlClass");
                 classes.appendChild(cl);
@@ -1883,7 +1917,7 @@ Hashtable allElements=new Hashtable();
                 while(entityNameKeys.hasMoreElements()){
                     String key = (String)entityNameKeys.nextElement();
                     Vector valueVector = (Vector)entityNameVectors.nextElement();
-         
+   
                     Element Interest = doc2.createElement("owlnl:Interest");
                     cl.appendChild(Interest);
                     Interest.setAttribute("rdf:parseType","Resource");
@@ -1893,8 +1927,8 @@ Hashtable allElements=new Hashtable();
                     InterestValue.appendChild(doc2.createTextNode(valueVector.get(0).toString()));
                     Interest.appendChild(forUserType);
                     Interest.appendChild(InterestValue);
-         
-         
+   
+   
                 }}*/
        /*         } else{
                     entityname = convertToClassName(entityname);
@@ -1908,7 +1942,7 @@ Hashtable allElements=new Hashtable();
                     while(entityNameKeys.hasMoreElements()){
                         String key = (String)entityNameKeys.nextElement();
                         Vector valueVector = (Vector)entityNameVectors.nextElement();
-                        
+        
                         Element Interest = doc2.createElement("owlnl:DRepetitions");
                         propert.appendChild(Interest);
                         Interest.setAttribute("rdf:parseType","Resource");
@@ -1921,7 +1955,7 @@ Hashtable allElements=new Hashtable();
                     }
                 }
             }
-            
+        
         }
         
         */
@@ -1929,16 +1963,18 @@ Hashtable allElements=new Hashtable();
         Writer writer=new Writer();
         writer.setOutput(output2,null);
         writer.write(doc2);
-}
+    }
     
     
-     
-     
-     
-          public static void exportRobotModelling(String fileName,String uri) throws Exception {
-     File xmlFile2 = new File(fileName+"RobotModelling.rdf");
-     String base= "http://www.aueb.gr/users/ion/owlnl/UserModelling";
-             DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+    
+    
+    
+    public static void exportRobotModelling(String fileName,String uri) throws Exception {
+        Hashtable characteristics=exportUserCharacteristics(uri);
+        Vector charVector=Mpiro.win.struc.getCharacteristics();
+        File xmlFile2 = new File(fileName+"RobotModelling.rdf");
+        String base= "http://www.aueb.gr/users/ion/owlnl/UserModelling";
+        DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document doc2 = docBuilder.newDocument();
         FileOutputStream output2 = new FileOutputStream(xmlFile2);
         Element RDF2=doc2.createElement("rdf:RDF");
@@ -1947,10 +1983,11 @@ Hashtable allElements=new Hashtable();
         RDF2.setAttribute("xmlns:rdf","http://www.w3.org/1999/02/22-rdf-syntax-ns#");
         RDF2.setAttribute("xmlns","http://www.aueb.gr/users/ion/owlnl/UserModelling#");
         RDF2.setAttribute("xml:base",base);
+        RDF2.setAttribute("xmlns:eleon", Mpiro.win.struc.getBaseURI());
         //RDF2.setAttribute("xmlns:rdfs","http://www.w3.org/2000/01/rdf-schema#");
         
         
-        Hashtable entityTypesHashtables=QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+        Hashtable entityTypesHashtables=Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
         
         Element UserModelling=doc2.createElement("owlnl:RobotModelling");
         RDF2.appendChild(UserModelling);
@@ -1958,29 +1995,29 @@ Hashtable allElements=new Hashtable();
         usersElement.setAttribute("rdf:parseType","Collection");
         UserModelling.appendChild(usersElement);
         
-        Enumeration userNamesEnu = QueryUsersHashtable.robotsHashtable.keys();
-        Enumeration userValuesEnu = QueryUsersHashtable.robotsHashtable.elements();
+        Enumeration userNamesEnu = Mpiro.win.struc.getRobotNames();
+        Enumeration userValuesEnu = Mpiro.win.struc.getRobotElements();
         Vector usersVector = new Vector();
         while (userNamesEnu.hasMoreElements()) {
             String userName = (String) userNamesEnu.nextElement();
-            Vector userVector = (Vector) userValuesEnu.nextElement();
+            Robot userVector = (Robot) userValuesEnu.nextElement();
             usersVector.add(userName);
             Element currentUserElement = doc2.createElement("owlnl:RobotType");
             currentUserElement.setAttribute("rdf:ID",userName);
             usersElement.appendChild(currentUserElement);
             
             Element sentenceElement = doc2.createElement("owlnl:Openness");
-            sentenceElement.appendChild(doc2.createTextNode(userVector.get(0).toString()));
+            sentenceElement.appendChild(doc2.createTextNode(userVector.getO()));
             Element paragraphElement = doc2.createElement("owlnl:Conscientiousness");
-            paragraphElement.appendChild(doc2.createTextNode(userVector.get(1).toString()));
+            paragraphElement.appendChild(doc2.createTextNode(userVector.getC()));
             //   Element conjunctionElement = doc2.createElement("Link-Number");
             // conjunctionElement.appendChild(doc2.createTextNode(userVector.get(2).toString()));
             Element voiceElement = doc2.createElement("owlnl:Extraversion");
-            voiceElement.appendChild(doc2.createTextNode(userVector.get(2).toString()));
+            voiceElement.appendChild(doc2.createTextNode(userVector.getE()));
             Element agreeableness = doc2.createElement("owlnl:Agreeableness");
-            agreeableness.appendChild(doc2.createTextNode(userVector.get(3).toString()));
+            agreeableness.appendChild(doc2.createTextNode(userVector.getA()));
             Element naturalReactions = doc2.createElement("owlnl:NaturalReactions");
-            naturalReactions.appendChild(doc2.createTextNode(userVector.get(4).toString()));
+            naturalReactions.appendChild(doc2.createTextNode(userVector.getN()));
             
             currentUserElement.appendChild(sentenceElement);
             currentUserElement.appendChild(paragraphElement);
@@ -1996,8 +2033,8 @@ Hashtable allElements=new Hashtable();
         Element PropertiesInterests  = doc2.createElement("owlnl:RobotsPreference");
         PropertiesInterests.setAttribute("rdf:parseType","Collection");
         UserModelling.appendChild(PropertiesInterests);
-        Enumeration properties=QueryHashtable.propertiesHashtable.keys();
-        Enumeration propVectors1=QueryHashtable.propertiesHashtable.elements();
+        Enumeration properties=Mpiro.win.struc.getPropertyNames();
+        Enumeration propVectors1=Mpiro.win.struc.getProperties();
         
         while(properties.hasMoreElements()){
             //   Vector property=(Vector) properties.nextElement();
@@ -2016,106 +2053,138 @@ Hashtable allElements=new Hashtable();
                 Element forUserType = doc2.createElement("owlnl:forUserType");
                 forUserType.setAttribute("rdf:resource",base+"#"+users.nextElement().toString());
                 DPInterest.appendChild(forUserType);
-                Element InterestValue= doc2.createElement("owlnl:Preference");
+                Element InterestValue= doc2.createElement("owlnl:PreferenceValue");
                 Vector value=(Vector) values.nextElement();
                 if(value.elementAt(0).toString().equalsIgnoreCase(""))
                     InterestValue.appendChild(doc2.createTextNode("-1"));
                 else
-                InterestValue.appendChild(doc2.createTextNode(value.elementAt(0).toString()));
+                    InterestValue.appendChild(doc2.createTextNode(value.elementAt(0).toString()));
                 DPInterest.appendChild(InterestValue);
-               // Element InterestValue1= doc2.createElement("owlnl:Repetitions");
-               // Vector value=(Vector) values.nextElement();
-              //  if(value.elementAt(2).toString().equalsIgnoreCase(""))
-              //      InterestValue1.appendChild(doc2.createTextNode("-1"));
-             //   else
-              //  InterestValue1.appendChild(doc2.createTextNode(value.elementAt(2).toString()));
-           //     DPInterest.appendChild(InterestValue1);
+                // Element InterestValue1= doc2.createElement("owlnl:Repetitions");
+                // Vector value=(Vector) values.nextElement();
+                //  if(value.elementAt(2).toString().equalsIgnoreCase(""))
+                //      InterestValue1.appendChild(doc2.createTextNode("-1"));
+                //   else
+                //  InterestValue1.appendChild(doc2.createTextNode(value.elementAt(2).toString()));
+                //     DPInterest.appendChild(InterestValue1);
             }
-            if(!QueryUsersHashtable.mainRobotsModelHashtable.containsKey(nextProp))
-                QueryUsersHashtable.mainRobotsModelHashtable.put(nextProp, new Hashtable());
-            Hashtable np=(Hashtable) QueryUsersHashtable.mainRobotsModelHashtable.get(nextProp);
+            if(!Mpiro.win.struc.mainUserModelHashtableContainsProperty(nextProp))
+                Mpiro.win.struc.putPropertyInMainUserModelHashtable(nextProp, new Hashtable());
+            Hashtable np=(Hashtable) Mpiro.win.struc.getPropertyFromMainUserModelHashtable(nextProp);
             Enumeration npkeys=np.keys();
             Enumeration npelems=np.elements();
             while(npkeys.hasMoreElements()){
                 String nextDomain=npkeys.nextElement().toString();
-                Hashtable nextElem=(Hashtable) npelems.nextElement();
+                // Hashtable nextElem=(Hashtable) npelems.nextElement();
                 if(entityTypesHashtables.containsKey(nextDomain)){
+                    Vector modelling_values=Mpiro.win.struc.getRobotModelling(nextProp, nextDomain);
+                    Enumeration users1=(Enumeration)modelling_values.elementAt(0);
+                    Enumeration values1=(Enumeration)modelling_values.elementAt(1);
                     
-                    Enumeration users1=nextElem.keys();
-                    Enumeration values1=nextElem.elements();
+                    // Enumeration users1=nextElem.keys();
+                    // Enumeration values1=nextElem.elements();
                     while(users1.hasMoreElements()){
                         String nextuser=users1.nextElement().toString();
                         Vector usersValue=(Vector) values1.nextElement();
-                       // if(usersValue.elementAt(1).toString().equalsIgnoreCase("")) continue;
+                        // if(usersValue.elementAt(1).toString().equalsIgnoreCase("")) continue;
                         Element CDPInterest  = doc2.createElement("owlnl:CDPPreference");
-                    CDPInterest.setAttribute("rdf:parseType","Resource");
-                    Property.appendChild(CDPInterest);
-                    //Hashtable usersHash=(Hashtable) nextPropVector.elementAt(12);
-                    Element forClass=doc2.createElement("owlnl:forOwlClass");
-                    forClass.setAttribute("rdf:resource",uri+"#"+nextDomain);
-                    CDPInterest.appendChild(forClass);
+                        CDPInterest.setAttribute("rdf:parseType","Resource");
+                        Property.appendChild(CDPInterest);
+                        //Hashtable usersHash=(Hashtable) nextPropVector.elementAt(12);
+                        Element forClass=doc2.createElement("owlnl:forOwlClass");
+                        forClass.setAttribute("rdf:resource",uri+"#"+nextDomain);
+                        CDPInterest.appendChild(forClass);
                         //String nextuser=users1.nextElement().toString();
                         //Vector usersValue=(Vector) values1.nextElement();
                         Element forUserType = doc2.createElement("owlnl:forUserType");
                         forUserType.setAttribute("rdf:resource",base+"#"+nextuser);
                         CDPInterest.appendChild(forUserType);
+                        for(int g=0;g<charVector.size();g++){
+                            String value="";
+                            if(characteristics.containsKey("Property:"+uri+'#'+nextProp+":"+charVector.elementAt(g).toString()+":"+nextuser+":Class:"+uri+"#"+convertToClassName(nextDomain)))
+                                value=characteristics.get("Property:"+uri+'#'+nextProp+":"+charVector.elementAt(g).toString()+":"+nextuser+":Class:"+uri+"#"+convertToClassName(nextDomain)).toString();
+                            if(characteristics.containsKey("Property:"+uri+'#'+nextProp+":"+charVector.elementAt(g).toString()+":universal:Class:"+uri+"#"+convertToClassName(nextDomain)))
+                                value=characteristics.get("Property:"+uri+'#'+nextProp+":"+charVector.elementAt(g).toString()+":universal:Class:"+uri+"#"+convertToClassName(nextDomain)).toString();
+                            if(!value.equals("")){
+                                Element CharValue= doc2.createElement("eleon:"+charVector.elementAt(g).toString());
+                                CharValue.appendChild(doc2.createTextNode(value));
+                                CDPInterest.appendChild(CharValue);
+                            }
+                        }
+                        
                         Element InterestValue= doc2.createElement("owlnl:PreferenceValue");
                         // Vector value=(Vector) values.nextElement();usersValue.elementAt(1).toString()
-                         if(usersValue.elementAt(0).toString().equalsIgnoreCase(""))
-                             InterestValue.appendChild(doc2.createTextNode(QueryUsersHashtable.getRobotsParentValuesVectorForOWLExport(nextProp, nextuser, nextDomain, 0)));
-                    //InterestValue.appendChild(doc2.createTextNode("-1"));
-                         else
-                        InterestValue.appendChild(doc2.createTextNode(usersValue.elementAt(0).toString()));
+                        if(usersValue.elementAt(0).toString().equalsIgnoreCase(""))
+                            InterestValue.appendChild(doc2.createTextNode(Mpiro.win.struc.getRobotsParentValuesVectorForOWLExport(nextProp, nextuser, nextDomain, 0)));
+                        //InterestValue.appendChild(doc2.createTextNode("-1"));
+                        else
+                            InterestValue.appendChild(doc2.createTextNode(usersValue.elementAt(0).toString()));
                         CDPInterest.appendChild(InterestValue);
                         
-                      //  Element Repetitions= doc2.createElement("owlnl:Repetitions");
+                        //  Element Repetitions= doc2.createElement("owlnl:Repetitions");
                         // Vector value=(Vector) values.nextElement();usersValue.elementAt(1).toString()
-                      //   if(usersValue.elementAt(2).toString().equalsIgnoreCase(""))
-                   // Repetitions.appendChild(doc2.createTextNode("-1"));
-                     //        Repetitions.appendChild(doc2.createTextNode(QueryUsersHashtable.getParentValuesVectorForOWLExport(nextProp, nextuser, nextDomain, 2)));
-                       //  else
-                      //  Repetitions.appendChild(doc2.createTextNode(usersValue.elementAt(2).toString()));
-                       // CDPInterest.appendChild(Repetitions);
+                        //   if(usersValue.elementAt(2).toString().equalsIgnoreCase(""))
+                        // Repetitions.appendChild(doc2.createTextNode("-1"));
+                        //        Repetitions.appendChild(doc2.createTextNode(Mpiro.win.struc.getParentValuesVectorForOWLExport(nextProp, nextuser, nextDomain, 2)));
+                        //  else
+                        //  Repetitions.appendChild(doc2.createTextNode(usersValue.elementAt(2).toString()));
+                        // CDPInterest.appendChild(Repetitions);
                     }
-                }
-                else
-                if(QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity").containsKey(nextDomain)){
-                     
-                    Enumeration users1=nextElem.keys();
-                    Enumeration values1=nextElem.elements();
+                } else
+                    if(Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity").containsKey(nextDomain)){
+                    
+                    Vector modelling_values=Mpiro.win.struc.getRobotModelling(nextProp, nextDomain);
+                    Enumeration users1=(Enumeration)modelling_values.elementAt(0);
+                    Enumeration values1=(Enumeration)modelling_values.elementAt(1);
+                    // Enumeration users1=nextElem.keys();
+                    // Enumeration values1=nextElem.elements();
                     while(users1.hasMoreElements()){
                         String nextuser=users1.nextElement().toString();
                         Vector usersValue=(Vector) values1.nextElement();
-                      //  if(usersValue.elementAt(1).toString().equalsIgnoreCase("")) continue;
+                        //  if(usersValue.elementAt(1).toString().equalsIgnoreCase("")) continue;
                         Element IPInterest  = doc2.createElement("owlnl:IPPreference");
-                    IPInterest.setAttribute("rdf:parseType","Resource");
-                    Property.appendChild(IPInterest);
-                    //Hashtable usersHash=(Hashtable) nextPropVector.elementAt(12);
-                    Element forInstance =doc2.createElement("owlnl:forInstance");
-                    forInstance .setAttribute("rdf:resource",uri+"#"+nextDomain);
-                    IPInterest.appendChild(forInstance );
+                        IPInterest.setAttribute("rdf:parseType","Resource");
+                        Property.appendChild(IPInterest);
+                        //Hashtable usersHash=(Hashtable) nextPropVector.elementAt(12);
+                        Element forInstance =doc2.createElement("owlnl:forInstance");
+                        forInstance .setAttribute("rdf:resource",uri+"#"+nextDomain);
+                        IPInterest.appendChild(forInstance );
                         
                         Element forUserType = doc2.createElement("owlnl:forUserType");
                         forUserType.setAttribute("rdf:resource",base+"#"+nextuser);
                         IPInterest.appendChild(forUserType);
+                        
+                        for(int g=0;g<charVector.size();g++){
+                            String value="";
+                            if(characteristics.containsKey("Property:"+uri+'#'+nextProp+":"+charVector.elementAt(g).toString()+":"+nextuser+":Individual:"+uri+"#"+nextDomain))
+                                value=characteristics.get("Property:"+uri+'#'+nextProp+":"+charVector.elementAt(g).toString()+":"+nextuser+":Individual:"+uri+"#"+nextDomain).toString();
+                            if(characteristics.containsKey("Property:"+uri+'#'+nextProp+":"+charVector.elementAt(g).toString()+":universal:Individual:"+uri+"#"+nextDomain))
+                                value=characteristics.get("Property:"+uri+'#'+nextProp+":"+charVector.elementAt(g).toString()+":universal:Individual:"+uri+"#"+nextDomain).toString();
+                            if(!value.equals("")){
+                                Element CharValue= doc2.createElement("eleon:"+charVector.elementAt(g).toString());
+                                CharValue.appendChild(doc2.createTextNode(value));
+                                IPInterest.appendChild(CharValue);
+                            }
+                        }
+                        
                         Element InterestValue= doc2.createElement("owlnl:PreferenceValue");
                         // Vector value=(Vector) values.nextElement();
                         if(usersValue.elementAt(0).toString().equalsIgnoreCase(""))
                             //InterestValue.appendChild(doc2.createTextNode("-1"));
-                            InterestValue.appendChild(doc2.createTextNode(QueryUsersHashtable.getRobotsParentValuesVectorForOWLExport(nextProp, nextuser, nextDomain, 0)));
+                            InterestValue.appendChild(doc2.createTextNode(Mpiro.win.struc.getRobotsParentValuesVectorForOWLExport(nextProp, nextuser, nextDomain, 0)));
                         else
-                        InterestValue.appendChild(doc2.createTextNode(usersValue.elementAt(0).toString()));
+                            InterestValue.appendChild(doc2.createTextNode(usersValue.elementAt(0).toString()));
                         IPInterest.appendChild(InterestValue);
-                      //  Element Repetitions= doc2.createElement("owlnl:Repetitions");
+                        //  Element Repetitions= doc2.createElement("owlnl:Repetitions");
                         // Vector value=(Vector) values.nextElement();
-                       // if(usersValue.elementAt(2).toString().equalsIgnoreCase(""))
-                           // Repetitions.appendChild(doc2.createTextNode("-1"));
-                    //        Repetitions.appendChild(doc2.createTextNode(QueryUsersHashtable.getParentValuesVectorForOWLExport(nextProp, nextuser, nextDomain, 2)));
-                    //    else
-                    //    Repetitions.appendChild(doc2.createTextNode(usersValue.elementAt(2).toString()));
-                      //  IPInterest.appendChild(Repetitions);
+                        // if(usersValue.elementAt(2).toString().equalsIgnoreCase(""))
+                        // Repetitions.appendChild(doc2.createTextNode("-1"));
+                        //        Repetitions.appendChild(doc2.createTextNode(Mpiro.win.struc.getParentValuesVectorForOWLExport(nextProp, nextuser, nextDomain, 2)));
+                        //    else
+                        //    Repetitions.appendChild(doc2.createTextNode(usersValue.elementAt(2).toString()));
+                        //  IPInterest.appendChild(Repetitions);
                     }
-                }
+                    }
             }
             
         }
@@ -2124,113 +2193,117 @@ Hashtable allElements=new Hashtable();
         
         
         
-       String nextProp="ClassOrInd";      
-       FileWriter fstream = new FileWriter("robots.txt");
+        String nextProp="ClassOrInd";
+        FileWriter fstream = new FileWriter(fileName+"robots.txt");
         BufferedWriter out = new BufferedWriter(fstream);
-       // out.write("test");
-       // out.newLine();
-    
-    //Close the output stream
-    
-      //  Element Property  = doc2.createElement("owlnl:Property");
+        // out.write("test");
+        // out.newLine();
+        
+        //Close the output stream
+        
+        //  Element Property  = doc2.createElement("owlnl:Property");
         //    Property.setAttribute("rdf:about",uri+'#'+nextProp);
-          ///  PropertiesInterests.appendChild(Property);
-         if(!QueryUsersHashtable.mainRobotsModelHashtable.containsKey(nextProp))
-                QueryUsersHashtable.mainRobotsModelHashtable.put(nextProp, new Hashtable());
-            Hashtable np=(Hashtable) QueryUsersHashtable.mainRobotsModelHashtable.get(nextProp);
-            Enumeration npkeys=np.keys();
-            Enumeration npelems=np.elements();
-            while(npkeys.hasMoreElements()){
-                String nextDomain=npkeys.nextElement().toString();
-                Hashtable nextElem=(Hashtable) npelems.nextElement();
-                if(entityTypesHashtables.containsKey(nextDomain)){
-                    
-                    Enumeration users1=nextElem.keys();
-                    Enumeration values1=nextElem.elements();
-                    while(users1.hasMoreElements()){
-                        String nextuser=users1.nextElement().toString();
-                        Vector usersValue=(Vector) values1.nextElement();
-                       // if(usersValue.elementAt(1).toString().equalsIgnoreCase("")) continue;
-                      //  Element CDPInterest  = doc2.createElement("owlnl:CDPPreference");
-                   // CDPInterest.setAttribute("rdf:parseType","Resource");
-                  //  Property.appendChild(CDPInterest);
+        ///  PropertiesInterests.appendChild(Property);
+        if(!Mpiro.win.struc.mainUserModelHashtableContainsProperty(nextProp))
+            Mpiro.win.struc.putPropertyInMainUserModelHashtable(nextProp, new Hashtable());
+        Hashtable np=(Hashtable) Mpiro.win.struc.getPropertyFromMainUserModelHashtable(nextProp);
+        Enumeration npkeys=np.keys();
+        Enumeration npelems=np.elements();
+        while(npkeys.hasMoreElements()){
+            String nextDomain=npkeys.nextElement().toString();
+            // Hashtable nextElem=(Hashtable) npelems.nextElement();
+            if(entityTypesHashtables.containsKey(nextDomain)){
+                
+                Vector modelling_values=Mpiro.win.struc.getRobotModelling(nextProp, nextDomain);
+                Enumeration users1=(Enumeration)modelling_values.elementAt(0);
+                Enumeration values1=(Enumeration)modelling_values.elementAt(1);
+                // Enumeration users1=nextElem.keys();
+                // Enumeration values1=nextElem.elements();
+                while(users1.hasMoreElements()){
+                    String nextuser=users1.nextElement().toString();
+                    Vector usersValue=(Vector) values1.nextElement();
+                    // if(usersValue.elementAt(1).toString().equalsIgnoreCase("")) continue;
+                    //  Element CDPInterest  = doc2.createElement("owlnl:CDPPreference");
+                    // CDPInterest.setAttribute("rdf:parseType","Resource");
+                    //  Property.appendChild(CDPInterest);
                     
                     //Hashtable usersHash=(Hashtable) nextPropVector.elementAt(12);
-                  //  Element forClass=doc2.createElement("owlnl:forOwlClass");
-                 //   forClass.setAttribute("rdf:resource",uri+"#"+nextDomain);
-                 //   CDPInterest.appendChild(forClass);
-                        //String nextuser=users1.nextElement().toString();
-                        //Vector usersValue=(Vector) values1.nextElement();
+                    //  Element forClass=doc2.createElement("owlnl:forOwlClass");
+                    //   forClass.setAttribute("rdf:resource",uri+"#"+nextDomain);
+                    //   CDPInterest.appendChild(forClass);
+                    //String nextuser=users1.nextElement().toString();
+                    //Vector usersValue=(Vector) values1.nextElement();
                     //    Element forUserType = doc2.createElement("owlnl:forUserType");
                     //    forUserType.setAttribute("rdf:resource","#"+nextuser);
                     //    CDPInterest.appendChild(forUserType);
-                     //   Element InterestValue= doc2.createElement("owlnl:PreferenceValue");
-                        // Vector value=(Vector) values.nextElement();usersValue.elementAt(1).toString()
-                         if(usersValue.elementAt(0).toString().equalsIgnoreCase("")){
-                             out.write("Class:"+uri+"#"+nextDomain+":"+nextuser+":"+QueryUsersHashtable.getRobotsParentValuesVectorForOWLExport(nextProp, nextuser, nextDomain, 0));
-out.newLine();}                          
-//   InterestValue.appendChild(doc2.createTextNode(QueryUsersHashtable.getRobotsParentValuesVectorForOWLExport(nextProp, nextuser, nextDomain, 0)));
+                    //   Element InterestValue= doc2.createElement("owlnl:PreferenceValue");
+                    // Vector value=(Vector) values.nextElement();usersValue.elementAt(1).toString()
+                    if(usersValue.elementAt(0).toString().equalsIgnoreCase("")){
+                        out.write("Class:"+uri+"#"+nextDomain+":"+nextuser+":"+Mpiro.win.struc.getRobotsParentValuesVectorForOWLExport(nextProp, nextuser, nextDomain, 0));
+                        out.newLine();}
+//   InterestValue.appendChild(doc2.createTextNode(Mpiro.win.struc.getRobotsParentValuesVectorForOWLExport(nextProp, nextuser, nextDomain, 0)));
                     //InterestValue.appendChild(doc2.createTextNode("-1"));
-                         else{
-                             out.write("Class:"+uri+"#"+nextDomain+":"+nextuser+":"+usersValue.elementAt(0).toString());
-out.newLine();}                       
+                    else{
+                        out.write("Class:"+uri+"#"+nextDomain+":"+nextuser+":"+usersValue.elementAt(0).toString());
+                        out.newLine();}
 //// InterestValue.appendChild(doc2.createTextNode(usersValue.elementAt(0).toString()));
-                      //  CDPInterest.appendChild(InterestValue);
-                        
-                      //  Element Repetitions= doc2.createElement("owlnl:Repetitions");
-                        // Vector value=(Vector) values.nextElement();usersValue.elementAt(1).toString()
-                      //   if(usersValue.elementAt(2).toString().equalsIgnoreCase(""))
-                   // Repetitions.appendChild(doc2.createTextNode("-1"));
-                     //        Repetitions.appendChild(doc2.createTextNode(QueryUsersHashtable.getParentValuesVectorForOWLExport(nextProp, nextuser, nextDomain, 2)));
-                       //  else
-                      //  Repetitions.appendChild(doc2.createTextNode(usersValue.elementAt(2).toString()));
-                       // CDPInterest.appendChild(Repetitions);
-                    }
+                    //  CDPInterest.appendChild(InterestValue);
+                    
+                    //  Element Repetitions= doc2.createElement("owlnl:Repetitions");
+                    // Vector value=(Vector) values.nextElement();usersValue.elementAt(1).toString()
+                    //   if(usersValue.elementAt(2).toString().equalsIgnoreCase(""))
+                    // Repetitions.appendChild(doc2.createTextNode("-1"));
+                    //        Repetitions.appendChild(doc2.createTextNode(Mpiro.win.struc.getParentValuesVectorForOWLExport(nextProp, nextuser, nextDomain, 2)));
+                    //  else
+                    //  Repetitions.appendChild(doc2.createTextNode(usersValue.elementAt(2).toString()));
+                    // CDPInterest.appendChild(Repetitions);
                 }
-                else
-                if(QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity").containsKey(nextDomain)){
-                     
-                    Enumeration users1=nextElem.keys();
-                    Enumeration values1=nextElem.elements();
-                    while(users1.hasMoreElements()){
-                        String nextuser=users1.nextElement().toString();
-                        Vector usersValue=(Vector) values1.nextElement();
-                      //  if(usersValue.elementAt(1).toString().equalsIgnoreCase("")) continue;
-                      //  Element IPInterest  = doc2.createElement("owlnl:IPPreference");
-                 //   IPInterest.setAttribute("rdf:parseType","Resource");
-                  //  Property.appendChild(IPInterest);
+            } else
+                if(Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity").containsKey(nextDomain)){
+                
+                Vector modelling_values=Mpiro.win.struc.getRobotModelling(nextProp, nextDomain);
+                Enumeration users1=(Enumeration)modelling_values.elementAt(0);
+                Enumeration values1=(Enumeration)modelling_values.elementAt(1);
+                // Enumeration users1=nextElem.keys();
+                // Enumeration values1=nextElem.elements();
+                while(users1.hasMoreElements()){
+                    String nextuser=users1.nextElement().toString();
+                    Vector usersValue=(Vector) values1.nextElement();
+                    //  if(usersValue.elementAt(1).toString().equalsIgnoreCase("")) continue;
+                    //  Element IPInterest  = doc2.createElement("owlnl:IPPreference");
+                    //   IPInterest.setAttribute("rdf:parseType","Resource");
+                    //  Property.appendChild(IPInterest);
                     //Hashtable usersHash=(Hashtable) nextPropVector.elementAt(12);
-                 //   Element forInstance =doc2.createElement("owlnl:forInstance");
-                  //  forInstance .setAttribute("rdf:resource",uri+"#"+nextDomain);
-                  //  IPInterest.appendChild(forInstance );
-                        
-                  //      Element forUserType = doc2.createElement("owlnl:forUserType");
-                  //      forUserType.setAttribute("rdf:resource","#"+nextuser);
-                   //     IPInterest.appendChild(forUserType);
+                    //   Element forInstance =doc2.createElement("owlnl:forInstance");
+                    //  forInstance .setAttribute("rdf:resource",uri+"#"+nextDomain);
+                    //  IPInterest.appendChild(forInstance );
+                    
+                    //      Element forUserType = doc2.createElement("owlnl:forUserType");
+                    //      forUserType.setAttribute("rdf:resource","#"+nextuser);
+                    //     IPInterest.appendChild(forUserType);
                     //    Element InterestValue= doc2.createElement("owlnl:PreferenceValue");
-                        // Vector value=(Vector) values.nextElement();
-                        if(usersValue.elementAt(0).toString().equalsIgnoreCase("")){
-                            out.write("Individual:"+uri+"#"+nextDomain+":"+nextuser+":"+QueryUsersHashtable.getRobotsParentValuesVectorForOWLExport(nextProp, nextuser, nextDomain, 0));
-                         out.newLine();}
-                            //InterestValue.appendChild(doc2.createTextNode("-1"));
-                           // InterestValue.appendChild(doc2.createTextNode(QueryUsersHashtable.getRobotsParentValuesVectorForOWLExport(nextProp, nextuser, nextDomain, 0)));
-                        else
-                        {
-                            out.write("Class:"+uri+"#"+nextDomain+":"+nextuser+":"+usersValue.elementAt(0).toString());
-               out.newLine();}
-                            // InterestValue.appendChild(doc2.createTextNode(usersValue.elementAt(0).toString()));
-                       // IPInterest.appendChild(InterestValue);
-                      //  Element Repetitions= doc2.createElement("owlnl:Repetitions");
-                        // Vector value=(Vector) values.nextElement();
-                       // if(usersValue.elementAt(2).toString().equalsIgnoreCase(""))
-                           // Repetitions.appendChild(doc2.createTextNode("-1"));
-                    //        Repetitions.appendChild(doc2.createTextNode(QueryUsersHashtable.getParentValuesVectorForOWLExport(nextProp, nextuser, nextDomain, 2)));
+                    // Vector value=(Vector) values.nextElement();
+                    if(usersValue.elementAt(0).toString().equalsIgnoreCase("")){
+                        out.write("Individual:"+uri+"#"+nextDomain+":"+nextuser+":"+Mpiro.win.struc.getRobotsParentValuesVectorForOWLExport(nextProp, nextuser, nextDomain, 0));
+                        out.newLine();}
+                    //InterestValue.appendChild(doc2.createTextNode("-1"));
+                    // InterestValue.appendChild(doc2.createTextNode(Mpiro.win.struc.getRobotsParentValuesVectorForOWLExport(nextProp, nextuser, nextDomain, 0)));
+                    else {
+                        out.write("Class:"+uri+"#"+nextDomain+":"+nextuser+":"+usersValue.elementAt(0).toString());
+                        out.newLine();}
+                    // InterestValue.appendChild(doc2.createTextNode(usersValue.elementAt(0).toString()));
+                    // IPInterest.appendChild(InterestValue);
+                    //  Element Repetitions= doc2.createElement("owlnl:Repetitions");
+                    // Vector value=(Vector) values.nextElement();
+                    // if(usersValue.elementAt(2).toString().equalsIgnoreCase(""))
+                    // Repetitions.appendChild(doc2.createTextNode("-1"));
+                    //        Repetitions.appendChild(doc2.createTextNode(Mpiro.win.struc.getParentValuesVectorForOWLExport(nextProp, nextuser, nextDomain, 2)));
                     //    else
                     //    Repetitions.appendChild(doc2.createTextNode(usersValue.elementAt(2).toString()));
-                      //  IPInterest.appendChild(Repetitions);
-                    }
+                    //  IPInterest.appendChild(Repetitions);
                 }
-            }
+                }
+        }
         out.close();
         
         
@@ -2242,7 +2315,7 @@ out.newLine();}
 //            Property1.setAttribute("rdf:about",uri+'#'+nextProp);
 //            PropertiesInterests.appendChild(Property1);
 //            //Hashtable usersHash=(Hashtable) nextPropVector.elementAt(12);
-//            Enumeration users=QueryUsersHashtable.robotsHashtable.keys();
+//            Enumeration users=QueryProfileHashtable.getRobots();
 //           // Enumeration values=usersHash.elements();
 //            while(users.hasMoreElements()){
 //                Element DPInterest  = doc2.createElement("owlnl:DPPreference");
@@ -2263,48 +2336,48 @@ out.newLine();}
         
         
         
-
         
         
-     //   Hashtable test=(Hashtable)((Vector)QueryHashtable.mainDBHashtable.get("item")).elementAt(5);
-      //  Element Appropriateness = doc2.createElement("owlnl:Appropriateness");
-      //  Appropriateness.setAttribute("rdf:parseType","Collection");
-     //   UserModelling.appendChild(Appropriateness);
+        
+        //   Hashtable test=(Hashtable)((Vector)Mpiro.win.struc.getEntityTypeOrEntity("item")).elementAt(5);
+        //  Element Appropriateness = doc2.createElement("owlnl:Appropriateness");
+        //  Appropriateness.setAttribute("rdf:parseType","Collection");
+        //   UserModelling.appendChild(Appropriateness);
         
         
-     //   Hashtable hash=entityTypesHashtables;
-       
+        //   Hashtable hash=entityTypesHashtables;
         
-     //   properties=QueryHashtable.propertiesHashtable.keys();
-     //   while(properties.hasMoreElements()){
-     //       Enumeration allEntityTypeParentNames = entityTypesHashtables.keys();
-            
-      //      String propName=properties.nextElement().toString();
-      //      while(allEntityTypeParentNames.hasMoreElements()){
-                
-            //    String entityTypeName = allEntityTypeParentNames.nextElement().toString();
-                // NodeVector nodeEntityType = (NodeVector) QueryHashtable.mainDBHashtable.get(entityTypeName);
-          //      Vector vec= (Vector) QueryHashtable.mainDBHashtable.get(entityTypeName);
-                // TemplateVector templateVector = (TemplateVector) vec.elementAt(4);
-         //       Hashtable microPlanningValues = (Hashtable) vec.get(5);
-                
-                
+        
+        //   properties=Mpiro.win.struc.getPropertyNames();
+        //   while(properties.hasMoreElements()){
+        //       Enumeration allEntityTypeParentNames = entityTypesHashtables.keys();
+        
+        //      String propName=properties.nextElement().toString();
+        //      while(allEntityTypeParentNames.hasMoreElements()){
+        
+        //    String entityTypeName = allEntityTypeParentNames.nextElement().toString();
+        // NodeVector nodeEntityType = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(entityTypeName);
+        //      Vector vec= (Vector) Mpiro.win.struc.getEntityTypeOrEntity(entityTypeName);
+        // TemplateVector templateVector = (TemplateVector) vec.elementAt(4);
+        //       Hashtable microPlanningValues = (Hashtable) vec.get(5);
+        
+        
         /*        for(int j=1;j<6;j++){
                     Element MicroplanApprop=doc2.createElement("owlnl:MicroplanApprop");
                     MicroplanApprop.setAttribute("rdf:about",uri+'#'+propName+"-templ"+String.valueOf(j)+"-el");
-                    
+         
                     for(int i=0;i<usersVector.size();i++){
-                        
+         
                         Element Approp=doc2.createElement("owlnl:Approp");
                         Approp.setAttribute("rdf:parseType","Resource");
-                        
+         
                         Element forUserType = doc2.createElement("owlnl:forUserType");
                         forUserType.setAttribute("rdf:resource","#"+usersVector.elementAt(i).toString());
                         Approp.appendChild(forUserType);
                         Element AppropValue= doc2.createElement("owlnl:AppropValue");
                         String value="";
                             try{
-                            
+         
                             value= microPlanningValues.get(String.valueOf(j)+":"+propName+":"+usersVector.elementAt(i).toString()+":"+"Greek").toString();
                             } catch(NullPointerException c){
                         continue;
@@ -2313,41 +2386,41 @@ out.newLine();}
                             AppropValue.appendChild(doc2.createTextNode(value));
                             Approp.appendChild(AppropValue);
                             Appropriateness.appendChild(MicroplanApprop);
-                        
-                        
+         
+         
                     }}
-                
+         
                 for(int j=1;j<6;j++){
                     Element MicroplanApprop=doc2.createElement("owlnl:MicroplanApprop");
                     MicroplanApprop.setAttribute("rdf:about",uri+'#'+propName+"-templ"+String.valueOf(j)+"-en");
-                    
+         
                     for(int i=0;i<usersVector.size();i++){
                         Element Approp=doc2.createElement("owlnl:Approp");
                         Approp.setAttribute("rdf:parseType","Resource");
-                        
+         
                         Element forUserType = doc2.createElement("owlnl:forUserType");
                         forUserType.setAttribute("rdf:resource","#"+usersVector.elementAt(i).toString());
                         Approp.appendChild(forUserType);
                         Element AppropValue= doc2.createElement("owlnl:AppropValue");
                         String value="";
                         try{
-                            
-                            
+         
+         
                             value= microPlanningValues.get(String.valueOf(j)+":"+propName+":"+usersVector.elementAt(i).toString()+":"+"English").toString();
                             } catch(NullPointerException c){continue;}
                         MicroplanApprop.appendChild(Approp);
                             AppropValue.appendChild(doc2.createTextNode(value));
                             Approp.appendChild(AppropValue);
                             Appropriateness.appendChild(MicroplanApprop);
-                        
-                        
+         
+         
                     }}*/
-                
-          //  }}
+        
+        //  }}
         
         
         
-         entityTypesHashtables.remove("Data Base");
+        entityTypesHashtables.remove("Data Base");
         entityTypesHashtables.remove("Basic-entity-types");
         
         Element ClassInterests = doc2.createElement("owlnl:ClassPreference");
@@ -2371,11 +2444,11 @@ out.newLine();}
         
         
         
-
         
         
-        Enumeration mainUserModelHashtableEnumKeys = QueryUsersHashtable.mainRobotsModelHashtable.keys();
-        Enumeration mainUserModelHashtableEnumElements = QueryUsersHashtable.mainRobotsModelHashtable.elements();
+        
+        Enumeration mainUserModelHashtableEnumKeys = Mpiro.win.struc.mainUserModelHashtableKeys();
+        Enumeration mainUserModelHashtableEnumElements = Mpiro.win.struc.mainUserModelHashtableElements();
         while (mainUserModelHashtableEnumKeys.hasMoreElements()) {
             String fieldname = mainUserModelHashtableEnumKeys.nextElement().toString();
             
@@ -2388,15 +2461,15 @@ out.newLine();}
             Enumeration fieldnameHashtableEnumElements = fieldnameHashtable.elements();
             while (fieldnameHashtableEnumKeys.hasMoreElements()) {
                 String entityname = fieldnameHashtableEnumKeys.nextElement().toString();
-                Hashtable entitynameHashtable = (Hashtable) fieldnameHashtableEnumElements.nextElement();
-                if(!QueryHashtable.mainDBHashtable.containsKey(entityname)) continue;
-                NodeVector nodeVector = (NodeVector)QueryHashtable.mainDBHashtable.get(entityname);
+                //  Hashtable entitynameHashtable = (Hashtable) fieldnameHashtableEnumElements.nextElement();
+                if(!Mpiro.win.struc.mainDBcontainsEntityOrEntityType(entityname)) continue;
+                NodeVector nodeVector = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(entityname);
                 if(entityname.equalsIgnoreCase("Data Base")||entityname.equalsIgnoreCase("Basic-entity-types")) continue;
-               // System.out.println(entityname);
+                // System.out.println(entityname);
                 if(nodeVector.size() != 6){
                     // entityname = convertToClassName(entityname);
                     
-                    String ctcn=convertToClassName(QueryHashtable.getParents(entityname).elementAt(0).toString());
+                    String ctcn=convertToClassName(Mpiro.win.struc.getParents(entityname).elementAt(0).toString());
                     Element propert =(Element) alltypes.get(ctcn);//other parents?
                     //       fieldElement.appendChild(entityElement);
                     //if(!fieldname.equalsIgnoreCase("type")){
@@ -2404,8 +2477,11 @@ out.newLine();}
                     //Element Property =doc2.createElement("owlnl:Property");
                     //propert.appendChild(Property);
                     //Property.setAttribute("rdf:about",uri+'/'+fieldname);
-                    Enumeration entityNameKeys = entitynameHashtable.keys();
-                    Enumeration entityNameVectors = entitynameHashtable.elements();
+                    Vector modelling_values=Mpiro.win.struc.getRobotModelling(fieldname, entityname);
+                    Enumeration entityNameKeys=(Enumeration)modelling_values.elementAt(0);
+                    Enumeration entityNameVectors=(Enumeration)modelling_values.elementAt(1);
+                    // Enumeration entityNameKeys = entitynameHashtable.keys();
+                    // Enumeration entityNameVectors = entitynameHashtable.elements();
                     while(entityNameKeys.hasMoreElements()){
                         String key = (String)entityNameKeys.nextElement();
                         Vector valueVector = (Vector)entityNameVectors.nextElement();
@@ -2417,34 +2493,52 @@ out.newLine();}
                         forUserType.setAttribute("rdf:resource",base+"#"+key);
                         Element forInstance=doc2.createElement("owlnl:forInstance");
                         forInstance.setAttribute("rdf:resource",uri+'#'+entityname);
-                        Element InterestValue=doc2.createElement("owlnl:Preference");
+                        Element InterestValue=doc2.createElement("owlnl:PreferenceValue");
                         if(valueVector.get(0).toString().equalsIgnoreCase(""))
-                    //InterestValue.appendChild(doc2.createTextNode("-1"));
-                            InterestValue.appendChild(doc2.createTextNode(QueryUsersHashtable.getRobotParentTypeOfVectorForOWLExport(key, entityname, 0)));
-                         else
-                        InterestValue.appendChild(doc2.createTextNode(valueVector.get(0).toString()));
+                            //InterestValue.appendChild(doc2.createTextNode("-1"));
+                            InterestValue.appendChild(doc2.createTextNode(Mpiro.win.struc.getParentTypeOfVectorForOWLExport(key, entityname, 0)));
+                        else
+                            InterestValue.appendChild(doc2.createTextNode(valueVector.get(0).toString()));
                         Element InterestValue1=doc2.createElement("owlnl:Repetitions");
-                    //    if(valueVector.get(2).toString().equalsIgnoreCase(""))
-                    //InterestValue1.appendChild(doc2.createTextNode("-1"));
-                       //     InterestValue1.appendChild(doc2.createTextNode(QueryUsersHashtable.getParentTypeOfVectorForOWLExport(key, entityname, 2)));
-                     //    else
-                    //    InterestValue1.appendChild(doc2.createTextNode(valueVector.get(2).toString()));
+                        //    if(valueVector.get(2).toString().equalsIgnoreCase(""))
+                        //InterestValue1.appendChild(doc2.createTextNode("-1"));
+                        //     InterestValue1.appendChild(doc2.createTextNode(Mpiro.win.struc.getParentTypeOfVectorForOWLExport(key, entityname, 2)));
+                        //    else
+                        //    InterestValue1.appendChild(doc2.createTextNode(valueVector.get(2).toString()));
+                        
+                        
+                        for(int g=0;g<charVector.size();g++){
+                            String value="";
+                            if(characteristics.containsKey("Individual:"+uri+'#'+entityname+":"+charVector.elementAt(g).toString()+":"+key))
+                                value=characteristics.get("Individual:"+uri+'#'+entityname+":"+charVector.elementAt(g).toString()+":"+key).toString();
+                            if(characteristics.containsKey("Individual:"+uri+'#'+entityname+":universal:"+key))
+                                value=characteristics.get("Individual:"+uri+'#'+entityname+":universal:"+key).toString();
+                            if(!value.equals("")){
+                                Element CharValue= doc2.createElement("eleon:"+charVector.elementAt(g).toString());
+                                CharValue.appendChild(doc2.createTextNode(value));
+                                Interest.appendChild(CharValue);
+                            }
+                        }
                         
                         Interest.appendChild(forInstance);
                         Interest.appendChild(forUserType);
                         Interest.appendChild(InterestValue);
-                     //   Interest.appendChild(InterestValue1);
+                        //   Interest.appendChild(InterestValue1);
                     }
-        
+                    
                 } else{
-                    entityname = convertToClassName(entityname);
-                    Element propert =(Element) alltypes.get(entityname);
+                    Vector modelling_values=Mpiro.win.struc.getRobotModelling(fieldname, entityname);
+                    String entitynameConverted = convertToClassName(entityname);
+                    Element propert =(Element) alltypes.get(entitynameConverted);
                     //    Element propert=(Element) entityElement.getFirstChild();
                     // Element Property =doc2.createElement("owlnl:Property");
                     // propert.appendChild(Property);
                     // Property.setAttribute("rdf:about",uri+'/'+fieldname);
-                    Enumeration entityNameKeys = entitynameHashtable.keys();
-                    Enumeration entityNameVectors = entitynameHashtable.elements();
+                    
+                    Enumeration entityNameKeys=(Enumeration)modelling_values.elementAt(0);
+                    Enumeration entityNameVectors=(Enumeration)modelling_values.elementAt(1);
+                    // Enumeration entityNameKeys = entitynameHashtable.keys();
+                    // Enumeration entityNameVectors = entitynameHashtable.elements();
                     while(entityNameKeys.hasMoreElements()){
                         String key = (String)entityNameKeys.nextElement();
                         Vector valueVector = (Vector)entityNameVectors.nextElement();
@@ -2454,23 +2548,36 @@ out.newLine();}
                         Interest.setAttribute("rdf:parseType","Resource");
                         Element forUserType=doc2.createElement("owlnl:forUserType");
                         forUserType.setAttribute("rdf:resource",base+"#"+key);
-                        Element InterestValue=doc2.createElement("owlnl:InterestValue");
+                        Element InterestValue=doc2.createElement("owlnl:PreferenceValue");
                         if(valueVector.get(0).toString().equalsIgnoreCase(""))
-                    //InterestValue.appendChild(doc2.createTextNode("-1"));
-                            InterestValue.appendChild(doc2.createTextNode(QueryUsersHashtable.getRobotParentTypeOfVectorForOWLExport(key, entityname, 0)));
+                            //InterestValue.appendChild(doc2.createTextNode("-1"));
+                            InterestValue.appendChild(doc2.createTextNode(Mpiro.win.struc.getParentTypeOfVectorForOWLExport(key, entityname, 0)));
                         else
-                        InterestValue.appendChild(doc2.createTextNode(valueVector.get(0).toString()));
-                     //   Element InterestValue1=doc2.createElement("owlnl:Repetitions");
-                  ///  if(valueVector.get(2).toString().equalsIgnoreCase(""))
-                    //InterestValue1.appendChild(doc2.createTextNode("-1"));
-                   //     InterestValue1.appendChild(doc2.createTextNode(QueryUsersHashtable.getParentTypeOfVectorForOWLExport(key, entityname, 2)));
-                    //     else
-                     //   InterestValue1.appendChild(doc2.createTextNode(valueVector.get(2).toString()));
-                       // Interest.appendChild(forUserType);
+                            InterestValue.appendChild(doc2.createTextNode(valueVector.get(0).toString()));
+                        //   Element InterestValue1=doc2.createElement("owlnl:Repetitions");
+                        ///  if(valueVector.get(2).toString().equalsIgnoreCase(""))
+                        //InterestValue1.appendChild(doc2.createTextNode("-1"));
+                        //     InterestValue1.appendChild(doc2.createTextNode(Mpiro.win.struc.getParentTypeOfVectorForOWLExport(key, entityname, 2)));
+                        //     else
+                        //   InterestValue1.appendChild(doc2.createTextNode(valueVector.get(2).toString()));
+                        // Interest.appendChild(forUserType);
+                        
+                        for(int g=0;g<charVector.size();g++){
+                            String value="";
+                            if(characteristics.containsKey("Class:"+uri+'#'+entitynameConverted+":"+charVector.elementAt(g).toString()+":"+key))
+                                value=characteristics.get("Class:"+uri+'#'+entitynameConverted+":"+charVector.elementAt(g).toString()+":"+key).toString();
+                            if(characteristics.containsKey("Class:"+uri+'#'+entitynameConverted+":universal:"+key))
+                                value=characteristics.get("Class:"+uri+'#'+entitynameConverted+":universal:"+key).toString();
+                            if(!value.equals("")){
+                                Element CharValue= doc2.createElement("eleon:"+charVector.elementAt(g).toString());
+                                CharValue.appendChild(doc2.createTextNode(value));
+                                Interest.appendChild(CharValue);
+                            }
+                        }
                         
                         Interest.appendChild(forUserType);
                         Interest.appendChild(InterestValue);
-                     //   Interest.appendChild(InterestValue1);
+                        //   Interest.appendChild(InterestValue1);
                     }
                 }
             }
@@ -2478,21 +2585,21 @@ out.newLine();}
         }
         
         
-
+        
         
         Writer writer=new Writer();
         writer.setOutput(output2,null);
         writer.write(doc2);
-}
-     
-     
-     
-     
-     
+    }
     
-        public static void exportMicroplans(String fileName,String uri) throws Exception {
+    
+    
+    
+    
+    
+    public static void exportMicroplans(String fileName,String uri) throws Exception {
         
-        Hashtable hash=QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity type");
+        Hashtable hash=Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity type");
         hash.remove("Data Base");
         hash.remove("Basic-entity-types");
         
@@ -2523,12 +2630,12 @@ out.newLine();}
         Element props=doc1.createElement("owlnl:Properties");
         props.setAttribute("rdf:parseType","Collection");
         MicroplansAndOrdering.appendChild(props);
-        //    Enumeration propKeys=QueryHashtable.propertiesHashtable.keys();
-        Enumeration propElements=QueryHashtable.propertiesHashtable.elements();
+        //    Enumeration propKeys=Mpiro.win.struc.getPropertyNames();
+        Enumeration propElements=Mpiro.win.struc.getProperties();
         Hashtable micros=new Hashtable();
         while (propElements.hasMoreElements()) {
             //    String entityTypeName = allEntityTypeParentNames.nextElement().toString();
-            // NodeVector nodeEntityType = (NodeVector) QueryHashtable.mainDBHashtable.get(entityTypeName);
+            // NodeVector nodeEntityType = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(entityTypeName);
             Vector vec= (Vector) propElements.nextElement();
             TemplateVector templateVector = (TemplateVector) vec.elementAt(11);
             Hashtable microplanning=(Hashtable) vec.elementAt(10);
@@ -2573,16 +2680,15 @@ out.newLine();}
                         microplan.appendChild(MicroplanName);
                         Element used=doc1.createElement("owlnl:Used");
                         if(o==2){
-                        if(microplanning.get(templ[0]+":"+templ[1]+":SELECTION:Greek").toString().equalsIgnoreCase("NoMicroplanning"))
-                            used.appendChild(doc1.createTextNode("false"));
-                        else
-                        used.appendChild(doc1.createTextNode("true"));
-                        }
-                        else{
+                            if(microplanning.get(templ[0]+":"+templ[1]+":SELECTION:Greek").toString().equalsIgnoreCase("NoMicroplanning"))
+                                used.appendChild(doc1.createTextNode("false"));
+                            else
+                                used.appendChild(doc1.createTextNode("true"));
+                        } else{
                             if(microplanning.get(templ[0]+":"+templ[1]+":SELECTION:English").toString().equalsIgnoreCase("NoMicroplanning"))
-                            used.appendChild(doc1.createTextNode("false"));
-                        else
-                        used.appendChild(doc1.createTextNode("true"));
+                                used.appendChild(doc1.createTextNode("false"));
+                            else
+                                used.appendChild(doc1.createTextNode("true"));
                         }
                         Element agr=doc1.createElement("owlnl:AggrAllowed");
                         agr.appendChild(doc1.createTextNode(langValues.get(templ[0]+":"+templ[1]+":Aggreg").toString().toLowerCase()));
@@ -2614,7 +2720,7 @@ out.newLine();}
                                             text1.appendChild(val);
                                             String plural="";
                                             if(template.containsKey("plural"))
-                                            plural=template.get("plural").toString();
+                                                plural=template.get("plural").toString();
                                             Element pluralVal= doc1.createElement("owlnl:pluralVal");
                                             pluralVal.setAttribute("xml:lang",lang);
                                             pluralVal.appendChild(doc1.createTextNode(plural));
@@ -2628,13 +2734,13 @@ out.newLine();}
                                         if (template.get("prep").toString().equalsIgnoreCase("true")){
                                             String prep=template.get("string").toString();
                                             Element text1= doc1.createElement("owlnl:Prep");
-                                           // Element voice=doc1.createElement("owlnl:voice");
-                                           // voice.appendChild(doc1.createTextNode(template.get("voice").toString()));
-                                           // text1.appendChild(voice);
-                                           // Element tense=doc1.createElement("owlnl:tense");
-                                           // tense.appendChild(doc1.createTextNode(template.get("tense").toString()));
-                                          //  text1.appendChild(tense);
-                                           Element val=doc1.createElement("owlnl:Val");
+                                            // Element voice=doc1.createElement("owlnl:voice");
+                                            // voice.appendChild(doc1.createTextNode(template.get("voice").toString()));
+                                            // text1.appendChild(voice);
+                                            // Element tense=doc1.createElement("owlnl:tense");
+                                            // tense.appendChild(doc1.createTextNode(template.get("tense").toString()));
+                                            //  text1.appendChild(tense);
+                                            Element val=doc1.createElement("owlnl:Val");
                                             val.appendChild(doc1.createTextNode(prep));
                                             val.setAttribute("xml:lang",lang);
                                             text1.appendChild(val);
@@ -2642,15 +2748,15 @@ out.newLine();}
                                             continue;
                                         }}
                                     
-                                        String text=template.get("string").toString();
-                                        Element text1= doc1.createElement("owlnl:Text");
-                                        Element val=doc1.createElement("owlnl:Val");
-                                        val.setAttribute("xml:lang",lang);
-                                        val.appendChild(doc1.createTextNode(text));
-                                        text1.appendChild(val);
-                                        Slots.appendChild(text1);
-                                        //    msg.appendChild(text1);
-                                    }
+                                    String text=template.get("string").toString();
+                                    Element text1= doc1.createElement("owlnl:Text");
+                                    Element val=doc1.createElement("owlnl:Val");
+                                    val.setAttribute("xml:lang",lang);
+                                    val.appendChild(doc1.createTextNode(text));
+                                    text1.appendChild(val);
+                                    Slots.appendChild(text1);
+                                    //    msg.appendChild(text1);
+                                }
                                 if (sel.toString().equalsIgnoreCase("referring")){
                                     if (template.get("semantics").toString().equalsIgnoreCase("Field owner")){
                                         Element sem=doc1.createElement("owlnl:Owner");
@@ -2663,18 +2769,13 @@ out.newLine();}
                                         if(template.containsKey("type")){
                                             String type=template.get("type").toString();
                                             if(type.equalsIgnoreCase("Name")){
-                                                retype.appendChild(doc1.createTextNode("RE_FULLNAME"));}
-                                            else if(type.equalsIgnoreCase("Pronoun")){
-                                                retype.appendChild(doc1.createTextNode("RE_PRONOUN"));}
-                                            else if(type.equalsIgnoreCase("Type with definite article")){
-                                                retype.appendChild(doc1.createTextNode("RE_DEF_ART"));}
-                                            else if(type.equalsIgnoreCase("Type with indefinite article")){
-                                                retype.appendChild(doc1.createTextNode("RE_INDEF_ART"));}
-                                            else retype.appendChild(doc1.createTextNode("RE_AUTO"));
+                                                retype.appendChild(doc1.createTextNode("RE_FULLNAME"));} else if(type.equalsIgnoreCase("Pronoun")){
+                                                retype.appendChild(doc1.createTextNode("RE_PRONOUN"));} else if(type.equalsIgnoreCase("Type with definite article")){
+                                                retype.appendChild(doc1.createTextNode("RE_DEF_ART"));} else if(type.equalsIgnoreCase("Type with indefinite article")){
+                                                retype.appendChild(doc1.createTextNode("RE_INDEF_ART"));} else retype.appendChild(doc1.createTextNode("RE_AUTO"));
                                             
-                                        }
-                                        else
-                                        retype.appendChild(doc1.createTextNode("RE_AUTO"));
+                                        } else
+                                            retype.appendChild(doc1.createTextNode("RE_AUTO"));
                                         sem.appendChild(retype);
                                         sem.appendChild(case1);
                                         Slots.appendChild(sem);
@@ -2691,24 +2792,19 @@ out.newLine();}
                                         if(template.containsKey("type")){
                                             String type=template.get("type").toString();
                                             if(type.equalsIgnoreCase("Name")){
-                                                retype.appendChild(doc1.createTextNode("RE_FULLNAME"));}
-                                            else if(type.equalsIgnoreCase("Pronoun")){
-                                                retype.appendChild(doc1.createTextNode("RE_PRONOUN"));}
-                                            else if(type.equalsIgnoreCase("Type with definite article")){
-                                                retype.appendChild(doc1.createTextNode("RE_DEF_ART"));}
-                                            else if(type.equalsIgnoreCase("Type with indefinite article")){
-                                                retype.appendChild(doc1.createTextNode("RE_INDEF_ART"));}
-                                            else retype.appendChild(doc1.createTextNode("RE_AUTO"));
+                                                retype.appendChild(doc1.createTextNode("RE_FULLNAME"));} else if(type.equalsIgnoreCase("Pronoun")){
+                                                retype.appendChild(doc1.createTextNode("RE_PRONOUN"));} else if(type.equalsIgnoreCase("Type with definite article")){
+                                                retype.appendChild(doc1.createTextNode("RE_DEF_ART"));} else if(type.equalsIgnoreCase("Type with indefinite article")){
+                                                retype.appendChild(doc1.createTextNode("RE_INDEF_ART"));} else retype.appendChild(doc1.createTextNode("RE_AUTO"));
                                             
-                                        }
-                                        else
-                                        retype.appendChild(doc1.createTextNode("RE_AUTO"));
+                                        } else
+                                            retype.appendChild(doc1.createTextNode("RE_AUTO"));
                                         sem.appendChild(retype);
                                         Slots.appendChild(sem);
                                     }
                                 }
                             } catch (java.lang.Exception ex) {
-continue;
+                                continue;
                             }
                             
                             
@@ -2721,8 +2817,8 @@ continue;
                     }}
             }
         }
-        Enumeration properties=QueryHashtable.propertiesHashtable.keys();
-        Enumeration propVectors=QueryHashtable.propertiesHashtable.elements();
+        Enumeration properties=Mpiro.win.struc.getPropertyNames();
+        Enumeration propVectors=Mpiro.win.struc.getProperties();
         while(properties.hasMoreElements()){
             
             Vector nextPropVector=(Vector) propVectors.nextElement();
@@ -2732,13 +2828,13 @@ continue;
             Element order=doc1.createElement("owlnl:Order");
             
             if(!nextPropVector.elementAt(13).toString().equalsIgnoreCase(""))
-            order.appendChild(doc1.createTextNode(nextPropVector.elementAt(13).toString()));
+                order.appendChild(doc1.createTextNode(nextPropVector.elementAt(13).toString()));
             else
                 order.appendChild(doc1.createTextNode("1"));
             property.appendChild(order);
             Element usedForComparisons=doc1.createElement("owlnl:UsedForComparisons");
             if(!nextPropVector.elementAt(14).toString().equalsIgnoreCase("true"))
-            usedForComparisons.appendChild(doc1.createTextNode("false"));
+                usedForComparisons.appendChild(doc1.createTextNode("false"));
             else
                 usedForComparisons.appendChild(doc1.createTextNode("true"));
             property.appendChild(usedForComparisons);
@@ -2761,11 +2857,11 @@ continue;
                     Element used=doc1.createElement("owlnl:Used");
                     used.appendChild(doc1.createTextNode("false"));
                     nextMicro1.appendChild(used);
-                     Element agr=doc1.createElement("owlnl:AggrAllowed");
-                        agr.appendChild(doc1.createTextNode("true"));
-                        
-                        nextMicro1.appendChild(agr);
-                 //   System.out.println("????");
+                    Element agr=doc1.createElement("owlnl:AggrAllowed");
+                    agr.appendChild(doc1.createTextNode("true"));
+                    
+                    nextMicro1.appendChild(agr);
+                    //   System.out.println("????");
                     Element Slots=doc1.createElement("owlnl:Slots");
                     Slots.setAttribute("rdf:parseType","Collection");
                     nextMicro1.appendChild(Slots);
@@ -2793,10 +2889,10 @@ continue;
                     used.appendChild(doc1.createTextNode("false"));
                     nextMicro1.appendChild(used);
                     Element agr=doc1.createElement("owlnl:AggrAllowed");
-                        agr.appendChild(doc1.createTextNode("true"));
-                        
-                        nextMicro1.appendChild(agr);
-                 //   System.out.println("????");
+                    agr.appendChild(doc1.createTextNode("true"));
+                    
+                    nextMicro1.appendChild(agr);
+                    //   System.out.println("????");
                     Element Slots=doc1.createElement("owlnl:Slots");
                     Slots.setAttribute("rdf:parseType","Collection");
                     nextMicro1.appendChild(Slots);
@@ -2810,13 +2906,13 @@ continue;
         Writer writer = new Writer();
         writer.setOutput(output,null);
         writer.write(doc1);
-        }
+    }
     
     
     
     public static void galanis(String fileName,String uri) throws Exception {
         
-        Hashtable hash=QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity type");
+        Hashtable hash=Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity type");
         hash.remove("Data Base");
         hash.remove("Basic-entity-types");
         
@@ -2847,12 +2943,12 @@ continue;
         Element props=doc1.createElement("owlnl:Properties");
         props.setAttribute("rdf:parseType","Collection");
         MicroplansAndOrdering.appendChild(props);
-        //    Enumeration propKeys=QueryHashtable.propertiesHashtable.keys();
-        Enumeration propElements=QueryHashtable.propertiesHashtable.elements();
+        //    Enumeration propKeys=Mpiro.win.struc.getPropertyNames();
+        Enumeration propElements=Mpiro.win.struc.getProperties();
         Hashtable micros=new Hashtable();
         while (propElements.hasMoreElements()) {
             //    String entityTypeName = allEntityTypeParentNames.nextElement().toString();
-            // NodeVector nodeEntityType = (NodeVector) QueryHashtable.mainDBHashtable.get(entityTypeName);
+            // NodeVector nodeEntityType = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(entityTypeName);
             Vector vec= (Vector) propElements.nextElement();
             TemplateVector templateVector = (TemplateVector) vec.elementAt(11);
             Hashtable microplanning=(Hashtable) vec.elementAt(10);
@@ -2896,16 +2992,15 @@ continue;
                         microplan.appendChild(MicroplanName);
                         Element used=doc1.createElement("owlnl:Used");
                         if(o==2){
-                        if(microplanning.get(templ[0]+":"+templ[1]+":SELECTION:Greek").toString().equalsIgnoreCase("NoMicroplanning"))
-                            used.appendChild(doc1.createTextNode("false"));
-                        else
-                        used.appendChild(doc1.createTextNode("true"));
-                        }
-                        else{
+                            if(microplanning.get(templ[0]+":"+templ[1]+":SELECTION:Greek").toString().equalsIgnoreCase("NoMicroplanning"))
+                                used.appendChild(doc1.createTextNode("false"));
+                            else
+                                used.appendChild(doc1.createTextNode("true"));
+                        } else{
                             if(microplanning.get(templ[0]+":"+templ[1]+":SELECTION:English").toString().equalsIgnoreCase("NoMicroplanning"))
-                            used.appendChild(doc1.createTextNode("false"));
-                        else
-                        used.appendChild(doc1.createTextNode("true"));
+                                used.appendChild(doc1.createTextNode("false"));
+                            else
+                                used.appendChild(doc1.createTextNode("true"));
                         }
                         
                         //used.appendChild(doc1.createTextNode("true"));
@@ -2997,8 +3092,8 @@ continue;
                     }}
             }
         }
-        Enumeration properties=QueryHashtable.propertiesHashtable.keys();
-        Enumeration propVectors=QueryHashtable.propertiesHashtable.elements();
+        Enumeration properties=Mpiro.win.struc.getPropertyNames();
+        Enumeration propVectors=Mpiro.win.struc.getProperties();
         while(properties.hasMoreElements()){
             
             Vector nextPropVector=(Vector) propVectors.nextElement();
@@ -3007,7 +3102,7 @@ continue;
             property.setAttribute("rdf:about",uri+'#'+propName);
             Element order=doc1.createElement("owlnl:Order");
             if(!nextPropVector.elementAt(13).toString().equalsIgnoreCase(""))
-            order.appendChild(doc1.createTextNode(nextPropVector.elementAt(13).toString()));
+                order.appendChild(doc1.createTextNode(nextPropVector.elementAt(13).toString()));
             else
                 order.appendChild(doc1.createTextNode("1"));
             property.appendChild(order);
@@ -3031,10 +3126,10 @@ continue;
                     used.appendChild(doc1.createTextNode("false"));
                     nextMicro1.appendChild(used);
                     Element agr=doc1.createElement("owlnl:AggrAllowed");
-                        agr.appendChild(doc1.createTextNode("true"));
-                        
-                        nextMicro1.appendChild(agr);
-                 //   System.out.println("????");
+                    agr.appendChild(doc1.createTextNode("true"));
+                    
+                    nextMicro1.appendChild(agr);
+                    //   System.out.println("????");
                     Element Slots=doc1.createElement("owlnl:Slots");
                     Slots.setAttribute("rdf:parseType","Collection");
                     nextMicro1.appendChild(Slots);
@@ -3062,10 +3157,10 @@ continue;
                     used.appendChild(doc1.createTextNode("false"));
                     nextMicro1.appendChild(used);
                     Element agr=doc1.createElement("owlnl:AggrAllowed");
-                        agr.appendChild(doc1.createTextNode("true"));
-                        
-                        nextMicro1.appendChild(agr);
-                 //   System.out.println("????");
+                    agr.appendChild(doc1.createTextNode("true"));
+                    
+                    nextMicro1.appendChild(agr);
+                    //   System.out.println("????");
                     Element Slots=doc1.createElement("owlnl:Slots");
                     Slots.setAttribute("rdf:parseType","Collection");
                     nextMicro1.appendChild(Slots);
@@ -3086,10 +3181,10 @@ continue;
         Document doc = docBuilder.newDocument();
         Element RDF=doc.createElement("rdf:RDF");
         doc.appendChild(RDF);
-      //  RDF.setAttribute("xmlns:owlnl","http://www.owlnl.com/owlnl#");
-     //   RDF.setAttribute("xmlns:rdf","http://www.w3.org/1999/02/22-rdf-syntax-ns#");
-    //    RDF.setAttribute("xmlns","http://www.aueb.gr/users/ion/owlnl/Lexicon#");
-    //    RDF.setAttribute("xml:base","http://www.aueb.gr/users/ion/owlnl/Lexicon");
+        //  RDF.setAttribute("xmlns:owlnl","http://www.owlnl.com/owlnl#");
+        //   RDF.setAttribute("xmlns:rdf","http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+        //    RDF.setAttribute("xmlns","http://www.aueb.gr/users/ion/owlnl/Lexicon#");
+        //    RDF.setAttribute("xml:base","http://www.aueb.gr/users/ion/owlnl/Lexicon");
         RDF.setAttribute("xmlns:owlnl","http://www.aueb.gr/users/ion/owlnl#");
         RDF.setAttribute("xmlns:rdf","http://www.w3.org/1999/02/22-rdf-syntax-ns#");
         RDF.setAttribute("xmlns","http://www.aueb.gr/users/ion/owlnl/Lexicon#");
@@ -3118,17 +3213,17 @@ continue;
         Element entries=doc.createElement("owlnl:Entries");
         entries.setAttribute("rdf:parseType","Collection");
         Mapping.appendChild(entries);
-        Hashtable allTypes=QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity type");
+        Hashtable allTypes=Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity type");
         Enumeration keys=allTypes.keys();
         //   Enumeration elements=allTypes.elements();
         while(keys.hasMoreElements()){
             String key=keys.nextElement().toString();
             
-            NodeVector nv= (NodeVector) QueryHashtable.mainDBHashtable.get(key);
+            NodeVector nv= (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(key);
             Vector nouns=(Vector) nv.nounVector.clone();
-            Vector parents=QueryHashtable.getParents(key);
+            Vector parents=Mpiro.win.struc.getParents(key);
             for(int i=0;i<parents.size();i++){
-                NodeVector parent=(NodeVector) QueryHashtable.mainDBHashtable.get(parents.elementAt(i));
+                NodeVector parent=(NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(parents.elementAt(i).toString());
                 Vector parentNouns=parent.nounVector;
                 for(int j=0;j<parentNouns.size();j++){
                     if(nouns.contains(parentNouns.elementAt(j)))
@@ -3145,12 +3240,12 @@ continue;
             }
             
         }
-        Hashtable allEntities=QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity+generic");
+        Hashtable allEntities=Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity+generic");
         Enumeration Entkeys=allEntities.keys();
         //    Enumeration Entelements=allTypes.elements();
         while(Entkeys.hasMoreElements()){
             String key=Entkeys.nextElement().toString();
-            NodeVector nv=(NodeVector) QueryHashtable.mainDBHashtable.get(key);
+            NodeVector nv=(NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(key);
             Element owlInstance=doc.createElement("owlnl:owlInstance");
             owlInstance.setAttribute("rdf:about",uri+'#'+key);
             Element hasNP=doc.createElement("owlnl:hasNP");
@@ -3181,9 +3276,9 @@ continue;
             Element gender=doc.createElement("owlnl:gender");
             temp=(Vector) english.elementAt(4);
             if(temp.elementAt(1).toString().equalsIgnoreCase("neuter"))
-            gender.appendChild(doc.createTextNode("nonpersonal"));
+                gender.appendChild(doc.createTextNode("nonpersonal"));
             else
-            gender.appendChild(doc.createTextNode(temp.elementAt(1).toString()));
+                gender.appendChild(doc.createTextNode(temp.elementAt(1).toString()));
             //gender.appendChild(doc.createTextNode(temp.elementAt(1).toString()));
             englishNP.appendChild(gender);
             Element singular=doc.createElement("owlnl:singular");
@@ -3217,9 +3312,9 @@ continue;
             Element gender1=doc.createElement("owlnl:gender");
             temp=(Vector) greek.elementAt(4);
             if(temp.elementAt(1).toString().equalsIgnoreCase("neuter"))
-            gender1.appendChild(doc.createTextNode("neuter"));
+                gender1.appendChild(doc.createTextNode("neuter"));
             else
-               gender1.appendChild(doc.createTextNode(temp.elementAt(1).toString())); 
+                gender1.appendChild(doc.createTextNode(temp.elementAt(1).toString()));
             greekNP.appendChild(gender1);
             Element singular1=doc.createElement("owlnl:singular");
             Element plural1=doc.createElement("owlnl:plural");
@@ -3275,8 +3370,8 @@ continue;
         //          style1.setAttribute("xmlns:xsl","http://www.w3.org/1999/XSL/Transform");
         //       style1.appendChild(nounsElement1);
         //              doc1.appendChild(nounsElement1);
-        Hashtable allNounHashTable = (Hashtable) QueryLexiconHashtable.mainLexiconHashtable.get("Nouns");
-        //    Hashtable allVerbHashTable = (Hashtable) QueryLexiconHashtable.mainLexiconHashtable.get("Verbs");
+        Hashtable allNounHashTable =  Mpiro.win.struc.getNounsHashtable();
+        //    Hashtable allVerbHashTable = (Hashtable) Mpiro.win.struc.getVerbsHashtable();
         
         //nouns
         Enumeration nounNameEnu = allNounHashTable.keys();
@@ -3378,7 +3473,7 @@ continue;
             if(greekNouns.get("grgender").toString().equalsIgnoreCase("neuter"))
                 gender1.appendChild(doc.createTextNode("neuter"));
             else
-            gender1.appendChild(doc.createTextNode(greekNouns.get("grgender").toString().toLowerCase()));
+                gender1.appendChild(doc.createTextNode(greekNouns.get("grgender").toString().toLowerCase()));
             greekNP.appendChild(gender1);
             Element singular1=doc.createElement("owlnl:singular");
             Element plural1=doc.createElement("owlnl:plural");
@@ -3449,8 +3544,8 @@ continue;
         usersElement.setAttribute("rdf:parseType","Collection");
         UserModelling.appendChild(usersElement);
         
-        Enumeration userNamesEnu = QueryUsersHashtable.mainUsersHashtable.keys();
-        Enumeration userValuesEnu = QueryUsersHashtable.mainUsersHashtable.elements();
+        Enumeration userNamesEnu = Mpiro.win.struc.getUserNames();
+        Enumeration userValuesEnu = Mpiro.win.struc.getUserElements();
         Vector usersVector = new Vector();
         while (userNamesEnu.hasMoreElements()) {
             String userName = (String) userNamesEnu.nextElement();
@@ -3481,8 +3576,8 @@ continue;
         Element PropertiesInterests  = doc2.createElement("owlnl:PropertiesInterests");
         PropertiesInterests.setAttribute("rdf:parseType","Collection");
         UserModelling.appendChild(PropertiesInterests);
-        properties=QueryHashtable.propertiesHashtable.keys();
-        Enumeration propVectors1=QueryHashtable.propertiesHashtable.elements();
+        properties=Mpiro.win.struc.getPropertyNames();
+        Enumeration propVectors1=Mpiro.win.struc.getProperties();
         while(properties.hasMoreElements()){
             //   Vector property=(Vector) properties.nextElement();
             String nextProp=properties.nextElement().toString();
@@ -3505,27 +3600,31 @@ continue;
                 InterestValue.appendChild(doc2.createTextNode(value.elementAt(1).toString()));
                 DPInterest.appendChild(InterestValue);
             }
-            Hashtable np=(Hashtable) QueryUsersHashtable.mainUserModelHashtable.get(nextProp);
+            Hashtable np=(Hashtable) Mpiro.win.struc.getPropertyFromMainUserModelHashtable(nextProp);
             Enumeration npkeys=np.keys();
             Enumeration npelems=np.elements();
             while(npkeys.hasMoreElements()){
                 String nextDomain=npkeys.nextElement().toString();
-                Hashtable nextElem=(Hashtable) npelems.nextElement();
-                if(QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type").containsKey(nextDomain)){
+                // Hashtable nextElem=(Hashtable) npelems.nextElement();
+                if(Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type").containsKey(nextDomain)){
                     
-                    Enumeration users1=nextElem.keys();
-                    Enumeration values1=nextElem.elements();
+                    
+                    Vector modelling_values=Mpiro.win.struc.getRobotModelling(nextProp, nextDomain);
+                    Enumeration users1=(Enumeration)modelling_values.elementAt(0);
+                    Enumeration values1=(Enumeration)modelling_values.elementAt(1);
+                    // Enumeration users1=nextElem.keys();
+                    //  Enumeration values1=nextElem.elements();
                     while(users1.hasMoreElements()){
                         String nextuser=users1.nextElement().toString();
                         Vector usersValue=(Vector) values1.nextElement();
                         if(usersValue.elementAt(1).toString().equalsIgnoreCase("")) continue;
                         Element CDPInterest  = doc2.createElement("owlnl:CDPInterest");
-                    CDPInterest.setAttribute("rdf:parseType","Resource");
-                    Property.appendChild(CDPInterest);
-                    //Hashtable usersHash=(Hashtable) nextPropVector.elementAt(12);
-                    Element forClass=doc2.createElement("owlnl:forOwlClass");
-                    forClass.setAttribute("rdf:resource",uri+"#"+nextDomain);
-                    CDPInterest.appendChild(forClass);
+                        CDPInterest.setAttribute("rdf:parseType","Resource");
+                        Property.appendChild(CDPInterest);
+                        //Hashtable usersHash=(Hashtable) nextPropVector.elementAt(12);
+                        Element forClass=doc2.createElement("owlnl:forOwlClass");
+                        forClass.setAttribute("rdf:resource",uri+"#"+nextDomain);
+                        CDPInterest.appendChild(forClass);
                         //String nextuser=users1.nextElement().toString();
                         //Vector usersValue=(Vector) values1.nextElement();
                         Element forUserType = doc2.createElement("owlnl:forUserType");
@@ -3537,22 +3636,24 @@ continue;
                         InterestValue.appendChild(doc2.createTextNode(usersValue.elementAt(1).toString()));
                         CDPInterest.appendChild(InterestValue);
                     }
-                }
-                else{
-                     
-                    Enumeration users1=nextElem.keys();
-                    Enumeration values1=nextElem.elements();
+                } else{
+                    
+                    Vector modelling_values=Mpiro.win.struc.getUserModelling(nextProp, nextDomain);
+                    Enumeration users1=(Enumeration)modelling_values.elementAt(0);
+                    Enumeration values1=(Enumeration)modelling_values.elementAt(1);
+                    // Enumeration users1=nextElem.keys();
+                    // Enumeration values1=nextElem.elements();
                     while(users1.hasMoreElements()){
                         String nextuser=users1.nextElement().toString();
                         Vector usersValue=(Vector) values1.nextElement();
                         if(usersValue.elementAt(1).toString().equalsIgnoreCase("")) continue;
                         Element IPInterest  = doc2.createElement("owlnl:IPInterest");
-                    IPInterest.setAttribute("rdf:parseType","Resource");
-                    Property.appendChild(IPInterest);
-                    //Hashtable usersHash=(Hashtable) nextPropVector.elementAt(12);
-                    Element forInstance =doc2.createElement("owlnl:forInstance");
-                    forInstance .setAttribute("rdf:resource",uri+"#"+nextDomain);
-                    IPInterest.appendChild(forInstance );
+                        IPInterest.setAttribute("rdf:parseType","Resource");
+                        Property.appendChild(IPInterest);
+                        //Hashtable usersHash=(Hashtable) nextPropVector.elementAt(12);
+                        Element forInstance =doc2.createElement("owlnl:forInstance");
+                        forInstance .setAttribute("rdf:resource",uri+"#"+nextDomain);
+                        IPInterest.appendChild(forInstance );
                         
                         Element forUserType = doc2.createElement("owlnl:forUserType");
                         forUserType.setAttribute("rdf:resource",base+"#"+nextuser);
@@ -3576,15 +3677,15 @@ continue;
         
         
         
-        properties=QueryHashtable.propertiesHashtable.keys();
+        properties=Mpiro.win.struc.getPropertyNames();
         while(properties.hasMoreElements()){
             Enumeration allEntityTypeParentNames = hash.keys();
             String propName=properties.nextElement().toString();
             while(allEntityTypeParentNames.hasMoreElements()){
                 
                 String entityTypeName = allEntityTypeParentNames.nextElement().toString();
-                // NodeVector nodeEntityType = (NodeVector) QueryHashtable.mainDBHashtable.get(entityTypeName);
-                Vector vec= (Vector) QueryHashtable.mainDBHashtable.get(entityTypeName);
+                // NodeVector nodeEntityType = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(entityTypeName);
+                Vector vec= (Vector) Mpiro.win.struc.getEntityTypeOrEntity(entityTypeName);
                 // TemplateVector templateVector = (TemplateVector) vec.elementAt(4);
                 Hashtable microPlanningValues = (Hashtable) vec.get(5);
                 
@@ -3647,7 +3748,7 @@ continue;
         UserModelling.appendChild(ClassInterests);
         
         Hashtable alltypes=new Hashtable();
-        Enumeration allTypes1=QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity type").keys();
+        Enumeration allTypes1=Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity type").keys();
         while(allTypes1.hasMoreElements()){
             String next=convertToClassName(allTypes1.nextElement().toString());
             Element el=doc2.createElement("owlnl:owlClass");
@@ -3668,7 +3769,7 @@ continue;
         UserModelling.appendChild(InstancesInterests);
   
 Hashtable allElements=new Hashtable();
-        Enumeration allEntities1=QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity+generic").keys();
+        Enumeration allEntities1=Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("entity+generic").keys();
         while(allEntities1.hasMoreElements()){
             String next=allEntities1.nextElement().toString();
             Element el=doc2.createElement("owlnl:owlInstance");
@@ -3685,8 +3786,8 @@ Hashtable allElements=new Hashtable();
         }*/
         
         
-        Enumeration mainUserModelHashtableEnumKeys = QueryUsersHashtable.mainUserModelHashtable.keys();
-        Enumeration mainUserModelHashtableEnumElements = QueryUsersHashtable.mainUserModelHashtable.elements();
+        Enumeration mainUserModelHashtableEnumKeys = Mpiro.win.struc.mainUserModelHashtableKeys();
+        Enumeration mainUserModelHashtableEnumElements = Mpiro.win.struc.mainUserModelHashtableElements();
         while (mainUserModelHashtableEnumKeys.hasMoreElements()) {
             String fieldname = mainUserModelHashtableEnumKeys.nextElement().toString();
             
@@ -3699,15 +3800,15 @@ Hashtable allElements=new Hashtable();
             Enumeration fieldnameHashtableEnumElements = fieldnameHashtable.elements();
             while (fieldnameHashtableEnumKeys.hasMoreElements()) {
                 String entityname = fieldnameHashtableEnumKeys.nextElement().toString();
-                Hashtable entitynameHashtable = (Hashtable) fieldnameHashtableEnumElements.nextElement();
+                // Hashtable entitynameHashtable = (Hashtable) fieldnameHashtableEnumElements.nextElement();
                 
                 
-                NodeVector nodeVector = (NodeVector)QueryHashtable.mainDBHashtable.get(entityname);
+                NodeVector nodeVector = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(entityname);
                 if(entityname.equalsIgnoreCase("Data Base")||entityname.equalsIgnoreCase("Basic-entity-types")) continue;
                 if(nodeVector.size() != 6){
                     // entityname = convertToClassName(entityname);
                     
-                    String ctcn=convertToClassName(QueryHashtable.getParents(entityname).elementAt(0).toString());
+                    String ctcn=convertToClassName(Mpiro.win.struc.getParents(entityname).elementAt(0).toString());
                     Element propert =(Element) alltypes.get(ctcn);//other parents?
                     //       fieldElement.appendChild(entityElement);
                     //if(!fieldname.equalsIgnoreCase("type")){
@@ -3715,8 +3816,11 @@ Hashtable allElements=new Hashtable();
                     //Element Property =doc2.createElement("owlnl:Property");
                     //propert.appendChild(Property);
                     //Property.setAttribute("rdf:about",uri+'/'+fieldname);
-                    Enumeration entityNameKeys = entitynameHashtable.keys();
-                    Enumeration entityNameVectors = entitynameHashtable.elements();
+                    Vector modelling_values=Mpiro.win.struc.getUserModelling(fieldname, entityname);
+                    Enumeration entityNameKeys=(Enumeration)modelling_values.elementAt(0);
+                    Enumeration entityNameVectors=(Enumeration)modelling_values.elementAt(1);
+                    //Enumeration entityNameKeys = entitynameHashtable.keys();
+                    // Enumeration entityNameVectors = entitynameHashtable.elements();
                     while(entityNameKeys.hasMoreElements()){
                         String key = (String)entityNameKeys.nextElement();
                         Vector valueVector = (Vector)entityNameVectors.nextElement();
@@ -3772,8 +3876,11 @@ Hashtable allElements=new Hashtable();
                     // Element Property =doc2.createElement("owlnl:Property");
                     // propert.appendChild(Property);
                     // Property.setAttribute("rdf:about",uri+'/'+fieldname);
-                    Enumeration entityNameKeys = entitynameHashtable.keys();
-                    Enumeration entityNameVectors = entitynameHashtable.elements();
+                    //  Enumeration entityNameKeys = entitynameHashtable.keys();
+                    //  Enumeration entityNameVectors = entitynameHashtable.elements();
+                    Vector modelling_values=Mpiro.win.struc.getUserModelling(fieldname, entityname);
+                    Enumeration entityNameKeys=(Enumeration)modelling_values.elementAt(0);
+                    Enumeration entityNameVectors=(Enumeration)modelling_values.elementAt(1);
                     while(entityNameKeys.hasMoreElements()){
                         String key = (String)entityNameKeys.nextElement();
                         Vector valueVector = (Vector)entityNameVectors.nextElement();
@@ -3921,8 +4028,8 @@ Hashtable allElements=new Hashtable();
         lexiconElement.appendChild(nounsElement);
         lexiconElement.appendChild(verbsElement);
         
-        Hashtable allNounHashTable = (Hashtable) QueryLexiconHashtable.mainLexiconHashtable.get("Nouns");
-        Hashtable allVerbHashTable = (Hashtable) QueryLexiconHashtable.mainLexiconHashtable.get("Verbs");
+        Hashtable allNounHashTable =  Mpiro.win.struc.getNounsHashtable();
+        Hashtable allVerbHashTable = Mpiro.win.struc.getVerbsHashtable();
         
         //nouns
         Enumeration nounNameEnu = allNounHashTable.keys();
@@ -4013,7 +4120,7 @@ Hashtable allElements=new Hashtable();
         Element microPlanElement = doc.createElement("Microplanning");
         root.appendChild(microPlanElement);
         
-        Hashtable allEntityTypes = (Hashtable) QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+        Hashtable allEntityTypes = (Hashtable) Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
         // Remove the 2 entries that are not needed
         allEntityTypes.remove("Data Base");
         allEntityTypes.remove("Basic-entity-types");
@@ -4026,7 +4133,7 @@ Hashtable allElements=new Hashtable();
         while (allEntityTypeNames.hasMoreElements()) {
             //export EntityType Nouns
             String entityTypeName = allEntityTypeNames.nextElement().toString();
-            NodeVector nodeEntityType = (NodeVector) QueryHashtable.mainDBHashtable.get(entityTypeName);
+            NodeVector nodeEntityType = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(entityTypeName);
             Vector nounVector = (Vector) nodeEntityType.get(2);
             
             Element entityTypeElement = doc.createElement("Entity-Type");
@@ -4100,8 +4207,8 @@ Hashtable allElements=new Hashtable();
                             String key = (String) elementVectorKeys.nextElement();
                             String value = (String) elementVectorValues.nextElement();
                             
-                          //  System.out.println("********** key:   "+key);
-                          //  System.out.println("********** value:   "+value);
+                            //  System.out.println("********** key:   "+key);
+                            //  System.out.println("********** value:   "+value);
                             
                             Element hashValueElement = doc.createElement(key);
                             hashValueElement.appendChild(doc.createTextNode(value));
@@ -4179,8 +4286,8 @@ Hashtable allElements=new Hashtable();
         Element usersElement = doc.createElement("Users");
         root.appendChild(usersElement);
         
-        Enumeration userNamesEnu = QueryUsersHashtable.mainUsersHashtable.keys();
-        Enumeration userValuesEnu = QueryUsersHashtable.mainUsersHashtable.elements();
+        Enumeration userNamesEnu = Mpiro.win.struc.getUserNames();
+        Enumeration userValuesEnu = Mpiro.win.struc.getUserElements();
         
         while (userNamesEnu.hasMoreElements()) {
             String userName = (String) userNamesEnu.nextElement();
@@ -4207,9 +4314,9 @@ Hashtable allElements=new Hashtable();
         //export user model
         Element userModelElement = doc.createElement("UserModel");
         root.appendChild(userModelElement);
-        QueryUsersHashtable.mainUserModelHashtable.remove("dddd'");
-        Enumeration mainUserModelHashtableEnumKeys = QueryUsersHashtable.mainUserModelHashtable.keys();
-        Enumeration mainUserModelHashtableEnumElements = QueryUsersHashtable.mainUserModelHashtable.elements();
+        //QueryProfileHashtable.mainUserModelHashtable.remove("dddd'");
+        Enumeration mainUserModelHashtableEnumKeys = Mpiro.win.struc.mainUserModelHashtableKeys();
+        Enumeration mainUserModelHashtableEnumElements = Mpiro.win.struc.mainUserModelHashtableElements();
         while (mainUserModelHashtableEnumKeys.hasMoreElements()) {
             String fieldname = mainUserModelHashtableEnumKeys.nextElement().toString();
             Hashtable fieldnameHashtable = (Hashtable) mainUserModelHashtableEnumElements.nextElement();
@@ -4221,10 +4328,10 @@ Hashtable allElements=new Hashtable();
             Enumeration fieldnameHashtableEnumElements = fieldnameHashtable.elements();
             while (fieldnameHashtableEnumKeys.hasMoreElements()) {
                 String entityname = fieldnameHashtableEnumKeys.nextElement().toString();
-                Hashtable entitynameHashtable = (Hashtable) fieldnameHashtableEnumElements.nextElement();
+                // Hashtable entitynameHashtable = (Hashtable) fieldnameHashtableEnumElements.nextElement();
                 
                 
-                NodeVector nodeVector = (NodeVector)QueryHashtable.mainDBHashtable.get(entityname);
+                NodeVector nodeVector = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(entityname);
                 //if entityname is an entityType
                 //if(nodeVector == null) continue;
                 //     if (entityname.equalsIgnoreCase("Generic-Fibula"))
@@ -4235,8 +4342,11 @@ Hashtable allElements=new Hashtable();
                 Element entityElement = doc.createElement(entityname);
                 fieldElement.appendChild(entityElement);
                 
-                Enumeration entityNameKeys = entitynameHashtable.keys();
-                Enumeration entityNameVectors = entitynameHashtable.elements();
+                Vector modelling_values=Mpiro.win.struc.getUserModelling(fieldname, entityname);
+                Enumeration entityNameKeys=(Enumeration)modelling_values.elementAt(0);
+                Enumeration entityNameVectors=(Enumeration)modelling_values.elementAt(1);
+                // Enumeration entityNameKeys = entitynameHashtable.keys();
+                // Enumeration entityNameVectors = entitynameHashtable.elements();
                 while(entityNameKeys.hasMoreElements()){
                     String key = (String)entityNameKeys.nextElement();
                     Vector valueVector = (Vector)entityNameVectors.nextElement();
@@ -4256,13 +4366,13 @@ Hashtable allElements=new Hashtable();
         Element userModelStoryElement = doc.createElement("UserModelStory");
         root.appendChild(userModelStoryElement);
  
-        Enumeration mainUserModelStoryHashtableEnumKeys = QueryUsersHashtable.mainUserModelStoryHashtable.keys();
-        Enumeration mainUserModelStoryHashtableEnumElements = QueryUsersHashtable.mainUserModelStoryHashtable.elements();
+        Enumeration mainUserModelStoryHashtableEnumKeys = QueryProfileHashtable.mainUserModelStoryHashtable.keys();
+        Enumeration mainUserModelStoryHashtableEnumElements = QueryProfileHashtable.mainUserModelStoryHashtable.elements();
         while (mainUserModelStoryHashtableEnumKeys.hasMoreElements()){
             String entityName =  (String)mainUserModelStoryHashtableEnumKeys.nextElement();
             Hashtable entityHashTable = (Hashtable)mainUserModelStoryHashtableEnumElements.nextElement();
  
-            NodeVector nodeVector = (NodeVector)QueryHashtable.mainDBHashtable.get(entityName);
+            NodeVector nodeVector = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(entityName);
             //if entityname is an entityType
             if(nodeVector!=null && nodeVector.size() == 6)
                 entityName = convertToClassName(entityName);
@@ -4291,8 +4401,8 @@ Hashtable allElements=new Hashtable();
         Element optionsElement = doc.createElement("Options");
         root.appendChild(optionsElement);
         
-        Enumeration optionKeys = QueryOptionsHashtable.mainOptionsHashtable.keys();
-        Enumeration optionElements = QueryOptionsHashtable.mainOptionsHashtable.elements();
+        Enumeration optionKeys = Mpiro.win.struc.mainOptionsHashtableKeys();
+        Enumeration optionElements = Mpiro.win.struc.mainOptionsHashtableElements();
         while(optionKeys.hasMoreElements()){
             String key = (String)optionKeys.nextElement();
             Object element = optionElements.nextElement();
@@ -4316,12 +4426,16 @@ Hashtable allElements=new Hashtable();
         
     }
     
-     public static void exportUserCharacteristics(String uri) throws IOException{
-         FileWriter fstream = new FileWriter("robotsChar.txt");
+    public static Hashtable exportUserCharacteristics(String uri) throws IOException{
+        if(!uri.endsWith("#"))
+            uri=uri+"#";
+        Hashtable result=new Hashtable();
+        FileWriter fstream = new FileWriter("robotsChar.txt");
         BufferedWriter out = new BufferedWriter(fstream);
-        Object[] usertypes=QueryUsersHashtable.robotsHashtable.keySet().toArray();
-        Enumeration keys=QueryHashtable.robotCharValuesHashtable.keys();
-        Enumeration elements=QueryHashtable.robotCharValuesHashtable.elements();
+        
+        Object[] usertypes=Mpiro.win.struc.getRobotNamesToArray();
+        Enumeration keys=Mpiro.win.struc.robotCharValuesHashtableKeys();
+        Enumeration elements=Mpiro.win.struc.robotCharValuesHashtableElements();
         
         while(keys.hasMoreElements()){
             String nextKey=(String)keys.nextElement();
@@ -4330,19 +4444,18 @@ Hashtable allElements=new Hashtable();
             if(nextKey.split(":").length==1){
                 if (nextKey.equals("Thing"))
                     name="Class:"+OWL.Thing.getURI();
-                else if(QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity").containsKey(nextKey))
-                name="Individual:"+uri+nextKey;
-            else
-                name="Class:"+uri+nextKey;
-            }
-            else if(nextKey.split(":").length==2){
+                else if(Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity").containsKey(nextKey))
+                    name="Individual:"+uri+nextKey;
+                else
+                    name="Class:"+uri+convertToClassName(nextKey);
+            } else if(nextKey.split(":").length==2){
                 String[] prop=nextKey.split(":");
-                if(QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity").containsKey(prop[0]))
-                name="Individual:"+uri+prop[0];
-            else
-                name="Class:"+uri+prop[0];
+                if(Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity").containsKey(prop[0]))
+                    name="Individual:"+uri+prop[0];
+                else
+                    name="Class:"+uri+convertToClassName(prop[0]);
                 
-                property="Property:"+uri+prop[1];
+                property="Property:"+uri+convertToPropertyName(prop[1]);
             }
             
             
@@ -4352,38 +4465,42 @@ Hashtable allElements=new Hashtable();
             while(robottypes.hasMoreElements()){
                 String robottype=(String)robottypes.nextElement();
                 Vector valuesVec=(Vector)values.nextElement();
-                 boolean universal=false;
-        for(int k=0;k<QueryHashtable.robotCharVector.size();k++){
-            if(((Vector)QueryHashtable.robotCharVector.elementAt(k)).elementAt(0).toString().equalsIgnoreCase(robottype)){
-                universal=(Boolean)((Vector)QueryHashtable.robotCharVector.elementAt(k)).elementAt(2);
-                break;
-            }}
+                boolean universal=false;
+                for(int k=0;k<Mpiro.win.struc.getRobotCharVectorSize();k++){
+                    if(((Vector)Mpiro.win.struc.getRobotCharVectorElementAt(k)).elementAt(0).toString().equalsIgnoreCase(robottype)){
+                        universal=(Boolean)((Vector)Mpiro.win.struc.getRobotCharVectorElementAt(k)).elementAt(2);
+                        break;
+                    }}
                 
                 for(int i=0;i<valuesVec.size();i++){
-                if(!universal){
-                    if(!((String)valuesVec.elementAt(i)).equals("-1")&&!((String)valuesVec.elementAt(i)).equals("")){
-                        if(nextKey.contains(":"))
-                     out.write(property+":"+robottype+":"+(String)usertypes[i]+":"+name+":"+(String)valuesVec.elementAt(i));
-                        else
-                     out.write(name+":"+robottype+":"+(String)usertypes[i]+":"+(String)valuesVec.elementAt(i));
-                out.newLine();
-                    }}
-            else{
-                 if(!((String)valuesVec.elementAt(i)).equals("-1")&&!((String)valuesVec.elementAt(i)).equals("")){
-                        if(nextKey.contains(":"))
-                     out.write(property+":"+robottype+":"+"universal"+":"+name+":"+(String)valuesVec.elementAt(i));
-                        else
-                     out.write(name+":"+robottype+":"+"universal"+":"+(String)valuesVec.elementAt(i));
-                out.newLine();
-                    }
-                 
-               break; 
+                    if(!universal){
+                        if(!((String)valuesVec.elementAt(i)).equals("-1")&&!((String)valuesVec.elementAt(i)).equals("")){
+                            if(nextKey.contains(":")){
+                                result.put(property+":"+robottype+":"+(String)usertypes[i]+":"+name, (String)valuesVec.elementAt(i));
+                                out.write(property+":"+robottype+":"+(String)usertypes[i]+":"+name+":"+(String)valuesVec.elementAt(i));
+                            }else{
+                                result.put(name+":"+robottype+":"+(String)usertypes[i], (String)valuesVec.elementAt(i));
+                                out.write(name+":"+robottype+":"+(String)usertypes[i]+":"+(String)valuesVec.elementAt(i));}
+                            out.newLine();
+                        }} else{
+                        if(!((String)valuesVec.elementAt(i)).equals("-1")&&!((String)valuesVec.elementAt(i)).equals("")){
+                            if(nextKey.contains(":")){
+                                result.put(property+":"+robottype+":"+"universal"+":"+name, (String)valuesVec.elementAt(i));
+                                out.write(property+":"+robottype+":"+"universal"+":"+name+":"+(String)valuesVec.elementAt(i));} else{
+                                result.put(name+":"+robottype+":"+"universal", (String)valuesVec.elementAt(i));
+                                out.write(name+":"+robottype+":"+"universal"+":"+(String)valuesVec.elementAt(i));}
+                            out.newLine();
+                        }
+                        
+                        break;
+                        }}
+                
             }}
-            
-        }}
         out.close();
+        return result;
     }
-
+    
+    
     public static String getNSFor(String name, String mpiroNS) {
         if(name.matches("(?i).*http://.*"))
             return name;

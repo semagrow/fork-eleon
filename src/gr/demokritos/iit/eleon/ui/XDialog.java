@@ -10,7 +10,7 @@ import gr.demokritos.iit.eleon.authoring.LangResources;
 import gr.demokritos.iit.eleon.authoring.ListData;
 import gr.demokritos.iit.eleon.authoring.Mpiro;
 import gr.demokritos.iit.eleon.authoring.NodeVector;
-import gr.demokritos.iit.eleon.authoring.QueryHashtable;
+import gr.demokritos.iit.eleon.struct.QueryHashtable;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -65,7 +65,7 @@ public class XDialog extends JFrame
 		dialog.setVisible(true);
 
 		// get current-upper-vector
-		//rootVector = (NodeVector)QueryHashtable.mainDBHashtable.get("Data Base");
+		//rootVector = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity("Data Base");
 		//upperVector = (Vector)rootVector.elementAt(1);
 	}
 
@@ -92,7 +92,7 @@ public class XDialog extends JFrame
 	      String newUpperType = textField.getText();
 	
 	      // get current-upper-vector
-	      rootVector = (NodeVector)QueryHashtable.mainDBHashtable.get("Data Base");
+	      rootVector = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity("Data Base");
 	      upperVector = (Vector)rootVector.elementAt(1);
 	
 	      //String newUpperType = textField.getText();
@@ -108,7 +108,7 @@ public class XDialog extends JFrame
 	        }
 	      }
         // if a name is given (=text) and
-        String checkValid = QueryHashtable.checkNameValidity(newUpperType);
+        String checkValid = Mpiro.win.struc.checkNameValidity(newUpperType);
 
         if (newUpperType.indexOf(" ") >= 0)
         {

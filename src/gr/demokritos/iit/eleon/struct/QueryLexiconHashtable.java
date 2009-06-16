@@ -4,8 +4,9 @@
 //  Institute of Informatics and Telecommunications,
 //  National Centre for Scientific Research "Demokritos", Greece.
 
-package gr.demokritos.iit.eleon.authoring;
+package gr.demokritos.iit.eleon.struct;
 
+import gr.demokritos.iit.eleon.authoring.*;
 import gr.demokritos.iit.eleon.ui.KButton;
 import gr.demokritos.iit.eleon.ui.KLabel;
 
@@ -22,40 +23,46 @@ import java.lang.Object.*;
 
 public class QueryLexiconHashtable extends Object implements Serializable 
 {
-	static Hashtable currentValues;
-	static Hashtable currentTables;
+	 Hashtable currentValues;
+	Hashtable currentTables;
 	
-	static String hashtableEntry;
-	static String field;
-	static String currentValue;
-	static String currentSpecialValue;
+	String hashtableEntry;
+	String field;
+	String currentValue;
+	String currentSpecialValue;
 	
-	static Font panelFont= new Font(Mpiro.selectedFont,Font.BOLD,11);
-	static Dimension leftMargin = new Dimension(150,10);
-	public static Hashtable mainLexiconHashtable;
-	public static Hashtable currentNounHashtable;
-	public static Hashtable currentVerbHashtable;
-	public static Hashtable currentHashtable;
-	public static Hashtable currentHashtableLanguage;
-	//public static Hashtable defaultHashtable;
+	//Font panelFont= new Font(Mpiro.selectedFont,Font.BOLD,11);
+	//Dimension leftMargin = new Dimension(150,10);
+	public Hashtable mainLexiconHashtable;
+	Hashtable currentNounHashtable;
+	Hashtable currentVerbHashtable;
+	Hashtable currentHashtable;
+	Hashtable currentHashtableLanguage;
+	//public Hashtable defaultHashtable;
 	
-	//	 static Hashtable tempHashtableName;
-	static KLabel labelEN;
-	static KButton getItalian;
-	static KButton getGreek;
-	static KButton moreButton;
-	static JPanel centerPanel;
-	static JPanel panelMain;
-	static JPanel panelAdvanced;
-	JPanel linePanel[] = null;
+	//	 Hashtable tempHashtableName;
+	//KLabel labelEN;
+	//KButton getItalian;
+	//KButton getGreek;
+	//KButton moreButton;
+	//JPanel centerPanel;
+	//JPanel panelMain;
+	//JPanel panelAdvanced;
+	//JPanel linePanel[] = null;
 	
 	/** Create the main lexicon hashtable. (for initialisation purposes only) */
-	public static void createMainLexiconHashtable() 
+	public QueryLexiconHashtable() 
 	{
 		mainLexiconHashtable = new Hashtable();
 		mainLexiconHashtable.put("Nouns", new Hashtable());
 		mainLexiconHashtable.put("Verbs", new Hashtable());
 	} //
+
+    public QueryLexiconHashtable(Hashtable lexHash)
+	{
+		mainLexiconHashtable = lexHash;
+
+	}
 
 	/**
 	 * This method checks the mainLexiconHashtable for name replication.
@@ -63,7 +70,7 @@ public class QueryLexiconHashtable extends Object implements Serializable
 	 * createNoun(), createVerb(),
 	 * and in KDialog (option: "rename").
 	 */
-	public static int checkLexiconName(String nodeName) 
+	public int checkLexiconName(String nodeName) 
 	{
 		int check = 0;
 		
@@ -106,7 +113,7 @@ public class QueryLexiconHashtable extends Object implements Serializable
 	}
 
 
-	public static void createDefaultLexiconNoun(String name) 
+	public void createDefaultLexiconNoun(String name, Vector usersVector) 
 	{
 		currentNounHashtable = (Hashtable)mainLexiconHashtable.get("Nouns");
 		currentNounHashtable.put(name, new Hashtable());
@@ -151,7 +158,7 @@ public class QueryLexiconHashtable extends Object implements Serializable
 		currentNounGreekHashtable.put("grpgtext", "");
 		currentNounGreekHashtable.put("grpatext", "");
 		
-		Vector usersVector = QueryUsersHashtable.getUsersVectorFromMainUsersHashtable();
+		
 		Enumeration usersVectorEnum = usersVector.elements();
 		while (usersVectorEnum.hasMoreElements())
 		{
@@ -163,7 +170,7 @@ public class QueryLexiconHashtable extends Object implements Serializable
 	}
 
 
-	public static void createDefaultLexiconVerb(String name) 
+	public void createDefaultLexiconVerb(String name, Vector usersVector) 
 	{
 		currentVerbHashtable = (Hashtable)mainLexiconHashtable.get("Verbs");
 		currentVerbHashtable.put(name, new Hashtable());
@@ -206,7 +213,7 @@ public class QueryLexiconHashtable extends Object implements Serializable
     currentVerbGreekHashtable.put("apText", "");
     currentVerbGreekHashtable.put("cb3", "false");
 
-		Vector usersVector = QueryUsersHashtable.getUsersVectorFromMainUsersHashtable();
+		
 		Enumeration usersVectorEnum = usersVector.elements();
 		while (usersVectorEnum.hasMoreElements())
 		{
@@ -220,7 +227,7 @@ public class QueryLexiconHashtable extends Object implements Serializable
 	 *  This method creates the default information for a lexicon entry (name).
 	 *  It is called when the lexicon entry is created.
 	 */
-	/* public static void createLexiconEntry(String name) 
+	/* public void createLexiconEntry(String name) 
 		{
 		  String keyStringName = name;
 		  String verbOrNoun = keyStringName.substring(keyStringName.length()-4, keyStringName.length());
@@ -241,7 +248,7 @@ public class QueryLexiconHashtable extends Object implements Serializable
 	 *  This method updates the hashtable for a lexicon entry (name), language (language), attribute (attribute),
 	 *  storing the attribute value (attributeValue). {(info)}
 	 */
-	public static void updateLexiconEntryNoun(String name, String language, String attribute, String attributeValue) 
+	public void updateLexiconEntryNoun(String name, String language, String attribute, String attributeValue) 
 	{
 		currentNounHashtable = (Hashtable)mainLexiconHashtable.get("Nouns");
 		currentHashtable = (Hashtable)currentNounHashtable.get(name);
@@ -254,7 +261,7 @@ public class QueryLexiconHashtable extends Object implements Serializable
 	 *  This method updates the hashtable for a lexicon entry (name), language (language), attribute (attribute),
 	 *  storing the attribute value (attributeValue). {(info)}
 	 */
-	public static void updateLexiconEntryNoun(String name, String language, String attribute, Vector attributeValue) 
+	public void updateLexiconEntryNoun(String name, String language, String attribute, Vector attributeValue) 
 	{
 		currentVerbHashtable = (Hashtable)mainLexiconHashtable.get("Nouns");
 		currentHashtable = (Hashtable)currentVerbHashtable.get(name);
@@ -267,7 +274,7 @@ public class QueryLexiconHashtable extends Object implements Serializable
 	 *  This method updates the hashtable for a lexicon entry (name), language (language), attribute (attribute),
 	 *  storing the attribute value (attributeValue). {(info)}
 	 */
-	public static void updateLexiconEntryVerb(String name, String language, String attribute, String attributeValue) 
+	public void updateLexiconEntryVerb(String name, String language, String attribute, String attributeValue) 
 	{
 	  currentNounHashtable = (Hashtable)mainLexiconHashtable.get("Verbs");
 	  currentHashtable = (Hashtable)currentNounHashtable.get(name);
@@ -280,7 +287,7 @@ public class QueryLexiconHashtable extends Object implements Serializable
 	 *  This method updates the hashtable for a lexicon entry (name), language (language), attribute (attribute),
 	 *  storing the attribute value (attributeValue). {(info)}
 	 */
-	public static void updateLexiconEntryVerb(String name, String language, String attribute, Vector attributeValue) 
+	public void updateLexiconEntryVerb(String name, String language, String attribute, Vector attributeValue) 
 	{
 	  currentVerbHashtable = (Hashtable)mainLexiconHashtable.get("Verbs");
 	  currentHashtable = (Hashtable)currentVerbHashtable.get(name);
@@ -293,7 +300,7 @@ public class QueryLexiconHashtable extends Object implements Serializable
 	 *  This method updates the hashtable for a lexicon entry (name), language (language), attribute (attribute),
 	 *  storing the attribute value (attributeValue). {(info)}
 	 */
-	/* public static void updateLexiconEntryUserInfo(String name, String language, String attribute, String attributeValue) 
+	/* public void updateLexiconEntryUserInfo(String name, String language, String attribute, String attributeValue) 
 	   {
 		    String keyStringName = name;
 		    String verbOrNoun = keyStringName.substring(keyStringName.length()-4, keyStringName.length());
@@ -316,7 +323,7 @@ public class QueryLexiconHashtable extends Object implements Serializable
 	/**
 	 *  This method is invoked when a lexicon entry (oldname) is renamed (newname)
 	 */
-	public static void renameLexiconEntry(String oldname, String newname) 
+	public void renameLexiconEntry(String oldname, String newname, Hashtable mainDB, Hashtable entityTypesHashtable)
 	{
 	  currentNounHashtable = (Hashtable)mainLexiconHashtable.get("Nouns");
 	  currentVerbHashtable = (Hashtable)mainLexiconHashtable.get("Verbs");
@@ -326,14 +333,14 @@ public class QueryLexiconHashtable extends Object implements Serializable
 	    Hashtable oldnameHashtable = (Hashtable)currentNounHashtable.get(oldname);
 	    currentNounHashtable.put(newname, oldnameHashtable);
 	    currentNounHashtable.remove(oldname);
-	    renameNounFromNounVectors(oldname, newname);
+	    renameNounFromNounVectors(oldname, newname, mainDB, entityTypesHashtable);
 		} 
     else if (currentVerbHashtable.containsKey(oldname)) 
     {
 	    Hashtable oldnameHashtable = (Hashtable)currentVerbHashtable.get(oldname);
 	    currentVerbHashtable.put(newname, oldnameHashtable);
 	    currentVerbHashtable.remove(oldname);
-	    renameVerbFromMicroplanning(oldname, newname);
+	    renameVerbFromMicroplanning(oldname, newname, mainDB, entityTypesHashtable);
 		}
 		//System.out.println(mainLexiconHashtable.entrySet());
 	}
@@ -342,19 +349,19 @@ public class QueryLexiconHashtable extends Object implements Serializable
 	/**
 	 *  This method is invoked when an entity-type (name) is removed
 	 */
-	public static void removeLexiconEntry(String name) 
+	public void removeLexiconEntry(String name, Hashtable mainDB, Hashtable entityTypesHashtable) 
 	{
 	  currentNounHashtable = (Hashtable)mainLexiconHashtable.get("Nouns");
 	  currentVerbHashtable = (Hashtable)mainLexiconHashtable.get("Verbs");
 	  if (currentNounHashtable.containsKey(name)) 
 	  {
       currentNounHashtable.remove(name);
-      removeNounFromNounVectors(name);
+      removeNounFromNounVectors(name, mainDB, entityTypesHashtable);
 		} 
 		else if (currentVerbHashtable.containsKey(name)) 
 		{
       currentVerbHashtable.remove(name);
-      removeVerbFromMicroplanning(name);
+      removeVerbFromMicroplanning(name, mainDB, entityTypesHashtable);
 		}
 	}
 
@@ -364,7 +371,7 @@ public class QueryLexiconHashtable extends Object implements Serializable
 	 *  for a specific language (language) and shows them.
 	 *  The values are displayed on the lexicon right hand side space.
 	 */
-	public static Hashtable showValues(String name, String language) 
+	public Hashtable showValues(String name, String language) 
 	{
 		//System.out.println("current lexicon entry = " + name);
 		//System.out.println("current language      = " + language);
@@ -395,7 +402,7 @@ public class QueryLexiconHashtable extends Object implements Serializable
 	 *  Returns a vector of all *nouns* (sorted in alphabetical order) currently saved
 	 *  It is used when loading a new domain
 	 */
-	public static Vector getNounsVectorFromMainLexiconHashtable() 
+	public Vector getNounsVectorFromMainLexiconHashtable() 
 	{
 		currentNounHashtable = (Hashtable)mainLexiconHashtable.get("Nouns");
 		//System.out.println(currentNounHashtable.toString());
@@ -423,7 +430,7 @@ public class QueryLexiconHashtable extends Object implements Serializable
 	 *  Returns a vector of all *verbs* (sorted in alphabetical order) currently saved
 	 *  It is used when loading a new domain
 	 */
-	public static Vector getVerbsVectorFromMainLexiconHashtable() 
+	public Vector getVerbsVectorFromMainLexiconHashtable() 
 	{
 		currentVerbHashtable = (Hashtable)mainLexiconHashtable.get("Verbs");
 		//System.out.println(currentVerbHashtable.toString());
@@ -451,11 +458,11 @@ public class QueryLexiconHashtable extends Object implements Serializable
 	 *  Called when a verb is renamed in the Lexicon
 	 *  If the verb (oldVerbName) was selected in any MicroPlanning tabs, it is renamed (newVerbName) also
 	 */
-	public static void renameVerbFromMicroplanning(String oldVerbName, String newVerbName) 
+	public void renameVerbFromMicroplanning(String oldVerbName, String newVerbName, Hashtable mainDB, Hashtable entityTypesHashtable) 
 	{
-		currentHashtable = QueryHashtable.mainDBHashtable;
-		Hashtable entityTypesHashtable = new Hashtable();
-		entityTypesHashtable = QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+		currentHashtable = mainDB;
+		
+		
 		entityTypesHashtable.remove("Data Base");
 		entityTypesHashtable.remove("Basic-entity-types");
 		
@@ -496,11 +503,11 @@ public class QueryLexiconHashtable extends Object implements Serializable
 	 *  Called when a verb is removed in the Lexicon
 	 *  If the verb (verbName) was selected in any MicroPlanning tabs, it is removed
 	 */
-	public static void removeVerbFromMicroplanning(String verbName) 
+	public void removeVerbFromMicroplanning(String verbName, Hashtable mainDB, Hashtable entityTypesHashtable) 
 	{
-		currentHashtable = QueryHashtable.mainDBHashtable;
-		Hashtable entityTypesHashtable = new Hashtable();
-		entityTypesHashtable = QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+		currentHashtable = mainDB;
+		
+		
 		entityTypesHashtable.remove("Data Base");
 		entityTypesHashtable.remove("Basic-entity-types");
 		
@@ -540,11 +547,10 @@ public class QueryLexiconHashtable extends Object implements Serializable
 	 *  Called when a noun is renamed in the Lexicon
 	 *  If the noun (oldNounName) was selected in any noun field, it is renamed (newNounName) also
 	 */
-	public static void renameNounFromNounVectors(String oldNounName, String newNounName) 
+	public void renameNounFromNounVectors(String oldNounName, String newNounName, Hashtable mainDB, Hashtable entityTypesHashtable) 
 	{
-		currentHashtable = QueryHashtable.mainDBHashtable;
-		Hashtable entityTypesHashtable = new Hashtable();
-		entityTypesHashtable = QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+		currentHashtable =mainDB;
+		
 		entityTypesHashtable.remove("Data Base");
 		entityTypesHashtable.remove("Basic-entity-types");
 		
@@ -587,11 +593,10 @@ public class QueryLexiconHashtable extends Object implements Serializable
 	 *  Called when a noun is removed in the Lexicon
 	 *  If the noun (nounName) was selected in any noun fields, it is removed
 	 */
-	public static void removeNounFromNounVectors(String nounName) 
+	public void removeNounFromNounVectors(String nounName, Hashtable mainDB, Hashtable entityTypesHashtable) 
 	{
-		currentHashtable = QueryHashtable.mainDBHashtable;
-		Hashtable entityTypesHashtable = new Hashtable();
-		entityTypesHashtable = QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+		currentHashtable = mainDB;
+		
 		entityTypesHashtable.remove("Data Base");
 		entityTypesHashtable.remove("Basic-entity-types");
 		
@@ -628,7 +633,7 @@ public class QueryLexiconHashtable extends Object implements Serializable
 	}//removeVerbFromMicroplanning
 
 
-  public static JTable createDefaultTable(String tableType)
+  public JTable createDefaultTable(String tableType)
   {
 	  String tense_tabletext = LangResources.getString(Mpiro.selectedLocale, "tense_tabletext");
 	  String tenseAspect_tabletext = LangResources.getString(Mpiro.selectedLocale, "tenseAspect_tabletext");

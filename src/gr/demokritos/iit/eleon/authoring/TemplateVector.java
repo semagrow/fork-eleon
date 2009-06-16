@@ -14,5 +14,10 @@ public class TemplateVector extends Vector
 		addElement(italianValues);
 		addElement(greekValues);
 	}
+    
+     public TemplateVector(Vector v)
+  {
+	  super(v);
+     }
 
 }

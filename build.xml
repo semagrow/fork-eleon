@@ -1,0 +1,390 @@
+
+<project name="eleon" default="main" basedir=".">
+
+  <!-- Configuration properties -->
+  <!-- ======================== -->
+
+  <property name="Name" value="ELEON"/>
+  <property name="name" value="eleon"/>
+
+  <!-- Release version labels -->
+  <property name="version-major"  value="2"/>
+  <property name="version-minor"  value="0"/>
+  <!-- betaVV, or empty string for stable releases -->
+  <property name="version-status" value="-beta01"/>
+
+  <property name="version"        value="${version-major}.${version-minor}${version-status}"/>
+
+  <!-- Output file names and locations -->
+  <property name="dist.name"       value="${Name}-${version}"/>
+  <property name="dist.zip.name"   value="${Name}-${version}.zip"/>
+  <property name="web.site"        value="http://www.iit.demokritos.gr/~eleon/" />
+  <property name="jarfile"         value="${name}.jar"/>
+  <property name="srczipfile"      value="${name}-src.zip"/>
+
+  <!-- Locations -->
+
+  <property name="src.dir"           value="src"/>
+  <property name="classes.dir"       value="classes"/>
+  <property name="dist.root"         value="dist"/>
+  <property name="dist.dir"          value="${dist.root}/${dist.name}"/>
+  <property name="lib.dir"           value="lib"/>
+  <property name="doc.dir"           value="doc"/>
+  <property name="javadoc.dir"       value="doc/javadoc"/>
+  <property name="etc.dir"           value="etc"/>
+  <property name="scrpts.dir"        value="scripts"/>
+
+
+  <!-- Classpaths -->
+
+  <path id="classpath">
+    <fileset dir="${lib.dir}" includes="*.jar" excludes="${jarfile}"/>
+  </path>
+
+
+  <!-- Primary externally visible targets -->
+  <!-- ================================== -->
+
+  <target name="main" depends="compile-eleon,make-jar"
+    description="Compile source code, then build ${jarfile}"/>
+
+  <target name="jar" depends="main"
+    description="Alias for target 'main'; builds ${jarfile}"/>
+
+  <target name="jar-optimised"  depends="optimise-javac-flags,main"
+    description="Builds ${jarfile} with javac optimisation turned on and no debug info"/>
+
+  <target name="release" depends="check-assembler-doc,package"
+      description="Create a complete ELEON release"/>
+
+  <target name="check-assembler-doc" unless="assembler.unnecessary">
+    <echo>
+        Warning: assembler documentation needs updating: do `ant assembler-doc`
+        and commit updates before releasing.
+    </echo>
+  </target>
+
+
+  <!-- Primary Java build targets -->
+  <!-- ========================== -->
+
+  <target name="compile-eleon" depends="default-javac-flags"
+    description="Compile the ELEON source tree into class files under ${classes.dir}">
+    <javac
+       srcdir="${src.dir}"
+       destdir="${classes.dir}"
+       debug="${java.debug}"
+       debuglevel="${java.debuglevel}"
+       deprecation="${java.deprecation}"
+       optimize="${java.optimize}"
+       source="${java.source}"
+       target="${java.target}">
+      <classpath refid="classpath" />
+    </javac>
+  </target>
+
+  <!--target name="make-jar" depends="compile-eleon,copy-aux-files" -->
+  <target name="make-jar" depends="compile-eleon"
+    description="Create eleon.jar files from the contents of the classes dir">
+    <property name="pattern.tests" value="**/test/*"/>
+    <jar jarfile="${lib.dir}/${jarfile}" index="yes">
+      <fileset dir="${classes.dir}" excludes="${pattern.tests}"/>
+    </jar>
+    <jar jarfile="${lib.dir}/${testjarfile}" index="yes">
+      <fileset dir="${classes.dir}" includes="${pattern.tests}"/>
+    </jar>
+    <!-- finally, check that etc.jar is up-to-date if it exists -->
+    <antcall target="conditional-jar-etc" />
+  </target>
+
+  <target name="optimise-javac-flags"
+    description="Set the javac flags that will produce an optmised jar with no debug symbols" >
+    <property name="java.debug"       value="false"/>
+    <property name="java.debuglevel"  value=""/>
+    <property name="java.deprecation" value="false"/>
+    <property name="java.optimize"    value="true"/>
+    <property name="java.source"      value="1.6"/>
+    <property name="java.target"      value="1.6"/>
+  </target>
+
+  <target name="default-javac-flags"
+    description="Set the javac flags that will produce an debug jar with no compiler optimisation and all debug symbols" >
+    <!-- Note that in ant, if these flags are already set setting them again has no effect -->
+    <property name="java.debug"       value="true"/>
+    <property name="java.debuglevel"  value="source,lines,vars"/>
+    <property name="java.deprecation" value="false"/>
+    <property name="java.optimize"    value="false"/>
+    <property name="java.source"      value="1.6"/>
+    <property name="java.target"      value="1.6"/>
+  </target>
+
+
+  <!-- handling contrib and assembler -->
+  <!-- ============================== -->
+
+  <uptodate property="update.unnecessary"
+    srcfile="${contrib.dir}/contributions.n3" targetfile="${contrib.dir}/contributions.html"
+  />
+
+  <uptodate property="assembler.unnecessary"
+    srcfile="${doc.dir}/assembler/assembler-howto.phtml"
+    targetfile="${doc.dir}/assembler/assembler-howto.html"
+  />
+
+  <target name="contrib" unless="update.unnecessary">
+      <echo>rebuilding contributions.html from contributions.n3</echo>
+      <java classname="com.hp.hpl.jena.tools.html.RDFtoTable">
+          <arg value="${contrib.dir}/contributions-table.n3"/>
+          <arg value="${contrib.dir}/contributions.n3"/>
+          <redirector output="${contrib.dir}/table.tmp"/>
+          <classpath>
+              <path refid="classpath.tools"/>
+          </classpath>
+      </java>
+      <java classname="jena.Weave">
+          <arg value="${contrib.dir}/contrib-template.html"/>
+          <redirector
+              output="${contrib.dir}/contributions.html"
+          />
+          <sysproperty
+              key="table"
+              value="${contrib.dir}/table.tmp"
+          />
+          <classpath>
+              <path refid="classpath.tools"/>
+          </classpath>
+      </java>
+  </target>
+
+
+
+  <!-- Generating Javadoc -->
+  <!-- ================== -->
+
+  <target name="clean-javadoc"
+   description="Clean out the old javadoc dir prior to regenerating new javadoc files">
+    <delete dir="${javadoc.dir}" quiet="true"/>
+    <mkdir dir="${javadoc.dir}"/>
+  </target>
+
+  <target name="javadoc" depends="clean-javadoc"
+    description="Generate selected javadoc (i.e. just the user-facing packages) from the copied source tree">
+    <javadoc
+     sourcepath="${bldsrc.dir}"
+     destdir="${javadoc.dir}"
+     source="${java.source}"
+     author="true"
+     version="true"
+     classpathref="classpath"
+     windowtitle="${Name} Ontology Authoring and Enrichment Tool"
+     doctitle="${Name}"
+     Public="true"
+     Use="true"
+     bottom="Copyright &#169; 2001-2009 NCSR &quot;Demokritos&quot;"
+     additionalparam="-breakiterator"
+    >
+      <classpath refid="classpath"/>
+      <package name="gr.demokritos.iit.eleon.authoring"/>
+      <package name="gr.demokritos.iit.eleon.parser"/>
+      <package name="gr.demokritos.iit.eleon.ui"/>
+      <package name="gr.demokritos.iit.eleon.um"/>
+      <package name="eleon"/>
+      <!-- We group the Javadoc packages by section -->
+      <group title="API - Application Programming Interface">
+        <package name="com.hp.hpl.jena.db"/>
+        <package name="com.hp.hpl.jena.rdf.model"/>
+        <package name="com.hp.hpl.jena.rdf.listeners"/>
+        <package name="com.hp.hpl.jena.rdf.arp"/>
+        <package name="com.hp.hpl.jena.rdf.arp.lang"/>
+        <package name="com.hp.hpl.jena.datatypes"/>
+        <package name="com.hp.hpl.jena.datatypes.xsd"/>
+        <package name="com.hp.hpl.jena.rdql"/>
+        <package name="com.hp.hpl.jena.shared"/>
+        <package name="com.hp.hpl.jena.vocabulary"/>
+        <package name="com.hp.hpl.jena.xmloutput"/>
+        <package name="com.hp.hpl.jena.ontology"/>
+        <package name="com.hp.hpl.jena.ontology.daml"/>
+        <package name="com.hp.hpl.jena.reasoner"/>
+        <package name="com.hp.hpl.jena.reasoner.rulesys"/>
+        <package name="com.hp.hpl.jena.reasoner.rulesys.builtins"/>
+        <package name="com.hp.hpl.jena.reasoner.transitiveReasoner"/>
+        <package name="com.hp.hpl.jena.reasoner.dig"/>
+      </group>
+      <group title="SPI - System Programming Interface">
+        <package name="com.hp.hpl.jena.enhanced"/>
+        <package name="com.hp.hpl.jena.graph"/>
+        <package name="com.hp.hpl.jena.graph.compose"/>
+        <package name="com.hp.hpl.jena.graph.query"/>
+        <package name="com.hp.hpl.jena.util"/>
+        <package name="com.hp.hpl.jena.util.iterator"/>
+      </group>
+      <group title="Command line tools">
+        <package name="jena" />
+      </group>
+    </javadoc>
+  </target>
+
+  <target name="javadoc-all" depends="clean-javadoc"
+    description="Generate Javadoc for the whole of Jena, not just the user-facing packages">
+    <javadoc
+     sourcepath="${bldsrc.dir}"
+     destdir="${javadoc.dir}"
+     maxmemory="200m"
+     author="true"
+     version="true"
+     classpathref="classpath"
+     windowtitle="${Name} Framework"
+     doctitle="${Name} Framework"
+     overview="${bldsrc.dir}/link2readme.html"
+     bottom="Copyright &#169; 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008 Hewlett-Packard. All Rights Reserved."
+     packagenames="com.hp.hpl.*"
+     additionalparam="-breakiterator"
+     Use="true"
+     />
+  </target>
+
+  <target name="assembler-doc" depends="assembler-doc-howto,assembler-doc-inside"/>
+
+  <target name="assembler-doc-howto">
+      <java classname="jena.Weave">
+          <classpath>
+              <path refid="classpath.tools"/>
+          </classpath>
+          <redirector
+              output="doc/assembler/assembler-howto.html"
+          />
+          <arg value="doc/assembler/assembler-howto.phtml"/>
+          <sysproperty key="vocab" value="vocabularies/assembler.n3"/>
+          <sysproperty key="examples" value="doc/assembler/examples.n3"/>
+      </java>
+  </target>
+
+   <target name="assembler-doc-inside">
+        <java classname="jena.Weave">
+            <classpath>
+                <path refid="classpath.tools"/>
+             </classpath>
+             <redirector
+                 output="doc/assembler/inside-assemblers.html"
+             />
+             <arg value="doc/assembler/inside-assemblers.phtml"/>
+             <sysproperty key="vocab" value="vocabularies/assembler.n3"/>
+             <sysproperty key="examples" value="doc/assembler/examples.n3"/>
+         </java>
+     </target>
+
+  <!-- Creating a Jena distribution -->
+  <!-- ============================ -->
+
+  <target name="package" depends="copy-dist,zip-dist"
+      description="Aggregate task to perform the steps of creating a Jena distribution"/>
+
+  <target name="clean-dist"
+    description="Clean the distribution directory prior to creating the distro">
+    <delete dir="${dist.dir}" quiet="true"/>
+    <mkdir dir="${dist.dir}"/>
+  </target>
+
+  <target name="copy-dist" depends="make-jar,javadoc,clean-dist"
+    description="Copy the various elements of a distribution into one directory tree">
+    <!-- Libraries, including eleon.jar" -->
+    <copy todir="${dist.dir}/${lib.dir}">
+      <fileset dir="${lib.dir}" includes="**/*.jar" excludes="**/etc.jar" />
+      <fileset dir="${lib.dir}" includes="readme.html"/>
+    </copy>
+    <!-- Source - we could zip this up -->
+    <copy todir="${dist.dir}/${src.dir}">
+      <fileset dir="${bldsrc.dir}" includes="**"/>
+    </copy>
+    <copy todir="${dist.dir}/${src.examples.dir}">
+      <fileset dir="${src.examples.dir}" includes="**"/>
+    </copy>
+    <!-- Misc files -->
+    <copy todir="${dist.dir}" file="build.xml"/>
+    <copy todir="${dist.dir}" file="copyright.txt"/>
+    <copy todir="${dist.dir}" file="INSTALL.txt"/>
+    <copy todir="${dist.dir}" file="README.txt"/>
+    <copy todir="${dist.dir}" file="ReleaseNotes.txt"/>
+    <copy todir="${dist.dir}" file="test.bat"/>
+    <copy todir="${dist.dir}" file="test.sh"/>
+    <copy todir="${dist.dir}" file="test-db.sh"/>
+    <copy todir="${dist.dir}" file="test-dig.sh"/>
+    <copy todir="${dist.dir}" file="readme.html"/>
+    <copy todir="${dist.dir}/${etc.dir}">
+      <fileset dir="${etc.dir}" includes="**"/>
+    </copy>
+    <!-- Scripts -->
+    <copy todir="${dist.dir}/${bin.dir}">
+      <fileset dir="${bin.dir}" includes="**"/>
+    </copy>
+    <copy todir="${dist.dir}/${bat.dir}">
+      <fileset dir="${bat.dir}" includes="**"/>
+    </copy>
+
+    <!-- Documentation -->
+    <!-- Javadoc is part of the documentation directory -->
+
+    <!-- First we translate the src-examples code into html (use ant-call to get the sequencing right) -->
+    <antcall target="generate.html.src-examples">
+    </antcall>
+
+    <!-- copy the documentation tree, minus non-release files -->
+    <copy todir="${dist.dir}/${doc.dir}">
+      <fileset dir="${doc.dir}">
+        <include name="**"/>
+        <!-- Ignore the raw source and scripts we use to prepare the docs -->
+        <exclude name="**/*.content.html"/>
+        <exclude name="template.html"/>
+        <exclude name="produce"/>
+        <exclude name="merge"/>
+        <exclude name="linkcheck"/>
+        <exclude name="release"/>
+        <exclude name="readme-site.txt"/>
+        <!-- FrontPage control files -->
+        <exclude name="**/_*"/>
+        <exclude name="**/_*/*"/>
+        <exclude name="**/desktop.ini"/>
+      </fileset>
+    </copy>
+
+    <!-- After we copy, edit links to src-examples to point to the html versions instead -->
+    <replaceregexp match="\.\./src-examples/(.*\.java)"
+                   replace="src-examples/\1.xhtml"
+                   byline="true">
+      <fileset dir="${dist.dir}/${doc.dir}" includes="**/*.html" excludes="**/javadoc"/>
+    </replaceregexp>
+    <replaceregexp match="\.\./src-examples/data"
+                   replace="src-examples/data"
+                   byline="true">
+      <fileset dir="${dist.dir}/${doc.dir}" includes="**/*.html" excludes="**/javadoc"/>
+    </replaceregexp>
+    <replaceregexp match="\.\./vocabularies"
+                   replace="vocabularies"
+                   byline="true">
+      <fileset dir="${dist.dir}/${doc.dir}" includes="**/*.html" excludes="**/javadoc"/>
+    </replaceregexp>
+
+    <!-- Vocabularies and schemas -->
+    <copy todir="${dist.dir}/${vocab.dir}">
+      <fileset dir="${vocab.dir}" includes="**"/>
+    </copy>
+    <copy todir="${dist.dir}/${test.dir}">
+      <!-- Exclude any zips of the RDQL test scripts -->
+      <fileset dir="${test.dir}"
+               includes="**"
+               excludes="${test.dir}/RDQL/rdql-tests-jena*.zip"/>
+    </copy>
+    <!-- Junk that creeps in -->
+    <delete>
+      <fileset dir="${dist.dir}" includes="**/.nbattrs"/>
+    </delete>
+  </target>
+
+  <target name="zip-dist"
+    description="Create a zip file of everything in the distribution directory">
+    <zip zipfile="${dist.root}/${dist.zip.name}">
+      <fileset dir="dist" includes="${dist.name}/**"/>
+    </zip>
+  </target>
+
+</project>

@@ -6,6 +6,8 @@
 
 package gr.demokritos.iit.eleon.authoring;
 
+import gr.demokritos.iit.eleon.struct.QueryHashtable;
+import gr.demokritos.iit.eleon.struct.QueryProfileHashtable;
 import gr.demokritos.iit.eleon.ui.MessageDialog;
 
 import java.util.*;
@@ -41,7 +43,7 @@ public class DataBaseTableModel extends AbstractTableModel
 
   public static final FillerCombo fillerCombo = new FillerCombo();
 
-  static Vector m_vector;
+  public static Vector m_vector;
   protected int m_rowActive;
   protected Vector m_initVector= new Vector();//maria
 
@@ -177,9 +179,13 @@ public class DataBaseTableModel extends AbstractTableModel
 //                    ren=n.getLocalName();
                 }
 
-				String checkName = QueryHashtable.checkNameValidity(svalue);
+				String checkName = Mpiro.win.struc.checkNameValidity(svalue);
 				Vector fieldNamesVector = new Vector();
-				fieldNamesVector = QueryHashtable.getExistingFieldnamesForEntityTypeAndChildren(DataBasePanel.topA);
+                Enumeration propNames=Mpiro.win.struc.getPropertyNames();
+                while(propNames.hasMoreElements()){
+                    fieldNamesVector.add(propNames.nextElement());
+                }
+				//fieldNamesVector = Mpiro.win.struc.getExistingFieldnamesForEntityTypeAndChildren(DataBasePanel.topA);
 				/*
 				Vector fieldNamesVector = new Vector();
 				Enumeration enum = DataBaseTable.m_data.m_vector.elements();
@@ -214,33 +220,35 @@ public class DataBaseTableModel extends AbstractTableModel
 				{
 					// Get the second column value (fillerType)
 					String fillerType = (String)getValueAt(nRow, nCol+1);
-					QueryHashtable.updateChildrenEntitiesFieldColumn(oldValue, svalue, fillerType);
-					QueryHashtable.renameHashtableField(DataBasePanel.last.toString(), oldValue, svalue);
+                    Mpiro.win.struc.updateTemplateVector(oldValue, svalue);
+					Mpiro.win.struc.updateChildrenEntitiesFieldColumn(oldValue, svalue, fillerType);
+					Mpiro.win.struc.renameHashtableField(DataBasePanel.last.toString(), oldValue, svalue);
 							//maria
 					row.m_field = svalue;
                                         
-                                  //      Object propValue=QueryHashtable.propertiesHashtable.remove(oldValue);
+                                  //      Object propValue=Mpiro.win.struc.removeProperty(oldValue);
                                     //    if (propValue==null)
                                       //      propValue=new propertiesHashtableRecord(row.m_filler);
-                                       // QueryHashtable.propertiesHashtable.put(svalue, propValue);
+                                       // Mpiro.win.struc.addProperty(svalue, propValue);
                                         
                                         
                                         
                                      //   occur(DataBasePanel.last.toString() , oldValue, svalue, fillerType);
                                         
-                                        Vector property=(Vector) QueryHashtable.propertiesHashtable.remove(oldValue);
-                                        QueryHashtable.propertiesHashtable.put(svalue, property);
-                                        property=(Vector) QueryHashtable.propertiesHashtable.get(svalue);
+                                        Vector property=(Vector) Mpiro.win.struc.removeProperty(oldValue);
+                                        Mpiro.win.struc.addProperty(svalue, (PropertiesHashtableRecord) property);
+                                        property=(Vector) Mpiro.win.struc.getProperty(svalue);
                                         Vector Domain=(Vector) property.elementAt(0);
                                         for(int y=0;y<Domain.size();y++){
                                             occur(Domain.elementAt(y).toString() , oldValue, svalue, fillerType);
                                         }
                                         
                                 }
-                                QueryUsersHashtable.renameFieldInUserModelHashtable(oldValue, svalue);//==
-                                QueryUsersHashtable.renameFieldInRobotsModelHashtable(oldValue, svalue);
-                                QueryHashtable.renameFieldInRestrictionsHashtable(oldValue, svalue);
+                                Mpiro.win.struc.renameFieldInUserModelHashtable(oldValue, svalue);//==
+                               // QueryProfileHashtable.renameFieldInRobotsModelHashtable(oldValue, svalue);
+                                Mpiro.win.struc.renameFieldInRestrictionsHashtable(oldValue, svalue);
 					Mpiro.needExportToExprimo = true;
+                                      //  NodeVector temp=Mpiro.win.struc.getEntityTypeOrEntity("sssssss");
                                 break;
       case COL_FILLER:
 
@@ -248,7 +256,7 @@ public class DataBaseTableModel extends AbstractTableModel
 		
 			  // Get the first column value (fieldName)
 			  String fieldName = (String)getValueAt(nRow, nCol-1);
-			  QueryHashtable.updateChildrenEntitiesFillerColumn(DataBasePanel.last, oldValue, svalue, fieldName);
+			  Mpiro.win.struc.updateChildrenEntitiesFillerColumn(DataBasePanel.last, oldValue, svalue, fieldName);
 		    Mpiro.needExportToExprimo = true;		//maria
 		    row.m_filler = svalue;
 			  row.m_approved = new Boolean(false);
@@ -257,13 +265,13 @@ public class DataBaseTableModel extends AbstractTableModel
                           
                           fillerUpdate( DataBasePanel.last.toString() , oldValue, svalue, fieldName);
                          
-Vector propValue=(Vector) QueryHashtable.propertiesHashtable.remove(row.m_field);
+Vector propValue=(Vector) Mpiro.win.struc.removeProperty(row.m_field);
                                         if (propValue==null)
                                             propValue=new PropertiesHashtableRecord(svalue);
 Vector range=(Vector) propValue.elementAt(1);
 range.removeAllElements();
 range.add(svalue);
-                                        QueryHashtable.propertiesHashtable.put(row.m_field, propValue);
+                                        Mpiro.win.struc.addProperty(row.m_field, (PropertiesHashtableRecord)propValue);
                                         System.out.println("bbbbbbbb"+propValue.toString());
                           
                           
@@ -271,7 +279,7 @@ range.add(svalue);
 			  DataBaseTable.dbTable.revalidate();
 			  DataBaseTable.dbTable.repaint();
 		
-			  //QueryHashtable.updateChildrenBasicTableVectors(nRow, true);
+			  //Mpiro.win.struc.updateChildrenBasicTableVectors(nRow, true);
         break;
 
    /*   case COL_APPROVED:
@@ -297,7 +305,7 @@ range.add(svalue);
                               
 				if (value.toString().equalsIgnoreCase("true"))
 				{
-					QueryHashtable.updateChildrenEntitiesFillerColumn
+					Mpiro.win.struc.updateChildrenEntitiesFillerColumn
 										(DataBasePanel.last,
 										filler, "Select multiple .....",
 										getValueAt(nRow, nCol-2).toString());
@@ -305,7 +313,7 @@ range.add(svalue);
 				}
 				else
 				{
-					QueryHashtable.updateChildrenEntitiesFillerColumn
+					Mpiro.win.struc.updateChildrenEntitiesFillerColumn
 										(DataBasePanel.last,
 				          	filler, filler,
 										getValueAt(nRow, nCol-2).toString());
@@ -317,7 +325,7 @@ range.add(svalue);
 
       case COL_MPLANNING:
              
-        microplanningUpdate(DataBasePanel.last.toString(),row.m_field, svalue);
+      //  microplanningUpdate(DataBasePanel.last.toString(),row.m_field, svalue);
             
           
     //  row.m_mplanning = svalue;
@@ -328,14 +336,17 @@ range.add(svalue);
 		field.setElementAt(value, nCol);
 		
 		// Updating BasicTypes & EntityTypes (children)
-		QueryHashtable.updateChildrenBasicTableVectors(nRow);
+		Mpiro.win.struc.updateChildrenBasicTableVectors(nRow);
+        if(Mpiro.win.ontoPipe.isRealTime())
+        Mpiro.win.ontoPipe.rebind();
 	}
   
   
   
   
     public void setValueAt(Object value, int nRow, int nCol, String node) 
-  {System.out.println("DDDDDDDDDDD   "+node+"  "+String.valueOf(nRow)+String.valueOf(nCol));
+  {
+        //System.out.println("DDDDDDDDDDD   "+node+"  "+String.valueOf(nRow)+String.valueOf(nCol));
 		// Conditions which may stop process
 		if (nRow < 0 || nRow>=getRowCount())
 		{
@@ -366,10 +377,14 @@ range.add(svalue);
           
 				oldValue = oldObject.toString();
 
-				String checkName = QueryHashtable.checkNameValidity(svalue);
+				String checkName = Mpiro.win.struc.checkNameValidity(svalue);
 				Vector fieldNamesVector = new Vector();
-				fieldNamesVector = QueryHashtable.getExistingFieldnamesForEntityTypeAndChildren(DataBasePanel.topA);
-				/*
+				//fieldNamesVector = Mpiro.win.struc.getExistingFieldnamesForEntityTypeAndChildren(DataBasePanel.topA);
+				Enumeration propNames=Mpiro.win.struc.getPropertyNames();
+                while(propNames.hasMoreElements()){
+                    fieldNamesVector.add(propNames.nextElement());
+                }
+                /*
 				Vector fieldNamesVector = new Vector();
 				Enumeration enum = DataBaseTable.m_data.m_vector.elements();
 				while (enum.hasMoreElements()) {
@@ -403,23 +418,24 @@ range.add(svalue);
 				{
 					// Get the second column value (fillerType)
 					String fillerType = (String)getValueAt(nRow, nCol+1);
-					QueryHashtable.updateChildrenEntitiesFieldColumn(oldValue, svalue, fillerType);
-					QueryHashtable.renameHashtableField(node, oldValue, svalue);
+					Mpiro.win.struc.updateChildrenEntitiesFieldColumn(oldValue, svalue, fillerType);
+                    Mpiro.win.struc.updateTemplateVector(oldValue, svalue);
+					Mpiro.win.struc.renameHashtableField(node, oldValue, svalue);
 							//maria
 					row.m_field = svalue;
                                         
-                                        Object propValue=QueryHashtable.propertiesHashtable.remove(oldValue);
+                                        Object propValue=Mpiro.win.struc.removeProperty(oldValue);
                                         if (propValue==null)
                                             propValue=new PropertiesHashtableRecord(row.m_filler);
-                                        QueryHashtable.propertiesHashtable.put(svalue, propValue);
+                                        Mpiro.win.struc.addProperty(svalue,(PropertiesHashtableRecord) propValue);
                                         
                                         
                                         
                                         occur(node , oldValue, svalue, fillerType);
                                         
                                 }
-                                QueryUsersHashtable.renameFieldInUserModelHashtable(oldValue, svalue);//==
-                                 QueryUsersHashtable.renameFieldInRobotsModelHashtable(oldValue, svalue);
+                                Mpiro.win.struc.renameFieldInUserModelHashtable(oldValue, svalue);//==
+                                // QueryProfileHashtable.renameFieldInRobotsModelHashtable(oldValue, svalue);
 					Mpiro.needExportToExprimo = true;
                                 break;
       case COL_FILLER:
@@ -428,7 +444,7 @@ range.add(svalue);
 		
 			  // Get the first column value (fieldName)
 			  String fieldName = (String)getValueAt(nRow, nCol-1);
-			  QueryHashtable.updateChildrenEntitiesFillerColumn(DataBasePanel.last, oldValue, svalue, fieldName);
+			  Mpiro.win.struc.updateChildrenEntitiesFillerColumn(DataBasePanel.last, oldValue, svalue, fieldName);
 		    Mpiro.needExportToExprimo = true;		//maria
 		    row.m_filler = svalue;
 			  row.m_approved = new Boolean(false);
@@ -437,17 +453,17 @@ range.add(svalue);
                           
                           fillerUpdate( node , oldValue, svalue, fieldName);
                          
-Object propValue=QueryHashtable.propertiesHashtable.remove(row.m_field);
+Object propValue=Mpiro.win.struc.removeProperty(row.m_field);
                                         if (propValue==null)
                                             propValue=new PropertiesHashtableRecord(svalue);
-                                        QueryHashtable.propertiesHashtable.put(row.m_field, propValue);
+                                        Mpiro.win.struc.addProperty(row.m_field, (PropertiesHashtableRecord)propValue);
                           
                           
 		
 			  DataBaseTable.dbTable.revalidate();
 			  DataBaseTable.dbTable.repaint();
 		
-			  //QueryHashtable.updateChildrenBasicTableVectors(nRow, true);
+			  //Mpiro.win.struc.updateChildrenBasicTableVectors(nRow, true);
         break;
 
       case COL_APPROVED:
@@ -465,20 +481,20 @@ Object propValue=QueryHashtable.propertiesHashtable.remove(row.m_field);
 						row.m_approved = (Boolean)value;
 				  }
 				}
-                                System.out.println("dddddd");
-                                approvedUpdate(node, row.m_field, row.m_approved, filler, nRow, nCol);
+                             //   System.out.println("dddddd");
+                             //   approvedUpdate(node, row.m_field, row.m_approved, filler, nRow, nCol);
 
                                                                                                              
                  // if (elementAt(6).toString().equalsIgnoreCase("true")){  
                  
                 //  }
-                                 Vector propVector=(Vector) QueryHashtable.propertiesHashtable.get(row.m_field);                  
+                                 Vector propVector=(Vector) Mpiro.win.struc.getProperty(row.m_field);                  
                   if(propVector==null) propVector=new PropertiesHashtableRecord();     
                               
 				if (value.toString().equalsIgnoreCase("true"))
 				{
                                propVector.setElementAt("false",6);
-					QueryHashtable.updateChildrenEntitiesFillerColumn
+					Mpiro.win.struc.updateChildrenEntitiesFillerColumn
 										(DataBasePanel.last,
 										filler, "Select multiple .....",
 										getValueAt(nRow, nCol-2).toString());
@@ -487,7 +503,7 @@ Object propValue=QueryHashtable.propertiesHashtable.remove(row.m_field);
 				else
 				{
                                propVector.setElementAt("true",6);
-					QueryHashtable.updateChildrenEntitiesFillerColumn
+					Mpiro.win.struc.updateChildrenEntitiesFillerColumn
 										(DataBasePanel.last,
 				          	filler, filler,
 										getValueAt(nRow, nCol-2).toString());
@@ -499,7 +515,7 @@ Object propValue=QueryHashtable.propertiesHashtable.remove(row.m_field);
 
       case COL_MPLANNING:
              
-        microplanningUpdate(node, row.m_field, svalue);
+     //   microplanningUpdate(node, row.m_field, svalue);
             
           
     //  row.m_mplanning = svalue;
@@ -510,7 +526,7 @@ Object propValue=QueryHashtable.propertiesHashtable.remove(row.m_field);
 		field.setElementAt(value, nCol);
 		
 		// Updating BasicTypes & EntityTypes (children)
-		QueryHashtable.updateChildrenBasicTableVectors(nRow);
+		Mpiro.win.struc.updateChildrenBasicTableVectors(nRow);
 	}
   
   
@@ -523,7 +539,7 @@ Object propValue=QueryHashtable.propertiesHashtable.remove(row.m_field);
                 {
                     lastSelected2=lastSelected2.substring(0, lastSelected2.length()-7);
                 }
-                 Hashtable allEntityTypes2 = (Hashtable) QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+                 Hashtable allEntityTypes2 = (Hashtable) Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
                     Enumeration allTypesNames2=allEntityTypes2.keys();
                     while(allTypesNames2.hasMoreElements())
                     {DefaultMutableTreeNode nextNode=null;
@@ -541,7 +557,7 @@ Object propValue=QueryHashtable.propertiesHashtable.remove(row.m_field);
                                 if (nextNode.toString().equalsIgnoreCase(nextEl.toString()))
                                    break;
                          }
-                               NodeVector entityTypeParentNode = (NodeVector) QueryHashtable.mainDBHashtable.get(nextNode.toString());
+                               NodeVector entityTypeParentNode = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(nextNode.toString());
                              Vector parentDatabaseTableVector =(Vector) entityTypeParentNode.elementAt(0);
                              FieldData property=null;
                              for (int h=parentDatabaseTableVector.size();h>0;h--){
@@ -554,7 +570,7 @@ Object propValue=QueryHashtable.propertiesHashtable.remove(row.m_field);
                              prop.m_mplanning=svalue;
                         }}
                     
-             //       Vector Children=QueryHashtable.getChildrenVectorFromMainDBHashtable(last,"entity type");
+             //       Vector Children=Mpiro.win.struc.getChildrenVectorFromMainDBHashtable(last,"entity type");
                //     for(int c=0;c<Children.size();c++)
                  //   {
                    //     microplanningUpdate(Children.elementAt(c).toString(), rowMField, svalue);
@@ -570,7 +586,7 @@ Object propValue=QueryHashtable.propertiesHashtable.remove(row.m_field);
                 {
                     lastSelected1=lastSelected1.substring(0, lastSelected1.length()-7);
                 }
-                 Hashtable allEntityTypes1 = (Hashtable) QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+                 Hashtable allEntityTypes1 = (Hashtable) Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
                     Enumeration allTypesNames1=allEntityTypes1.keys();
                     while(allTypesNames1.hasMoreElements())
                     {DefaultMutableTreeNode nextNode=null;
@@ -588,19 +604,19 @@ Object propValue=QueryHashtable.propertiesHashtable.remove(row.m_field);
                                 if (nextNode.toString().equalsIgnoreCase(nextEl.toString()))
                                    break;
                          }
-                              Vector propVector=(Vector) QueryHashtable.propertiesHashtable.get(rowMField);                  
+                              Vector propVector=(Vector) Mpiro.win.struc.getProperty(rowMField);                  
                   if(propVector==null) propVector=new PropertiesHashtableRecord();     
                             if (String.valueOf(value).equalsIgnoreCase("true"))
 				{
                                   propVector.setElementAt("false",6);
-					QueryHashtable.updateChildrenEntitiesFillerColumn
+					Mpiro.win.struc.updateChildrenEntitiesFillerColumn
 										(nextNode,
 										filler, "Select multiple .....",
 										getValueAt(nRow, nCol-2).toString());
 					Mpiro.needExportToExprimo = true;	
                                         //maria
                                         //System.out.println("testttt1"+nextNode.toString());
-                                        NodeVector entityTypeParentNode = (NodeVector) QueryHashtable.mainDBHashtable.get(nextNode.toString());
+                                        NodeVector entityTypeParentNode = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(nextNode.toString());
                              Vector parentDatabaseTableVector = (Vector) entityTypeParentNode.elementAt(0);
                               FieldData property=null;
                              for (int h=parentDatabaseTableVector.size();h>0;h--){
@@ -615,13 +631,13 @@ Object propValue=QueryHashtable.propertiesHashtable.remove(row.m_field);
 				else
 				{
                                   propVector.setElementAt("true",6);
-					QueryHashtable.updateChildrenEntitiesFillerColumn
+					Mpiro.win.struc.updateChildrenEntitiesFillerColumn
 										(nextNode,
 				          	filler, filler,
 										getValueAt(nRow, nCol-2).toString());
 					Mpiro.needExportToExprimo = true;		//maria
                                         //System.out.println("testttt2"+nextNode.toString());
-                                         NodeVector entityTypeParentNode = (NodeVector) QueryHashtable.mainDBHashtable.get(nextNode.toString());
+                                         NodeVector entityTypeParentNode = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(nextNode.toString());
                              Vector parentDatabaseTableVector =(Vector) entityTypeParentNode.elementAt(0);
                              FieldData property=null;
                              for (int h=parentDatabaseTableVector.size();h>0;h--){
@@ -637,7 +653,7 @@ Object propValue=QueryHashtable.propertiesHashtable.remove(row.m_field);
                             
                         }}
                     
-                    Vector Children=QueryHashtable.getChildrenVectorFromMainDBHashtable(last,"entity type");
+                    Vector Children=Mpiro.win.struc.getChildrenVectorFromMainDBHashtable(last,"entity type");
                     for(int c=0;c<Children.size();c++)
                     {
                         approvedUpdate(Children.elementAt(c).toString(), rowMField, value, filler, nRow, nCol);
@@ -653,7 +669,7 @@ Object propValue=QueryHashtable.propertiesHashtable.remove(row.m_field);
                 {
                     lastSelected=lastSelected.substring(0, lastSelected.length()-7);
                 }
-                 Hashtable allEntityTypes = (Hashtable) QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+                 Hashtable allEntityTypes = (Hashtable) Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
                     Enumeration allTypesNames=allEntityTypes.keys();
                     while(allTypesNames.hasMoreElements())
                     {DefaultMutableTreeNode nextNode=null;
@@ -673,25 +689,28 @@ Object propValue=QueryHashtable.propertiesHashtable.remove(row.m_field);
                                if (nextNode.toString().equalsIgnoreCase(nextEl.toString()))
                                    break;
                          }
-                             			  QueryHashtable.updateChildrenEntitiesFillerColumn(nextNode, oldValue, svalue, fieldName);
-                             NodeVector entityTypeParentNode = (NodeVector) QueryHashtable.mainDBHashtable.get(nextNode.toString());
-                             Vector parentDatabaseTableVector =(Vector) entityTypeParentNode.elementAt(0);
-                           //  entityTypeParentNode.databaseTableVector
-                              FieldData property=null;
-                             for (int h=parentDatabaseTableVector.size();h>0;h--){
-                             property = (FieldData) parentDatabaseTableVector.elementAt(h-1);
-                           //  System.out.println("LLLLLLLLLLL"+property.elementAt(0).toString()+getValueAt(nRow, 0).toString());
-                             if (property.elementAt(0).toString().equalsIgnoreCase(fieldName)) break;
-                             }
-                             
-                              
-                             property.remove(1);
-                             property.add(1, svalue);
-                             property.remove(2);
-                             property.add(2, "false");
-                             FieldData prop= (FieldData) property;
-                             prop.m_filler=svalue;
-                             prop.m_approved= new Boolean("False");
+                             			  Mpiro.win.struc.updateChildrenEntitiesFillerColumn(nextNode, oldValue, svalue, fieldName);
+//                             NodeVector entityTypeParentNode = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(nextNode.toString());
+//                             Vector parentDatabaseTableVector =(Vector) entityTypeParentNode.elementAt(0);
+//                           //  entityTypeParentNode.databaseTableVector
+//                              FieldData property=null;
+//                             for (int h=parentDatabaseTableVector.size();h>0;h--){
+//                             property = (FieldData) parentDatabaseTableVector.elementAt(h-1);
+//                           //  System.out.println("LLLLLLLLLLL"+property.elementAt(0).toString()+getValueAt(nRow, 0).toString());
+//                             if (property.elementAt(0).toString().equalsIgnoreCase(fieldName)) break;
+//                             }
+//                             
+//                              
+//                             property.remove(1);
+//                             property.add(1, svalue);
+//                             property.remove(2);
+//                             property.add(2, "false");
+//                             FieldData prop= (FieldData) property;
+//                             prop.m_filler=svalue;
+//                             prop.m_approved= new Boolean("False");
+    PropertiesHashtableRecord prop=Mpiro.win.struc.getProperty(fieldName);
+    prop.removeFromRange(oldValue);
+    prop.addToRange(svalue);
                              
                             // parentDatabaseTableVector.removeElementAt(parentDatabaseTableVector.size()-1);
                             // //System.out.println("aaaaaaaaaaaaaaaaaaaaaaaa"+property.toString());
@@ -700,7 +719,7 @@ Object propValue=QueryHashtable.propertiesHashtable.remove(row.m_field);
 	   		
                     }
                   
-                     Vector Children=QueryHashtable.getChildrenVectorFromMainDBHashtable(last,"entity type");
+                     Vector Children=Mpiro.win.struc.getChildrenVectorFromMainDBHashtable(last,"entity type");
                     for(int c=0;c<Children.size();c++)
                     {
                         fillerUpdate(Children.elementAt(c).toString() , oldValue, svalue, fieldName);
@@ -716,7 +735,7 @@ Object propValue=QueryHashtable.propertiesHashtable.remove(row.m_field);
                 {
                     lastSelected=lastSelected.substring(0, lastSelected.length()-7);
                 }
-                 Hashtable allEntityTypes = (Hashtable) QueryHashtable.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
+                 Hashtable allEntityTypes = (Hashtable) Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
                     Enumeration allTypesNames=allEntityTypes.keys();
                     while(allTypesNames.hasMoreElements())
                     {DefaultMutableTreeNode nextNode=null;
@@ -737,9 +756,9 @@ Object propValue=QueryHashtable.propertiesHashtable.remove(row.m_field);
                                    break;
                          }
                             // System.out.println("sddssdsdfsdfsdfadasad"+nextEl.toString());
-                             QueryHashtable.updateChildrenEntitiesFieldColumn(oldValue, svalue, fillerType, nextNode);
-                             QueryHashtable.renameHashtableField(nextEl.toString(), oldValue, svalue);
-                             NodeVector entityTypeParentNode = (NodeVector) QueryHashtable.mainDBHashtable.get(nextEl.toString());
+                             Mpiro.win.struc.updateChildrenEntitiesFieldColumn(oldValue, svalue, fillerType, nextNode);
+                             Mpiro.win.struc.renameHashtableField(nextEl.toString(), oldValue, svalue);
+                             NodeVector entityTypeParentNode = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(nextEl.toString());
                              Vector parentDatabaseTableVector =(Vector) entityTypeParentNode.elementAt(0);
                              Vector property=null;
                              for (int h=parentDatabaseTableVector.size();h>0;h--){
@@ -763,7 +782,7 @@ Object propValue=QueryHashtable.propertiesHashtable.remove(row.m_field);
 	   		
                     }
                     
-                    Vector Children=QueryHashtable.getChildrenVectorFromMainDBHashtable(last,"entity type");
+                    Vector Children=Mpiro.win.struc.getChildrenVectorFromMainDBHashtable(last,"entity type");
                     for(int c=0;c<Children.size();c++)
                     {
                         System.out.println("FFFSDSSSSSA"+Children.elementAt(c).toString());
@@ -774,28 +793,28 @@ Object propValue=QueryHashtable.propertiesHashtable.remove(row.m_field);
 
   public void insert(int row) 
   {
-		QueryHashtable.insertRowInDataBaseTable(row);
+		Mpiro.win.struc.insertRowInDataBaseTable(row);
   }
 
   public boolean delete(int row) 
   {
 		String field = (String)getValueAt(row, 0);
 		String filler = (String)getValueAt(row, 1);
-		QueryHashtable.removeHashtableField(DataBasePanel.last.toString(), field);
-		////!!!!!!! TO BE FIXED!!!!!!QueryUsersHashtable.removeFieldInUserModelHashtable(field);
-                QueryHashtable.DeletePropertyFromPropertiesHashtable(field);
-                //QueryHashtable.removeFieldFromDomain(field, QueryHashtable.nameWithoutOccur(DataBasePanel.last.toString()));
-		return (boolean)QueryHashtable.removeRowFromDataBaseTable(field, filler, row);
+		Mpiro.win.struc.removeHashtableField(DataBasePanel.last.toString(), field);
+		////!!!!!!! TO BE FIXED!!!!!!QueryProfileHashtable.removeFieldInUserModelHashtable(field);
+                Mpiro.win.struc.deletePropertyFromPropertiesHashtable(field);
+                //QueryHashtable.removeFieldFromDomain(field, Mpiro.win.struc.nameWithoutOccur(DataBasePanel.last.toString()));
+		return (boolean)Mpiro.win.struc.removeRowFromDataBaseTable(field, filler, row);
   }
   
   public boolean delete(int row,String node) 
   {
 		String field = (String)getValueAt(row, 0);
 		String filler = (String)getValueAt(row, 1);
-		QueryHashtable.removeHashtableField(node, field);
+		Mpiro.win.struc.removeHashtableField(node, field);
                 //System.out.println("pppppppopkl"+field);
-		////!!!!!!! TO BE FIXED!!!!!!QueryUsersHashtable.removeFieldInUserModelHashtable(field);
-		return (boolean)QueryHashtable.removeRowFromDataBaseTable(field, filler, row, node);
+		////!!!!!!! TO BE FIXED!!!!!!QueryProfileHashtable.removeFieldInUserModelHashtable(field);
+		return Mpiro.win.struc.removeRowFromDataBaseTable(field, filler, row, node);
   }
 
   /*

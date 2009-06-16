@@ -37,6 +37,29 @@ public class NodeVector extends Vector
   public NodeVector(Vector v) 
   {
 	  super(v);
+        if(v.size()==6){
+             databaseTableVector = (DefaultVector)this.elementAt(0);
+		upperVector =(Vector)this.elementAt(1);
+		nounVector = (Vector)this.elementAt(2);
+		storiesVector = new StoriesVector();
+		templateVector = (TemplateVector)this.elementAt(4);
+		microPlanningValues = (Hashtable)this.elementAt(5);
+		//userModellingValues = new Hashtable();
+         }
+      if(v.size()==4){
+          databaseTableVector=(Vector)this.elementAt(0);
+             upperVector = (Vector)this.elementAt(1);
+		nounVector = (Vector)this.elementAt(2);
+		storiesVector = new StoriesVector();
+        independentFieldsVector = (Vector)databaseTableVector.elementAt(0);
+		englishFieldsVector = (Vector)databaseTableVector.elementAt(1);
+		italianFieldsVector = (Vector)databaseTableVector.elementAt(2);
+		greekFieldsVector = (Vector)databaseTableVector.elementAt(3);
+      }
+
+      if(v.size()==1){
+          lexTableVector=(Vector)this.elementAt(0);
+      }
   }
 
   // 2. A constructor for BasicTypes and EntityTypes

@@ -12,6 +12,8 @@ import com.hp.hpl.jena.ontology.*;
 import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.vocabulary.*;
 import com.hp.hpl.jena.util.iterator.*;
+import gr.demokritos.iit.eleon.profiles.Robot;
+import gr.demokritos.iit.eleon.profiles.User;
 
 import gr.demokritos.iit.eleon.ui.Equivalent;
 import gr.demokritos.iit.eleon.ui.StoriesPanel;
@@ -27,7 +29,6 @@ import java.util.Enumeration;
 import javax.swing.tree.*;
 import javax.xml.parsers.*;
 import org.w3c.dom.*;
-import javax.swing.JOptionPane;
 
 public class OwlImport {
     static DialogClassesToImport dialogClassesToImport;
@@ -55,7 +56,7 @@ public class OwlImport {
                 mpiroPath = nameNodeMap.getNamedItem("xmlns").getNodeValue();
             else  mpiroPath = "http://www.w3.org/#";
             }
-        QueryOptionsHashtable.setBaseURI(mpiroPath);
+        Mpiro.win.struc.setBaseURI(mpiroPath);
         
 //System.out.println("0.04");
         ontModel.getSpecification().getDocumentManager().addAltEntry(mpiroPath, "file:" + rdfFile.getAbsolutePath());
@@ -131,19 +132,21 @@ public class OwlImport {
         if (!dialogClassesToImport.modalResult) {
             return dialogClassesToImport.modalResult;
         }
-        
-        //intitialize new domain
-        QueryHashtable.clearDomain();
-        QueryLexiconHashtable.createMainLexiconHashtable();
-        QueryHashtable.createBasicEntityType("type", "Data Base");
-        QueryHashtable.createBasicEntityType("Data Base", "Basic-entity-types");
-        QueryHashtable.createDefaultUpperVector();
-        
-        //clear all trees
+
         DataBasePanel.clearTree();
         LexiconPanel.clearTree();
         StoriesPanel.clearTree();
         UsersPanel.clearTree();
+        //intitialize new domain
+        Mpiro.win.clearDomain();
+        Mpiro.win.initializeDomain();
+//        QueryLexiconHashtable.createMainLexiconHashtable();
+//        Mpiro.win.struc.createBasicEntityType("type", "Data Base");
+//        Mpiro.win.struc.createBasicEntityType("Data Base", "Basic-entity-types");
+//        Mpiro.win.struc.createDefaultUpperVector();
+//        
+        //clear all trees
+        
         UsersPanel.users.add(new DefaultMutableTreeNode(new IconData(UsersPanel.ICON_USER, "NewUserType")));
         
         //START IMPORTTING DATA
@@ -152,7 +155,7 @@ public class OwlImport {
         
         //add upper model classes in Domain
         if (owlFromMpiro) {
-            NodeVector rootVector = (NodeVector) QueryHashtable.mainDBHashtable.get("Data Base");
+            NodeVector rootVector = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity("Data Base");
             Vector upperVector = (Vector) rootVector.elementAt(1);
             ExtendedIterator upperModelClasses = ontModel.getOntClass(mpiroPath + "Basic-Entity-Types").listSubClasses();
             while (upperModelClasses.hasNext()) {
@@ -225,7 +228,8 @@ public class OwlImport {
         
         
         //add default user
-        QueryUsersHashtable.createDefaultUser("NewUserType");
+        Mpiro.win.struc.createDefaultUser("NewUserType");
+        Mpiro.win.struc.createDefaultRobot("NewProfile");
         
         
         //add Basic-Entity-Types
@@ -240,11 +244,11 @@ public class OwlImport {
                 OntClass test = treeObject.getOntClass();
                 if (!test.isIntersectionClass()) {
                     if (nvName == null) nvName = treeObject.getOntClass().toString();
-                    QueryHashtable.mainDBHashtable.put(nvName, nv);
+                    Mpiro.win.struc.putEntityTypeOrEntityToDB(nvName, nv);
                     ////System.out.println(nvName);
                     
                     //if (!owlFromMpiro) {
-                    QueryUsersHashtable.addEntityTypeInUserModelHashtable(nvName);
+                    Mpiro.win.struc.addEntityTypeInUserModelHashtable(nvName);
                     // }
                     
                     //set upper Model types in the new types
@@ -294,9 +298,9 @@ public class OwlImport {
                   //ExtendedIterator asta=inter1.listInstances();
                  // NodeVector nv = new NodeVector(asta.next().toString());
                  // String aaa=inter1.toString()+"oi";
-               // QueryHashtable.mainDBHashtable.put(aaa, nv);
+               // Mpiro.win.struc.putEntityTypeOrEntityToDB(aaa, nv);
                // if (!owlFromMpiro)
-                //   QueryUsersHashtable.addEntityTypeInUserModelHashtable(aaa);
+                //   Mpiro.win.struc.addEntityTypeInUserModelHashtable(aaa);
                 int notr=0,res=0;
       
                 String range1=null, prop=null;
@@ -359,12 +363,12 @@ public class OwlImport {
       
                           NodeVector nv = new NodeVector(notr1));
                    //        IconOwlData treeObject = ( (IconOwlData) currentTreeNode1.getUserObject());
-                QueryHashtable.mainDBHashtable.put(getNameInELEON(inter1), nv);
+                Mpiro.win.struc.putEntityTypeOrEntityToDB(getNameInELEON(inter1), nv);
       
       
       
                 if (!owlFromMpiro)
-                    QueryUsersHashtable.addEntityTypeInUserModelHashtable(getNameInELEON(inter1));
+                    Mpiro.win.struc.addEntityTypeInUserModelHashtable(getNameInELEON(inter1));
       
 Vector databaseTableVector = nv.getDatabaseTableVector();
                 databaseTableVector.add(new FieldData(prop, range1, approved, ""));
@@ -414,9 +418,9 @@ DefaultMutableTreeNode ssos=null;
        if ( res==0 && notr==2){
            NodeVector nv = new NodeVector(notr1));
                    //        IconOwlData treeObject = ( (IconOwlData) currentTreeNode1.getUserObject());
-                QueryHashtable.mainDBHashtable.put(getNameInELEON(inter1), nv);
+                Mpiro.win.struc.putEntityTypeOrEntityToDB(getNameInELEON(inter1), nv);
                 if (!owlFromMpiro)
-                                  QueryUsersHashtable.addEntityTypeInUserModelHashtable(getNameInELEON(inter1));
+                                  Mpiro.win.struc.addEntityTypeInUserModelHashtable(getNameInELEON(inter1));
                               Vector databaseTableVector = nv.getDatabaseTableVector();
                               ExtendedIterator aaaaa=notr1.listDeclaredProperties();
                               ExtendedIterator aaaaa2=notr2.listDeclaredProperties();
@@ -482,11 +486,11 @@ DefaultMutableTreeNode ssos=null;
             ExtendedIterator superclasses=nextRestr.listSubClasses();
             while(superclasses.hasNext()){
                 OntClass nextSuper=(OntClass) superclasses.next();
-                if(QueryHashtable.valueRestrictionsHashtable.get(getNameInELEON(nextSuper)+":"+getNameInELEON(nextRestr.getOnProperty()))==null)
+                if(Mpiro.win.struc.getValueRestriction(getNameInELEON(nextSuper)+":"+getNameInELEON(nextRestr.getOnProperty()))==null)
                     
-                    QueryHashtable.valueRestrictionsHashtable.put(getNameInELEON(nextSuper)+":"+getNameInELEON(nextRestr.getOnProperty()),new ValueRestriction());
+                    Mpiro.win.struc.addValueRestriction(getNameInELEON(nextSuper)+":"+getNameInELEON(nextRestr.getOnProperty()),new ValueRestriction());
                // System.out.println(getNameInELEON(nextSuper)+":"+getNameInELEON(nextRestr.getOnProperty()));
-                Vector restr=(Vector) QueryHashtable.valueRestrictionsHashtable.get(getNameInELEON(nextSuper)+":"+getNameInELEON(nextRestr.getOnProperty()));
+                Vector restr=Mpiro.win.struc.getValueRestriction(getNameInELEON(nextSuper)+":"+getNameInELEON(nextRestr.getOnProperty()));
                 if(nextRestr.isAllValuesFromRestriction()){
                     AllValuesFromRestriction avf=nextRestr.asAllValuesFromRestriction();
                     if(avf.getAllValuesFrom().isAnon()) continue;
@@ -540,8 +544,8 @@ DefaultMutableTreeNode ssos=null;
             }
         }
         
-        if(readXMLFile)
-            importLexiconFromXmlFile(rdfFile.getAbsolutePath().substring(0, rdfFile.getAbsolutePath().lastIndexOf('.')) + "_mpiro.xml");
+      //  if(readXMLFile)
+        //    importLexiconFromXmlFile(rdfFile.getAbsolutePath().substring(0, rdfFile.getAbsolutePath().lastIndexOf('.')) + "_mpiro.xml");
         
         
         
@@ -552,7 +556,7 @@ DefaultMutableTreeNode ssos=null;
         ExtendedIterator ei=ontModel.listNamedClasses();
         while(ei.hasNext()){
             OntClass next= (OntClass) ei.next();
-            QueryHashtable.equivalentClassesHashtable.put(getNameInELEON(next),new Vector());
+            Mpiro.win.struc.addEquivalentClasses(getNameInELEON(next),new Vector());
             
             ExtendedIterator eqclasses=next.listEquivalentClasses();
             while(eqclasses.hasNext()){
@@ -565,7 +569,7 @@ DefaultMutableTreeNode ssos=null;
                 
                 String[] s=temp.splitIntersections(convertToClassExpression(nextEqClass)).split("A-N-D");
                 temp.dispose();
-                Vector eqVec=(Vector) QueryHashtable.equivalentClassesHashtable.get(getNameInELEON(next));
+                Vector eqVec=(Vector) Mpiro.win.struc.getEquivalentClasses(getNameInELEON(next));
                 //    eqVec.add(convertToClassExpression(NexteqClass));
                 
                 
@@ -583,7 +587,7 @@ DefaultMutableTreeNode ssos=null;
             }
             
             
-            QueryHashtable.superClassesHashtable.put(getNameInELEON(next),new Vector());
+            Mpiro.win.struc.addSuperClasses(getNameInELEON(next),new Vector());
             ExtendedIterator superclasses=next.listSuperClasses();
             while(superclasses.hasNext()){
                 OntClass nextSuperClass=(OntClass) superclasses.next();
@@ -614,7 +618,7 @@ DefaultMutableTreeNode ssos=null;
                 
                 String[] s=temp.splitIntersections(convertToClassExpression(nextSuperClass)).split("A-N-D");
                 temp.dispose();
-                Vector supVec=(Vector) QueryHashtable.superClassesHashtable.get(getNameInELEON(next));
+                Vector supVec=(Vector) Mpiro.win.struc.getSuperClasses(getNameInELEON(next));
                 //    eqVec.add(convertToClassExpression(NexteqClass));
                 
                 
@@ -653,7 +657,7 @@ DefaultMutableTreeNode ssos=null;
                     annotations.add(new AnnotationProperty("rdfs:seeAlso", getNameInELEON(nextIsDefinedBy), "", new Boolean(false), ""));
                 }
                 
-                QueryHashtable.annotationPropertiesHashtable.put(getNameInELEON(next), annotations);
+                Mpiro.win.struc.addAnnotation(getNameInELEON(next), annotations);
             }
         }
         if(readXMLFile){
@@ -681,7 +685,7 @@ DefaultMutableTreeNode ssos=null;
                     annotations.add(new AnnotationProperty("rdfs:seeAlso", getNameInELEON(nextIsDefinedBy), "", new Boolean(false), ""));
                 }
                 
-                QueryHashtable.annotationPropertiesHashtable.put(getNameInELEON(next), annotations);
+                Mpiro.win.struc.addAnnotation(getNameInELEON(next), annotations);
             }
         }
         
@@ -690,15 +694,16 @@ DefaultMutableTreeNode ssos=null;
         
         readLexiconRDF(rdfFile.getParentFile().getAbsolutePath());
         readUserModellingRDF(rdfFile.getParentFile().getAbsolutePath());
+        readRobotModellingRDF(rdfFile.getParentFile().getAbsolutePath());
         readMicroplansRDF(rdfFile.getParentFile().getAbsolutePath());
 //System.out.println("112");
         //System.out.println(DialogClassesToImport.modalResult);
-        QueryUsersHashtable.robotsHashtable=new Hashtable();
+       // QueryProfileHashtable.robotsHashtable=new Hashtable();
         
-        QueryUsersHashtable.mainRobotsModelHashtable=new Hashtable();
-        QueryUsersHashtable.fillMainRobotsModelHashtable();
-        
-        QueryUsersHashtable.createDefaultRobot("NewProfile");
+       // QueryProfileHashtable.mainRobotsModelHashtable=new Hashtable();
+        //QueryProfileHashtable.fillMainRobotsModelHashtable();
+        if(Mpiro.win.struc.getRobotsVectorFromUsersHashtable().size()==0)
+        Mpiro.win.struc.createDefaultRobot("NewProfile");
         return DialogClassesToImport.modalResult;
         //  return true;
     }
@@ -801,9 +806,9 @@ DefaultMutableTreeNode ssos=null;
                 
                    NodeVector nv = new NodeVector(notr[0]));
                  //        IconOwlData treeObject = ( (IconOwlData) currentTreeNode1.getUserObject());
-              QueryHashtable.mainDBHashtable.put(treeObject.toString(), nv);
+              Mpiro.win.struc.putEntityTypeOrEntityToDB(treeObject.toString(), nv);
               if (!owlFromMpiro)
-                                QueryUsersHashtable.addEntityTypeInUserModelHashtable(treeObject.toString());
+                                Mpiro.win.struc.addEntityTypeInUserModelHashtable(treeObject.toString());
                             Vector databaseTableVector = nv.getDatabaseTableVector();
                             ExtendedIterator aaaaa=notr[0].listDeclaredProperties();
                             ExtendedIterator aaaaa2=notr[1].listDeclaredProperties();
@@ -834,11 +839,11 @@ DefaultMutableTreeNode ssos=null;
             if (treeObject.m_icon == DialogClassesToImport.ICON_OWLCLASSCHECKED) {
                 NodeVector nv = new NodeVector(parentTreeNode.getUserObject().toString()+occur+instan);
                 //System.out.println("nvvvv"+ parentTreeNode.getUserObject().toString()+"treeeee"+treeObject.toString());
-                QueryHashtable.mainDBHashtable.put(treeObject.toString()+occur+instan, nv);
+                Mpiro.win.struc.putEntityTypeOrEntityToDB(treeObject.toString()+occur+instan, nv);
                 //System.out.println("20");
                 //System.out.println("77.1");
                 //if (!owlFromMpiro)
-                QueryUsersHashtable.addEntityTypeInUserModelHashtable(treeObject.toString()+occur+instan);
+                Mpiro.win.struc.addEntityTypeInUserModelHashtable(treeObject.toString()+occur+instan);
                 //System.out.println("21");
                 //System.out.println("77.2");
                 //System.out.println("nv"+nv.toString());
@@ -874,7 +879,7 @@ DefaultMutableTreeNode ssos=null;
                     res++;
                 else{
                     notr++;
-                    //  if (!QueryHashtable.mainDBHashtable.containsKey(c.toString())) return;
+                    //  if (!Mpiro.win.struc.mainDBcontainsEntityOrEntityType(c.toString())) return;
                 }
             }
             OntClass notres[]=new OntClass[notr];
@@ -956,18 +961,18 @@ DefaultMutableTreeNode ssos=null;
                 //  //System.out.println("3.7");
                 //        IconOwlData treeObject = ((IconOwlData) currentTreeNode1.getUserObject());
                 if (getNameInELEON(inter1)!=null)
-                    QueryHashtable.mainDBHashtable.put(getNameInELEON(inter1), nv);
+                    Mpiro.win.struc.putEntityTypeOrEntityToDB(getNameInELEON(inter1), nv);
                 else
-                    QueryHashtable.mainDBHashtable.put(inter1.toString(), nv);
+                    Mpiro.win.struc.putEntityTypeOrEntityToDB(inter1.toString(), nv);
                 
                 // //System.out.println("4");
                 
                 //  if (!owlFromMpiro)
                 // {
                 if (getNameInELEON(inter1)!=null)
-                    QueryUsersHashtable.addEntityTypeInUserModelHashtable(getNameInELEON(inter1));
+                    Mpiro.win.struc.addEntityTypeInUserModelHashtable(getNameInELEON(inter1));
                 else
-                    QueryUsersHashtable.addEntityTypeInUserModelHashtable(inter1.toString());
+                    Mpiro.win.struc.addEntityTypeInUserModelHashtable(inter1.toString());
                 // }
                 Vector databaseTableVector = nv.getDatabaseTableVector();
                 //if (inheritedProp != null)
@@ -1157,18 +1162,18 @@ DefaultMutableTreeNode ssos=null;
                     //  //System.out.println("3.7");
                     //        IconOwlData treeObject = ( (IconOwlData) currentTreeNode1.getUserObject());
                     if (getNameInELEON(inter1)!=null)
-                        QueryHashtable.mainDBHashtable.put(getNameInELEON(inter1)+"_occur"+String.valueOf(b+1), nv);
+                        Mpiro.win.struc.putEntityTypeOrEntityToDB(getNameInELEON(inter1)+"_occur"+String.valueOf(b+1), nv);
                     else
-                        QueryHashtable.mainDBHashtable.put(inter1.toString()+"_occur"+String.valueOf(b+1), nv);
+                        Mpiro.win.struc.putEntityTypeOrEntityToDB(inter1.toString()+"_occur"+String.valueOf(b+1), nv);
                     
                     // //System.out.println("4");
                     
                     // if (!owlFromMpiro)
                     //{
                     if (getNameInELEON(inter1)!=null)
-                        QueryUsersHashtable.addEntityTypeInUserModelHashtable(getNameInELEON(inter1)+"_occur"+String.valueOf(b+1));
+                        Mpiro.win.struc.addEntityTypeInUserModelHashtable(getNameInELEON(inter1)+"_occur"+String.valueOf(b+1));
                     else
-                        QueryUsersHashtable.addEntityTypeInUserModelHashtable(inter1.toString()+"_occur"+String.valueOf(b+1));
+                        Mpiro.win.struc.addEntityTypeInUserModelHashtable(inter1.toString()+"_occur"+String.valueOf(b+1));
                     //  }
                     Vector databaseTableVector = nv.getDatabaseTableVector();
                     
@@ -1349,17 +1354,17 @@ DefaultMutableTreeNode ssos=null;
         //  //System.out.println("3.7");
         //        IconOwlData treeObject = ( (IconOwlData) currentTreeNode1.getUserObject());
         if (getNameInELEON(inter1) != null)
-            QueryHashtable.mainDBHashtable.put(getNameInELEON(inter1)+"_"+"occur"+String.valueOf(r+1) , nv1);
+            Mpiro.win.struc.putEntityTypeOrEntityToDB(getNameInELEON(inter1)+"_"+"occur"+String.valueOf(r+1) , nv1);
         else
-            QueryHashtable.mainDBHashtable.put(inter1.toString()+"_"+"occur"+String.valueOf(r+1), nv1);
+            Mpiro.win.struc.putEntityTypeOrEntityToDB(inter1.toString()+"_"+"occur"+String.valueOf(r+1), nv1);
       
         // //System.out.println("4");
       
         if (!owlFromMpiro) {
             if (getNameInELEON(inter1) != null)
-                QueryUsersHashtable.addEntityTypeInUserModelHashtable(getNameInELEON(inter1));
+                Mpiro.win.struc.addEntityTypeInUserModelHashtable(getNameInELEON(inter1));
             else
-                QueryUsersHashtable.addEntityTypeInUserModelHashtable(inter1.toString());
+                Mpiro.win.struc.addEntityTypeInUserModelHashtable(inter1.toString());
         }
         Vector databaseTableVector = nv1.getDatabaseTableVector();
         ExtendedIterator aaaaa= notres[r].listDeclaredProperties();
@@ -1507,7 +1512,7 @@ createSubTypes(ssos, inter1.asClass(), nv1.getDatabaseTableVector(),String.value
         //add properties
         while (properties.hasNext()) {
             OntProperty property = (OntProperty) properties.next();
-            if(!QueryHashtable.propertiesHashtable.containsKey(getNameInELEON(property))) continue;
+            if(!Mpiro.win.struc.existsProperty(getNameInELEON(property))) continue;
             //System.out.println("prin"+typeName+"  "+property.toString());
             
             if (inheritedProp != null) {
@@ -1634,29 +1639,29 @@ createSubTypes(ssos, inter1.asClass(), nv1.getDatabaseTableVector(),String.value
                 for (int k = 1; k < 6; k++) {
                     String microplanNumber = new Integer(k).toString();
                     for (int i = 0; i < allAttributesEnglish.length; i++) {
-                        QueryHashtable.updateHashtable(typeName, microplanNumber, propertyName, allAttributesEnglish[i], "English",
+                        Mpiro.win.struc.updateHashtable(typeName, microplanNumber, propertyName, allAttributesEnglish[i], "English",
                                 allValuesEnglish[i]);
                     }
                     
                     for (int i = 0; i < allAttributesItalianGreek.length; i++) {
-                        QueryHashtable.updateHashtable(typeName, microplanNumber, propertyName, allAttributesItalianGreek[i], "Italian",
+                        Mpiro.win.struc.updateHashtable(typeName, microplanNumber, propertyName, allAttributesItalianGreek[i], "Italian",
                                 allValuesItalianGreek[i]);
-                        QueryHashtable.updateHashtable(typeName, microplanNumber, propertyName, allAttributesItalianGreek[i], "Greek",
+                        Mpiro.win.struc.updateHashtable(typeName, microplanNumber, propertyName, allAttributesItalianGreek[i], "Greek",
                                 allValuesItalianGreek[i]);
                     }
 //System.out.println("38");
                     // adding the default value "0" as appropriateness for every user
-                    Vector usersVector = QueryUsersHashtable.getUsersVectorFromMainUsersHashtable();
+                    Vector usersVector = Mpiro.win.struc.getUsersVectorFromMainUsersHashtable();
                     Enumeration usersVectorEnum = usersVector.elements();
                     while (usersVectorEnum.hasMoreElements()) {
                         String user = usersVectorEnum.nextElement().toString();
-                        QueryHashtable.updateHashtable(typeName, microplanNumber, propertyName, user, "English", "0");
-                        QueryHashtable.updateHashtable(typeName, microplanNumber, propertyName, user, "Italian", "0");
-                        QueryHashtable.updateHashtable(typeName, microplanNumber, propertyName, user, "Greek", "0");
+                        Mpiro.win.struc.updateHashtable(typeName, microplanNumber, propertyName, user, "English", "0");
+                        Mpiro.win.struc.updateHashtable(typeName, microplanNumber, propertyName, user, "Italian", "0");
+                        Mpiro.win.struc.updateHashtable(typeName, microplanNumber, propertyName, user, "Greek", "0");
                     }
                 }//System.out.println("38.5");//System.out.println("prop"+propertyName);//System.out.println("typ"+typeName);
                 //System.out.println("ssssssss"+propertyName);
-                QueryUsersHashtable.addFieldInUserModelHashtable(propertyName, typeName);
+                Mpiro.win.struc.addFieldInUserModelHashtable(propertyName, typeName);
             }
             //========================================================================================
         }
@@ -1673,11 +1678,11 @@ createSubTypes(ssos, inter1.asClass(), nv1.getDatabaseTableVector(),String.value
             NodeVector nv = new NodeVector(typeName, getNameInELEON(individual));
             String occur="";
             if (inst!="") occur="_occur";
-            QueryHashtable.mainDBHashtable.put(getNameInELEON(individual)+occur+inst, nv);
+            Mpiro.win.struc.putEntityTypeOrEntityToDB(getNameInELEON(individual)+occur+inst, nv);
             ////System.out.println( individual));
             try{
                 // if (!owlFromMpiro)
-                QueryUsersHashtable.addEntityInUserModelHashtable(getNameInELEON(individual));
+                Mpiro.win.struc.addEntityInUserModelHashtable(getNameInELEON(individual));
             }catch ( Exception t){};
             // //System.out.println("13");
             //if there is a label put it in the name property
@@ -1719,11 +1724,11 @@ createSubTypes(ssos, inter1.asClass(), nv1.getDatabaseTableVector(),String.value
             NodeVector nv = new NodeVector(typeName, getNameInELEON(individual));
             String occur="";
             if (inst!="") occur="_occur";
-            QueryHashtable.mainDBHashtable.put(getNameInELEON(individual)+occur+inst, nv);
+            Mpiro.win.struc.putEntityTypeOrEntityToDB(getNameInELEON(individual)+occur+inst, nv);
             ////System.out.println( individual));
             try{
                 // if (!owlFromMpiro)
-                QueryUsersHashtable.addEntityInUserModelHashtable(getNameInELEON(individual));
+                Mpiro.win.struc.addEntityInUserModelHashtable(getNameInELEON(individual));
             }catch ( Exception t){};
             // //System.out.println("13");
             //if there is a label put it in the name property
@@ -1777,29 +1782,29 @@ createSubTypes(ssos, inter1.asClass(), nv1.getDatabaseTableVector(),String.value
             for (int k = 1; k < 6; k++) {
                 String microplanNumber = new Integer(k).toString();
                 for (int i = 0; i < allAttributesEnglish.length; i++) {
-                    QueryHashtable.updateHashtable(typeName, microplanNumber, propertyName, allAttributesEnglish[i], "English",
+                    Mpiro.win.struc.updateHashtable(typeName, microplanNumber, propertyName, allAttributesEnglish[i], "English",
                             allValuesEnglish[i]);
                 }
                 
                 for (int i = 0; i < allAttributesItalianGreek.length; i++) {
-                    QueryHashtable.updateHashtable(typeName, microplanNumber, propertyName, allAttributesItalianGreek[i], "Italian",
+                    Mpiro.win.struc.updateHashtable(typeName, microplanNumber, propertyName, allAttributesItalianGreek[i], "Italian",
                             allValuesItalianGreek[i]);
-                    QueryHashtable.updateHashtable(typeName, microplanNumber, propertyName, allAttributesItalianGreek[i], "Greek",
+                    Mpiro.win.struc.updateHashtable(typeName, microplanNumber, propertyName, allAttributesItalianGreek[i], "Greek",
                             allValuesItalianGreek[i]);
                 }
 //System.out.println("38");
                 // adding the default value "0" as appropriateness for every user
-                Vector usersVector = QueryUsersHashtable.getUsersVectorFromMainUsersHashtable();
+                Vector usersVector = Mpiro.win.struc.getUsersVectorFromMainUsersHashtable();
                 Enumeration usersVectorEnum = usersVector.elements();
                 while (usersVectorEnum.hasMoreElements()) {
                     String user = usersVectorEnum.nextElement().toString();
-                    QueryHashtable.updateHashtable(typeName, microplanNumber, propertyName, user, "English", "0");
-                    QueryHashtable.updateHashtable(typeName, microplanNumber, propertyName, user, "Italian", "0");
-                    QueryHashtable.updateHashtable(typeName, microplanNumber, propertyName, user, "Greek", "0");
+                    Mpiro.win.struc.updateHashtable(typeName, microplanNumber, propertyName, user, "English", "0");
+                    Mpiro.win.struc.updateHashtable(typeName, microplanNumber, propertyName, user, "Italian", "0");
+                    Mpiro.win.struc.updateHashtable(typeName, microplanNumber, propertyName, user, "Greek", "0");
                 }
             }//System.out.println("38.5");//System.out.println("prop"+propertyName);//System.out.println("typ"+typeName);
             //System.out.println("ssssssss"+propertyName);
-            QueryUsersHashtable.addFieldInUserModelHashtable(propertyName, typeName);
+            Mpiro.win.struc.addFieldInUserModelHashtable(propertyName, typeName);
         }
     }
     
@@ -2359,9 +2364,9 @@ createSubTypes(ssos, inter1.asClass(), nv1.getDatabaseTableVector(),String.value
         DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
         Document doc = docBuilder.parse(input);
         
-        if(QueryUsersHashtable.mainUsersHashtable.containsKey("NewUserType"))
-            QueryUsersHashtable.removeUser("NewUserType");
-        //QueryUsersHashtable.mainUsersHashtable.remove("NewUserType");
+        if(Mpiro.win.struc.existsUser("NewUserType"))
+            Mpiro.win.struc.removeUser("NewUserType");
+        //QueryProfileHashtable.mainUsersHashtable.remove("NewUserType");
         
         
         NodeList userTypes=doc.getElementsByTagName("owlnl:UserType");
@@ -2388,15 +2393,15 @@ createSubTypes(ssos, inter1.asClass(), nv1.getDatabaseTableVector(),String.value
             }
             userVector.set(2, "4");
             String username=type.getAttributes().item(0).getNodeValue();
-            QueryUsersHashtable.updateIndependentLexiconHashtable(username, "", "ADD");
-            QueryUsersHashtable.updateAppropriatenessValuesInMicroplanningOfFields(username, "", "ADD");
-            QueryUsersHashtable.addUserInUserModelHashtable(username);//==
-            QueryUsersHashtable.addUserInUserModelStoryHashtable(username);//==
-            QueryHashtable.addUserInPropertiesHashtable(username);
+            Mpiro.win.struc.updateIndependentLexiconHashtable(username, "", "ADD");
+            Mpiro.win.struc.updateAppropriatenessValuesInMicroplanningOfFields(username, "", "ADD");
+            Mpiro.win.struc.addUserInUserModelHashtable(username);//==
+            //QueryProfileHashtable.addUserInUserModelStoryHashtable(username);//==
+            Mpiro.win.struc.addUserInPropertiesHashtable(username);
             //    userVector.add(userNodeChilds.item(1).getFirstChild().getNodeValue());
             ///  userVector.add(userNodeChilds.item(2).getFirstChild().getNodeValue());
             // userVector.add(userNodeChilds.item(3).getFirstChild().getNodeValue());
-            QueryUsersHashtable.mainUsersHashtable.put(username, userVector);
+            Mpiro.win.struc.putUserOrRobotInMainUsersHashtable(username, new User(userVector));
         }
         
         NodeList propInterestsRepetitions=doc.getElementsByTagName("owlnl:Property");
@@ -2424,13 +2429,13 @@ createSubTypes(ssos, inter1.asClass(), nv1.getDatabaseTableVector(),String.value
                         NodeList values=child.getChildNodes();
                         Hashtable users;
                         //   try {
-                        //System.out.println(property);
-                        users = (Hashtable) ((Vector) QueryHashtable.propertiesHashtable.get(property)).elementAt(12);
+                        System.out.println(property);
+                        users = (Hashtable) ((Vector) Mpiro.win.struc.getProperty(property)).elementAt(12);
                         //   } catch(java.lang.NullPointerException npe) {
-                        //       Vector temp=(Vector) QueryHashtable.propertiesHashtable.get(property);
+                        //       Vector temp=(Vector) Mpiro.win.struc.getProperty(property);
                         //        System.out.println("dddddd");
                         //    }
-                        users = (Hashtable) ((Vector) QueryHashtable.propertiesHashtable.get(property)).elementAt(12);
+                        //users = (Hashtable) ((Vector) Mpiro.win.struc.getProperty(property)).elementAt(12);
                         String usertype=new String();
                         String interest=new String();
                         String repetitions=new String();
@@ -2458,9 +2463,9 @@ createSubTypes(ssos, inter1.asClass(), nv1.getDatabaseTableVector(),String.value
                         String repetitions=new String();
                         String classOrEntityName=new String();
                         Hashtable np=new Hashtable();
-                        if(!QueryUsersHashtable.mainUserModelHashtable.containsKey(property))
-                            QueryUsersHashtable.mainUserModelHashtable.put(property, new Hashtable());
-                        np=(Hashtable) QueryUsersHashtable.mainUserModelHashtable.get(property);
+                        if(!Mpiro.win.struc.mainUserModelHashtableContainsProperty(property))
+                            Mpiro.win.struc.putPropertyInMainUserModelHashtable(property, new Hashtable());
+                        np=(Hashtable) Mpiro.win.struc.getPropertyFromMainUserModelHashtable(property);
                         
                         for(int k=0;k<values.getLength();k++){
                             
@@ -2476,7 +2481,7 @@ createSubTypes(ssos, inter1.asClass(), nv1.getDatabaseTableVector(),String.value
                             
                             // System.out.print("ddd");
                         }
-                        //Hashtable np=(Hashtable) QueryUsersHashtable.mainUserModelHashtable.get(classOrEntityName);
+                        //Hashtable np=(Hashtable) Mpiro.win.struc.getPropertyFromMainUserModelHashtable(classOrEntityName);
                         Hashtable forClass=new Hashtable();
                         if(!np.containsKey(classOrEntityName))
                             np.put(classOrEntityName,new Hashtable());
@@ -2524,11 +2529,11 @@ createSubTypes(ssos, inter1.asClass(), nv1.getDatabaseTableVector(),String.value
                 if(nameSplitted[nameSplitted.length-1].equalsIgnoreCase("en"))
                     language="English";
                 //  System.out.println("  "+propertyName);
-                if(!QueryHashtable.propertiesHashtable.containsKey(propertyName)){
+                if(!Mpiro.win.struc.existsProperty(propertyName)){
                     System.err.println("WARNING: property "+propertyName+" not imported");
                     continue;
                 }
-                Hashtable hb= (Hashtable)((Vector)QueryHashtable.propertiesHashtable.get(propertyName)).elementAt(10);
+                Hashtable hb= (Hashtable)((Vector)Mpiro.win.struc.getProperty(propertyName)).elementAt(10);
                 //     String test=nameSplitted[nameSplitted.length-2].charAt(5)+":"+propertyName+":"+usertype+":"+language;
                 hb.put(nameSplitted[nameSplitted.length-2].charAt(5)+":"+propertyName+":"+usertype+":"+language,appropValue);
             }
@@ -2557,7 +2562,7 @@ createSubTypes(ssos, inter1.asClass(), nv1.getDatabaseTableVector(),String.value
                         
                         
                     }
-                    Hashtable subtypeof=(Hashtable)QueryUsersHashtable.mainUserModelHashtable.get("Subtype-of");
+                    Hashtable subtypeof=(Hashtable)Mpiro.win.struc.getPropertyFromMainUserModelHashtable("Subtype-of");
                     if(!subtypeof.containsKey(className))
                         subtypeof.put(className,new Hashtable());
                     Hashtable subtypeClass=(Hashtable)subtypeof.get(className);
@@ -2589,7 +2594,7 @@ createSubTypes(ssos, inter1.asClass(), nv1.getDatabaseTableVector(),String.value
                         
                         
                     }
-                    Hashtable subtypeof=(Hashtable)QueryUsersHashtable.mainUserModelHashtable.get("type");
+                    Hashtable subtypeof=(Hashtable)Mpiro.win.struc.getPropertyFromMainUserModelHashtable("type");
                     if(!subtypeof.containsKey(instance))
                         subtypeof.put(instance,new Hashtable());
                     Hashtable subtypeClass=(Hashtable)subtypeof.get(instance);
@@ -2605,7 +2610,237 @@ createSubTypes(ssos, inter1.asClass(), nv1.getDatabaseTableVector(),String.value
         }
         
     }
-    
+
+     public static void readRobotModellingRDF(String path) throws Exception {
+        //System.out.println("90");
+        // LexiconPanel.addNoun("ggggggg");
+        FileInputStream input;//System.out.println("90.3");
+        try {
+            input = new FileInputStream(path+"//RobotModelling.rdf");
+        } catch (IOException ioe) {
+            //ioe.printStackTrace();
+            return;
+        }
+        
+        DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        Document doc = docBuilder.parse(input);
+        
+        if(Mpiro.win.struc.existsUser("NewRobotType"))
+            Mpiro.win.struc.removeUser("NewRobotType");
+        //QueryProfileHashtable.mainUsersHashtable.remove("NewUserType");
+        
+        
+        NodeList robotTypes=doc.getElementsByTagName("owlnl:RobotType");
+        for(int i=0;i<robotTypes.getLength();i++){
+            Node type=robotTypes.item(i);
+            
+            Vector robotVector = new Vector();
+            robotVector.setSize(5);
+            //robotVector.add(type.getAttributes().item(0).getNodeValue());
+            NodeList typeCharacteristics=type.getChildNodes();
+            for(int h=0;h<typeCharacteristics.getLength();h++){
+                Node nextChar=typeCharacteristics.item(h);
+                //  String test1=nextChar.getTextContent();
+                // String test2=nextChar.getNodeValue();
+                //String test3=nextChar.getNodeName();
+                //String test4=nextChar.get
+                if(nextChar.getNodeName().equalsIgnoreCase("owlnl:Openness"))
+                    // robotVector.set()
+                    robotVector.set(0, nextChar.getTextContent());
+                if(nextChar.getNodeName().equalsIgnoreCase("owlnl:Conscientiousness"))
+                    robotVector.set(1, nextChar.getTextContent());
+                if(nextChar.getNodeName().equalsIgnoreCase("owlnl:Extraversion"))
+                    robotVector.set(2,nextChar.getTextContent());
+                 if(nextChar.getNodeName().equalsIgnoreCase("owlnl:Agreeableness"))
+                    robotVector.set(3,nextChar.getTextContent());
+                 if(nextChar.getNodeName().equalsIgnoreCase("owlnl:NaturalReactions"))
+                    robotVector.set(4,nextChar.getTextContent());
+            }
+            String robotname=type.getAttributes().item(0).getNodeValue();
+           // Mpiro.win.struc.updateIndependentLexiconHashtable(robotname, "", "ADD");
+            //Mpiro.win.struc.updateAppropriatenessValuesInMicroplanningOfFields(robotname, "", "ADD");
+            Mpiro.win.struc.addRobotInUserModelHashtable(robotname);//==
+            //QueryProfileHashtable.addUserInUserModelStoryHashtable(robotname);//==
+            Mpiro.win.struc.addRobotInPropertiesHashtable(robotname);
+            //    robotVector.add(userNodeChilds.item(1).getFirstChild().getNodeValue());
+            ///  robotVector.add(userNodeChilds.item(2).getFirstChild().getNodeValue());
+            // robotVector.add(userNodeChilds.item(3).getFirstChild().getNodeValue());
+            Mpiro.win.struc.putUserOrRobotInMainUsersHashtable(robotname, new Robot(robotVector));
+        }
+        
+        NodeList propInterestsRepetitions=doc.getElementsByTagName("owlnl:Property");
+        for(int i=0;i<propInterestsRepetitions.getLength();i++){
+            NodeList children=propInterestsRepetitions.item(i).getChildNodes();
+            String property=propInterestsRepetitions.item(i).getAttributes().item(0).getNodeValue().split("#")[1];
+            if( !property.equalsIgnoreCase("title")
+            && !property.equalsIgnoreCase("name")
+            && !property.equalsIgnoreCase("shortname")
+            && !property.equalsIgnoreCase("notes")
+            && !property.equalsIgnoreCase("gender")
+            && !property.equalsIgnoreCase("number")
+            && !property.equalsIgnoreCase("gender-name")
+            && !property.equalsIgnoreCase("gender-shortname")
+            && !property.equalsIgnoreCase("name-nominative")
+            && !property.equalsIgnoreCase("name-genitive")
+            && !property.equalsIgnoreCase("name-accusative")
+            && !property.equalsIgnoreCase("shortname-nominative")
+            && !property.equalsIgnoreCase("shortname-genitive")
+            && !property.equalsIgnoreCase("shortname-accusative")
+            && !property.equalsIgnoreCase( "images")) {
+                for(int j=0;j<children.getLength();j++){
+                    Node child=children.item(j);
+                    if (child.getNodeName().equalsIgnoreCase("owlnl:DPPreference")){
+                        NodeList values=child.getChildNodes();
+                        Hashtable robots;
+                        //   try {
+                        System.out.println(property);
+                        robots = (Hashtable) ((Vector) Mpiro.win.struc.getProperty(property)).elementAt(15);
+                        //   } catch(java.lang.NullPointerException npe) {
+                        //       Vector temp=(Vector) Mpiro.win.struc.getProperty(property);
+                        //        System.out.println("dddddd");
+                        //    }
+                        
+                        String robottype=new String();
+                        String preference=new String();
+                       // String repetitions=new String();
+                        for(int k=0;k<values.getLength();k++){
+                            
+                            Node nextValue=values.item(k);
+                            if(nextValue.getNodeName().equalsIgnoreCase("owlnl:forUserType"))
+                                robottype=nextValue.getAttributes().item(0).getNodeValue().split("#")[1];
+                            if(nextValue.getNodeName().equalsIgnoreCase("owlnl:PreferenceValue"))
+                                preference=nextValue.getFirstChild().getTextContent();
+                         //   if(preference.equals("0")||preference.equals("2"))
+                         //       System.out.print("dddd");
+                           // if(nextValue.getNodeName().equalsIgnoreCase("owlnl:Repetitions"))
+                             //   repetitions=nextValue.getTextContent();
+                            
+                            // System.out.print("ddd");
+                        }
+                        Vector v=new Vector();
+                        v.add(preference);
+                       // v.add("3");
+                       // v.add(repetitions);
+                        robots.put(robottype,v);
+                    } else{
+                        NodeList values=child.getChildNodes();
+                        String robottype=new String();
+                        String preference=new String();
+                        //String repetitions=new String();
+                        String classOrEntityName=new String();
+                        Hashtable np=new Hashtable();
+                        if(!Mpiro.win.struc.mainUserModelHashtableContainsProperty(property))
+                            Mpiro.win.struc.putPropertyInMainUserModelHashtable(property, new Hashtable());
+                        np=(Hashtable) Mpiro.win.struc.getPropertyFromMainUserModelHashtable(property);
+                        
+                        for(int k=0;k<values.getLength();k++){
+                            
+                            Node nextValue=values.item(k);
+                            if(nextValue.getNodeName().equalsIgnoreCase("owlnl:forUserType"))
+                                robottype=nextValue.getAttributes().item(0).getNodeValue().split("#")[1];
+                            if(nextValue.getNodeName().equalsIgnoreCase("owlnl:forOwlClass")||nextValue.getNodeName().equalsIgnoreCase("owlnl:forInstance"))
+                                classOrEntityName=nextValue.getAttributes().item(0).getNodeValue().split("#")[1];
+                            if(nextValue.getNodeName().equalsIgnoreCase("owlnl:PreferenceValue"))
+                                preference=nextValue.getFirstChild().getTextContent();
+                           //  if(preference.equals("0")||preference.equals("2"))
+                           //     System.out.print("dddd");
+                          //  if(nextValue.getNodeName().equalsIgnoreCase("owlnl:Repetitions"))
+                          //      repetitions=nextValue.getTextContent();
+                            
+                            // System.out.print("ddd");
+                        }
+                        //Hashtable np=(Hashtable) Mpiro.win.struc.getPropertyFromMainUserModelHashtable(classOrEntityName);
+                        Hashtable forClass=new Hashtable();
+                        if(!np.containsKey(classOrEntityName))
+                            np.put(classOrEntityName,new Hashtable());
+                        forClass=(Hashtable) np.get(classOrEntityName);
+                        
+                        
+                        Vector v=new Vector();
+                        v.add(preference);
+                       // v.add("3");
+                       // v.add(repetitions);
+                        forClass.put(robottype,v);
+                      //  System.out.print("Doh!");
+                     ///   Hashtable temp=(Hashtable) Mpiro.win.struc.getPropertyFromMainUserModelHashtable(property);
+                      //  System.out.print("ddddddd");
+                    }
+                }
+            }
+        }
+        
+        
+        NodeList classes=doc.getElementsByTagName("owlnl:owlClass");
+        for(int i=0;i<classes.getLength();i++){
+            String className=classes.item(i).getAttributes().item(0).getNodeValue().split("#")[1];
+            NodeList children=classes.item(i).getChildNodes();
+            for(int h=0;h<children.getLength();h++){
+                Node child=children.item(h);
+                if(child.getNodeName().equalsIgnoreCase("owlnl:DPreference")){
+                    NodeList values=child.getChildNodes();
+                    String robottype=new String();
+                    String preference=new String();
+                    //String repetitions=new String();
+                    for(int k=0;k<values.getLength();k++){
+                        
+                        Node nextValue=values.item(k);
+                        if(nextValue.getNodeName().equalsIgnoreCase("owlnl:forUserType"))
+                            robottype=nextValue.getAttributes().item(0).getNodeValue().split("#")[1];
+                        if(nextValue.getNodeName().equalsIgnoreCase("owlnl:PreferenceValue"))
+                            preference=nextValue.getTextContent();
+                       // if(nextValue.getNodeName().equalsIgnoreCase("owlnl:Repetitions"))
+                        //    repetitions=nextValue.getTextContent();
+                        
+                        
+                    }
+                    Hashtable subtypeof=(Hashtable)Mpiro.win.struc.getPropertyFromMainUserModelHashtable("Subtype-of");
+                    if(!subtypeof.containsKey(className))
+                        subtypeof.put(className,new Hashtable());
+                    Hashtable subtypeClass=(Hashtable)subtypeof.get(className);
+                    Vector v=new Vector();
+                    v.add(preference);
+                  //  v.add("3");
+                   // v.add(repetitions);
+                    subtypeClass.put(robottype,v);
+                    //   System.out.print("ddd");
+                }
+                
+                if(child.getNodeName().equalsIgnoreCase("owlnl:IPreference")){
+                    NodeList values=child.getChildNodes();
+                    String robottype=new String();
+                    String preference=new String();
+                   // String repetitions=new String();
+                    String instance=new String();
+                    for(int k=0;k<values.getLength();k++){
+                        
+                        Node nextValue=values.item(k);
+                        if(nextValue.getNodeName().equalsIgnoreCase("owlnl:forUserType"))
+                            robottype=nextValue.getAttributes().item(0).getNodeValue().split("#")[1];
+                        if(nextValue.getNodeName().equalsIgnoreCase("owlnl:PreferenceValue"))
+                            preference=nextValue.getFirstChild().getTextContent();
+                    //    if(nextValue.getNodeName().equalsIgnoreCase("owlnl:Repetitions"))
+                    //        repetitions=nextValue.getTextContent();
+                        if(nextValue.getNodeName().equalsIgnoreCase("owlnl:forInstance"))
+                            instance=nextValue.getAttributes().item(0).getNodeValue().split("#")[1];
+                        
+                        
+                    }
+                    Hashtable subtypeof=(Hashtable)Mpiro.win.struc.getPropertyFromMainUserModelHashtable("type");
+                    if(!subtypeof.containsKey(instance))
+                        subtypeof.put(instance,new Hashtable());
+                    Hashtable subtypeClass=(Hashtable)subtypeof.get(instance);
+                    Vector v=new Vector();
+                    v.add(preference);
+                 //   v.add("3");
+                //    v.add(repetitions);
+                    subtypeClass.put(robottype,v);
+                    //  System.out.print("ddd");
+                }
+                
+            }
+        }
+        
+    }
     
     public static void readMicroplansRDF(String path) throws Exception {
         // System.out.println("90");
@@ -2625,8 +2860,8 @@ createSubTypes(ssos, inter1.asClass(), nv1.getDatabaseTableVector(),String.value
         for(int i=0;i<properties.getLength();i++){
             Node property=properties.item(i);
             String propName=property.getAttributes().item(0).getNodeValue().split("#")[1];
-            if(!QueryHashtable.propertiesHashtable.containsKey(propName)) continue;
-            Vector propVector=(Vector) QueryHashtable.propertiesHashtable.get(propName);
+            if(!Mpiro.win.struc.existsProperty(propName)) continue;
+            Vector propVector=(Vector) Mpiro.win.struc.getProperty(propName);
             TemplateVector tv=(TemplateVector)propVector.elementAt(11);
             NodeList microplansOrOrder=property.getChildNodes();
             
@@ -2897,7 +3132,7 @@ createSubTypes(ssos, inter1.asClass(), nv1.getDatabaseTableVector(),String.value
     }
     
     public static void readCanned() throws Exception{
-        QueryHashtable.annotationPropertiesHashtable=new Hashtable();
+        //QueryHashtable.annotationPropertiesHashtable=new Hashtable();
         FileInputStream input;//System.out.println("90.3");
         try {
             //  input = new FileInputStream("G:\\crete\\ppp\\NLFiles-MPIRO\\Lexicon3.rdf");
@@ -2949,9 +3184,9 @@ createSubTypes(ssos, inter1.asClass(), nv1.getDatabaseTableVector(),String.value
             else
                 n=cannedText.getAttribute("rdf:ID").substring(0,cannedText.getAttribute("rdf:ID").lastIndexOf("-"));
             
-            if(!QueryHashtable.annotationPropertiesHashtable.containsKey(n))
-                QueryHashtable.annotationPropertiesHashtable.put(n, new Vector());
-            Vector annotationsVec=(Vector)QueryHashtable.annotationPropertiesHashtable.get(n);
+            if(!Mpiro.win.struc.existsAnnotation(n))
+                Mpiro.win.struc.addAnnotation(n, new Vector());
+            Vector annotationsVec=(Vector)Mpiro.win.struc.getAnnotation(n);
             annotationsVec.add(new AnnotationProperty("rdfs:comment", greek, "greek", new Boolean(true), userTypes));
             annotationsVec.add(new AnnotationProperty("rdfs:comment", english, "english", new Boolean(true), userTypes));
             
@@ -3005,7 +3240,7 @@ createSubTypes(ssos, inter1.asClass(), nv1.getDatabaseTableVector(),String.value
                 if (mappings.item(j).getAttributes().item(0).getNodeValue().equalsIgnoreCase("#"+jjj)){
                     if(mappings.item(j).getParentNode().getNodeName().equalsIgnoreCase("owlnl:owlInstance")) {
                         String test=mappings.item(j).getParentNode().getAttributes().item(0).getNodeValue().split("#")[1];
-                        NodeVector dbVector=(NodeVector) QueryHashtable.mainDBHashtable.get(mappings.item(j).getParentNode().getAttributes().item(0).getNodeValue().split("#")[1]);
+                        NodeVector dbVector=(NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(mappings.item(j).getParentNode().getAttributes().item(0).getNodeValue().split("#")[1]);
                         try{
                             if(dbVector.size()>5) continue;
                         }catch(java.lang.NullPointerException npe){continue;}
@@ -3104,8 +3339,8 @@ createSubTypes(ssos, inter1.asClass(), nv1.getDatabaseTableVector(),String.value
                     } else {
                         //            String test=mappings.item(j).getParentNode().getAttributes().item(0).getNodeValue().split("#")[1];
                         NodeVector dbVector=new NodeVector();
-                        if(QueryHashtable.mainDBHashtable.containsKey(mappings.item(j).getParentNode().getAttributes().item(0).getNodeValue().split("#")[1]))
-                            dbVector=(NodeVector) QueryHashtable.mainDBHashtable.get(mappings.item(j).getParentNode().getAttributes().item(0).getNodeValue().split("#")[1]);
+                        if(Mpiro.win.struc.mainDBcontainsEntityOrEntityType(mappings.item(j).getParentNode().getAttributes().item(0).getNodeValue().split("#")[1]))
+                            dbVector=(NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(mappings.item(j).getParentNode().getAttributes().item(0).getNodeValue().split("#")[1]);
                         else
                             continue;
                         //   System.out.println(mappings.item(j).getParentNode().getAttributes().item(0).getNodeValue().split("#")[1]);
@@ -3115,12 +3350,12 @@ createSubTypes(ssos, inter1.asClass(), nv1.getDatabaseTableVector(),String.value
                         //        System.out.print(mappings.item(j).getParentNode().getAttributes().item(0).getNodeValue().split("#")[1]);
                         //   }
                         dbVector.nounVector.add(jjj);
-                        Vector children1=QueryHashtable.getChildrenVectorFromMainDBHashtable(mappings.item(j).getParentNode().getAttributes().item(0).getNodeValue().split("#")[1],"entity type");
+                        Vector children1=Mpiro.win.struc.getChildrenVectorFromMainDBHashtable(mappings.item(j).getParentNode().getAttributes().item(0).getNodeValue().split("#")[1],"entity type");
                         for(int l=0;l<children1.size();l++){
-                            NodeVector dbChild=(NodeVector) QueryHashtable.mainDBHashtable.get(children1.elementAt(l));
+                            NodeVector dbChild=(NodeVector) Mpiro.win.struc.getEntityTypeOrEntity((String)children1.elementAt(l));
                             dbChild.nounVector.add(jjj);
                         }
-                        Hashtable currentNounHashtable = (Hashtable)QueryLexiconHashtable.mainLexiconHashtable.get("Nouns");
+                        Hashtable currentNounHashtable = Mpiro.win.struc.getNounsHashtable();
                         currentNounHashtable.put(jjj, new Hashtable());
                         Hashtable currentHashtable = (Hashtable)currentNounHashtable.get(jjj);
                         currentHashtable.put("Independent",  new Hashtable());
@@ -3224,7 +3459,7 @@ createSubTypes(ssos, inter1.asClass(), nv1.getDatabaseTableVector(),String.value
                         //currentNounGreekHashtable.put("grpgtext", "");
                         //currentNounGreekHashtable.put("grpatext", "");
                         
-        /*	Vector usersVector = QueryUsersHashtable.getUsersVectorFromMainUsersHashtable();
+        /*	Vector usersVector = Mpiro.win.struc.getUsersVectorFromMainUsersHashtable();
                 Enumeration usersVectorEnum = usersVector.elements();
                 while (usersVectorEnum.hasMoreElements())
                 {
@@ -3276,17 +3511,17 @@ createSubTypes(ssos, inter1.asClass(), nv1.getDatabaseTableVector(),String.value
                 }
             }
             // Vector temp=new Vector();
-            //if(QueryHashtable.annotationPropertiesHashtable.containsKey("bestPreservedInSouth")){
-            //  temp=(Vector)QueryHashtable.annotationPropertiesHashtable.get("bestPreservedInSouth");}
+            //if(Mpiro.win.struc.existsAnnotation("bestPreservedInSouth")){
+            //  temp=(Vector)Mpiro.win.struc.getAnnotation("bestPreservedInSouth");}
             String n="";
             if(cannedText.getAttribute("rdf:ID").contains("-canned-text"))
                 n=cannedText.getAttribute("rdf:ID").split("-canned-text")[0];
             else
                 n=cannedText.getAttribute("rdf:ID").substring(0,cannedText.getAttribute("rdf:ID").lastIndexOf("-"));
             
-            if(!QueryHashtable.annotationPropertiesHashtable.containsKey(n))
-                QueryHashtable.annotationPropertiesHashtable.put(n, new Vector());
-            Vector annotationsVec=(Vector)QueryHashtable.annotationPropertiesHashtable.get(n);
+            if(!Mpiro.win.struc.existsAnnotation(n))
+                Mpiro.win.struc.addAnnotation(n, new Vector());
+            Vector annotationsVec=(Vector)Mpiro.win.struc.getAnnotation(n);
             annotationsVec.add(new AnnotationProperty("rdfs:comment", greek, "greek", new Boolean(true), userTypes));
             annotationsVec.add(new AnnotationProperty("rdfs:comment", english, "english", new Boolean(true), userTypes));
             //System.out.println(temp);
@@ -3334,9 +3569,9 @@ createSubTypes(ssos, inter1.asClass(), nv1.getDatabaseTableVector(),String.value
             else
                 n=cannedText.getAttribute("rdf:ID").substring(0,cannedText.getAttribute("rdf:ID").lastIndexOf("-"));
             
-            if(!QueryHashtable.annotationPropertiesHashtable.containsKey(n))
-                QueryHashtable.annotationPropertiesHashtable.put(n, new Vector());
-            Vector annotationsVec=(Vector)QueryHashtable.annotationPropertiesHashtable.get(n);
+            if(!Mpiro.win.struc.existsAnnotation(n))
+                Mpiro.win.struc.addAnnotation(n, new Vector());
+            Vector annotationsVec=(Vector)Mpiro.win.struc.getAnnotation(n);
             
             annotationsVec.add(new AnnotationProperty("rdfs:comment", greek, "greek", new Boolean(true), userTypes));
             annotationsVec.add(new AnnotationProperty("rdfs:comment", english, "english", new Boolean(true), userTypes));
@@ -3344,405 +3579,405 @@ createSubTypes(ssos, inter1.asClass(), nv1.getDatabaseTableVector(),String.value
         }
     }
     
-    public static void importLexiconFromXmlFile(String fileName) throws Exception {
-        //System.out.println("90");
-        FileInputStream input;//System.out.println("90.3");
-        try {
-            input = new FileInputStream(fileName);
-        } catch (IOException ioe) {
-            //ioe.printStackTrace();
-            return;
-        }
-        //System.out.println("91");
-        DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        Document doc = docBuilder.parse(input);
-        //System.out.println("92");
-        //noun import
-        Node noun = doc.getElementsByTagName("Noun").item(0);
-        NodeList nounElements = noun.getChildNodes();
-        //System.out.println("93");
-        for (int i = 0; i < nounElements.getLength(); i++) {
-            Node currentNounNode = nounElements.item(i);
-            
-            QueryLexiconHashtable.currentNounHashtable = (Hashtable) QueryLexiconHashtable.mainLexiconHashtable.get("Nouns");
-            QueryLexiconHashtable.currentNounHashtable.put(currentNounNode.getNodeName(), new Hashtable());
-            QueryLexiconHashtable.currentHashtable = (Hashtable) QueryLexiconHashtable.currentNounHashtable.get(currentNounNode.getNodeName());
-            QueryLexiconHashtable.currentHashtable.put("Independent", new Hashtable());
-            QueryLexiconHashtable.currentHashtable.put("English", new Hashtable());
-            QueryLexiconHashtable.currentHashtable.put("Italian", new Hashtable());
-            QueryLexiconHashtable.currentHashtable.put("Greek", new Hashtable());
-            
-            Hashtable currentNounIndependentHashtable = (Hashtable) QueryLexiconHashtable.currentHashtable.get("Independent");
-            Hashtable currentNounEnglishHashtable = (Hashtable) QueryLexiconHashtable.currentHashtable.get("English");
-            Hashtable currentNounItalianHashtable = (Hashtable) QueryLexiconHashtable.currentHashtable.get("Italian");
-            Hashtable currentNounGreekHashtable = (Hashtable) QueryLexiconHashtable.currentHashtable.get("Greek");
-            
-            NodeList languagesElements = currentNounNode.getChildNodes();
-            
-            NodeList currentGreekElements = null;
-            NodeList currentEnglishElements = null;
-            NodeList currentItalianElements = null;
-            NodeList currentIndepedentElements = null;
-            
-            for (int k = 0; k < languagesElements.getLength(); k++) {
-                if (languagesElements.item(k).getNodeName().equals("Greek"))
-                    currentGreekElements = languagesElements.item(k).getChildNodes();
-                else if (languagesElements.item(k).getNodeName().equals("English"))
-                    currentEnglishElements = languagesElements.item(k).getChildNodes();
-                else if (languagesElements.item(k).getNodeName().equals("Italian"))
-                    currentItalianElements = languagesElements.item(k).getChildNodes();
-                else
-                    currentIndepedentElements = languagesElements.item(k).getChildNodes();
-            }
-            
-            for (int j = 0; j < currentGreekElements.getLength(); j++) {
-                Node greekElement = currentGreekElements.item(j);
-                if (greekElement.getFirstChild() != null)
-                    currentNounGreekHashtable.put(greekElement.getNodeName(), greekElement.getFirstChild().getNodeValue());
-                else
-                    currentNounGreekHashtable.put(greekElement.getNodeName(), "");
-            }
-            
-            for (int j = 0; j < currentEnglishElements.getLength(); j++) {
-                Node englishElement = currentEnglishElements.item(j);
-                if (englishElement.getFirstChild() != null)
-                    currentNounEnglishHashtable.put(englishElement.getNodeName(), englishElement.getFirstChild().getNodeValue());
-                else
-                    currentNounEnglishHashtable.put(englishElement.getNodeName(), "");
-            }
-            
-            for (int j = 0; j < currentItalianElements.getLength(); j++) {
-                Node italianElement = currentItalianElements.item(j);
-                if (italianElement.getFirstChild() != null)
-                    currentNounItalianHashtable.put(italianElement.getNodeName(), italianElement.getFirstChild().getNodeValue());
-                else
-                    currentNounItalianHashtable.put(italianElement.getNodeName(), "");
-            }
-            
-            for (int j = 0; j < currentIndepedentElements.getLength(); j++) {
-                Node indepedentElement = currentIndepedentElements.item(j);
-                if (indepedentElement.getFirstChild() != null)
-                    currentNounIndependentHashtable.put(indepedentElement.getNodeName(), indepedentElement.getFirstChild().getNodeValue());
-            }
-            //   //System.out.println("95");
-            /*			Vector usersVector = QueryUsersHashtable.getUsersVectorFromMainUsersHashtable();
-               Enumeration usersVectorEnum = usersVector.elements();
-               while (usersVectorEnum.hasMoreElements()) {
-             String user = usersVectorEnum.nextElement().toString();
-             currentNounIndependentHashtable.put(user, "0");
-               }
-             */
-        }
-        //end noun import
-        
-        
-        //verb import
-        Node verb = doc.getElementsByTagName("Verb").item(0);
-        NodeList verbElements = verb.getChildNodes();
-        //    System.out.println("96");
-        for (int i = 0; i < verbElements.getLength(); i++) {
-            Node currentVerbNode = verbElements.item(i);
-            QueryLexiconHashtable.currentVerbHashtable = (Hashtable) QueryLexiconHashtable.mainLexiconHashtable.get("Verbs");
-            QueryLexiconHashtable.currentVerbHashtable.put(currentVerbNode.getNodeName(), new Hashtable());
-            QueryLexiconHashtable.currentHashtable = (Hashtable) QueryLexiconHashtable.currentVerbHashtable.get(currentVerbNode.getNodeName());
-            QueryLexiconHashtable.currentHashtable.put("Independent", new Hashtable());
-            QueryLexiconHashtable.currentHashtable.put("English", new Hashtable());
-            QueryLexiconHashtable.currentHashtable.put("Italian", new Hashtable());
-            QueryLexiconHashtable.currentHashtable.put("Greek", new Hashtable());
-            
-            Hashtable currentVerbIndependentHashtable = (Hashtable) QueryLexiconHashtable.currentHashtable.get("Independent");
-            Hashtable currentVerbEnglishHashtable = (Hashtable) QueryLexiconHashtable.currentHashtable.get("English");
-            Hashtable currentVerbItalianHashtable = (Hashtable) QueryLexiconHashtable.currentHashtable.get("Italian");
-            Hashtable currentVerbGreekHashtable = (Hashtable) QueryLexiconHashtable.currentHashtable.get("Greek");
-            
-            NodeList languagesElements = currentVerbNode.getChildNodes();
-            
-            NodeList currentGreekElements = null;
-            NodeList currentEnglishElements = null;
-            NodeList currentItalianElements = null;
-            NodeList currentIndepedentElements = null;
-            
-            for (int k = 0; k < languagesElements.getLength(); k++) {
-                if (languagesElements.item(k).getNodeName().equals("Greek"))
-                    currentGreekElements = languagesElements.item(k).getChildNodes();
-                else if (languagesElements.item(k).getNodeName().equals("English"))
-                    currentEnglishElements = languagesElements.item(k).getChildNodes();
-                else if (languagesElements.item(k).getNodeName().equals("Italian"))
-                    currentItalianElements = languagesElements.item(k).getChildNodes();
-                else
-                    currentIndepedentElements = languagesElements.item(k).getChildNodes();
-            }
-            
-            Vector grvTable = new Vector();
-            Vector grpTable = new Vector();
-            currentVerbGreekHashtable.put("vTable", grvTable);
-            currentVerbGreekHashtable.put("pTable", grpTable);
-            
-            Vector itvTable = new Vector();
-            Vector itpTable = new Vector();
-            currentVerbItalianHashtable.put("vTable", itvTable);
-            currentVerbItalianHashtable.put("pTable", itpTable);
-            
-            for (int j = 0; j < currentGreekElements.getLength(); j++) {
-                Node greekElement = currentGreekElements.item(j);
-                String name = greekElement.getNodeName();
-                if (name.equals("vTable")) {
-                    NamedNodeMap attributes = greekElement.getAttributes();
-                    boolean bool;
-                    if (attributes.item(5).getNodeValue().equals("true")) bool = true;
-                    else bool = false;
-                    grvTable.addElement(new LexiconFieldData(attributes.item(0).getNodeValue(), attributes.item(1).getNodeValue(),
-                            attributes.item(2).getNodeValue(), attributes.item(3).getNodeValue(), attributes.item(4).getNodeValue(),
-                            bool));
-                } else if (name.equals("pTable")) {
-                    NamedNodeMap attributes = greekElement.getAttributes();
-                    boolean bool;
-                    if (attributes.item(2).getNodeValue().equals("true")) bool = true;
-                    else bool = false;
-                    grpTable.addElement(new LexiconFieldData(attributes.item(0).getNodeValue(), attributes.item(1).getNodeValue(),
-                            bool));
-                } else if (greekElement.getFirstChild() != null)
-                    currentVerbGreekHashtable.put(name, greekElement.getFirstChild().getNodeValue());
-                else
-                    currentVerbGreekHashtable.put(name, "");
-            }
-            
-            for (int j = 0; j < currentEnglishElements.getLength(); j++) {
-                Node englishElement = currentEnglishElements.item(j);
-                if (englishElement.getFirstChild() != null)
-                    currentVerbEnglishHashtable.put(englishElement.getNodeName(), englishElement.getFirstChild().getNodeValue());
-                else
-                    currentVerbEnglishHashtable.put(englishElement.getNodeName(), "");
-            }
-            
-            for (int j = 0; j < currentItalianElements.getLength(); j++) {
-                Node italianElement = currentItalianElements.item(j);
-                String name = italianElement.getNodeName();
-                if (name.equals("vTable")) {
-                    NamedNodeMap attributes = italianElement.getAttributes();
-                    boolean bool;
-                    if (attributes.item(4).getNodeValue().equals("true")) bool = true;
-                    else bool = false;
-                    itvTable.addElement(new LexiconFieldData(attributes.item(0).getNodeValue(), attributes.item(1).getNodeValue(),
-                            attributes.item(2).getNodeValue(), attributes.item(3).getNodeValue(), bool));
-                } else if (name.equals("pTable")) {
-                    NamedNodeMap attributes = italianElement.getAttributes();
-                    boolean bool;
-                    if (attributes.item(3).getNodeValue().equals("true")) bool = true;
-                    else bool = false;
-                    itpTable.addElement(new LexiconFieldData(attributes.item(0).getNodeValue(), attributes.item(1).getNodeValue(),
-                            attributes.item(2).getNodeValue(),
-                            bool));
-                } else if (italianElement.getFirstChild() != null)
-                    currentVerbItalianHashtable.put(italianElement.getNodeName(), italianElement.getFirstChild().getNodeValue());
-                else
-                    currentVerbItalianHashtable.put(italianElement.getNodeName(), "");
-            }
-        }
-        System.out.println("98");
-        //import EntityType-Noun
-        Node entityTypeNounsElement = doc.getElementsByTagName("EntityType-Nouns").item(0);
-        NodeList entityTypeElements = entityTypeNounsElement.getChildNodes();
-        for (int i = 0; i < entityTypeElements.getLength(); i++) {
-            Node entityTypeElement = entityTypeElements.item(i);
-            NodeVector nodeVector = (NodeVector) QueryHashtable.mainDBHashtable.get(entityTypeElement.getAttributes().item(0).getNodeValue());
-            if (nodeVector != null) {
-                NodeList nounNodes = entityTypeElement.getChildNodes();
-                for (int j = 0; j < nounNodes.getLength(); j++) {
-                    ( (Vector) nodeVector.get(2)).add(nounNodes.item(j).getAttributes().item(0).getNodeValue());
-                }
-            }
-        }
-        
-        //import Microplanning Values
-        Node microplanningValues = doc.getElementsByTagName("Microplanning").item(0);
-        NodeList entityTypeNodes = microplanningValues.getChildNodes();
-        for (int i = 0; i < entityTypeNodes.getLength(); i++) {
-            Node entityTypeElement = entityTypeNodes.item(i);
-            NodeVector nodeVector = (NodeVector) QueryHashtable.mainDBHashtable.get(entityTypeElement.getNodeName());
-            //System.out.println("99");
-            //if entity type has been imported
-            if (nodeVector != null) {
-                NodeList microValues = entityTypeElement.getChildNodes().item(0).getChildNodes();
-                for (int j = 0; j < microValues.getLength(); j++) {
-                    String key = microValues.item(j).getAttributes().item(0).getNodeValue();
-                    String value = "";
-                    if (microValues.item(j).getFirstChild() != null)
-                        value = microValues.item(j).getFirstChild().getNodeValue();
-                    
-                    ( (Hashtable) nodeVector.get(5)).put(key, value);
-                }
-                
-                //import Template Values
-                TemplateVector templateVector = (TemplateVector) nodeVector.get(4);
-                
-                Node templateValues = entityTypeElement.getChildNodes().item(1);
-                Node englishNode = templateValues.getChildNodes().item(0);
-                Node italianNode = templateValues.getChildNodes().item(1);
-                Node greekNode = templateValues.getChildNodes().item(2);
-                
-                //english templates
-                NodeList englishValues = englishNode.getChildNodes();
-                for (int j = 0; j < englishValues.getLength(); j++) {
-                    String name = englishValues.item(j).getAttributes().item(0).getNodeValue();
-                    Node valueNode = englishValues.item(j).getFirstChild();
-                    if (valueNode.getNodeType() == Node.TEXT_NODE) {
-                        ( (Hashtable) templateVector.get(0)).put(name, valueNode.getNodeValue());
-                    } else {
-                        Vector templateValueVector = new Vector();
-                        NodeList hashTableNodes = englishValues.item(j).getChildNodes();
-                        for (int k = 0; k < hashTableNodes.getLength(); k++) {
-                            NodeList hashTableValues = hashTableNodes.item(k).getChildNodes();
-                            Hashtable hashTable = new Hashtable();
-                            for (int l = 0; l < hashTableValues.getLength(); l++) {
-                                String value = "";
-                                if (hashTableValues.item(l).getFirstChild() != null)
-                                    value = hashTableValues.item(l).getFirstChild().getNodeValue();
-                                hashTable.put(hashTableValues.item(l).getNodeName(), value);
-                            }
-                            templateValueVector.add(hashTable);
-                        }
-                        ( (Hashtable) templateVector.get(0)).put(name, templateValueVector);
-                    }
-                }
-                
-                //italian templates
-                NodeList italianValues = italianNode.getChildNodes();
-                for (int j = 0; j < italianValues.getLength(); j++) {
-                    String name = italianValues.item(j).getAttributes().item(0).getNodeValue();
-                    Node valueNode = italianValues.item(j).getFirstChild();
-                    if (valueNode.getNodeType() == Node.TEXT_NODE) {
-                        ( (Hashtable) templateVector.get(1)).put(name, valueNode.getNodeValue());
-                    } else {
-                        Vector templateValueVector = new Vector();
-                        NodeList hashTableNodes = italianValues.item(j).getChildNodes();
-                        for (int k = 0; k < hashTableNodes.getLength(); k++) {
-                            NodeList hashTableValues = hashTableNodes.item(k).getChildNodes();
-                            Hashtable hashTable = new Hashtable();
-                            for (int l = 0; l < hashTableValues.getLength(); l++) {
-                                String value = "";
-                                if (hashTableValues.item(l).getFirstChild() != null)
-                                    value = hashTableValues.item(l).getFirstChild().getNodeValue();
-                                hashTable.put(hashTableValues.item(l).getNodeName(), value);
-                            }
-                            templateValueVector.add(hashTable);
-                        }
-                        ( (Hashtable) templateVector.get(1)).put(name, templateValueVector);
-                    }
-                }
-                
-                //greek templates
-                NodeList greekValues = greekNode.getChildNodes();
-                for (int j = 0; j < greekValues.getLength(); j++) {
-                    String name = greekValues.item(j).getAttributes().item(0).getNodeValue();
-                    Node valueNode = greekValues.item(j).getFirstChild();
-                    if (valueNode.getNodeType() == Node.TEXT_NODE) {
-                        ( (Hashtable) templateVector.get(2)).put(name, valueNode.getNodeValue());
-                    } else {
-                        Vector templateValueVector = new Vector();
-                        NodeList hashTableNodes = greekValues.item(j).getChildNodes();
-                        for (int k = 0; k < hashTableNodes.getLength(); k++) {
-                            NodeList hashTableValues = hashTableNodes.item(k).getChildNodes();
-                            Hashtable hashTable = new Hashtable();
-                            for (int l = 0; l < hashTableValues.getLength(); l++) {
-                                String value = "";
-                                if (hashTableValues.item(l).getFirstChild() != null)
-                                    value = hashTableValues.item(l).getFirstChild().getNodeValue();
-                                hashTable.put(hashTableValues.item(l).getNodeName(), value);
-                            }
-                            templateValueVector.add(hashTable);
-                        }
-                        ( (Hashtable) templateVector.get(2)).put(name, templateValueVector);
-                    }
-                }
-                //System.out.println("99.1");
-                //set field micropllanning text
-                Vector fieldVector = nodeVector.getDatabaseTableVector();
-                NodeVector parentNode = (NodeVector) QueryHashtable.mainDBHashtable.get( ( (FieldData) fieldVector.get(0)).m_filler);
-                /*           for (int j = 8; j < parentNode.getDatabaseTableVector().size(); j++) {
-                   FieldData fieldData = (FieldData) fieldVector.get(j);
-                   fieldData.m_mplanning = "";
-                   fieldData.set(3, fieldData.m_mplanning);
-                  }*/
-                
-                for (int j = parentNode.getDatabaseTableVector().size(); j < fieldVector.size(); j++) {
-                    FieldData fieldData = (FieldData) fieldVector.get(j);
-                    fieldData.m_mplanning = updateMicroplanningIndex(fieldData.m_field, entityTypeElement.getNodeName());
-                    fieldData.set(3, fieldData.m_mplanning);
-                }
-            }
-        }//System.out.println("99.2");
-        
-        //import users
-        NodeList usersElements = doc.getElementsByTagName("Users").item(0).getChildNodes();
-        for (int i = 0; i < usersElements.getLength(); i++) {
-            NodeList userNodeChilds = usersElements.item(i).getChildNodes();
-            String userName = usersElements.item(i).getNodeName();
-            //System.out.println("99.3");
-            Vector userVector = new Vector();
-            userVector.add(userNodeChilds.item(0).getFirstChild().getNodeValue());
-            userVector.add(userNodeChilds.item(1).getFirstChild().getNodeValue());
-            userVector.add(userNodeChilds.item(2).getFirstChild().getNodeValue());
-            userVector.add(userNodeChilds.item(3).getFirstChild().getNodeValue());
-            QueryUsersHashtable.mainUsersHashtable.put(userName, userVector);
-        }
-        //System.out.println("99.4");
-        //import user model
-        NodeList userModelElements = doc.getElementsByTagName("UserModel").item(0).getChildNodes();
-        for (int i = 0; i < userModelElements.getLength(); i++) {
-            Node fieldNode = userModelElements.item(i);
-            Hashtable fieldHashTable = new Hashtable();
-            QueryUsersHashtable.mainUserModelHashtable.put(fieldNode.getNodeName(), fieldHashTable);
-            
-            NodeList entityElements = fieldNode.getChildNodes();
-            for (int j = 0; j < entityElements.getLength(); j++) {
-                Node entityNode = entityElements.item(j);
-                Hashtable entityHashTable = new Hashtable();
-                fieldHashTable.put(entityNode.getNodeName(), entityHashTable);
-                
-                NodeList userElements = entityNode.getChildNodes();
-                for (int k = 0; k < userElements.getLength(); k++) {
-                    Node userNode = userElements.item(k);
-                    Vector userValues = new Vector();
-                    entityHashTable.put(userNode.getNodeName(), userValues);
-                    
-                    NodeList valuesElements = userNode.getChildNodes();
-                    for (int l = 0; l < valuesElements.getLength(); l++) {
-                        String value = "";
-                        if (valuesElements.item(l).getFirstChild() != null)
-                            value = valuesElements.item(l).getFirstChild().getNodeValue();
-                        userValues.add(value);
-                    }
-                }
-            }
-        } //end import usr model
-        
-        /*        //import user model story
-          NodeList userModelStoryElements = doc.getElementsByTagName("UserModelStory").item(0).getChildNodes();
-          for (int i = 0; i < userModelStoryElements.getLength(); i++) {
-           String entityName = userModelStoryElements.item(i).getAttributes().item(0).getNodeValue();
-           Hashtable valueHashTable = new Hashtable();
-           QueryUsersHashtable.mainUserModelStoryHashtable.put(entityName, valueHashTable);
-          }
-         */
-        //import options
-        NodeList optionElements = doc.getElementsByTagName("Options").item(0).getChildNodes();
-        for (int i = 0; i < optionElements.getLength(); i++) {
-            String optionName = optionElements.item(i).getNodeName();
-            Object value = optionElements.item(i).getFirstChild().getNodeValue();
-            
-            if (!optionName.equals("pserverAddress"))
-                QueryOptionsHashtable.mainOptionsHashtable.put(optionName, (String) value);
-            else {
-                NodeList serverValueNodes = optionElements.item(i).getChildNodes();
-                Vector vector = new Vector();
-                for (int j = 0; j < serverValueNodes.getLength(); j++) {
-                    vector.add(serverValueNodes.item(j).getFirstChild().getNodeValue());
-                }
-                QueryOptionsHashtable.mainOptionsHashtable.put(optionName, vector);
-            }
-        }
-    }
+//    public static void importLexiconFromXmlFile(String fileName) throws Exception {
+//        //System.out.println("90");
+//        FileInputStream input;//System.out.println("90.3");
+//        try {
+//            input = new FileInputStream(fileName);
+//        } catch (IOException ioe) {
+//            //ioe.printStackTrace();
+//            return;
+//        }
+//        //System.out.println("91");
+//        DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+//        Document doc = docBuilder.parse(input);
+//        //System.out.println("92");
+//        //noun import
+//        Node noun = doc.getElementsByTagName("Noun").item(0);
+//        NodeList nounElements = noun.getChildNodes();
+//        //System.out.println("93");
+//        for (int i = 0; i < nounElements.getLength(); i++) {
+//            Node currentNounNode = nounElements.item(i);
+//            
+//            Hashtable currentNounHashtable =  Mpiro.win.struc.getNounsHashtable();
+//            currentNounHashtable.put(currentNounNode.getNodeName(), new Hashtable());
+//            Hashtable currentHashtable = (Hashtable) currentNounHashtable.get(currentNounNode.getNodeName());
+//            currentHashtable.put("Independent", new Hashtable());
+//            currentHashtable.put("English", new Hashtable());
+//            currentHashtable.put("Italian", new Hashtable());
+//            currentHashtable.put("Greek", new Hashtable());
+//            
+//            Hashtable currentNounIndependentHashtable = (Hashtable) currentHashtable.get("Independent");
+//            Hashtable currentNounEnglishHashtable = (Hashtable) currentHashtable.get("English");
+//            Hashtable currentNounItalianHashtable = (Hashtable) currentHashtable.get("Italian");
+//            Hashtable currentNounGreekHashtable = (Hashtable) currentHashtable.get("Greek");
+//            
+//            NodeList languagesElements = currentNounNode.getChildNodes();
+//            
+//            NodeList currentGreekElements = null;
+//            NodeList currentEnglishElements = null;
+//            NodeList currentItalianElements = null;
+//            NodeList currentIndepedentElements = null;
+//            
+//            for (int k = 0; k < languagesElements.getLength(); k++) {
+//                if (languagesElements.item(k).getNodeName().equals("Greek"))
+//                    currentGreekElements = languagesElements.item(k).getChildNodes();
+//                else if (languagesElements.item(k).getNodeName().equals("English"))
+//                    currentEnglishElements = languagesElements.item(k).getChildNodes();
+//                else if (languagesElements.item(k).getNodeName().equals("Italian"))
+//                    currentItalianElements = languagesElements.item(k).getChildNodes();
+//                else
+//                    currentIndepedentElements = languagesElements.item(k).getChildNodes();
+//            }
+//            
+//            for (int j = 0; j < currentGreekElements.getLength(); j++) {
+//                Node greekElement = currentGreekElements.item(j);
+//                if (greekElement.getFirstChild() != null)
+//                    currentNounGreekHashtable.put(greekElement.getNodeName(), greekElement.getFirstChild().getNodeValue());
+//                else
+//                    currentNounGreekHashtable.put(greekElement.getNodeName(), "");
+//            }
+//            
+//            for (int j = 0; j < currentEnglishElements.getLength(); j++) {
+//                Node englishElement = currentEnglishElements.item(j);
+//                if (englishElement.getFirstChild() != null)
+//                    currentNounEnglishHashtable.put(englishElement.getNodeName(), englishElement.getFirstChild().getNodeValue());
+//                else
+//                    currentNounEnglishHashtable.put(englishElement.getNodeName(), "");
+//            }
+//            
+//            for (int j = 0; j < currentItalianElements.getLength(); j++) {
+//                Node italianElement = currentItalianElements.item(j);
+//                if (italianElement.getFirstChild() != null)
+//                    currentNounItalianHashtable.put(italianElement.getNodeName(), italianElement.getFirstChild().getNodeValue());
+//                else
+//                    currentNounItalianHashtable.put(italianElement.getNodeName(), "");
+//            }
+//            
+//            for (int j = 0; j < currentIndepedentElements.getLength(); j++) {
+//                Node indepedentElement = currentIndepedentElements.item(j);
+//                if (indepedentElement.getFirstChild() != null)
+//                    currentNounIndependentHashtable.put(indepedentElement.getNodeName(), indepedentElement.getFirstChild().getNodeValue());
+//            }
+//            //   //System.out.println("95");
+//            /*			Vector usersVector = Mpiro.win.struc.getUsersVectorFromMainUsersHashtable();
+//               Enumeration usersVectorEnum = usersVector.elements();
+//               while (usersVectorEnum.hasMoreElements()) {
+//             String user = usersVectorEnum.nextElement().toString();
+//             currentNounIndependentHashtable.put(user, "0");
+//               }
+//             */
+//        }
+//        //end noun import
+//        
+//        
+//        //verb import
+//        Node verb = doc.getElementsByTagName("Verb").item(0);
+//        NodeList verbElements = verb.getChildNodes();
+//        //    System.out.println("96");
+//        for (int i = 0; i < verbElements.getLength(); i++) {
+//            Node currentVerbNode = verbElements.item(i);
+//            Hashtable currentVerbHashtable = Mpiro.win.struc.getVerbsHashtable();
+//            currentVerbHashtable.put(currentVerbNode.getNodeName(), new Hashtable());
+//            Hashtable currentHashtable = (Hashtable) currentVerbHashtable.get(currentVerbNode.getNodeName());
+//            currentHashtable.put("Independent", new Hashtable());
+//            currentHashtable.put("English", new Hashtable());
+//            currentHashtable.put("Italian", new Hashtable());
+//            currentHashtable.put("Greek", new Hashtable());
+//            
+//            Hashtable currentVerbIndependentHashtable = (Hashtable) currentHashtable.get("Independent");
+//            Hashtable currentVerbEnglishHashtable = (Hashtable) currentHashtable.get("English");
+//            Hashtable currentVerbItalianHashtable = (Hashtable) currentHashtable.get("Italian");
+//            Hashtable currentVerbGreekHashtable = (Hashtable) currentHashtable.get("Greek");
+//            
+//            NodeList languagesElements = currentVerbNode.getChildNodes();
+//            
+//            NodeList currentGreekElements = null;
+//            NodeList currentEnglishElements = null;
+//            NodeList currentItalianElements = null;
+//            NodeList currentIndepedentElements = null;
+//            
+//            for (int k = 0; k < languagesElements.getLength(); k++) {
+//                if (languagesElements.item(k).getNodeName().equals("Greek"))
+//                    currentGreekElements = languagesElements.item(k).getChildNodes();
+//                else if (languagesElements.item(k).getNodeName().equals("English"))
+//                    currentEnglishElements = languagesElements.item(k).getChildNodes();
+//                else if (languagesElements.item(k).getNodeName().equals("Italian"))
+//                    currentItalianElements = languagesElements.item(k).getChildNodes();
+//                else
+//                    currentIndepedentElements = languagesElements.item(k).getChildNodes();
+//            }
+//            
+//            Vector grvTable = new Vector();
+//            Vector grpTable = new Vector();
+//            currentVerbGreekHashtable.put("vTable", grvTable);
+//            currentVerbGreekHashtable.put("pTable", grpTable);
+//            
+//            Vector itvTable = new Vector();
+//            Vector itpTable = new Vector();
+//            currentVerbItalianHashtable.put("vTable", itvTable);
+//            currentVerbItalianHashtable.put("pTable", itpTable);
+//            
+//            for (int j = 0; j < currentGreekElements.getLength(); j++) {
+//                Node greekElement = currentGreekElements.item(j);
+//                String name = greekElement.getNodeName();
+//                if (name.equals("vTable")) {
+//                    NamedNodeMap attributes = greekElement.getAttributes();
+//                    boolean bool;
+//                    if (attributes.item(5).getNodeValue().equals("true")) bool = true;
+//                    else bool = false;
+//                    grvTable.addElement(new LexiconFieldData(attributes.item(0).getNodeValue(), attributes.item(1).getNodeValue(),
+//                            attributes.item(2).getNodeValue(), attributes.item(3).getNodeValue(), attributes.item(4).getNodeValue(),
+//                            bool));
+//                } else if (name.equals("pTable")) {
+//                    NamedNodeMap attributes = greekElement.getAttributes();
+//                    boolean bool;
+//                    if (attributes.item(2).getNodeValue().equals("true")) bool = true;
+//                    else bool = false;
+//                    grpTable.addElement(new LexiconFieldData(attributes.item(0).getNodeValue(), attributes.item(1).getNodeValue(),
+//                            bool));
+//                } else if (greekElement.getFirstChild() != null)
+//                    currentVerbGreekHashtable.put(name, greekElement.getFirstChild().getNodeValue());
+//                else
+//                    currentVerbGreekHashtable.put(name, "");
+//            }
+//            
+//            for (int j = 0; j < currentEnglishElements.getLength(); j++) {
+//                Node englishElement = currentEnglishElements.item(j);
+//                if (englishElement.getFirstChild() != null)
+//                    currentVerbEnglishHashtable.put(englishElement.getNodeName(), englishElement.getFirstChild().getNodeValue());
+//                else
+//                    currentVerbEnglishHashtable.put(englishElement.getNodeName(), "");
+//            }
+//            
+//            for (int j = 0; j < currentItalianElements.getLength(); j++) {
+//                Node italianElement = currentItalianElements.item(j);
+//                String name = italianElement.getNodeName();
+//                if (name.equals("vTable")) {
+//                    NamedNodeMap attributes = italianElement.getAttributes();
+//                    boolean bool;
+//                    if (attributes.item(4).getNodeValue().equals("true")) bool = true;
+//                    else bool = false;
+//                    itvTable.addElement(new LexiconFieldData(attributes.item(0).getNodeValue(), attributes.item(1).getNodeValue(),
+//                            attributes.item(2).getNodeValue(), attributes.item(3).getNodeValue(), bool));
+//                } else if (name.equals("pTable")) {
+//                    NamedNodeMap attributes = italianElement.getAttributes();
+//                    boolean bool;
+//                    if (attributes.item(3).getNodeValue().equals("true")) bool = true;
+//                    else bool = false;
+//                    itpTable.addElement(new LexiconFieldData(attributes.item(0).getNodeValue(), attributes.item(1).getNodeValue(),
+//                            attributes.item(2).getNodeValue(),
+//                            bool));
+//                } else if (italianElement.getFirstChild() != null)
+//                    currentVerbItalianHashtable.put(italianElement.getNodeName(), italianElement.getFirstChild().getNodeValue());
+//                else
+//                    currentVerbItalianHashtable.put(italianElement.getNodeName(), "");
+//            }
+//        }
+//        System.out.println("98");
+//        //import EntityType-Noun
+//        Node entityTypeNounsElement = doc.getElementsByTagName("EntityType-Nouns").item(0);
+//        NodeList entityTypeElements = entityTypeNounsElement.getChildNodes();
+//        for (int i = 0; i < entityTypeElements.getLength(); i++) {
+//            Node entityTypeElement = entityTypeElements.item(i);
+//            NodeVector nodeVector = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(entityTypeElement.getAttributes().item(0).getNodeValue());
+//            if (nodeVector != null) {
+//                NodeList nounNodes = entityTypeElement.getChildNodes();
+//                for (int j = 0; j < nounNodes.getLength(); j++) {
+//                    ( (Vector) nodeVector.get(2)).add(nounNodes.item(j).getAttributes().item(0).getNodeValue());
+//                }
+//            }
+//        }
+//        
+//        //import Microplanning Values
+//        Node microplanningValues = doc.getElementsByTagName("Microplanning").item(0);
+//        NodeList entityTypeNodes = microplanningValues.getChildNodes();
+//        for (int i = 0; i < entityTypeNodes.getLength(); i++) {
+//            Node entityTypeElement = entityTypeNodes.item(i);
+//            NodeVector nodeVector = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(entityTypeElement.getNodeName());
+//            //System.out.println("99");
+//            //if entity type has been imported
+//            if (nodeVector != null) {
+//                NodeList microValues = entityTypeElement.getChildNodes().item(0).getChildNodes();
+//                for (int j = 0; j < microValues.getLength(); j++) {
+//                    String key = microValues.item(j).getAttributes().item(0).getNodeValue();
+//                    String value = "";
+//                    if (microValues.item(j).getFirstChild() != null)
+//                        value = microValues.item(j).getFirstChild().getNodeValue();
+//                    
+//                    ( (Hashtable) nodeVector.get(5)).put(key, value);
+//                }
+//                
+//                //import Template Values
+//                TemplateVector templateVector = (TemplateVector) nodeVector.get(4);
+//                
+//                Node templateValues = entityTypeElement.getChildNodes().item(1);
+//                Node englishNode = templateValues.getChildNodes().item(0);
+//                Node italianNode = templateValues.getChildNodes().item(1);
+//                Node greekNode = templateValues.getChildNodes().item(2);
+//                
+//                //english templates
+//                NodeList englishValues = englishNode.getChildNodes();
+//                for (int j = 0; j < englishValues.getLength(); j++) {
+//                    String name = englishValues.item(j).getAttributes().item(0).getNodeValue();
+//                    Node valueNode = englishValues.item(j).getFirstChild();
+//                    if (valueNode.getNodeType() == Node.TEXT_NODE) {
+//                        ( (Hashtable) templateVector.get(0)).put(name, valueNode.getNodeValue());
+//                    } else {
+//                        Vector templateValueVector = new Vector();
+//                        NodeList hashTableNodes = englishValues.item(j).getChildNodes();
+//                        for (int k = 0; k < hashTableNodes.getLength(); k++) {
+//                            NodeList hashTableValues = hashTableNodes.item(k).getChildNodes();
+//                            Hashtable hashTable = new Hashtable();
+//                            for (int l = 0; l < hashTableValues.getLength(); l++) {
+//                                String value = "";
+//                                if (hashTableValues.item(l).getFirstChild() != null)
+//                                    value = hashTableValues.item(l).getFirstChild().getNodeValue();
+//                                hashTable.put(hashTableValues.item(l).getNodeName(), value);
+//                            }
+//                            templateValueVector.add(hashTable);
+//                        }
+//                        ( (Hashtable) templateVector.get(0)).put(name, templateValueVector);
+//                    }
+//                }
+//                
+//                //italian templates
+//                NodeList italianValues = italianNode.getChildNodes();
+//                for (int j = 0; j < italianValues.getLength(); j++) {
+//                    String name = italianValues.item(j).getAttributes().item(0).getNodeValue();
+//                    Node valueNode = italianValues.item(j).getFirstChild();
+//                    if (valueNode.getNodeType() == Node.TEXT_NODE) {
+//                        ( (Hashtable) templateVector.get(1)).put(name, valueNode.getNodeValue());
+//                    } else {
+//                        Vector templateValueVector = new Vector();
+//                        NodeList hashTableNodes = italianValues.item(j).getChildNodes();
+//                        for (int k = 0; k < hashTableNodes.getLength(); k++) {
+//                            NodeList hashTableValues = hashTableNodes.item(k).getChildNodes();
+//                            Hashtable hashTable = new Hashtable();
+//                            for (int l = 0; l < hashTableValues.getLength(); l++) {
+//                                String value = "";
+//                                if (hashTableValues.item(l).getFirstChild() != null)
+//                                    value = hashTableValues.item(l).getFirstChild().getNodeValue();
+//                                hashTable.put(hashTableValues.item(l).getNodeName(), value);
+//                            }
+//                            templateValueVector.add(hashTable);
+//                        }
+//                        ( (Hashtable) templateVector.get(1)).put(name, templateValueVector);
+//                    }
+//                }
+//                
+//                //greek templates
+//                NodeList greekValues = greekNode.getChildNodes();
+//                for (int j = 0; j < greekValues.getLength(); j++) {
+//                    String name = greekValues.item(j).getAttributes().item(0).getNodeValue();
+//                    Node valueNode = greekValues.item(j).getFirstChild();
+//                    if (valueNode.getNodeType() == Node.TEXT_NODE) {
+//                        ( (Hashtable) templateVector.get(2)).put(name, valueNode.getNodeValue());
+//                    } else {
+//                        Vector templateValueVector = new Vector();
+//                        NodeList hashTableNodes = greekValues.item(j).getChildNodes();
+//                        for (int k = 0; k < hashTableNodes.getLength(); k++) {
+//                            NodeList hashTableValues = hashTableNodes.item(k).getChildNodes();
+//                            Hashtable hashTable = new Hashtable();
+//                            for (int l = 0; l < hashTableValues.getLength(); l++) {
+//                                String value = "";
+//                                if (hashTableValues.item(l).getFirstChild() != null)
+//                                    value = hashTableValues.item(l).getFirstChild().getNodeValue();
+//                                hashTable.put(hashTableValues.item(l).getNodeName(), value);
+//                            }
+//                            templateValueVector.add(hashTable);
+//                        }
+//                        ( (Hashtable) templateVector.get(2)).put(name, templateValueVector);
+//                    }
+//                }
+//                //System.out.println("99.1");
+//                //set field micropllanning text
+//                Vector fieldVector = nodeVector.getDatabaseTableVector();
+//                NodeVector parentNode = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity( ( (FieldData) fieldVector.get(0)).m_filler);
+//                /*           for (int j = 8; j < parentNode.getDatabaseTableVector().size(); j++) {
+//                   FieldData fieldData = (FieldData) fieldVector.get(j);
+//                   fieldData.m_mplanning = "";
+//                   fieldData.set(3, fieldData.m_mplanning);
+//                  }*/
+//                
+//                for (int j = parentNode.getDatabaseTableVector().size(); j < fieldVector.size(); j++) {
+//                    FieldData fieldData = (FieldData) fieldVector.get(j);
+//                    fieldData.m_mplanning = updateMicroplanningIndex(fieldData.m_field, entityTypeElement.getNodeName());
+//                    fieldData.set(3, fieldData.m_mplanning);
+//                }
+//            }
+//        }//System.out.println("99.2");
+//        
+//        //import users
+//        NodeList usersElements = doc.getElementsByTagName("Users").item(0).getChildNodes();
+//        for (int i = 0; i < usersElements.getLength(); i++) {
+//            NodeList userNodeChilds = usersElements.item(i).getChildNodes();
+//            String userName = usersElements.item(i).getNodeName();
+//            //System.out.println("99.3");
+//            Vector userVector = new Vector();
+//            userVector.add(userNodeChilds.item(0).getFirstChild().getNodeValue());
+//            userVector.add(userNodeChilds.item(1).getFirstChild().getNodeValue());
+//            userVector.add(userNodeChilds.item(2).getFirstChild().getNodeValue());
+//            userVector.add(userNodeChilds.item(3).getFirstChild().getNodeValue());
+//            Mpiro.win.struc.putUserOrRobotInMainUsersHashtable(userName, new User(userVector));
+//        }
+//        //System.out.println("99.4");
+//        //import user model
+//        NodeList userModelElements = doc.getElementsByTagName("UserModel").item(0).getChildNodes();
+//        for (int i = 0; i < userModelElements.getLength(); i++) {
+//            Node fieldNode = userModelElements.item(i);
+//            Hashtable fieldHashTable = new Hashtable();
+//            Mpiro.win.struc.putPropertyInMainUserModelHashtable(fieldNode.getNodeName(), fieldHashTable);
+//            
+//            NodeList entityElements = fieldNode.getChildNodes();
+//            for (int j = 0; j < entityElements.getLength(); j++) {
+//                Node entityNode = entityElements.item(j);
+//                Hashtable entityHashTable = new Hashtable();
+//                fieldHashTable.put(entityNode.getNodeName(), entityHashTable);
+//                
+//                NodeList userElements = entityNode.getChildNodes();
+//                for (int k = 0; k < userElements.getLength(); k++) {
+//                    Node userNode = userElements.item(k);
+//                    Vector userValues = new Vector();
+//                    entityHashTable.put(userNode.getNodeName(), userValues);
+//                    
+//                    NodeList valuesElements = userNode.getChildNodes();
+//                    for (int l = 0; l < valuesElements.getLength(); l++) {
+//                        String value = "";
+//                        if (valuesElements.item(l).getFirstChild() != null)
+//                            value = valuesElements.item(l).getFirstChild().getNodeValue();
+//                        userValues.add(value);
+//                    }
+//                }
+//            }
+//        } //end import usr model
+//        
+//        /*        //import user model story
+//          NodeList userModelStoryElements = doc.getElementsByTagName("UserModelStory").item(0).getChildNodes();
+//          for (int i = 0; i < userModelStoryElements.getLength(); i++) {
+//           String entityName = userModelStoryElements.item(i).getAttributes().item(0).getNodeValue();
+//           Hashtable valueHashTable = new Hashtable();
+//           QueryProfileHashtable.mainUserModelStoryHashtable.put(entityName, valueHashTable);
+//          }
+//         */
+//        //import options
+//        NodeList optionElements = doc.getElementsByTagName("Options").item(0).getChildNodes();
+//        for (int i = 0; i < optionElements.getLength(); i++) {
+//            String optionName = optionElements.item(i).getNodeName();
+//            Object value = optionElements.item(i).getFirstChild().getNodeValue();
+//            
+//            if (!optionName.equals("pserverAddress"))
+//                QueryOptionsHashtable.mainOptionsHashtable.put(optionName, (String) value);
+//            else {
+//                NodeList serverValueNodes = optionElements.item(i).getChildNodes();
+//                Vector vector = new Vector();
+//                for (int j = 0; j < serverValueNodes.getLength(); j++) {
+//                    vector.add(serverValueNodes.item(j).getFirstChild().getNodeValue());
+//                }
+//                QueryOptionsHashtable.mainOptionsHashtable.put(optionName, vector);
+//            }
+//        }
+//    }
     
  /*   private static void getProperties( ExtendedIterator properties)
     {
@@ -3751,8 +3986,8 @@ createSubTypes(ssos, inter1.asClass(), nv1.getDatabaseTableVector(),String.value
         //   propertiesHashtableRecord rrrrrrr=new propertiesHashtableRecord();
            ExtendedIterator extit=nextProp.listDomain();
            if (!extit.hasNext()) continue;
-           QueryHashtable.propertiesHashtable.put(getNameInELEON(nextProp),new propertiesHashtableRecord(false));
-           Vector propVec=(Vector) QueryHashtable.propertiesHashtable.get(getNameInELEON(nextProp));
+           Mpiro.win.struc.addProperty(getNameInELEON(nextProp),new propertiesHashtableRecord(false));
+           Vector propVec=(Vector) Mpiro.win.struc.getProperty(getNameInELEON(nextProp));
            Vector vect=(Vector) propVec.elementAt(0);
   
            while (extit.hasNext()){
@@ -3800,8 +4035,8 @@ OntClass next= (OntClass) extit.next();
         while(properties.hasNext()){
            DatatypeProperty nextProp = (DatatypeProperty) properties.next();
         //   propertiesHashtableRecord rrrrrrr=new propertiesHashtableRecord();
-           QueryHashtable.propertiesHashtable.put(getNameInELEON(nextProp),new propertiesHashtableRecord(false));
-           Vector propVec=(Vector) QueryHashtable.propertiesHashtable.get(getNameInELEON(nextProp));
+           Mpiro.win.struc.addProperty(getNameInELEON(nextProp),new propertiesHashtableRecord(false));
+           Vector propVec=(Vector) Mpiro.win.struc.getProperty(getNameInELEON(nextProp));
            Vector vect=(Vector) propVec.elementAt(0);
            ExtendedIterator extit=nextProp.listDomain();
            while (extit.hasNext()){
@@ -3844,7 +4079,7 @@ OntClass next= (OntClass) extit.next();
         int numberOfItalianMicroplans = 0;
         int numberOfGreekMicroplans = 0;
         String result = new String("");
-        Vector entityTypeVector = (Vector) QueryHashtable.mainDBHashtable.get(entityType);
+        Vector entityTypeVector = (Vector) Mpiro.win.struc.getEntityTypeOrEntity(entityType);
         Hashtable mpHashtable = (Hashtable) entityTypeVector.get(5);
         String selectionEnglish = new String("");
         String selectionItalian = new String(""); //maria
@@ -3889,8 +4124,8 @@ OntClass next= (OntClass) extit.next();
     private static void addObjectProperty(ObjectProperty nextProp, OntModel ontModel) {
         try {
                 ExtendedIterator extit=nextProp.listDomain();
-                QueryHashtable.propertiesHashtable.put(getNameInELEON(nextProp),new PropertiesHashtableRecord(false));
-                Vector propVec=(Vector) QueryHashtable.propertiesHashtable.get(getNameInELEON(nextProp));
+                Mpiro.win.struc.addProperty(getNameInELEON(nextProp),new PropertiesHashtableRecord(false));
+                Vector propVec=(Vector) Mpiro.win.struc.getProperty(getNameInELEON(nextProp));
                 Vector vect=(Vector) propVec.elementAt(0);
                 if (!extit.hasNext()){
                     vect.add("Basic-entity-types");
@@ -3997,15 +4232,41 @@ OntClass next= (OntClass) extit.next();
                 
                 //   propertiesHashtableRecord rrrrrrr=new propertiesHashtableRecord();
                 //System.out.println("a");
-                QueryHashtable.propertiesHashtable.put(getNameInELEON(nextProp),new PropertiesHashtableRecord(false));
-                Vector propVec=(Vector) QueryHashtable.propertiesHashtable.get(getNameInELEON(nextProp));
+                Mpiro.win.struc.addProperty(getNameInELEON(nextProp),new PropertiesHashtableRecord(false));
+                Vector propVec=(Vector) Mpiro.win.struc.getProperty(getNameInELEON(nextProp));
                 //System.out.println("b");
                 Vector vect=(Vector) propVec.elementAt(0);
                 ExtendedIterator extit=nextProp.listDomain();
                 //System.out.println("c"+getNameInELEON(nextProp));
                 while (extit.hasNext()){
-                    OntResource temp=(OntResource) extit.next();
+                   // OntResource temp=(OntResource) extit.next();
                     if(getNameInELEON(nextProp).equalsIgnoreCase("date")) continue;
+                                   
+                    OntClass temp=(OntClass)extit.next();
+                    if(temp.isUnionClass()){
+                       UnionClass uc=temp.asUnionClass();
+                       ExtendedIterator ops=uc.listOperands();
+                       Vector tempDom=new Vector();
+                       while(ops.hasNext()){
+                           OntClass nextDom=(OntClass) ops.next();
+                           if(nextDom.isAnon()){//It's not union of named classes
+                               tempDom.clear();
+                               tempDom.add("Basic-entity-types");
+                               System.err.println("Domain of "+getNameInELEON(nextProp)+" is complicated. It will be inserted with domain Basic-entity-types");
+                               break;
+                           }
+                           else{
+                           tempDom.add(getNameInELEON(nextDom));}
+                       }
+                       propVec.setElementAt(tempDom,0);
+                    } else if(!temp.isAnon()){
+                        //String test=getNameInELEON(temp);
+                        vect.add(getNameInELEON(temp));}
+                    else{
+                         vect.add("Basic-entity-types");
+                         System.err.println("Domain of "+getNameInELEON(nextProp)+" is complicated. It will be inserted with domain Basic-entity-types");  
+                    }
+                
                     //ontClass tem1p=extit.next();
                     //    String[] next=extit.next().toString().split("#");
                     //        System.out.println(ob.toString());
@@ -4013,8 +4274,8 @@ OntClass next= (OntClass) extit.next();
                     //System.out.println(getNameInELEON(temp));
                     //OntClass temp=ontModel.getOntClass(extit.next().toString());
                     // if(!temp.isAnon())
-                    if (temp.isClass())
-                        vect.add(getNameInELEON(temp));
+                    //if (temp.isClass())
+                     //   vect.add(getNameInELEON(temp));
                 }
                 //System.out.println("d");
                 vect= (Vector) propVec.elementAt(1);

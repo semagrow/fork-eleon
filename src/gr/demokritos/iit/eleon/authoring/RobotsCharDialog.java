@@ -6,6 +6,8 @@
 
 package gr.demokritos.iit.eleon.authoring;
 
+import gr.demokritos.iit.eleon.struct.QueryHashtable;
+import gr.demokritos.iit.eleon.struct.QueryProfileHashtable;
 import gr.demokritos.iit.eleon.ui.KButton;
 import gr.demokritos.iit.eleon.ui.KComboBox;
 import gr.demokritos.iit.eleon.ui.KLabel;
@@ -56,7 +58,7 @@ public class RobotsCharDialog extends JFrame implements ActionListener
 		type = dialogType;
 		frameTitle = new String(editing_text+ "(" + fieldname + ")");		//maria
 		// Get the nodeVector of the selected node
-		//currentVector = (NodeVector)QueryHashtable.mainDBHashtable.get(DataBasePanel.last.toString());
+		//currentVector = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(DataBasePanel.last.toString());
 		
 		// The dialog and its components from top to bottom (1-6)
 		dialog = new JDialog(this, frameTitle, true);
@@ -66,7 +68,7 @@ public class RobotsCharDialog extends JFrame implements ActionListener
 		//dialog.setResizable(false);
                 
 		// 1
-                Object[] r=QueryUsersHashtable.robotsHashtable.keySet().toArray();
+                Object[] r=Mpiro.win.struc.getRobotNamesToArray();
                 String robots="";
                 for(int i=0;i<r.length;i++){
                     if(r[i].toString().length()>11){
@@ -96,7 +98,7 @@ public class RobotsCharDialog extends JFrame implements ActionListener
 		c.weightx = 1.0; c.weighty = 0.0;
 		c.gridy = 0;
 
-		Vector<Vector> allUserTypesVector = QueryHashtable.robotCharVector;
+		Vector<Vector> allUserTypesVector = Mpiro.win.struc.getRobotCharVector();
 		Enumeration<Vector> allUserTypesVectorEnum = allUserTypesVector.elements();
                 int robottypes=0;
 		while (allUserTypesVectorEnum.hasMoreElements())
@@ -130,7 +132,7 @@ public class RobotsCharDialog extends JFrame implements ActionListener
     dialog.pack();
     dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-    int yNo=QueryHashtable.robotCharVector.size();
+    int yNo=Mpiro.win.struc.getRobotCharVectorSize();
     int xNo=r.length;
     
     dialog.setSize(215+xNo*55,67+yNo*40);
@@ -167,7 +169,7 @@ public class RobotsCharDialog extends JFrame implements ActionListener
             else{
                 
             }*/
-		Hashtable allFieldsAndContainingEntityTypesHashtable = QueryHashtable.returnAllFieldsAndContainingEntityTypes();
+		Hashtable allFieldsAndContainingEntityTypesHashtable = Mpiro.win.struc.returnAllFieldsAndContainingEntityTypes();
 		
 		// this is used for the "type" and "called" (name/shortname) fields
 		// that are not present in entity-types. They are entity only
@@ -179,13 +181,13 @@ public class RobotsCharDialog extends JFrame implements ActionListener
 			defaultVector.addElement("1");
 			return defaultVector;
 		}
-		String containingEntityType = QueryHashtable.getParents(QueryHashtable.nameWithoutOccur(DataBasePanel.last.toString())).elementAt(0).toString();
+		String containingEntityType = Mpiro.win.struc.getParents(Mpiro.win.struc.nameWithoutOccur(DataBasePanel.last.toString())).elementAt(0).toString();
                 if(!containingEntityType.equalsIgnoreCase("Basic-entity-types")){
-		Vector parentValuesVector = QueryUsersHashtable.getRobotsModelValuesVector(currentField, containingEntityType, usertype);
+		Vector parentValuesVector = Mpiro.win.struc.getRobotsModelValuesVector(currentField, containingEntityType, usertype);
 		return parentValuesVector;
                 }
                 else{
-                   return (Vector) (((Hashtable)((Vector)QueryHashtable.propertiesHashtable.get(currentField)).elementAt(15)).get(usertype));
+                   return (Vector) (((Hashtable)((Vector)Mpiro.win.struc.getProperty(currentField)).elementAt(15)).get(usertype));
                 }
 	}
 
@@ -220,14 +222,14 @@ public class RobotsCharDialog extends JFrame implements ActionListener
 			user.setEditable(false);
 			user.setBorder(new EmptyBorder(new Insets(1,1,1,1)));
 			
-                        Set robots=QueryUsersHashtable.robotsHashtable.keySet();
+                        Object[] robots=Mpiro.win.struc.getRobotNamesToArray();
                         
                       //  combos[rcombosobottype]=new PreferenceComboBox[robots.size()];
 			//intCB = new InterestComboBox();
 			//impCB = new PreferenceComboBox();
 			//repCB = new RepetitionsComboBox();
                         Vector<PreferenceComboBox> v1=new Vector();
-                        for(int i=0;i<robots.size();i++){
+                        for(int i=0;i<robots.length;i++){
                            v1.add(new PreferenceComboBox());
                             v1.elementAt(i).addActionListener(this);
                         }
@@ -238,10 +240,10 @@ public class RobotsCharDialog extends JFrame implements ActionListener
 Vector valuesVector=new Vector();
                         if(type.equalsIgnoreCase("Property")){
                             
-             valuesVector=QueryHashtable.getPropertyRobotsImportanceAndRepetitions(field,username);
+             valuesVector=Mpiro.win.struc.getPropertyRobotsImportanceAndRepetitions(field,username);
                         }else
-                            valuesVector=QueryHashtable.getRobotsCharValues(field, node, username);
-			//valuesVector = QueryUsersHashtable.getRobotsModelValuesVector(field, node, username);
+                            valuesVector=Mpiro.win.struc.getRobotsCharValues(field, node, username);
+			//valuesVector = Mpiro.win.struc.getRobotsModelValuesVector(field, node, username);
 			/*!!!*/  //intCB.setSelectedItem((String)valuesVector.elementAt(0));
 			//impCB.setSelectedItem((String)valuesVector.elementAt(0));
         			//repCB.setSelectedItem((String)valuesVector.elementAt(2));
@@ -288,13 +290,13 @@ Vector valuesVector=new Vector();
                         if (e.getSource() == v1.elementAt(i))
 			{
                            System.out.println(v1.elementAt(i).getForeground().toString());
-                            if(((v1.elementAt(i).getForeground().equals(Color.red))&&(!QueryHashtable.getValueFromRobotCharValuesHash(node, username,i).equals(v1.elementAt(i).getSelectedItem().toString())))||(v1.elementAt(i).getForeground().equals(Color.black))){
-                            QueryHashtable.setValueAtRobotCharValuesHash(node, username,i,v1.elementAt(i).getSelectedItem().toString());
+                            if(((v1.elementAt(i).getForeground().equals(Color.red))&&(!Mpiro.win.struc.getValueFromRobotCharValuesHash(node, username,i).equals(v1.elementAt(i).getSelectedItem().toString())))||(v1.elementAt(i).getForeground().equals(Color.black))){
+                            Mpiro.win.struc.setValueAtRobotCharValuesHash(node, username,i,v1.elementAt(i).getSelectedItem().toString());
                             v1.elementAt(i).setForeground(Color.black);
                              boolean universal=false;
-        for(int k=0;k<QueryHashtable.robotCharVector.size();k++){
-            if(((Vector)QueryHashtable.robotCharVector.elementAt(k)).elementAt(0).toString().equalsIgnoreCase(username)){
-                universal=(Boolean)((Vector)QueryHashtable.robotCharVector.elementAt(k)).elementAt(2);
+        for(int k=0;k<Mpiro.win.struc.getRobotCharVectorSize();k++){
+            if(((Vector)Mpiro.win.struc.getRobotCharVectorElementAt(k)).elementAt(0).toString().equalsIgnoreCase(username)){
+                universal=(Boolean)((Vector)Mpiro.win.struc.getRobotCharVectorElementAt(k)).elementAt(2);
                 break;
             }
         }
@@ -313,13 +315,13 @@ Vector valuesVector=new Vector();
                //     if(type.equalsIgnoreCase("Property")){
                  //       if (e.getSource() == impCB)
 		///	{
-				//QueryHashtable.updateImportanceOrRepetitionsForProperty(field, username, 1, impCB.getSelectedItem().toString());
+				//Mpiro.win.struc.updateImportanceOrRepetitionsForProperty(field, username, 1, impCB.getSelectedItem().toString());
 		//		QueryHashtable.updateRobotsCharPreferenceForProperty(field, username, 0, impCB.getSelectedItem().toString());
 				//Mpiro.needExportToEmulator=true;			//maria
 		//	}
 			//else if (e.getSource() == repCB)
 		//	{
-		//		QueryHashtable.updateImportanceOrRepetitionsForProperty(field, username, 2, repCB.getSelectedItem().toString());
+		//		Mpiro.win.struc.updateImportanceOrRepetitionsForProperty(field, username, 2, repCB.getSelectedItem().toString());
 		//		Mpiro.needExportToEmulator=true;			//maria
 		//	}
                   //  }
@@ -327,17 +329,17 @@ Vector valuesVector=new Vector();
                     //else{
                     /* if (e.getSource() == intCB)
 			{
-			QueryUsersHashtable.updateUserModelParameters(field, node, username, 0, intCB.getSelectedItem().toString());
+			QueryProfileHashtable.updateUserModelParameters(field, node, username, 0, intCB.getSelectedItem().toString());
 			}
 			else*/ //if (e.getSource() == impCB)
 		//	{
-			//	QueryUsersHashtable.updateUserModelParameters(field, node, username, 1, impCB.getSelectedItem().toString());
-		///		QueryUsersHashtable.updateRobotsCharModelParameters(field, node, username, 0, impCB.getSelectedItem().toString());
+			//	QueryProfileHashtable.updateUserModelParameters(field, node, username, 1, impCB.getSelectedItem().toString());
+		///		QueryProfileHashtable.updateRobotsCharModelParameters(field, node, username, 0, impCB.getSelectedItem().toString());
 				//Mpiro.needExportToEmulator=true;			//maria
 		//	}
 			//else if (e.getSource() == repCB)
 			//{
-			//	QueryUsersHashtable.updateUserModelParameters(field, node, username, 2, repCB.getSelectedItem().toString());
+			//	QueryProfileHashtable.updateUserModelParameters(field, node, username, 2, repCB.getSelectedItem().toString());
 			//	Mpiro.needExportToEmulator=true;			//maria
 			//}
                    // }

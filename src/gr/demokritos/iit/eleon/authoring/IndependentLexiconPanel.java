@@ -6,6 +6,8 @@
 
 package gr.demokritos.iit.eleon.authoring;
 
+import gr.demokritos.iit.eleon.struct.QueryLexiconHashtable;
+import gr.demokritos.iit.eleon.struct.QueryProfileHashtable;
 import gr.demokritos.iit.eleon.ui.KComboBox;
 import gr.demokritos.iit.eleon.ui.KLabel;
 
@@ -60,10 +62,10 @@ public class IndependentLexiconPanel extends JPanel
     c.weightx = 1.0; c.weighty = 1.0;
     c.gridy = 0;
 
-    valuesHashtable = QueryLexiconHashtable.showValues(LexiconPanel.n.toString(), "Independent");
+    valuesHashtable = Mpiro.win.struc.showValues(LexiconPanel.n.toString(), "Independent");
     //System.out.println(valuesHashtable);
 
-    Vector allUserTypesVector = QueryUsersHashtable.getUsersVectorFromMainUsersHashtable();
+    Vector allUserTypesVector = Mpiro.win.struc.getUsersVectorFromMainUsersHashtable();
     Enumeration allUserTypesVectorEnum = allUserTypesVector.elements();
     while (allUserTypesVectorEnum.hasMoreElements())
     {
@@ -83,7 +85,7 @@ public class IndependentLexiconPanel extends JPanel
 		this.add("North", labelIN);
 		this.add("Center", centerpanel);
 		
-		//valuesHashtable = QueryLexiconHashtable.showValues(LexiconPanel.n.toString(), "Independent");
+		//valuesHashtable = Mpiro.win.struc.showValues(LexiconPanel.n.toString(), "Independent");
 		//System.out.println(QueryLexiconHashtable.currentValues);
 		//System.out.println(valuesHashtable);
 		centerpanel.revalidate();
@@ -130,12 +132,12 @@ public class IndependentLexiconPanel extends JPanel
 	      //System.out.println("()---- " + username + "===" + acb.getSelectedItem().toString());
 	      if (LexiconPanel.parent.toString().equalsIgnoreCase("Nouns"))
 	      {
-	        QueryLexiconHashtable.updateLexiconEntryNoun(LexiconPanel.n.toString(), "Independent", username, acb.getSelectedItem().toString());
+	        Mpiro.win.struc.updateLexiconEntryNoun(LexiconPanel.n.toString(), "Independent", username, acb.getSelectedItem().toString());
 	      	Mpiro.needExportToEmulator=true;		//maria
 	      }
 	      else if (LexiconPanel.parent.toString().equalsIgnoreCase("Verbs"))
 	      {
-	      	QueryLexiconHashtable.updateLexiconEntryVerb(LexiconPanel.n.toString(), "Independent", username, acb.getSelectedItem().toString());
+	      	Mpiro.win.struc.updateLexiconEntryVerb(LexiconPanel.n.toString(), "Independent", username, acb.getSelectedItem().toString());
 	      }
       }
 		} // actionPerformed

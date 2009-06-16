@@ -6,6 +6,7 @@
 
 package gr.demokritos.iit.eleon.authoring;
 
+import gr.demokritos.iit.eleon.struct.QueryHashtable;
 import java.awt.*;
 import java.awt.image.*;
 import javax.swing.*;
@@ -47,7 +48,7 @@ public class FlagPanel extends JPanel
 	JButton grButton;
 	JButton independentButton;
 
-	static int langID;
+	public static int langID;
 
 	public FlagPanel()
 	{
@@ -164,8 +165,8 @@ public class FlagPanel extends JPanel
 		DataBasePanel.label01.revalidate();
 
 		String parent = DataBasePanel.last.getParent().toString();
-		String node = QueryHashtable.nameWithoutOccur(DataBasePanel.last.toString());
-		NodeVector nodeVector = (NodeVector)QueryHashtable.mainDBHashtable.get(node);
+		String node = Mpiro.win.struc.nameWithoutOccur(DataBasePanel.last.toString());
+		NodeVector nodeVector = (NodeVector)Mpiro.win.ontoPipe.getExtension().getEntityTypeOrEntity(node);
 
 		// *********************************
 		/* System.out.println("parent=" + parent);

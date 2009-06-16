@@ -39,6 +39,10 @@ with this program; if not, see <http://www.gnu.org/licenses/>.
 package gr.demokritos.iit.eleon.authoring;
 
 
+import gr.demokritos.iit.eleon.struct.QueryHashtable;
+import gr.demokritos.iit.eleon.struct.QueryLexiconHashtable;
+import gr.demokritos.iit.eleon.struct.QueryOptionsHashtable;
+import gr.demokritos.iit.eleon.struct.QueryProfileHashtable;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -53,6 +57,7 @@ import javax.swing.tree.*;
 import gr.demokritos.iit.eleon.ui.ELEONWindow;
 import gr.demokritos.iit.eleon.ui.KButton;
 import gr.demokritos.iit.eleon.ui.MessageDialog;
+import gr.demokritos.iit.eleon.ui.PServerPanel;
 import gr.demokritos.iit.eleon.ui.Reasoner;
 import gr.demokritos.iit.eleon.ui.RobotCharacteristicsPanel;
 import gr.demokritos.iit.eleon.ui.StoriesPanel;
@@ -245,6 +250,7 @@ public class Mpiro
     private JMenuItem exportToOWL;  //kallonis
     private JMenuItem importFromOWL; //kallonis
     private JMenuItem runReasoner;
+    private JMenuItem startPServer;
     private JMenuItem exportFileItem;
     private JMenuItem exitFileItem;
 
@@ -304,96 +310,6 @@ public class Mpiro
     private JPanel searchPanel; //theofilos
 
  
-
-    /* --------------------------------------------------------------
-     * Domain Initialisation!
-     * --------------------------------------------------------------
-     */
-    public void initializeDomain() {
-        /** Setting and checking on the LOCALE */
-        Locale.setDefault(enLocale);
-        Locale defaultLocale = Locale.getDefault();
-        String country = defaultLocale.getCountry();
-        String language = defaultLocale.getLanguage();
-
-        /*
-         * First: DataBase initialisation.
-         */
-        QueryHashtable.createMainDBHashtable();
-        QueryHashtable.createPropertiesHashtable();
-        QueryHashtable.createValueRestrictionsHashtable();
-        QueryHashtable.createEquivalentClassesHashtable();
-        QueryHashtable.createSuperClassesHashtable();
-        QueryHashtable.createAnnotationPropertiesHashtable();
-                
-
-        // Make the default NodeVectors for every tree node except Root.
-        Enumeration enum1 = DataBasePanel.top.breadthFirstEnumeration();
-        DefaultMutableTreeNode tmp;
-        IconData id;
-        while (enum1.hasMoreElements()) {
-            tmp = (DefaultMutableTreeNode) enum1.nextElement();
-            Object o = (Object) (tmp.getUserObject());
-            id = (IconData) o;
-            Icon ii = id.getIcon();
-            ImageIcon ima = (ImageIcon) ii;
-            String node = tmp.toString();
-            TreeNode tn = (TreeNode) tmp;
-
-            if ( (ima != DataBasePanel.ICON_TOP_B) &&
-                (ima != DataBasePanel.ICON_BUILT) &&
-                (ima != DataBasePanel.ICON_GEI) &&
-                (ima != DataBasePanel.ICON_GENERIC)) {
-                if (tn.getParent() == null) {
-                    QueryHashtable.createBasicEntityType(node, "Data Base");
-                }
-                else {
-                    String parent = tn.getParent().toString();
-                    QueryHashtable.createBasicEntityType(parent, node);
-                    //QueryHashtable.createDefaultStory(node);  /// spiliot
-                }
-            }
-
-            if ( (ima == DataBasePanel.ICON_GEI) ||
-                (ima == DataBasePanel.ICON_GENERIC)) {
-                if (tn.getParent() == null) {
-                    // do nothing
-                    //System.out.println("Leaf's parent is tree's root!!!");
-                }
-                else {
-                    String parent = tn.getParent().toString();
-                    QueryHashtable.createEntity(parent, node);
-                    //QueryHashtable.createDefaultStory(node);  /// spiliot
-                }
-            }
-        }
-
-        /*
-         * Second: creating DefaultUpperVector
-         */
-        QueryHashtable.createDefaultUpperVector();
-
-        /*
-         * Third: Lexicon initialisation.
-         */
-        QueryLexiconHashtable.createMainLexiconHashtable();
-
-        /*
-         * Fourth: Users initialisation.
-         */
-        QueryUsersHashtable.createMainUserModelHashtable();
-        QueryUsersHashtable.createMainUserModelStoryHashtable();
-        QueryUsersHashtable.createMainUsersHashtable();
-        QueryUsersHashtable.createmainRobotsModelHashtable();
-QueryUsersHashtable.createRobotsHashtable();
-
-        /*
-         * Fifth: Options initialisation.
-         */
-        QueryOptionsHashtable.createMainOptionsHashtable();
-
-    } // initializeDomain()
-
 
     public static void main( String args[] )
     {
