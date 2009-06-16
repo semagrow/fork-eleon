@@ -639,12 +639,13 @@ OwlExport.exportRobotModelling(rdfFile.getAbsolutePath().substring(0, rdfFile.ge
                                 return;
                             }
                             //initialize file path for export (kallonis)
-                            Mpiro.win.ontoPipe.rebind();
+                            
                             DialogExportToOwl.jTextField2.setText(d.getSelectedFile().getAbsolutePath());
                             String ontName = fileName.getName().substring(0, fileName.getName().lastIndexOf('.'));
                             DialogExportToOwl.jTextField1.setText(Mpiro.win.struc.getBaseURI());
                             //-------------
                         }
+                        Mpiro.win.ontoPipe.rebind();
 //Mpiro.win.struc.removeEntityTypeOrEntityFromDB("exhibit1");
                         // these methods clear all trees and redraw them
                 //       Object tttttt=Mpiro.win.struc.getEntityTypeOrEntity("aaa");

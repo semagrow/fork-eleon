@@ -184,8 +184,11 @@ public class OwlImport {
                 if((!p.isObjectProperty())&&(!p.isDatatypeProperty())&&(!p.isAnnotationProperty())){
                 boolean isObjectProp=false;
                 OntResource dom=p.getRange();
-                if(dom.canAs(OntClass.class))
+                
+                if(dom!=null && dom.canAs(OntClass.class))
                     isObjectProp=true;
+
+             try{
                 ExtendedIterator resources=ontModel.listResourcesWithProperty(p);
                 
                 while(resources.hasNext()){
@@ -197,6 +200,9 @@ public class OwlImport {
                           
                     }
                 }
+             }catch  (java.lang.NoSuchMethodError nslm){
+                 isObjectProp=true;
+             }
                  if(isObjectProp)
          addObjectProperty(p.convertToObjectProperty(), ontModel);
                         else
@@ -1825,18 +1831,26 @@ createSubTypes(ssos, inter1.asClass(), nv1.getDatabaseTableVector(),String.value
         Vector properties = getAllOntProperties(superClass);////System.out.println(properties.toString());
         while (!properties.isEmpty()) {
             OntProperty property = (OntProperty) properties.remove(0);
-            boolean isDirect=false;
-            ExtendedIterator directProperties= superClass.listDeclaredProperties(true);
-            while (directProperties.hasNext()){
-                if (directProperties.next()==property) isDirect=true;
-            }
-            if ((property.hasDomain(Parent)) || (direct && isDirect ))   {
+           // boolean isDirect=false;
+            //ExtendedIterator directProperties= superClass.listDeclaredProperties(true);
+           // while (directProperties.hasNext()){
+           //     if (directProperties.next()==property) isDirect=true;
+           // }
+            
                 if (property.isObjectProperty()) {
                     //get the tree node of the range to see if it is checked
                     if(property.getRange()!=null){
-                        DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) classToTreeNode.get(property.getRange());
+                        IconOwlData treeObject=(IconOwlData) new IconOwlData(UsersPanel.ICON_USER, "NewUserType", superClass);
+                         OntResource temp=property.getRange();
+                        //DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) classToTreeNode.get(property.getRange());
                         
-                        IconOwlData treeObject = ( (IconOwlData) treeNode.getUserObject());
+                       if(!temp.isAnon()){
+                        DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) classToTreeNode.get(property.getRange());
+
+                        treeObject = ( (IconOwlData) treeNode.getUserObject());
+                    } else
+
+                        treeObject.m_icon = DialogClassesToImport.ICON_OWLCLASSCHECKED;
                         
                         //if it is checked insert value else do not
                         if (treeObject.m_icon == DialogClassesToImport.ICON_OWLCLASSCHECKED) {
@@ -2021,7 +2035,7 @@ createSubTypes(ssos, inter1.asClass(), nv1.getDatabaseTableVector(),String.value
                         greekFieldsVector.add(new FieldData(getNameInELEON(property), indValues));
                     }
                 }
-            }
+            
         }
     }
     
@@ -2687,13 +2701,18 @@ createSubTypes(ssos, inter1.asClass(), nv1.getDatabaseTableVector(),String.value
             && !property.equalsIgnoreCase("shortname-genitive")
             && !property.equalsIgnoreCase("shortname-accusative")
             && !property.equalsIgnoreCase( "images")) {
+
                 for(int j=0;j<children.getLength();j++){
                     Node child=children.item(j);
                     if (child.getNodeName().equalsIgnoreCase("owlnl:DPPreference")){
                         NodeList values=child.getChildNodes();
                         Hashtable robots;
                         //   try {
-                        System.out.println(property);
+                       // System.out.println(property);
+                        if(!Mpiro.win.struc.existsProperty(property)){
+                    System.err.println("WARNING: property "+property+" not imported");
+                    continue;
+                }
                         robots = (Hashtable) ((Vector) Mpiro.win.struc.getProperty(property)).elementAt(15);
                         //   } catch(java.lang.NullPointerException npe) {
                         //       Vector temp=(Vector) Mpiro.win.struc.getProperty(property);

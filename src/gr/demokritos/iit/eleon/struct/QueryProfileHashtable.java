@@ -211,8 +211,8 @@ public class QueryProfileHashtable extends Object implements Serializable
 				{
 					String microplanNumber = new Integer(i).toString();
 					
-					Vector nodeVector = (Vector)Mpiro.win.struc.getEntityTypeOrEntity(entityTypeName);
-					Hashtable currentHashtable = (Hashtable)nodeVector.get(5);
+					Vector nodeVector = (Vector)Mpiro.win.struc.getProperty(field);
+					Hashtable currentHashtable = (Hashtable)nodeVector.get(10);
 					currentHashtable.put(microplanNumber + ":" + field + ":" + usertype + ":" + "English", "0");
 					currentHashtable.put(microplanNumber + ":" + field + ":" + usertype + ":" + "Italian", "0");
 					currentHashtable.put(microplanNumber + ":" + field + ":" + usertype + ":" + "Greek", "0");

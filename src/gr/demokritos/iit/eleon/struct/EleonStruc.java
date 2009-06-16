@@ -80,6 +80,15 @@ public class EleonStruc {
         Vector usersVector =profileHash.getUsersVectorFromMainUsersHashtable();
         ontoHash.createDefaultHashtableField(name, usersVector);
     }
+
+    public Vector getCharacteristics() {
+        Vector result=new Vector();
+        for(int i=0;i<gp.robotCharVector.size();i++){
+             Vector nextChar=(Vector)gp.robotCharVector.elementAt(i);
+             result.add(nextChar.elementAt(0));
+         }
+         return result;
+    }
     
     public Object getUser(String username){
         return profileHash.mainUsersHashtable.get(username);
@@ -653,7 +662,7 @@ public class EleonStruc {
         return profileHash.getUserModelValuesVector(fieldname, nodename, username);
     }
     public Vector getPropertyImportanceAndRepetitions(String property,String username){
-        return getPropertyImportanceAndRepetitions( property, username);
+        return ontoHash.getPropertyImportanceAndRepetitions( property, username);
     }
     public void updateImportanceOrRepetitionsForProperty(String property, String username, int valueID, String value) {
         ontoHash.updateImportanceOrRepetitionsForProperty(property, username, valueID, value);
@@ -812,6 +821,16 @@ public class EleonStruc {
      public Vector getRobotCharVectorElementAt(int i){
      return (Vector)gp.robotCharVector.elementAt(i);
      }
+
+     public Vector getCharacteristic(String name){
+         for(int i=0;i<gp.robotCharVector.size();i++){
+             Vector nextChar=(Vector)gp.robotCharVector.elementAt(i);
+             if(nextChar.elementAt(0).equals(name))
+                 return nextChar;
+         }
+         return null;
+     }
+
       public Object[] getRobotNamesToArray(){
          return profileHash.getRobotNamesToArray();
       }
@@ -963,14 +982,6 @@ public class EleonStruc {
                     
      public String checkNameValidityNumberOnly(String nodeName) {
      return ontoHash.checkNameValidityNumberOnly(nodeName);
-     }
-     
-     public Vector getCharacteristics(){
-         Vector result=new Vector();
-          for(int i=0;i<gp.robotCharVector.size();i++){
-             result.add(((Vector)gp.robotCharVector.elementAt(i)).elementAt(0));
-          }
-         return result;
      }
      
       public boolean removeRowFromStoriesTable(String fieldName, int rowPosition) {
