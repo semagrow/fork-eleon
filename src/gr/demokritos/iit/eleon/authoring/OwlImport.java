@@ -175,62 +175,61 @@ public class OwlImport {
         
         ExtendedIterator properties=ontModel.listOntProperties();
         //ExtendedIterator temp1=ontModel.listObjectProperties();
-//getProperties(properties);
-        while(properties.hasNext()){
-            OntProperty p=(OntProperty)properties.next();
+        //getProperties(properties);
+        while( properties.hasNext() ) {
+            OntProperty p = (OntProperty)properties.next();
             
             //check the fillers to understand if it is datatype or objecttype
                
-                if((!p.isObjectProperty())&&(!p.isDatatypeProperty())&&(!p.isAnnotationProperty())){
-                boolean isObjectProp=false;
+            if((!p.isObjectProperty())&&(!p.isDatatypeProperty())&&(!p.isAnnotationProperty())) {
+            	boolean isObjectProp=false;
                 OntResource dom=p.getRange();
                 
-                if(dom!=null && dom.canAs(OntClass.class))
-                    isObjectProp=true;
+                if(dom!=null && dom.canAs(OntClass.class)) { isObjectProp = true; }
 
-             try{
-                ExtendedIterator resources=ontModel.listResourcesWithProperty(p);
+                try{
+                	ExtendedIterator resources=ontModel.listResourcesWithProperty(p);
                 
-                while(resources.hasNext()){
-                    OntResource res=(OntResource)resources.next();
-                    if(res.isIndividual()){
-                        RDFNode n=((Individual)res).getPropertyValue(p);
-                        if(n.canAs(Individual.class))
-                            isObjectProp=true;
-                          
-                    }
+                	while( resources.hasNext() ) {
+                		Resource r = (Resource)resources.next();
+                		OntResource res;
+                		try { res = (OntResource)r.as( OntResource.class ); }
+                		catch( ClassCastException ex ) {
+                			System.err.println( "XXX: " + r.toString() );
+                			res = null;
+                			isObjectProp = false;
+                		}
+                		if( (res != null) && res.isIndividual() ) {
+                			RDFNode n=((Individual)res).getPropertyValue(p);
+                			if( n.canAs(Individual.class) ) { isObjectProp=true; }
+                		}
+                	}
+                } catch  (java.lang.NoSuchMethodError nslm){
+                	isObjectProp=true;
                 }
-             }catch  (java.lang.NoSuchMethodError nslm){
-                 isObjectProp=true;
-             }
-                 if(isObjectProp)
-         addObjectProperty(p.convertToObjectProperty(), ontModel);
-                        else
-                            addDatatypeProperty(p.convertToDatatypeProperty(), ontModel);
+                if( isObjectProp ) {
+                	addObjectProperty(p.convertToObjectProperty(), ontModel);
                 }
+                else {
+                	addDatatypeProperty(p.convertToDatatypeProperty(), ontModel);
+                }
+            } // end if
            
-        }
+        } // end while
             
         properties=ontModel.listObjectProperties();
-          while(properties.hasNext()){
-                ObjectProperty nextProp = (ObjectProperty)properties.next();
-                addObjectProperty(nextProp, ontModel);
-                //System.out.println(getNameInELEON(nextProp));
-                //   propertiesHashtableRecord rrrrrrr=new propertiesHashtableRecord();
-                
-            
+        while(properties.hasNext()){
+        	ObjectProperty nextProp = (ObjectProperty)properties.next();
+        	addObjectProperty(nextProp, ontModel);
+        	//System.out.println(getNameInELEON(nextProp));
+        	//   propertiesHashtableRecord rrrrrrr=new propertiesHashtableRecord();
         }
         
-         properties=ontModel.listDatatypeProperties();
-          while(properties.hasNext()){
-           
-            
-                
-                DatatypeProperty nextProp = (DatatypeProperty)properties.next();
-           
-                addDatatypeProperty(nextProp, ontModel);
-           
-           }
+        properties=ontModel.listDatatypeProperties();
+        while(properties.hasNext()){
+        	DatatypeProperty nextProp = (DatatypeProperty)properties.next();
+        	addDatatypeProperty(nextProp, ontModel);
+        }
         
         
         //add default user
@@ -669,6 +668,7 @@ DefaultMutableTreeNode ssos=null;
         if(readXMLFile){
             for(ExtendedIterator instances=ontModel.listIndividuals();instances.hasNext();){
                 Individual next=(Individual)instances.next();
+                //System.err.println( "III " + next.toString() );
                 Vector annotations=new Vector();
                 for(ExtendedIterator labels=next.listLabels(null);labels.hasNext();){
                     Literal nextLabel=(Literal) labels.next();
