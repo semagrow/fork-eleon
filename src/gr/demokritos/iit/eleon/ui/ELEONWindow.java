@@ -764,24 +764,9 @@ OwlExport.exportRobotModelling(rdfFile.getAbsolutePath().substring(0, rdfFile.ge
             else {}
         }
 
-        /*
-           if (e.getSource() == flagPanel.enButton)
-           {
-          System.out.println("ENGLISH");
-           }
-           if (e.getSource() == flagPanel.itButton)
-           {
-          System.out.println("ITALIAN");
-           }
-           if (e.getSource() == flagPanel.grButton)
-           {
-          System.out.println("GREEK");
-           }
-         */
-
         if (e.getSource() == this.menuBar.aboutHelpItem) {
             JOptionPane.showMessageDialog(this,
-                                          "ELEON AUTHORING TOOL v1.1" + "\n\n" +
+                                          "ELEON AUTHORING TOOL v2.0" + "\n\n" +
                                           "Copyright (c) 2001 - 2009" + "\n" +
                                           "Software and Knowledge Engineering Laboratory," + "\n" +
                                           "Institute of Informatics and Telecommunications," + "\n" +
