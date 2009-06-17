@@ -1,6 +1,6 @@
 commons-logging	??
 icu4j			icu4j 3.4
 iri.jar			??
-jena.jar		Jena 2.5.7
+jena.jar		Jena 2.6.0
 NL.jar			NaturalOWL 1.1
-xercesImpl		??
+xercesImpl		Xerces 2.7.1

@@ -7,10 +7,6 @@ import com.hp.hpl.jena.vocabulary.OWL;
 import gr.demokritos.iit.eleon.parser.ClassParser;
 import gr.demokritos.iit.eleon.profiles.Robot;
 import gr.demokritos.iit.eleon.profiles.User;
-import gr.demokritos.iit.eleon.struct.QueryHashtable;
-import gr.demokritos.iit.eleon.struct.QueryLexiconHashtable;
-import gr.demokritos.iit.eleon.struct.QueryOptionsHashtable;
-import gr.demokritos.iit.eleon.struct.QueryProfileHashtable;
 
 import java.io.*;
 import java.util.Vector;
@@ -20,8 +16,11 @@ import java.util.StringTokenizer;
 import org.w3c.dom.*;
 import javax.xml.parsers.*;
 
-public class OwlExport {
-    public static void ExportToOwlFile(File rdfFile, String format, String url, String ontname, boolean exportlexicon) throws Exception {
+
+public class OwlExport
+{
+
+	public static void ExportToOwlFile(File rdfFile, String format, String url, String ontname, boolean exportlexicon) throws Exception {
         FileOutputStream fileOutput = new FileOutputStream(rdfFile);
         OutputStreamWriter output = new OutputStreamWriter(fileOutput, "UTF-8");
 
@@ -31,30 +30,26 @@ public class OwlExport {
         String mpiroPath = url;
 
         String mpiroNS = url;
-        if(!mpiroNS.endsWith("#"))
-            mpiroNS=mpiroNS+"#";
+        if( !mpiroNS.endsWith("#") ) { mpiroNS = mpiroNS + "#"; }
 
         OntDocumentManager ontManager = new OntDocumentManager();
 
-        ontManager.getDeclaredPrefixMapping().removeNsPrefix("vcard");
-        ontManager.getDeclaredPrefixMapping().removeNsPrefix("dc");
-        ontManager.getDeclaredPrefixMapping().removeNsPrefix("rss");
-        ontManager.getDeclaredPrefixMapping().removeNsPrefix("jms");
-        ontManager.getDeclaredPrefixMapping().removeNsPrefix("daml");
-
-        ontManager.addPrefixMapping(mpiroNS,ontname);
-        ontManager.addPrefixMapping("http://www.w3.org/2001/XMLSchema#", "xsd");
-        //ontManager.addPrefixMapping("http://www.mpiro.gr/Mpiro-Schema#", "mp");
-        ontManager.addPrefixMapping("http://www.mpiro.gr/Mpiro-Schema#","");
         ontManager.addAltEntry(mpiroNS, "file:mpiro.xsd");
         OntModelSpec s = new OntModelSpec(OntModelSpec.OWL_MEM);
-        s.setDocumentManager(ontManager);
+        s.setDocumentManager( ontManager );
 
         OntModel ontModel = ModelFactory.createOntologyModel(s, null);
+        ontModel.removeNsPrefix( "vcard" );
+        ontModel.removeNsPrefix( "dc" );
+        ontModel.removeNsPrefix( "rss" );
+        ontModel.removeNsPrefix( "jms" );
+        ontModel.removeNsPrefix( "daml" );
+        ontModel.setNsPrefix( ontname, mpiroNS );
+        ontModel.setNsPrefix( "xsd", "http://www.w3.org/2001/XMLSchema#" );
 
         //create Ontology TAG
-        Ontology ontology = ontModel.createOntology(mpiroPath);
-
+        Ontology ontology = ontModel.createOntology( mpiroPath );
+        
         //add Upper Model Classes
         //  addUpperModelClasses(ontModel, mpiroNS);
 
@@ -113,8 +108,6 @@ public class OwlExport {
                 // if  (ontModel.getOntProperty(getNSFor(convertToPropertyName(property.m_field), mpiroNS))==null){
 
                 ObjectProperty  newProp = ontModel.createObjectProperty(getNSFor(convertToPropertyName(propName), mpiroNS));
-
-
 
                 Vector domain=(Vector) propVector.elementAt(0);
 

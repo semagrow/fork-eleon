@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>eleon</name>
+	<name>eleon-trunk</name>
 	<comment></comment>
 	<projects>
+		<project>jena2-head</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
