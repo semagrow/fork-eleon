@@ -6,7 +6,25 @@
 Entry point for the ELEON application.
 </p>
 
-<p>Copyright (c) 2001-2009 National Centre for Scientific Research "Demokritos"</p>
+<p>
+This file is part of the ELEON Ontology Authoring and Enrichment Tool.<br>
+Copyright (c) 2001-2009 National Centre for Scientific Research "Demokritos"
+</p>
+
+<pre>
+ELEON is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+ELEON is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program; if not, see <http://www.gnu.org/licenses/>.
+<pre>
 
 @author Dimitris Spiliotopoulos (MPIRO, 2001-2004)
 @author Kostas Stamatakis
@@ -18,50 +36,19 @@ Entry point for the ELEON application.
 
 ***************/
 
-/*
-This file is part of the ELEON Ontology Authoring and Enrichment Tool.
-
-ELEON is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along
-with this program; if not, see <http://www.gnu.org/licenses/>.
-*/
-
-
 package gr.demokritos.iit.eleon.authoring;
 
 
-import gr.demokritos.iit.eleon.struct.QueryHashtable;
-import gr.demokritos.iit.eleon.struct.QueryLexiconHashtable;
-import gr.demokritos.iit.eleon.struct.QueryOptionsHashtable;
-import gr.demokritos.iit.eleon.struct.QueryProfileHashtable;
 import java.awt.*;
-import java.awt.event.*;
 import java.util.*;
 import java.util.zip.*;
 import javax.swing.*;
-import javax.swing.event.*;
 import javax.swing.border.*;
 import java.net.URL;
 import java.io.*;
-import javax.swing.tree.*;
 
-import gr.demokritos.iit.eleon.ui.ELEONWindow;
 import gr.demokritos.iit.eleon.ui.KButton;
-import gr.demokritos.iit.eleon.ui.MessageDialog;
-import gr.demokritos.iit.eleon.ui.PServerPanel;
-import gr.demokritos.iit.eleon.ui.Reasoner;
-import gr.demokritos.iit.eleon.ui.RobotCharacteristicsPanel;
 import gr.demokritos.iit.eleon.ui.StoriesPanel;
-import gr.demokritos.iit.eleon.ui.UsersPanel;
 import gr.demokritos.iit.eleon.ui.lang.LangChooser;
 
 

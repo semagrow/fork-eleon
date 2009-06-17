@@ -1,13 +1,40 @@
+/***************
+
+<p>Title: OWL Import</p>
+
+<p>Description:
+Load in OWL/RDF ontologies and annotations.
+</p>
+
+<p>
+This file is part of the ELEON Ontology Authoring and Enrichment Tool.<br>
+Copyright (c) 2001-2009 National Centre for Scientific Research "Demokritos"
+</p>
+
+<pre>
+ELEON is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+ELEON is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program; if not, see <http://www.gnu.org/licenses/>.
+<pre>
+
+@author Dimitris Bilidas (XENIOS & INDIGO, 2007-2009)
+@author Stasinos Konstantopoulos (INDIGO, 2009)
+
+***************/
+
+
 package gr.demokritos.iit.eleon.authoring;
 
-/**
- * <p>Title: </p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2004</p>
- * <p>Company: </p>
- * @author not attributable
- * @version 1.0
- */
+
 import com.hp.hpl.jena.ontology.*;
 import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.vocabulary.*;
@@ -200,7 +227,9 @@ public class OwlImport {
                 			isObjectProp = false;
                 		}
                 		if( (res != null) && res.isIndividual() ) {
-                			RDFNode n=((Individual)res).getPropertyValue(p);
+                			RDFNode n;
+                			try { n = res.asIndividual().getPropertyValue( p ); }
+                			catch( ConversionException ex ) { throw new AssertionError( ex ); }
                 			if( n.canAs(Individual.class) ) { isObjectProp=true; }
                 		}
                 	}
@@ -208,10 +237,10 @@ public class OwlImport {
                 	isObjectProp=true;
                 }
                 if( isObjectProp ) {
-                	addObjectProperty(p.convertToObjectProperty(), ontModel);
+                	addObjectProperty( p.convertToObjectProperty(), ontModel );
                 }
                 else {
-                	addDatatypeProperty(p.convertToDatatypeProperty(), ontModel);
+                	addDatatypeProperty( p.convertToDatatypeProperty(), ontModel );
                 }
             } // end if
            
