@@ -1663,9 +1663,9 @@ public class OwlExport
         Hashtable alltypes=new Hashtable();
         Enumeration allTypes1=entityTypesHashtables.keys();
         while(allTypes1.hasMoreElements()){
-            String next=convertToClassName(allTypes1.nextElement().toString());
+            String next=allTypes1.nextElement().toString();
             Element el=doc2.createElement("owlnl:owlClass");
-            el.setAttribute("rdf:about",uri+'#'+next);
+            el.setAttribute( "rdf:about", uri + '#' + convertToClassName(next) );
             //  Element Properties=doc2.createElement("owlnl:Properties");
             //  Properties.setAttribute("rdf:parseType","Collection");
             //  el.appendChild(Properties);
@@ -1723,7 +1723,8 @@ Hashtable allElements=new Hashtable();
                 if(nodeVector.size() != 6){
                     // entityname = convertToClassName(entityname);
 
-                    String ctcn=convertToClassName(Mpiro.win.struc.getParents(entityname).elementAt(0).toString());
+                    String ctcn = Mpiro.win.struc.getParents(entityname).elementAt(0).toString();
+
                     Element propert =(Element) alltypes.get(ctcn);//other parents?
                     //       fieldElement.appendChild(entityElement);
                     //if(!fieldname.equalsIgnoreCase("type")){
@@ -1769,54 +1770,11 @@ Hashtable allElements=new Hashtable();
                         Interest.appendChild(InterestValue1);
                          propert.appendChild(Interest);
                         }
-                            //InterestValue1.appendChild(doc2.createTextNode("-1"));
-                       //     InterestValue1.appendChild(doc2.createTextNode(Mpiro.win.struc.getParentTypeOfVectorForOWLExport(key, entityname, 2)));
-                      //  else
-                      //      InterestValue1.appendChild(doc2.createTextNode(valueVector.get(2).toString()));
-
-                       // Interest.appendChild(forInstance);
-                       // Interest.appendChild(forUserType);
-                       // Interest.appendChild(InterestValue);
-                       // Interest.appendChild(InterestValue1);
-
-
-                        //   for(int i = 0; i<valueVector.size();i++){
-                        //     Element valueElement = doc.createElement("value");
-                        //   valueElement.appendChild(doc.createTextNode((String)valueVector.get(i)));
-                        // keyElement.appendChild(valueElement);
-                        //}
-                    }//}
-        /*        else{
-
-                    Element classes=(Element) entityElement.getLastChild();
-                Element cl =doc2.createElement("owlnl:owlClass");
-                classes.appendChild(cl);
-                Vector data=nodeVector.independentFieldsVector;
-                data=(Vector) data.elementAt(1);
-                cl.setAttribute("rdf:about",data.elementAt(1).toString());//change fieldname!!!!!!!!
-                Enumeration entityNameKeys = entitynameHashtable.keys();
-                Enumeration entityNameVectors = entitynameHashtable.elements();
-                while(entityNameKeys.hasMoreElements()){
-                    String key = (String)entityNameKeys.nextElement();
-                    Vector valueVector = (Vector)entityNameVectors.nextElement();
-
-                    Element Interest = doc2.createElement("owlnl:Interest");
-                    cl.appendChild(Interest);
-                    Interest.setAttribute("rdf:parseType","Resource");
-                    Element forUserType=doc2.createElement("owlnl:forUserType");
-                    forUserType.setAttribute("rdf:resource",key);
-                    Element InterestValue=doc2.createElement("owlnl:InterestValue");
-                    InterestValue.appendChild(doc2.createTextNode(valueVector.get(0).toString()));
-                    Interest.appendChild(forUserType);
-                    Interest.appendChild(InterestValue);
-
-
-                }}*/
+                    }
                 } else{
                     Vector modelling_values=Mpiro.win.struc.getUserModelling(fieldname, entityname);
-                    String entitynameConverted = convertToClassName(entityname);
 
-                    Element propert =(Element) alltypes.get(entitynameConverted);
+                    Element propert =(Element) alltypes.get( entityname );
                     //    Element propert=(Element) entityElement.getFirstChild();
                     // Element Property =doc2.createElement("owlnl:Property");
                     // propert.appendChild(Property);
@@ -2377,120 +2335,6 @@ Hashtable allElements=new Hashtable();
         }
         out.close();
 
-
-
-//        String[] mpiroProps=new String[] {"title","name","name-nominative","name-genitive","name-accusative","gender-name","shortname","shortname-nominative","shortname-genitive","shortname-accusative","gender-shortname","gender","notes","number","images"};
-//        for(int j=0;j<mpiroProps.length;j++){
-//            nextProp=mpiroProps[j];
-//            Element Property1  = doc2.createElement("owlnl:Property");
-//            Property1.setAttribute("rdf:about",uri+'#'+nextProp);
-//            PropertiesInterests.appendChild(Property1);
-//            //Hashtable usersHash=(Hashtable) nextPropVector.elementAt(12);
-//            Enumeration users=QueryProfileHashtable.getRobots();
-//           // Enumeration values=usersHash.elements();
-//            while(users.hasMoreElements()){
-//                Element DPInterest  = doc2.createElement("owlnl:DPPreference");
-//                DPInterest.setAttribute("rdf:parseType","Resource");
-//                Property1.appendChild(DPInterest);
-//                Element forUserType = doc2.createElement("owlnl:forUserType");
-//                forUserType.setAttribute("rdf:resource",base+"#"+users.nextElement().toString());
-//                DPInterest.appendChild(forUserType);
-//                Element InterestValue= doc2.createElement("owlnl:Preference");
-//InterestValue.appendChild(doc2.createTextNode("0"));
-//
-//                DPInterest.appendChild(InterestValue);
-//               // Element InterestValue1= doc2.createElement("owlnl:Repetitions");
-//                //    InterestValue1.appendChild(doc2.createTextNode("1"));
-//
-//              //  DPInterest.appendChild(InterestValue1);
-//        }}
-
-
-
-
-
-
-        //   Hashtable test=(Hashtable)((Vector)Mpiro.win.struc.getEntityTypeOrEntity("item")).elementAt(5);
-        //  Element Appropriateness = doc2.createElement("owlnl:Appropriateness");
-        //  Appropriateness.setAttribute("rdf:parseType","Collection");
-        //   UserModelling.appendChild(Appropriateness);
-
-
-        //   Hashtable hash=entityTypesHashtables;
-
-
-        //   properties=Mpiro.win.struc.getPropertyNames();
-        //   while(properties.hasMoreElements()){
-        //       Enumeration allEntityTypeParentNames = entityTypesHashtables.keys();
-
-        //      String propName=properties.nextElement().toString();
-        //      while(allEntityTypeParentNames.hasMoreElements()){
-
-        //    String entityTypeName = allEntityTypeParentNames.nextElement().toString();
-        // NodeVector nodeEntityType = (NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(entityTypeName);
-        //      Vector vec= (Vector) Mpiro.win.struc.getEntityTypeOrEntity(entityTypeName);
-        // TemplateVector templateVector = (TemplateVector) vec.elementAt(4);
-        //       Hashtable microPlanningValues = (Hashtable) vec.get(5);
-
-
-        /*        for(int j=1;j<6;j++){
-                    Element MicroplanApprop=doc2.createElement("owlnl:MicroplanApprop");
-                    MicroplanApprop.setAttribute("rdf:about",uri+'#'+propName+"-templ"+String.valueOf(j)+"-el");
-
-                    for(int i=0;i<usersVector.size();i++){
-
-                        Element Approp=doc2.createElement("owlnl:Approp");
-                        Approp.setAttribute("rdf:parseType","Resource");
-
-                        Element forUserType = doc2.createElement("owlnl:forUserType");
-                        forUserType.setAttribute("rdf:resource","#"+usersVector.elementAt(i).toString());
-                        Approp.appendChild(forUserType);
-                        Element AppropValue= doc2.createElement("owlnl:AppropValue");
-                        String value="";
-                            try{
-
-                            value= microPlanningValues.get(String.valueOf(j)+":"+propName+":"+usersVector.elementAt(i).toString()+":"+"Greek").toString();
-                            } catch(NullPointerException c){
-                        continue;
-                        }
-                            MicroplanApprop.appendChild(Approp);
-                            AppropValue.appendChild(doc2.createTextNode(value));
-                            Approp.appendChild(AppropValue);
-                            Appropriateness.appendChild(MicroplanApprop);
-
-
-                    }}
-
-                for(int j=1;j<6;j++){
-                    Element MicroplanApprop=doc2.createElement("owlnl:MicroplanApprop");
-                    MicroplanApprop.setAttribute("rdf:about",uri+'#'+propName+"-templ"+String.valueOf(j)+"-en");
-
-                    for(int i=0;i<usersVector.size();i++){
-                        Element Approp=doc2.createElement("owlnl:Approp");
-                        Approp.setAttribute("rdf:parseType","Resource");
-
-                        Element forUserType = doc2.createElement("owlnl:forUserType");
-                        forUserType.setAttribute("rdf:resource","#"+usersVector.elementAt(i).toString());
-                        Approp.appendChild(forUserType);
-                        Element AppropValue= doc2.createElement("owlnl:AppropValue");
-                        String value="";
-                        try{
-
-
-                            value= microPlanningValues.get(String.valueOf(j)+":"+propName+":"+usersVector.elementAt(i).toString()+":"+"English").toString();
-                            } catch(NullPointerException c){continue;}
-                        MicroplanApprop.appendChild(Approp);
-                            AppropValue.appendChild(doc2.createTextNode(value));
-                            Approp.appendChild(AppropValue);
-                            Appropriateness.appendChild(MicroplanApprop);
-
-
-                    }}*/
-
-        //  }}
-
-
-
         entityTypesHashtables.remove("Data Base");
         entityTypesHashtables.remove("Basic-entity-types");
 
@@ -2501,9 +2345,9 @@ Hashtable allElements=new Hashtable();
         Hashtable alltypes=new Hashtable();
         Enumeration allTypes1=entityTypesHashtables.keys();
         while(allTypes1.hasMoreElements()){
-            String next=convertToClassName(allTypes1.nextElement().toString());
+            String next = allTypes1.nextElement().toString();
             Element el=doc2.createElement("owlnl:owlClass");
-            el.setAttribute("rdf:about",uri+'#'+next);
+            el.setAttribute("rdf:about",uri+'#'+ convertToClassName(next) );
             //  Element Properties=doc2.createElement("owlnl:Properties");
             //  Properties.setAttribute("rdf:parseType","Collection");
             //  el.appendChild(Properties);
@@ -2511,10 +2355,6 @@ Hashtable allElements=new Hashtable();
             alltypes.put(next,el);
             ClassInterests.appendChild(el);
         }
-
-
-
-
 
 
 
@@ -2540,7 +2380,7 @@ Hashtable allElements=new Hashtable();
                 if(nodeVector.size() != 6){
                     // entityname = convertToClassName(entityname);
 
-                    String ctcn=convertToClassName(Mpiro.win.struc.getParents(entityname).elementAt(0).toString());
+                    String ctcn = Mpiro.win.struc.getParents(entityname).elementAt(0).toString();
                     Element propert =(Element) alltypes.get(ctcn);//other parents?
                     //       fieldElement.appendChild(entityElement);
                     //if(!fieldname.equalsIgnoreCase("type")){
@@ -2604,8 +2444,7 @@ Hashtable allElements=new Hashtable();
 
                 } else{
                     Vector modelling_values=Mpiro.win.struc.getRobotModelling(fieldname, entityname);
-                    String entitynameConverted = convertToClassName(entityname);
-                    Element propert =(Element) alltypes.get(entitynameConverted);
+                    Element propert =(Element) alltypes.get( entityname );
                     //    Element propert=(Element) entityElement.getFirstChild();
                     // Element Property =doc2.createElement("owlnl:Property");
                     // propert.appendChild(Property);
@@ -2646,10 +2485,10 @@ Hashtable allElements=new Hashtable();
 
                         for(int g=0;g<charVector.size();g++){
                             String value="";
-                            if(characteristics.containsKey("Class:"+uri+'#'+entitynameConverted+":"+charVector.elementAt(g).toString()+":"+key))
-                                value=characteristics.get("Class:"+uri+'#'+entitynameConverted+":"+charVector.elementAt(g).toString()+":"+key).toString();
-                            if(characteristics.containsKey("Class:"+uri+'#'+entitynameConverted+":"+charVector.elementAt(g).toString()+":universal"))
-                                value=characteristics.get("Class:"+uri+'#'+entitynameConverted+":"+charVector.elementAt(g).toString()+":universal").toString();
+                            if(characteristics.containsKey("Class:"+uri+'#' + entityname + ":"+charVector.elementAt(g).toString()+":"+key))
+                                value=characteristics.get("Class:"+uri+'#' + entityname + ":"+charVector.elementAt(g).toString()+":"+key).toString();
+                            if(characteristics.containsKey("Class:"+uri+'#'+entityname + ":"+charVector.elementAt(g).toString()+":universal"))
+                                value=characteristics.get("Class:"+uri+'#'+entityname + ":"+charVector.elementAt(g).toString()+":universal").toString();
                             if(!value.equals("")){
                                 Element CharValue= doc2.createElement("eleon:"+charVector.elementAt(g).toString());
                                 CharValue.appendChild(doc2.createTextNode(value));
@@ -3079,10 +2918,12 @@ Hashtable allElements=new Hashtable();
                             else
                                 used.appendChild(doc1.createTextNode("true"));
                         } else{
-                            if(microplanning.get(templ[0]+":"+templ[1]+":SELECTION:English").toString().equalsIgnoreCase("NoMicroplanning"))
+                            if( microplanning.get(templ[0]+":"+templ[1]+":SELECTION:English").toString().equalsIgnoreCase("NoMicroplanning") ) {
                                 used.appendChild(doc1.createTextNode("false"));
-                            else
+                            }
+                            else {
                                 used.appendChild(doc1.createTextNode("true"));
+                            }
                         }
 
                         //used.appendChild(doc1.createTextNode("true"));

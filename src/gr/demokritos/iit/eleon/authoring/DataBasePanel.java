@@ -2497,11 +2497,11 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
 
             Hashtable allEntityTypes = new Hashtable();
             Hashtable allEntities = new Hashtable();
-            Hashtable allGeneric = new Hashtable();
+            //Hashtable allGeneric = new Hashtable();
            // Hashtable temp= Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
             allEntityTypes = (Hashtable) Mpiro.win.ontoPipe.getExtension().getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
             allEntities = (Hashtable) Mpiro.win.ontoPipe.getExtension().getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity");
-            allGeneric = (Hashtable) Mpiro.win.ontoPipe.getExtension().getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Generic");
+            //allGeneric = (Hashtable) Mpiro.win.ontoPipe.getExtension().getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Generic");
             
             
             //         allEntities.remove("olympic-games");
@@ -2510,8 +2510,8 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
             allEntityTypes.remove("Data Base");
             allEntityTypes.remove("Basic-entity-types");
             
-            String nodename = new String("Basic-entity-types");
-            int childrenNumber = 0;
+            //String nodename = new String("Basic-entity-types");
+            //int childrenNumber = 0;
             
             // Adding the basic entity types
             childrenVector = Mpiro.win.ontoPipe.getExtension().getChildrenVectorFromMainDBHashtable("Basic-entity-types", "Entity type");
@@ -2549,7 +2549,7 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
             
             // Adding the entities
             childrenVector.clear();
-            childrenNumber = 0;
+          //  childrenNumber = 0;
              continueLoop=true;
             while (allEntities.size() != 0 && continueLoop) {
                  continueLoop=false;
@@ -2577,7 +2577,7 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
             
             // Adding the generic entities
             childrenVector.clear();
-            childrenNumber = 0;
+           // childrenNumber = 0;
             
 //            while (allGeneric.size() != 0) {
 //                Enumeration enu1 = first.preorderEnumeration();

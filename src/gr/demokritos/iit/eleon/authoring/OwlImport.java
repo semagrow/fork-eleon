@@ -3287,7 +3287,6 @@ createSubTypes(ssos, inter1.asClass(), nv1.getDatabaseTableVector(),String.value
                 // String hhh=mappings.item(j).getAttributes().item(0).getNodeValue();
                 if (mappings.item(j).getAttributes().item(0).getNodeValue().equalsIgnoreCase("#"+jjj)){
                     if(mappings.item(j).getParentNode().getNodeName().equalsIgnoreCase("owlnl:owlInstance")) {
-                        String test=mappings.item(j).getParentNode().getAttributes().item(0).getNodeValue().split("#")[1];
                         NodeVector dbVector=(NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(mappings.item(j).getParentNode().getAttributes().item(0).getNodeValue().split("#")[1]);
                         try{
                             if(dbVector.size()>5) continue;
@@ -4208,7 +4207,7 @@ OntClass next= (OntClass) extit.next();
                          System.err.println("Domain of "+getNameInELEON(nextProp)+" is complicated. It will be inserted with domain Basic-entity-types");  
                     }
                 }
-                //   }
+                if (vect.size()==0) { vect.add("Basic-entity-types"); }
                 vect= (Vector) propVec.elementAt(1);
                 //extit= nextProp.getR.listRange();
                  //               while(extit.hasNext()){
@@ -4325,6 +4324,7 @@ OntClass next= (OntClass) extit.next();
                     //if (temp.isClass())
                      //   vect.add(getNameInELEON(temp));
                 }
+                if (vect.size()==0) { vect.add("Basic-entity-types"); }
                 //System.out.println("d");
                 vect= (Vector) propVec.elementAt(1);
                 extit= nextProp.listRange();
