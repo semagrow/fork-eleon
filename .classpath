@@ -7,6 +7,6 @@
 	<classpathentry kind="lib" path="lib/xercesImpl.jar"/>
 	<classpathentry kind="lib" path="lib/iri.jar"/>
 	<classpathentry kind="lib" path="lib/icu4j.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/jena2-head"/>
+	<classpathentry kind="lib" path="lib/jena.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
