@@ -42,7 +42,7 @@ public class LangChooser extends JFrame implements ActionListener
 	
 	public LangChooser()
 	{
-		setTitle( "M-PIRO authoring tool" );
+		setTitle( "ELEON authoring tool" );
 		
 		//frameTitle = new String("M-PIRO Authoring Tool");
 		// The dialog and its components from top to bottom (1-6)
