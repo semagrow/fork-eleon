@@ -23,6 +23,18 @@ Planned changes for ELEON v2:
    properties are verbs
 
 
+Jun 2009, Version 2.0-beta01
+
+Defines a mechanism for external inference components:
+ * Defines the OntoExtension interface of components that complete the ontology model
+ * Collects all the various OWL axioms that previous ELEON versions implemented into
+   the .struct.MicroReasoner class, which implements OntoExtension
+ 
+Other:
+ * Upgrades to Jena 2.6.0, and replaces ELEON code using deprecated Jena calls.
+ * Fixes filename and namespace errors between ELEON and NaturalOWL.   
+ * build.xml creates executable jar
+
 
 5 Mar 2009, Version 1.1
 
