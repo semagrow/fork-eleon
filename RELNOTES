@@ -7,7 +7,7 @@ Planned changes for ELEON v2:
    (possibly based on owl:import) for remembering the links between OWL files
    and RDF annotations.
  - Make it possible to re-combine annotations and ontologies.
- - Factor UI strings out of the code and use standard localization mechanisms.   
+ - Factor UI strings out of the code and use standard localization mechanisms.
  
  And beyond:
  - Remove the distinction between user and system models and develop an RDF
