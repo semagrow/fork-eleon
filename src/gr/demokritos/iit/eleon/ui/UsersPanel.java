@@ -662,7 +662,7 @@ robotsChar = new RobotCharacteristicsPanel();
               Mpiro.win.struc.removeRobotFromRobotCharVector(currentNode.toString());
 	      Mpiro.win.struc.updateIndependentLexiconHashtable(currentNode.toString(), "", "REMOVE");
 	      Mpiro.win.struc.updateAppropriatenessValuesInMicroplanningOfFields(currentNode.toString(), "", "REMOVE");
-	      Mpiro.win.struc.removeUserInUserOrRobotModelHashtable(currentNode.toString());
+	     // Mpiro.win.struc.removeUserInUserOrRobotModelHashtable(currentNode.toString());
 	     // QueryProfileHashtable.removeUserInUserModelStoryHashtable(currentNode.toString());
 	      TreePreviews.setLexPanel();
 	      TreePreviews.generalDataBasePreview();

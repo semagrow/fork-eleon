@@ -341,10 +341,7 @@ public class QueryHashtable extends Object implements Serializable {
     }
     
     
-    /**
-     *  This method is invoked when an entity-type (name) field (fieldname) is first created
-     *  Used in: DataBaseTableListener
-     */
+  
     public void createDefaultHashtableField(String name, Vector usersVector) {
         String fieldname = "New-user-field";
         
@@ -3176,12 +3173,7 @@ public class QueryHashtable extends Object implements Serializable {
     } //clearHashtableMicroplanningEntries
     
     
-    /**
-     *  Returns a vector of all FIRST children (sorted in alphabetical order) currently saved
-     *  for a particular entity type node (nodename)
-     *  It is used in: DataBasePanel.reloadDBPanel();
-     *                 ExportUtilsIlex.createTypesGram();
-     */
+   
     public Vector getChildrenVectorFromMainDBHashtable(String nodename, String entityTypeOrEntity) {
         Hashtable currentHashtable = new Hashtable();
         if (entityTypeOrEntity.equalsIgnoreCase("Entity type")) {
@@ -3231,7 +3223,7 @@ public class QueryHashtable extends Object implements Serializable {
             
             if (name.equalsIgnoreCase(nodename)) {
                 boolean ttt=tempVector.add(child);
-                System.out.print("eee");
+                //System.out.print("eee");
             }
         }
         

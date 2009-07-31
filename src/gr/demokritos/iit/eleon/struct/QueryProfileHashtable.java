@@ -237,8 +237,8 @@ public class QueryProfileHashtable extends Object implements Serializable
 	      {
 					String microplanNumber = new Integer(i).toString();
 					
-					Vector nodeVector = (Vector)Mpiro.win.struc.getEntityTypeOrEntity(entityTypeName);
-					Hashtable currentHashtable = (Hashtable)nodeVector.get(5);
+					Vector nodeVector = (Vector)Mpiro.win.struc.getProperty(field);
+					Hashtable currentHashtable = (Hashtable)nodeVector.get(10);
                                         String oldvalueEnglish = "NoMicroPlanning";
 					String oldvalueItalian = "NoMicroPlanning";
 					String oldvalueGreek ="NoMicroPlanning";
@@ -273,8 +273,8 @@ public class QueryProfileHashtable extends Object implements Serializable
 				{
 					String microplanNumber = new Integer(i).toString();
 					
-					Vector nodeVector = (Vector)Mpiro.win.struc.getEntityTypeOrEntity(entityTypeName);
-					Hashtable currentHashtable = (Hashtable)nodeVector.get(5);
+					Vector nodeVector = (Vector)Mpiro.win.struc.getProperty(field);
+					Hashtable currentHashtable = (Hashtable)nodeVector.get(10);
 					currentHashtable.remove(microplanNumber + ":" + field + ":" + usertype + ":" + "English");
 					currentHashtable.remove(microplanNumber + ":" + field + ":" + usertype + ":" + "Italian");
 					currentHashtable.remove(microplanNumber + ":" + field + ":" + usertype + ":" + "Greek");
