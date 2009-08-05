@@ -71,7 +71,7 @@
 
   <manifestclasspath property="jar.classpath" jarfile="${dist.dir}/${jarfile}">
   	<classpath>
-  	  <fileset dir="${lib.dir}"><include name="**/*.jar"/></fileset>
+  	  <fileset dir="${dist.lib.dir}"><include name="**/*.jar"/></fileset>
   	</classpath>
   </manifestclasspath>
 	
