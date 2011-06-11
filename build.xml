@@ -3,8 +3,11 @@
   <!-- Configuration properties -->
   <!-- ======================== -->
 
+  <exec executable="cat"
+	outputproperty="version" errorproperty="stderr"
+	input="VERSION" />
+
   <property name="name"            value="eleon"/>
-  <property name="version"         value="2.0-beta01"/>
   <property name="vname"           value="${name}-${version}"/>
 
   <!-- Output file names and locations -->
