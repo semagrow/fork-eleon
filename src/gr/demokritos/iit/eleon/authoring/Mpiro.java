@@ -6,7 +6,11 @@
 Entry point for the ELEON application.
 </p>
 
-<p>Copyright (c) 2001-2011 National Centre for Scientific Research "Demokritos"</p>
+<p>
+This file is part of the ELEON Ontology Authoring and Enrichment Tool.<br>
+Copyright (c) 2001-2011 National Centre for Scientific Research "Demokritos"<br>
+Please see at the bottom of this file for license details.
+</p>
 
 @author Dimitris Spiliotopoulos (MPIRO, 2001-2004)
 @author Kostas Stamatakis
@@ -18,50 +22,18 @@ Entry point for the ELEON application.
 
 ***************/
 
-/*
-This file is part of the ELEON Ontology Authoring and Enrichment Tool.
-
-ELEON is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along
-with this program; if not, see <http://www.gnu.org/licenses/>.
-*/
-
 
 package gr.demokritos.iit.eleon.authoring;
 
 
-import gr.demokritos.iit.eleon.struct.QueryHashtable;
-import gr.demokritos.iit.eleon.struct.QueryLexiconHashtable;
-import gr.demokritos.iit.eleon.struct.QueryOptionsHashtable;
-import gr.demokritos.iit.eleon.struct.QueryProfileHashtable;
 import java.awt.*;
-import java.awt.event.*;
 import java.util.*;
 import java.util.zip.*;
 import javax.swing.*;
-import javax.swing.event.*;
 import javax.swing.border.*;
-import java.net.URL;
 import java.io.*;
-import javax.swing.tree.*;
 
-import gr.demokritos.iit.eleon.ui.ELEONWindow;
-import gr.demokritos.iit.eleon.ui.KButton;
-import gr.demokritos.iit.eleon.ui.MessageDialog;
-import gr.demokritos.iit.eleon.ui.PServerPanel;
-import gr.demokritos.iit.eleon.ui.Reasoner;
-import gr.demokritos.iit.eleon.ui.RobotCharacteristicsPanel;
 import gr.demokritos.iit.eleon.ui.StoriesPanel;
-import gr.demokritos.iit.eleon.ui.UsersPanel;
 import gr.demokritos.iit.eleon.ui.lang.LangChooser;
 
 
@@ -212,82 +184,23 @@ public class Mpiro
         new EtchedBorder(EtchedBorder.LOWERED));
 
     //public static JTabbedPane tabbedPane;
-    private static String userDir = System.getProperty("user.dir"); //spiliot
     public static String loadedDomain = new String("");
     public static ZipFile domainZip = null; //spiliot
     public static ZipFile resourcesZip = null; //spiliot
-    private KButton newButton;
-    private KButton saveButton;
-    private KButton loadButton;
-    private KButton exportButton;
-    private KButton quitButton;
-    private JPanel buttonColumn;
-
-    //private JPanel multiLegend; //theofilos
-    private JPanel panelA;
-
-    //private JPanel panelB;
-    private DataBasePanel panelB;
-    private JPanel panelC;
-    private JPanel panelD;
-    private JPanel panelF;
     static StoriesPanel storiespanel;
-    private URL previewURL;
-    private JPanel flags;
-    private static FlagPanel flagPanel;
     
    // public static ComparisonTree comparTree = new ComparisonTree();
   //  public static ComparisonTree statisticalTree = new ComparisonTree();
 
     final JFileChooser d = new JFileChooser(System.getProperty("user.dir"));
 
-    // the MenuBar items
-    private JMenu fileMenu;
-    private JMenuItem newFileItem;
-    private JMenuItem openFileItem;
-    private JMenuItem saveFileItem;
-    private JMenu owlMenu; //kallonis
-    private JMenuItem exportToOWL;  //kallonis
-    private JMenuItem importFromOWL; //kallonis
-    private JMenuItem runReasoner;
-    private JMenuItem startPServer;
-    private JMenuItem exportFileItem;
-    private JMenuItem exitFileItem;
-
-    private JMenu lafMenu;
-
-    private JMenu optionsMenu;
-    private JMenuItem pserverAddressItem;
-    private JMenu activatePreviewLanguageMenu;
-    private JMenuItem englishItem;
-    private JMenuItem italianItem;
-    private JMenuItem greekItem;
-    private static JMenuItem resetInteractionHistoryItem;
-
     //private JMenuItem resetInteractionHistoryEmulatorItem;
     public static JCheckBoxMenuItem resetInteractionHistoryBeforeEachPreviewItem; //maria
     public static JCheckBoxMenuItem showAllPagesInPreviewsItem; //maria
-    private JMenu automaticExportMenu; //maria
 
     public static JRadioButtonMenuItem exportToDefaultItem; //maria
     public static JRadioButtonMenuItem exportToChoiceItem; //maria
     //public static JRadioButtonMenuItem notAutomaticExportItem; //maria
-
-    private JMenu helpMenu;
-    private JMenuItem aboutHelpItem;
-
-    private JMenu debugMenu;
-    private JMenuItem queryMainDBHashtableItem;
-    private JMenuItem queryMainLexiconHashtableItem;
-    private JMenuItem queryMainUsersHashtableItem;
-    private JMenuItem queryMainUserModelHashtableItem;
-    private JMenuItem queryMainUserModelStoryHashtableItem;
-    private JMenuItem queryOptionsHashtableItem;
-    private JMenuItem updateOptionsHashtableItem;
-    private JMenuItem testHashtableItem; //spiliot
-
-    private JMenu xmlMenu;
-    private JMenuItem createXmlOutputItem;
 
     ////////////////////////////////
 
@@ -298,18 +211,12 @@ public class Mpiro
     public static Locale selectedLocale;
 
     public static String activatedPreviewLanguage = "";
-    public static ArrayList selectedLanguagesToExportArrayList = new ArrayList(); //spiliot
     public static boolean restart = false; //spiliot
 
     public static boolean needExportToEmulator = false; //maria
     public static boolean needExportToExprimo = true; //maria
     public static File jardir = new File(System.getProperty("user.dir")); //maria
 
-    private JTextField textToFind; //theofilos
-    private KButton searchButton; //theofilos
-    private JPanel searchPanel; //theofilos
-
- 
 
     public static void main( String args[] )
     {
@@ -339,3 +246,20 @@ public class Mpiro
     }
 
 }
+
+/*
+This file is part of the ELEON Ontology Authoring and Enrichment Tool.
+
+ELEON is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program; if not, see <http://www.gnu.org/licenses/>.
+*/

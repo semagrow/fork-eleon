@@ -1,13 +1,27 @@
-//  "M-PIRO AUTHORING TOOL v.4.4"
-//  Copyright (c) 2001, 2002, 2003, 2004
-//  Software and Knowledge Engineering Lausermodeldiboratory,
-//  Institute of Informatics and Telecommunications,
-//  National Centre for Scientific Research "Demokritos", Greece.
+/***************
+
+<p>Title: DataBaseTableListener</p>
+
+<p>Description: The listener used by DataBaseTable
+</p>
+
+<p>
+This file is part of the ELEON Ontology Authoring and Enrichment Tool.<br>
+Copyright (c) 2001-2011 National Centre for Scientific Research "Demokritos"<br>
+Please see at the bottom of this file for license details.
+</p>
+
+@author Kostas Stamatakis (2002)
+@author Dimitris Spiliotopoulos (2002)
+@author Maria Prospathopoulou
+@author Theofilos Nickolaou
+@author Dimitris Bilidas (XENIOS & INDIGO, 2007-2009; RoboSKEL 2010-2011)
+
+***************/
+
 
 package gr.demokritos.iit.eleon.authoring;
 
-import gr.demokritos.iit.eleon.struct.QueryHashtable;
-import gr.demokritos.iit.eleon.struct.QueryProfileHashtable;
 import gr.demokritos.iit.eleon.ui.EditFieldProperties;
 import gr.demokritos.iit.eleon.ui.KDialog;
 import gr.demokritos.iit.eleon.ui.MessageDialog;
@@ -24,15 +38,6 @@ import javax.swing.table.*;
 import java.util.*;
 
 
-/**
- * <p>Title: DataBaseTableListener</p>
- * <p>Description: The listener used by DataBaseTable</p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: NCSR "Demokritos"</p>
- * @author Kostas Stamatakis, Dimitris Spiliotopoulos
- * @version 1.0
- */
-//Edited and enhanced by Theofilos Nickolaou
 public class DataBaseTableListener extends MouseAdapter
 {
 	public static String selectedField;
@@ -713,4 +718,22 @@ editMicroplanSixMenu.addSeparator();
                 popupInheritedProperties.add(pror);
                 DataBaseTable.dbTable.add(popupInheritedProperties);
 	} // setPopups()
-} // DataBaseTableListener
+}
+
+
+/*
+This file is part of the ELEON Ontology Authoring and Enrichment Tool.
+
+ELEON is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program; if not, see <http://www.gnu.org/licenses/>.
+*/

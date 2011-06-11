@@ -1,32 +1,33 @@
-//  "M-PIRO AUTHORING TOOL v.4.4"
-//  Copyright (c) 2001, 2002, 2003, 2004
-//  Software and Knowledge Engineering Laboratory,
-//  Institute of Informatics and Telecommunications,
-//  National Centre for Scientific Research "Demokritos", Greece.
+/***************
+
+<p>Title: Flag Panel</p>
+
+<p>Description:
+A panel of 3 language flags.
+Language-independent state when none of them is selected.
+</p>
+
+<p>
+This file is part of the ELEON Ontology Authoring and Enrichment Tool.<br>
+Copyright (c) 2001-2011 National Centre for Scientific Research "Demokritos"<br>
+Please see at the bottom of this file for license details.
+</p>
+
+@author Dimitris Spiliotopoulos (2002)
+@author Dimitris Bilidas (XENIOS & INDIGO, 2007-2009; RoboSKEL 2010-2011)
+
+***************/
+
+
 
 package gr.demokritos.iit.eleon.authoring;
 
-import gr.demokritos.iit.eleon.struct.QueryHashtable;
 import java.awt.*;
-import java.awt.image.*;
 import javax.swing.*;
-import javax.swing.event.*;
 import java.awt.event.*;
 import java.util.*;
 
 
-/* A panel of 3 language flags.
- * Language-independent state when none of them is selected.
- */
-/**
-* <p>Title: ExportDialog</p>
-* <p>Description: A panel of 3 language flags. Language-independent state when none of them is selected.
-* </p>
-* <p>Copyright: Copyright (c) 2002</p>
-* <p>Company: NCSR "Demokritos"</p>
-* @author Dimitris Spiliotopoulos
-* @version 1.0
-*/
 public class FlagPanel extends JPanel
 {
 	// used for FlagPanel(); i.e. for Mpirp frame
@@ -230,4 +231,23 @@ public class FlagPanel extends JPanel
 	else {languageButton.setIcon(ICON_X);}
   }
 
-} // class FlagPanel
+}
+
+
+/*
+This file is part of the ELEON Ontology Authoring and Enrichment Tool.
+
+ELEON is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program; if not, see <http://www.gnu.org/licenses/>.
+*/
+
