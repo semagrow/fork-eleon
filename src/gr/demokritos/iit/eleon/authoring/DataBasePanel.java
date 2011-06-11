@@ -1373,7 +1373,11 @@ f11.nounVector=(Vector) f11.elementAt(2);*/
     String DBusername,String  DBpassword)*/
                             
                             String NLResourcePath = tempOwlFile.getAbsolutePath().substring(0,tempOwlFile.getAbsolutePath().length()-11);
-                            myEngine =  new NLGEngine(owlPath, NLResourcePath,  Languages.ENGLISH, !pServerIsStarted, false, null, null, null, null, navIP, navPort, dbUser, dbPass, "127.0.0.1",1111);
+                            myEngine = new NLGEngine(owlPath, NLResourcePath,  Languages.GREEK, !DataBasePanel.pServerIsStarted, false, null, null, null, null, DataBasePanel.navIP, DataBasePanel.navPort, DataBasePanel.dbUser, DataBasePanel.dbPass,"127.0.0.1",1111);
+
+                                    //new NLGEngine(owlPath, NLResourcePath,  Languages.ENGLISH, !pServerIsStarted, false, 0,  null, null, null, null, navIP, navPort, dbUser, dbPass, "127.0.0.1",1111);
+                            //myEngine =  new NLGEngine(owlPath, NLResourcePath,  Languages.ENGLISH, !pServerIsStarted, false, null, null, null, null, navIP, navPort, dbUser, dbPass, "127.0.0.1",1111);
+
                             myEngine.initStatisticalTree();
                             myEngine.initPServer();
                             progress.updateProgressBar(9, 1);
@@ -1454,8 +1458,11 @@ f11.nounVector=(Vector) f11.elementAt(2);*/
                             myEngine.setLanguage("en");
                     
                         result = myEngine.GenerateDescription(0, objectURI, UT, userID, Integer.parseInt(depth.getSelectedItem().toString()), -1, useComparisons.isSelected(), "robot1");
+
+                                //GenerateDescription(0, objectURI, null, UT, userID, Integer.parseInt(depth.getSelectedItem().toString()), -1, -1, useComparisons.isSelected(), 1, "robot1");
+                   // result = myEngine.GenerateDescription(0, objectURI, null, UT, userID, Integer.parseInt(depth.getSelectedItem().toString()), -1, 10, useComparisons.isSelected(), "robot1");
                   //  else
-                   //     result = myEngineEnglish.GenerateDescription(0, objectURI, UT, userID, Integer.parseInt(depth.getSelectedItem().toString()), -1, useComparisons.isSelected(), "robot1");
+                   //    result = myEngine.GenerateDescription(0, objectURI, UT, userID, Integer.parseInt(depth.getSelectedItem().toString()), -1, useComparisons.isSelected(), "robot1");
                     
                //     result[1]=result[1];
                //     result[1]=result[1];
@@ -2497,11 +2504,11 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
 
             Hashtable allEntityTypes = new Hashtable();
             Hashtable allEntities = new Hashtable();
-            //Hashtable allGeneric = new Hashtable();
+            Hashtable allGeneric = new Hashtable();
            // Hashtable temp= Mpiro.win.struc.getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
             allEntityTypes = (Hashtable) Mpiro.win.ontoPipe.getExtension().getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity type");
             allEntities = (Hashtable) Mpiro.win.ontoPipe.getExtension().getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Entity");
-            //allGeneric = (Hashtable) Mpiro.win.ontoPipe.getExtension().getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Generic");
+            allGeneric = (Hashtable) Mpiro.win.ontoPipe.getExtension().getEntityTypesAndEntitiesHashtableFromMainDBHashtable("Generic");
             
             
             //         allEntities.remove("olympic-games");
@@ -2510,8 +2517,8 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
             allEntityTypes.remove("Data Base");
             allEntityTypes.remove("Basic-entity-types");
             
-            //String nodename = new String("Basic-entity-types");
-            //int childrenNumber = 0;
+            String nodename = new String("Basic-entity-types");
+            int childrenNumber = 0;
             
             // Adding the basic entity types
             childrenVector = Mpiro.win.ontoPipe.getExtension().getChildrenVectorFromMainDBHashtable("Basic-entity-types", "Entity type");
@@ -2549,7 +2556,7 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
             
             // Adding the entities
             childrenVector.clear();
-          //  childrenNumber = 0;
+            childrenNumber = 0;
              continueLoop=true;
             while (allEntities.size() != 0 && continueLoop) {
                  continueLoop=false;
@@ -2577,7 +2584,7 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
             
             // Adding the generic entities
             childrenVector.clear();
-           // childrenNumber = 0;
+            childrenNumber = 0;
             
 //            while (allGeneric.size() != 0) {
 //                Enumeration enu1 = first.preorderEnumeration();
@@ -2830,7 +2837,7 @@ public void trrr(String userTypeString,StringBuffer previewText,int num){
             Vector databaseVectorOfParentOfLast =(Vector) entityTypeParentOfLast.elementAt(0);
             
             
-            for (int g = 8; g < databaseVectorOfParentOfLast.size(); g++) {
+            for (int g = 0; g < databaseVectorOfParentOfLast.size(); g++) {
                 FieldData property1 = ((FieldData) databaseVectorOfParentOfLast.get(g));
                 //System.out.println("!!@!@!!!!@111!111"+property1.toString()+property1.m_field);
                 

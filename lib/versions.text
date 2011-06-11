@@ -1,9 +1,14 @@
-commons-logging	??
-icu4j			icu4j 3.4
-iri.jar			??
-jena.jar		Jena 2.6.0
-log4j			1.2.12
-NL.jar			NaturalOWL 1.1
-slf4j			slf4j-log4j12-1.5.6
-slf4j-api		slf4j-api-1.5.6
-xercesImpl		2.7.1
+
+NL.jar:			NaturalOWL 1.1
+xercesImpl:		2.7.1
+
+Jena
+  jena.jar:		jena 2.6.4
+  icu4j:		icu4j 3.4.4
+  iri.jar:		iri 0.8
+
+Logging
+  slf4j-api:	1.5.8
+  slf4j-log4j12:1.5.8
+  log4j:		1.2.12
+  

@@ -540,7 +540,7 @@ public class DataBaseTableListener extends MouseAdapter
                                          for(Object parents:Mpiro.win.struc.getParents(lastSelected)){
                                              Vector nextParent=(Vector)Mpiro.win.struc.getEntityTypeOrEntity(parents.toString());
                                              Vector db=(Vector)nextParent.elementAt(0);
-                                             for(int k=8;k<db.size();k++){
+                                             for(int k=0;k<db.size();k++){
                                                  Vector field=(Vector) db.elementAt(k);
                                                  if(field.elementAt(0).toString().equalsIgnoreCase(selectedField)){
                                                      MessageDialog error=new MessageDialog(Mpiro.win.getFrames()[0], "this field is inherited from "+parents.toString()+" and cannot be removed.");

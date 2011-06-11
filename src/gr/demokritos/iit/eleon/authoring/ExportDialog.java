@@ -208,6 +208,9 @@ public class ExportDialog extends JFrame implements ActionListener
             
             
                      DataBasePanel.myEngine=  new NLGEngine(owlPath, NLResourcePath,  Languages.GREEK, !DataBasePanel.pServerIsStarted, false, null, null, null, null, DataBasePanel.navIP, DataBasePanel.navPort, DataBasePanel.dbUser, DataBasePanel.dbPass,"127.0.0.1",1111);
+
+                             //new NLGEngine(owlPath, NLResourcePath,  Languages.GREEK, !DataBasePanel.pServerIsStarted, false, 0, null, null, null, null, DataBasePanel.navIP, DataBasePanel.navPort, DataBasePanel.dbUser, DataBasePanel.dbPass,"127.0.0.1",1111);
+                     //DataBasePanel.myEngine=  new NLGEngine(owlPath, NLResourcePath,  Languages.GREEK, !DataBasePanel.pServerIsStarted, false, null, null, null, null, DataBasePanel.navIP, DataBasePanel.navPort, DataBasePanel.dbUser, DataBasePanel.dbPass,"127.0.0.1",1111);
                     // DataBasePanel.myEngineGreek =  new NLGEngine(owlPath, NLResourcePath,  Languages.GREEK, false, false, null, null, null, null, "", 0, "", "");
                             DataBasePanel.myEngine.initStatisticalTree();
                             //myEngineGreek.initStatisticalTree();

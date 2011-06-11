@@ -167,7 +167,7 @@ implements ActionListener
         ExplicitOntoData expl = new ExplicitOntoData( this.struc );
         MicroReasoner microR = new MicroReasoner();
         microR.setPrevious( expl );
-        microR.rebind();
+//        microR.rebind();
         this.ontoPipe = microR;
      /*   try{
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
@@ -645,7 +645,9 @@ OwlExport.exportRobotModelling(rdfFile.getAbsolutePath().substring(0, rdfFile.ge
                             DialogExportToOwl.jTextField1.setText(Mpiro.win.struc.getBaseURI());
                             //-------------
                         }
+                        Mpiro.win.ontoPipe.reloadTree(true);
                         Mpiro.win.ontoPipe.rebind();
+                        Mpiro.win.ontoPipe.reloadTree(false);
 //Mpiro.win.struc.removeEntityTypeOrEntityFromDB("exhibit1");
                         // these methods clear all trees and redraw them
                 //       Object tttttt=Mpiro.win.struc.getEntityTypeOrEntity("aaa");
@@ -653,6 +655,7 @@ OwlExport.exportRobotModelling(rdfFile.getAbsolutePath().substring(0, rdfFile.ge
                         LexiconPanel.reloadLexiconTree();
                        // StoriesPanel.reloadStoriesTree();
                         UsersPanel.reloadUsersTree();
+                       // 
                         this.menuBar.pserverAddressItem.setEnabled( true );
                         this.menuBar.activatePreviewLanguageMenu.setEnabled( true );
                         this.menuBar.xmlMenu.setEnabled( true );
@@ -764,9 +767,24 @@ OwlExport.exportRobotModelling(rdfFile.getAbsolutePath().substring(0, rdfFile.ge
             else {}
         }
 
+        /*
+           if (e.getSource() == flagPanel.enButton)
+           {
+          System.out.println("ENGLISH");
+           }
+           if (e.getSource() == flagPanel.itButton)
+           {
+          System.out.println("ITALIAN");
+           }
+           if (e.getSource() == flagPanel.grButton)
+           {
+          System.out.println("GREEK");
+           }
+         */
+
         if (e.getSource() == this.menuBar.aboutHelpItem) {
             JOptionPane.showMessageDialog(this,
-                                          "ELEON AUTHORING TOOL v2.0" + "\n\n" +
+                                          "ELEON AUTHORING TOOL v1.1" + "\n\n" +
                                           "Copyright (c) 2001 - 2009" + "\n" +
                                           "Software and Knowledge Engineering Laboratory," + "\n" +
                                           "Institute of Informatics and Telecommunications," + "\n" +

@@ -143,6 +143,9 @@ public class DataBaseEntityTableModel extends AbstractTableModel
 		}
                 FieldData field = (FieldData)m_vector.elementAt(nRow);
 		field.setElementAt(svalue, nCol);
+                //System.out.println("aaaaaas");
+                if(Mpiro.win.ontoPipe.isRealTime())
+            Mpiro.win.ontoPipe.rebind();
        // Mpiro.win.struc.putEntityTypeOrEntityToDB(DataBasePanel.last.toString(), Mpiro.win.ontoPipe.getExtension().getEntityTypeOrEntity(DataBasePanel.last.toString()));
                //  Vector propVector=(Vector) Mpiro.win.struc.getProperty(row.m_field);
                                               /*    if (!(propVector.elementAt(5).toString().equalsIgnoreCase(""))){

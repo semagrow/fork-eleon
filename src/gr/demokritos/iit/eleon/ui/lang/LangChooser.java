@@ -8,6 +8,7 @@
  * 
  * @author Dimitris Spiliotopoulos
  * @author Theofilos Nickolaou
+ * @author Dimitris Bilidas
  **/
 
 
@@ -42,7 +43,7 @@ public class LangChooser extends JFrame implements ActionListener
 	
 	public LangChooser()
 	{
-		setTitle( "ELEON authoring tool" );
+		setTitle( "M-PIRO authoring tool" );
 		
 		//frameTitle = new String("M-PIRO Authoring Tool");
 		// The dialog and its components from top to bottom (1-6)

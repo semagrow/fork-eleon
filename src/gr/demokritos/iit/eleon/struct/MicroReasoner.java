@@ -33,6 +33,9 @@ public class MicroReasoner implements OntoExtension {
 
     private OntoExtension source;
     private EleonStruc result;
+    private boolean reloadTree=false;
+
+   
 
     @Override
     public void setPrevious(OntoExtension prev) {
@@ -49,6 +52,8 @@ public class MicroReasoner implements OntoExtension {
         return true;
     }
 
+
+
     @Override
     public void rebind() {
         result=new EleonStruc();
@@ -58,6 +63,8 @@ public class MicroReasoner implements OntoExtension {
         result.profileHash=new QueryProfileHashtable(cloneHash(explicitModel.profileHash.mainUserModelHashtable), cloneHash(explicitModel.profileHash.mainUsersHashtable));
         result.optionsHash=new QueryOptionsHashtable(explicitModel.optionsHash.getBaseURI());
         result.gp=new GeneralizedProfiles(cloneHash(explicitModel.gp.robotCharValuesHashtable), cloneVector(explicitModel.gp.robotCharVector));
+        if(reloadTree)
+        DataBasePanel.reloadDBTree();
 
         Enumeration propNames = result.ontoHash.propertiesHashtable.keys();
         Enumeration properties = result.ontoHash.propertiesHashtable.elements();
@@ -119,6 +126,10 @@ public class MicroReasoner implements OntoExtension {
     }
 
 
+     @Override
+    public void reloadTree(boolean set){
+        reloadTree=set;
+    }
 
     private void checkFunctionalProperty(String propName) {
         Vector propVector = (Vector) result.ontoHash.propertiesHashtable.get(propName);
@@ -715,7 +726,13 @@ public class MicroReasoner implements OntoExtension {
     }
 
     private boolean canSetFunctional(String node, String name) {
-        Hashtable childrenEntities = result.ontoHash.getChildrenEntities(DataBasePanel.getNode(node));
+        Hashtable childrenEntities;
+        try{
+        childrenEntities = result.ontoHash.getChildrenEntities(DataBasePanel.getNode(node));
+        }catch(java.lang.NullPointerException npe){
+            System.err.println("Node "+node+" not found");
+            return false;
+        }
         Enumeration keys = childrenEntities.keys();
         Enumeration values = childrenEntities.elements();
         while (keys.hasMoreElements()) {

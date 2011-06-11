@@ -484,6 +484,7 @@ public class DDialog
                     for(int h=1;h<selectedItems.size();h++){
                         value+=" "+selectedItems.elementAt(h).toString();
                     }
+                    
                     Mpiro.win.struc.addChangesInRobotCharValuesHashtable(selectedItems);
                //     System.out.print(String.valueOf(AnnotationPropertiesPanel.jTable1.getEditingRow()));
                     RobotCharacteristicsPanel.jTable1.setValueAt(value, RobotCharacteristicsPanel.jTable1.getSelectedRow(),1);

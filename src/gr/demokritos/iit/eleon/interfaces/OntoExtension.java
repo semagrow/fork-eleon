@@ -30,6 +30,8 @@ public interface OntoExtension
 	 * @param QueryHashtable the output object
 	 */
 	public EleonStruc getExtension();
+
+        public void reloadTree(boolean set);
 	
 	
 	

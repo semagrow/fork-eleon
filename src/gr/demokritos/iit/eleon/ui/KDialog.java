@@ -284,7 +284,7 @@ public class KDialog
                 Vector vec=(Vector)   Mpiro.win.struc.getEntityTypeOrEntity(DataBasePanel.last.toString());
                 vec=(Vector) vec.elementAt(0);
                 boolean exists=false;
-                for(int i=8;i<vec.size();i++){
+                for(int i=0;i<vec.size();i++){
                     Vector temp=(Vector) vec.elementAt(i);
                     if (temp.elementAt(0).toString().equalsIgnoreCase(nextElem)) {
                         exists=true;
@@ -2514,7 +2514,7 @@ public class KDialog
         
         
         
-        for (int g = 8; g < childDatabaseTableVector.size(); g++) {////ston occur1 prosthetei tis idiotites tou occur2
+        for (int g = 0; g < childDatabaseTableVector.size(); g++) {////ston occur1 prosthetei tis idiotites tou occur2
             FieldData property1 = ((FieldData) childDatabaseTableVector.get(g));
             System.out.println("1"+property1.m_field);
             //System.out.println("!!@!@!!!!@111!111"+property1.toString()+property1.m_field);

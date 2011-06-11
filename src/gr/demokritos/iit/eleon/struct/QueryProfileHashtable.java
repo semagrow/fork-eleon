@@ -211,8 +211,8 @@ public class QueryProfileHashtable extends Object implements Serializable
 				{
 					String microplanNumber = new Integer(i).toString();
 					
-					Vector nodeVector = (Vector)Mpiro.win.struc.getProperty(field);
-					Hashtable currentHashtable = (Hashtable)nodeVector.get(10);
+					Vector nodeVector = (Vector)Mpiro.win.struc.getEntityTypeOrEntity(entityTypeName);
+					Hashtable currentHashtable = (Hashtable)nodeVector.get(5);
 					currentHashtable.put(microplanNumber + ":" + field + ":" + usertype + ":" + "English", "0");
 					currentHashtable.put(microplanNumber + ":" + field + ":" + usertype + ":" + "Italian", "0");
 					currentHashtable.put(microplanNumber + ":" + field + ":" + usertype + ":" + "Greek", "0");
@@ -237,8 +237,8 @@ public class QueryProfileHashtable extends Object implements Serializable
 	      {
 					String microplanNumber = new Integer(i).toString();
 					
-					Vector nodeVector = (Vector)Mpiro.win.struc.getProperty(field);
-					Hashtable currentHashtable = (Hashtable)nodeVector.get(10);
+					Vector nodeVector = (Vector)Mpiro.win.struc.getEntityTypeOrEntity(entityTypeName);
+					Hashtable currentHashtable = (Hashtable)nodeVector.get(5);
                                         String oldvalueEnglish = "NoMicroPlanning";
 					String oldvalueItalian = "NoMicroPlanning";
 					String oldvalueGreek ="NoMicroPlanning";
@@ -273,8 +273,8 @@ public class QueryProfileHashtable extends Object implements Serializable
 				{
 					String microplanNumber = new Integer(i).toString();
 					
-					Vector nodeVector = (Vector)Mpiro.win.struc.getProperty(field);
-					Hashtable currentHashtable = (Hashtable)nodeVector.get(10);
+					Vector nodeVector = (Vector)Mpiro.win.struc.getEntityTypeOrEntity(entityTypeName);
+					Hashtable currentHashtable = (Hashtable)nodeVector.get(5);
 					currentHashtable.remove(microplanNumber + ":" + field + ":" + usertype + ":" + "English");
 					currentHashtable.remove(microplanNumber + ":" + field + ":" + usertype + ":" + "Italian");
 					currentHashtable.remove(microplanNumber + ":" + field + ":" + usertype + ":" + "Greek");
@@ -726,8 +726,11 @@ public class QueryProfileHashtable extends Object implements Serializable
               //  databaseTable =(Vector) databaseTable.elementAt(0);
 		for (int i=8; i<databaseTable.size(); i++)
 		{
+                    
 			Vector rowVector = (Vector)databaseTable.elementAt(i);
 			String fieldname = rowVector.firstElement().toString();
+                        if(fieldname.equals("Subtype-of") || fieldname.equals("title") || fieldname.equals("name")|| fieldname.equals("shortname")|| fieldname.equals("notes")|| fieldname.equals("images")|| fieldname.equals("gender")|| fieldname.equals("number"))
+                            continue;
 			allEntityFieldsVector.addElement(fieldname);
 		}
 		// add the "type" field

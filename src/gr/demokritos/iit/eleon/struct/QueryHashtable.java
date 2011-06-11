@@ -225,6 +225,8 @@ public class QueryHashtable extends Object implements Serializable {
         for(int i=8;i<tableVector.size();i++){
             Vector temp=(Vector) tableVector.elementAt(i);
             String propertyName=temp.elementAt(0).toString();
+            if(propertyName.equals("Subtype-of") || propertyName.equals("title") || propertyName.equals("name")|| propertyName.equals("shortname")|| propertyName.equals("notes")|| propertyName.equals("images")|| propertyName.equals("gender")|| propertyName.equals("number"))
+                            continue;
             valueRestrictionsHashtable.put(createdNodeName+":"+propertyName, valueRestrictionsHashtable.get(parentNodeName+":"+propertyName));
         }
     }
@@ -341,7 +343,10 @@ public class QueryHashtable extends Object implements Serializable {
     }
     
     
-  
+    /**
+     *  This method is invoked when an entity-type (name) field (fieldname) is first created
+     *  Used in: DataBaseTableListener
+     */
     public void createDefaultHashtableField(String name, Vector usersVector) {
         String fieldname = "New-user-field";
         
@@ -1496,7 +1501,7 @@ public class QueryHashtable extends Object implements Serializable {
                     //    NodeVector nd= (NodeVector) nextEl;
                     Vector oneChild6 = (Vector)nd6.elementAt(0);
                     boolean contains=false;
-                    for(int i=8;i<oneChild6.size();i++){
+                    for(int i=0;i<oneChild6.size();i++){
                         Vector next=(Vector) oneChild6.elementAt(i);
                         if (next.elementAt(0).toString().equalsIgnoreCase(fd.m_field)){
                             oneChild6.remove(i);
@@ -1522,7 +1527,7 @@ public class QueryHashtable extends Object implements Serializable {
                         NodeVector oneChildVector16 = (NodeVector)basicNodeVectors16.get(key6);
                         Vector oneChildTableVector16 = (Vector)oneChildVector16.elementAt(0);
                         contains=false;
-                        for(int i=8;i<oneChildTableVector16.size();i++){
+                        for(int i=0;i<oneChildTableVector16.size();i++){
                             Vector next=(Vector) oneChildTableVector16.elementAt(i);
                             if (next.elementAt(0).toString().equalsIgnoreCase(fd.m_field)){
                                 oneChildTableVector16.remove(i);
@@ -1589,7 +1594,7 @@ public class QueryHashtable extends Object implements Serializable {
                 rowPosition = oneChildTableVector.size();
             //   boolean t=(!oneChildTableVector.contains((Object) fd));
             boolean contains=false;
-            for(int i=8;i<oneChildTableVector.size();i++){
+            for(int i=0;i<oneChildTableVector.size();i++){
                 Vector next=(Vector) oneChildTableVector.elementAt(i);
                 if (next.elementAt(0).toString().equalsIgnoreCase(fd.m_field)){
                     oneChildTableVector.remove(i);
@@ -1616,7 +1621,7 @@ public class QueryHashtable extends Object implements Serializable {
         }
         
         boolean contains=false;
-        for(int i=8;i<DataBaseTable.m_data.m_vector.size();i++){
+        for(int i=0;i<DataBaseTable.m_data.m_vector.size();i++){
             Vector next=(Vector) DataBaseTable.m_data.m_vector.elementAt(i);
             if (next.elementAt(0).toString().equalsIgnoreCase(fd.m_field)){
                 DataBaseTable.m_data.m_vector.remove(i);
@@ -1710,7 +1715,7 @@ public class QueryHashtable extends Object implements Serializable {
                 //    NodeVector nd= (NodeVector) nextEl;
                 Vector oneChild = (Vector)nd.elementAt(0);
                 contains=false;
-                for(int i=8;i<oneChild.size();i++){
+                for(int i=0;i<oneChild.size();i++){
                     Vector next=(Vector) oneChild.elementAt(i);
                     if (next.elementAt(0).toString().equalsIgnoreCase(fd.m_field)){
                         oneChild.remove(i);
@@ -1735,7 +1740,7 @@ public class QueryHashtable extends Object implements Serializable {
                     NodeVector oneChildVector1 = (NodeVector)basicNodeVectors1.get(key1);
                     Vector oneChildTableVector1 = (Vector)oneChildVector1.elementAt(0);
                     contains=false;
-                    for(int i=8;i<oneChildTableVector1.size();i++){
+                    for(int i=0;i<oneChildTableVector1.size();i++){
                         Vector next=(Vector) oneChildTableVector1.elementAt(i);
                         if (next.elementAt(0).toString().equalsIgnoreCase(fd.m_field)){
                             oneChildTableVector1.remove(i);
@@ -3173,7 +3178,12 @@ public class QueryHashtable extends Object implements Serializable {
     } //clearHashtableMicroplanningEntries
     
     
-   
+    /**
+     *  Returns a vector of all FIRST children (sorted in alphabetical order) currently saved
+     *  for a particular entity type node (nodename)
+     *  It is used in: DataBasePanel.reloadDBPanel();
+     *                 ExportUtilsIlex.createTypesGram();
+     */
     public Vector getChildrenVectorFromMainDBHashtable(String nodename, String entityTypeOrEntity) {
         Hashtable currentHashtable = new Hashtable();
         if (entityTypeOrEntity.equalsIgnoreCase("Entity type")) {
@@ -3223,7 +3233,7 @@ public class QueryHashtable extends Object implements Serializable {
             
             if (name.equalsIgnoreCase(nodename)) {
                 boolean ttt=tempVector.add(child);
-                //System.out.print("eee");
+                System.out.print("eee");
             }
         }
         
@@ -4299,6 +4309,8 @@ public class QueryHashtable extends Object implements Serializable {
     }
     
     public int getMinOfMaxCardinalities(String node,String property){
+        if(!valueRestrictionsHashtable.contains(node+":"+property))
+            valueRestrictionsHashtable.put(node+":"+property, new ValueRestriction());
         Vector prop=(Vector) valueRestrictionsHashtable.get(node+":"+property);
         prop=(Vector) prop.elementAt(3);
         int minOfMax=Integer.MAX_VALUE;
@@ -4970,32 +4982,32 @@ public class QueryHashtable extends Object implements Serializable {
                     if (trimmedNewValue.length() == 0) {
                         trimmedNewValue = "Select ...";
                     }
-                    Vector p=Mpiro.win.struc.getPropertyForEntity(DataBasePanel.last.toString(),FlagPanel.langID, DataBaseTable.dbtl.selectedField );
-                    if(setVector.size()>0){
-                    if(!setVector.elementAt(0).toString().startsWith("Select ")&&!setVector.elementAt(0).toString().equalsIgnoreCase("")){
-                    for(int k=0;k<setVector.size();k++){
-                        if(!fillers.contains(setVector.elementAt(k).toString())){
-
-                            
-                            if (!p.contains(setVector.elementAt(k).toString())){
-
-                             Object[] optionButtons = {
-				"OK",
-				};
-
-			JOptionPane.showOptionDialog(Mpiro.win.getFrames()[0],
-                                                 "Filler "+setVector.elementAt(k).toString()+" doesn't exist in explicit model",
-												 LangResources.getString(Mpiro.selectedLocale, "warning_dialog"),
-												 JOptionPane.WARNING_MESSAGE,
-												 JOptionPane.OK_OPTION,
-												 null,
-												 optionButtons,
-												 optionButtons[0]);
-                                                     return;
-
-                    }}
-                    
-                    }}}
+                    Vector p=Mpiro.win.struc.getPropertyForEntity(DataBasePanel.last.toString(),FlagPanel.langID, DataBaseEntityTable.m_data.getValueAt(DataBaseEntityTable.dbetl.rowNo,0).toString() );
+//                    if(setVector.size()>0){
+//                    if(!setVector.elementAt(0).toString().startsWith("Select ")&&!setVector.elementAt(0).toString().equalsIgnoreCase("")){
+//                    for(int k=0;k<setVector.size();k++){
+//                        if(!fillers.contains(setVector.elementAt(k).toString())){
+//
+//
+//                            if (!p.contains(setVector.elementAt(k).toString())){
+//
+//                             Object[] optionButtons = {
+//				"OK",
+//				};
+//
+//			JOptionPane.showOptionDialog(Mpiro.win.getFrames()[0],
+//                                                 "Filler "+setVector.elementAt(k).toString()+" doesn't exist in explicit model",
+//												 LangResources.getString(Mpiro.selectedLocale, "warning_dialog"),
+//												 JOptionPane.WARNING_MESSAGE,
+//												 JOptionPane.OK_OPTION,
+//												 null,
+//												 optionButtons,
+//												 optionButtons[0]);
+//                                                     return;
+//
+//                    }}
+//
+//                    }}}
                     
                     p.setElementAt(trimmedNewValue, 1);
                    

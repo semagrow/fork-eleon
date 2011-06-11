@@ -496,7 +496,11 @@ public class DialogImportFromDatabase
         greekComboVector.add(new JComboBox());
 
         for (int i = 8; i < databaseTableVector.size(); i++) {
+            
             FieldData fieldData = (FieldData) databaseTableVector.get(i);
+            String fieldname=fieldData.m_field;
+            if(fieldname.equals("Subtype-of") || fieldname.equals("title") || fieldname.equals("name")|| fieldname.equals("shortname")|| fieldname.equals("notes")|| fieldname.equals("images")|| fieldname.equals("gender")|| fieldname.equals("number"))
+                            continue;
 
             if (!fieldData.m_filler.equalsIgnoreCase("String")) {
                 independentComboVector.add(new JComboBox());

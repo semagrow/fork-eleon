@@ -166,7 +166,7 @@ public class FlagPanel extends JPanel
 
 		String parent = DataBasePanel.last.getParent().toString();
 		String node = Mpiro.win.struc.nameWithoutOccur(DataBasePanel.last.toString());
-		NodeVector nodeVector = (NodeVector)Mpiro.win.ontoPipe.getExtension().getEntityTypeOrEntity(node);
+		NodeVector nodeVector = (NodeVector)Mpiro.win.struc.getEntityTypeOrEntity(node);
 
 		// *********************************
 		/* System.out.println("parent=" + parent);

@@ -27,4 +27,7 @@ public class ExplicitOntoData implements OntoExtension
 	@Override
 	public void rebind() { }
 
+        @Override
+	public void reloadTree(boolean set) { }
+
 }

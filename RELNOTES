@@ -1,5 +1,5 @@
 
-Planned changes for ELEON v2:
+Planned near future changes:
  - finalize the DL inference pipeline, making everything properties-configurable
  - implement an OntoExtension object that interfaces with Pellet   
  - extend to pipelines for preference and ling annotations
@@ -23,7 +23,16 @@ Planned changes for ELEON v2:
    properties are verbs
 
 
-Jun 2009, Version 2.0-beta01
+17 Jun 2011, Version 2.0
+
+Updates Jena to 2.6.4
+
+Fixes bugs noticed by Nikos Papanelopoulos:
+ * Erroneously restoring taxonomy when saving in OWL/RDF
+ * Delete concept functionality unavailable in Greek UI 
+
+
+Aug 2009, Version 2.0-beta01
 
 Defines a mechanism for external inference components:
  * Defines the OntoExtension interface of components that complete the ontology model
@@ -34,6 +43,7 @@ Other:
  * Upgrades to Jena 2.6.0, and replaces ELEON code using deprecated Jena calls.
  * Fixes filename and namespace errors between ELEON and NaturalOWL.   
  * build.xml creates executable jar
+ * Javadocs (TODO: write recipe in build.xml)
 
 
 5 Mar 2009, Version 1.1

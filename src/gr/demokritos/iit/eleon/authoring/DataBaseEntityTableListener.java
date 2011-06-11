@@ -334,6 +334,7 @@ public class DataBaseEntityTableListener extends MouseAdapter {
                 }
             }
             }
+        //System.out.println("aaaaa");
         if(Mpiro.win.ontoPipe.isRealTime())
             Mpiro.win.ontoPipe.rebind();
 

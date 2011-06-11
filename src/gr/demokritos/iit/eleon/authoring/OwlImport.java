@@ -1,40 +1,13 @@
-/***************
-
-<p>Title: OWL Import</p>
-
-<p>Description:
-Load in OWL/RDF ontologies and annotations.
-</p>
-
-<p>
-This file is part of the ELEON Ontology Authoring and Enrichment Tool.<br>
-Copyright (c) 2001-2009 National Centre for Scientific Research "Demokritos"
-</p>
-
-<pre>
-ELEON is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-ELEON is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along
-with this program; if not, see <http://www.gnu.org/licenses/>.
-<pre>
-
-@author Dimitris Bilidas (XENIOS & INDIGO, 2007-2009)
-@author Stasinos Konstantopoulos (INDIGO, 2009)
-
-***************/
-
-
 package gr.demokritos.iit.eleon.authoring;
 
-
+/**
+ * <p>Title: </p>
+ * <p>Description: </p>
+ * <p>Copyright: Copyright (c) 2004</p>
+ * <p>Company: </p>
+ * @author not attributable
+ * @version 1.0
+ */
 import com.hp.hpl.jena.ontology.*;
 import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.vocabulary.*;
@@ -202,63 +175,56 @@ public class OwlImport {
         
         ExtendedIterator properties=ontModel.listOntProperties();
         //ExtendedIterator temp1=ontModel.listObjectProperties();
-        //getProperties(properties);
-        while( properties.hasNext() ) {
-            OntProperty p = (OntProperty)properties.next();
+//getProperties(properties);
+        while(properties.hasNext()){
+            OntProperty p=(OntProperty)properties.next();
             
             //check the fillers to understand if it is datatype or objecttype
                
-            if((!p.isObjectProperty())&&(!p.isDatatypeProperty())&&(!p.isAnnotationProperty())) {
-            	boolean isObjectProp=false;
+                if((!p.isObjectProperty())&&(!p.isDatatypeProperty())&&(!p.isAnnotationProperty())){
+                boolean isObjectProp=false;
                 OntResource dom=p.getRange();
+                if(dom.canAs(OntClass.class))
+                    isObjectProp=true;
+                ExtendedIterator resources=ontModel.listResourcesWithProperty(p);
                 
-                if(dom!=null && dom.canAs(OntClass.class)) { isObjectProp = true; }
-
-                try{
-                	ExtendedIterator resources=ontModel.listResourcesWithProperty(p);
-                
-                	while( resources.hasNext() ) {
-                		Resource r = (Resource)resources.next();
-                		OntResource res;
-                		try { res = (OntResource)r.as( OntResource.class ); }
-                		catch( ClassCastException ex ) {
-                			System.err.println( "XXX: " + r.toString() );
-                			res = null;
-                			isObjectProp = false;
-                		}
-                		if( (res != null) && res.isIndividual() ) {
-                			RDFNode n;
-                			try { n = res.asIndividual().getPropertyValue( p ); }
-                			catch( ConversionException ex ) { throw new AssertionError( ex ); }
-                			if( n.canAs(Individual.class) ) { isObjectProp=true; }
-                		}
-                	}
-                } catch  (java.lang.NoSuchMethodError nslm){
-                	isObjectProp=true;
+                while(resources.hasNext()){
+                    OntResource res=(OntResource)resources.next();
+                    if(res.isIndividual()){
+                        RDFNode n=((Individual)res).getPropertyValue(p);
+                        if(n.canAs(Individual.class))
+                            isObjectProp=true;
+                          
+                    }
                 }
-                if( isObjectProp ) {
-                	addObjectProperty( p.convertToObjectProperty(), ontModel );
+                 if(isObjectProp)
+         addObjectProperty(p.convertToObjectProperty(), ontModel);
+                        else
+                            addDatatypeProperty(p.convertToDatatypeProperty(), ontModel);
                 }
-                else {
-                	addDatatypeProperty( p.convertToDatatypeProperty(), ontModel );
-                }
-            } // end if
            
-        } // end while
+        }
             
         properties=ontModel.listObjectProperties();
-        while(properties.hasNext()){
-        	ObjectProperty nextProp = (ObjectProperty)properties.next();
-        	addObjectProperty(nextProp, ontModel);
-        	//System.out.println(getNameInELEON(nextProp));
-        	//   propertiesHashtableRecord rrrrrrr=new propertiesHashtableRecord();
+          while(properties.hasNext()){
+                ObjectProperty nextProp = (ObjectProperty)properties.next();
+                addObjectProperty(nextProp, ontModel);
+                //System.out.println(getNameInELEON(nextProp));
+                //   propertiesHashtableRecord rrrrrrr=new propertiesHashtableRecord();
+                
+            
         }
         
-        properties=ontModel.listDatatypeProperties();
-        while(properties.hasNext()){
-        	DatatypeProperty nextProp = (DatatypeProperty)properties.next();
-        	addDatatypeProperty(nextProp, ontModel);
-        }
+         properties=ontModel.listDatatypeProperties();
+          while(properties.hasNext()){
+           
+            
+                
+                DatatypeProperty nextProp = (DatatypeProperty)properties.next();
+           
+                addDatatypeProperty(nextProp, ontModel);
+           
+           }
         
         
         //add default user
@@ -697,7 +663,6 @@ DefaultMutableTreeNode ssos=null;
         if(readXMLFile){
             for(ExtendedIterator instances=ontModel.listIndividuals();instances.hasNext();){
                 Individual next=(Individual)instances.next();
-                //System.err.println( "III " + next.toString() );
                 Vector annotations=new Vector();
                 for(ExtendedIterator labels=next.listLabels(null);labels.hasNext();){
                     Literal nextLabel=(Literal) labels.next();
@@ -1539,8 +1504,10 @@ createSubTypes(ssos, inter1.asClass(), nv1.getDatabaseTableVector(),String.value
         //add inherited properties
         
         if (inheritedProp != null)
-            for (int i = 8; i < inheritedProp.size(); i++) {
-            
+            for (int i = 0; i < inheritedProp.size(); i++) {
+            String fieldname=((Vector)inheritedProp.get(i)).elementAt(0).toString();
+            if(fieldname.equals("Subtype-of") || fieldname.equals("title") || fieldname.equals("name")|| fieldname.equals("shortname")|| fieldname.equals("notes")|| fieldname.equals("images")|| fieldname.equals("gender")|| fieldname.equals("number"))
+                            continue;
             databaseTableVector.add(inheritedProp.get(i));
             }
 //System.out.println("32");
@@ -1553,7 +1520,7 @@ createSubTypes(ssos, inter1.asClass(), nv1.getDatabaseTableVector(),String.value
             if (inheritedProp != null) {
                 boolean found = false;
                 
-                for (int i = 8; i < inheritedProp.size(); i++) {
+                for (int i = 0; i < inheritedProp.size(); i++) {
                     if ( ( (FieldData) inheritedProp.get(i)).m_field.equals(getNameInELEON(property)))
                         found = true;
                 }
@@ -1860,26 +1827,18 @@ createSubTypes(ssos, inter1.asClass(), nv1.getDatabaseTableVector(),String.value
         Vector properties = getAllOntProperties(superClass);////System.out.println(properties.toString());
         while (!properties.isEmpty()) {
             OntProperty property = (OntProperty) properties.remove(0);
-           // boolean isDirect=false;
-            //ExtendedIterator directProperties= superClass.listDeclaredProperties(true);
-           // while (directProperties.hasNext()){
-           //     if (directProperties.next()==property) isDirect=true;
-           // }
-            
+            boolean isDirect=false;
+            ExtendedIterator directProperties= superClass.listDeclaredProperties(true);
+            while (directProperties.hasNext()){
+                if (directProperties.next()==property) isDirect=true;
+            }
+            if ((property.hasDomain(Parent)) || (direct && isDirect ))   {
                 if (property.isObjectProperty()) {
                     //get the tree node of the range to see if it is checked
                     if(property.getRange()!=null){
-                        IconOwlData treeObject=(IconOwlData) new IconOwlData(UsersPanel.ICON_USER, "NewUserType", superClass);
-                         OntResource temp=property.getRange();
-                        //DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) classToTreeNode.get(property.getRange());
-                        
-                       if(!temp.isAnon()){
                         DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) classToTreeNode.get(property.getRange());
-
-                        treeObject = ( (IconOwlData) treeNode.getUserObject());
-                    } else
-
-                        treeObject.m_icon = DialogClassesToImport.ICON_OWLCLASSCHECKED;
+                        
+                        IconOwlData treeObject = ( (IconOwlData) treeNode.getUserObject());
                         
                         //if it is checked insert value else do not
                         if (treeObject.m_icon == DialogClassesToImport.ICON_OWLCLASSCHECKED) {
@@ -2064,7 +2023,7 @@ createSubTypes(ssos, inter1.asClass(), nv1.getDatabaseTableVector(),String.value
                         greekFieldsVector.add(new FieldData(getNameInELEON(property), indValues));
                     }
                 }
-            
+            }
         }
     }
     
@@ -2715,6 +2674,11 @@ createSubTypes(ssos, inter1.asClass(), nv1.getDatabaseTableVector(),String.value
         for(int i=0;i<propInterestsRepetitions.getLength();i++){
             NodeList children=propInterestsRepetitions.item(i).getChildNodes();
             String property=propInterestsRepetitions.item(i).getAttributes().item(0).getNodeValue().split("#")[1];
+            if(!Mpiro.win.struc.existsProperty(property))
+            {
+                System.out.println("WARNING: Property "+property+" wasn't found in the ontology");
+                continue;
+            }
             if( !property.equalsIgnoreCase("title")
             && !property.equalsIgnoreCase("name")
             && !property.equalsIgnoreCase("shortname")
@@ -2730,18 +2694,14 @@ createSubTypes(ssos, inter1.asClass(), nv1.getDatabaseTableVector(),String.value
             && !property.equalsIgnoreCase("shortname-genitive")
             && !property.equalsIgnoreCase("shortname-accusative")
             && !property.equalsIgnoreCase( "images")) {
-
                 for(int j=0;j<children.getLength();j++){
                     Node child=children.item(j);
                     if (child.getNodeName().equalsIgnoreCase("owlnl:DPPreference")){
                         NodeList values=child.getChildNodes();
                         Hashtable robots;
                         //   try {
-                       // System.out.println(property);
-                        if(!Mpiro.win.struc.existsProperty(property)){
-                    System.err.println("WARNING: property "+property+" not imported");
-                    continue;
-                }
+                        System.out.println(property);
+                        
                         robots = (Hashtable) ((Vector) Mpiro.win.struc.getProperty(property)).elementAt(15);
                         //   } catch(java.lang.NullPointerException npe) {
                         //       Vector temp=(Vector) Mpiro.win.struc.getProperty(property);
@@ -3287,6 +3247,7 @@ createSubTypes(ssos, inter1.asClass(), nv1.getDatabaseTableVector(),String.value
                 // String hhh=mappings.item(j).getAttributes().item(0).getNodeValue();
                 if (mappings.item(j).getAttributes().item(0).getNodeValue().equalsIgnoreCase("#"+jjj)){
                     if(mappings.item(j).getParentNode().getNodeName().equalsIgnoreCase("owlnl:owlInstance")) {
+                        String test=mappings.item(j).getParentNode().getAttributes().item(0).getNodeValue().split("#")[1];
                         NodeVector dbVector=(NodeVector) Mpiro.win.struc.getEntityTypeOrEntity(mappings.item(j).getParentNode().getAttributes().item(0).getNodeValue().split("#")[1]);
                         try{
                             if(dbVector.size()>5) continue;
@@ -4207,7 +4168,7 @@ OntClass next= (OntClass) extit.next();
                          System.err.println("Domain of "+getNameInELEON(nextProp)+" is complicated. It will be inserted with domain Basic-entity-types");  
                     }
                 }
-                if (vect.size()==0) { vect.add("Basic-entity-types"); }
+                //   }
                 vect= (Vector) propVec.elementAt(1);
                 //extit= nextProp.getR.listRange();
                  //               while(extit.hasNext()){
@@ -4285,6 +4246,7 @@ OntClass next= (OntClass) extit.next();
                 Vector vect=(Vector) propVec.elementAt(0);
                 ExtendedIterator extit=nextProp.listDomain();
                 //System.out.println("c"+getNameInELEON(nextProp));
+                
                 while (extit.hasNext()){
                    // OntResource temp=(OntResource) extit.next();
                     if(getNameInELEON(nextProp).equalsIgnoreCase("date")) continue;
@@ -4324,7 +4286,8 @@ OntClass next= (OntClass) extit.next();
                     //if (temp.isClass())
                      //   vect.add(getNameInELEON(temp));
                 }
-                if (vect.size()==0) { vect.add("Basic-entity-types"); }
+                if(vect.size()==0)
+                    vect.add("Basic-entity-types");
                 //System.out.println("d");
                 vect= (Vector) propVec.elementAt(1);
                 extit= nextProp.listRange();

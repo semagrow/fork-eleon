@@ -3,10 +3,12 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/NL.jar"/>
-	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
 	<classpathentry kind="lib" path="lib/xercesImpl.jar"/>
 	<classpathentry kind="lib" path="lib/iri.jar"/>
 	<classpathentry kind="lib" path="lib/icu4j.jar"/>
 	<classpathentry kind="lib" path="lib/jena.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-log4j12.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-api.jar"/>
+	<classpathentry kind="lib" path="lib/log4j.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
