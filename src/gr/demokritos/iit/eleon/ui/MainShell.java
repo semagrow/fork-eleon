@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.ToolBar;
 
 public class MainShell extends Shell {
 	protected Text text;
@@ -62,7 +63,7 @@ public class MainShell extends Shell {
 		mntmAbout.setText("About");
 		
 		text = new Text(this, SWT.BORDER);
-		text.setBounds(92, 10, 811, 24);
+		text.setBounds(92, 30, 811, 24);
 		
 		Button btnLoad = new Button(this, SWT.NONE);
 		btnLoad.addMouseListener(new MouseAdapter() {
@@ -76,15 +77,15 @@ public class MainShell extends Shell {
 				
 			}
 		});
-		btnLoad.setBounds(909, 10, 99, 27);
+		btnLoad.setBounds(909, 30, 99, 27);
 		btnLoad.setText("Load");
 		
 		Label lblEnpoint = new Label(this, SWT.NONE);
-		lblEnpoint.setBounds(10, 10, 76, 18);
+		lblEnpoint.setBounds(10, 30, 76, 18);
 		lblEnpoint.setText("Enpoint");
 		
 		Label lbltree = new Label(this, SWT.NONE);
-		lbltree.setBounds(318, 54, 283, 18);
+		lbltree.setBounds(318, 60, 283, 18);
 		lbltree.setText("Tree");
 		
 		Label lblfacet = new Label(this, SWT.NONE);
@@ -92,19 +93,22 @@ public class MainShell extends Shell {
 		lblfacet.setText("Facet");
 		
 		Label lblFields = new Label(this, SWT.NONE);
-		lblFields.setBounds(607, 54, 76, 18);
+		lblFields.setBounds(607, 60, 76, 18);
 		lblFields.setText("Fields");
 		
 		list = new List(this, SWT.BORDER);
-		list.setBounds(10, 79, 302, 583);
+		list.setBounds(10, 78, 302, 584);
 		
 		tree = new Tree(this, SWT.BORDER);
-		tree.setBounds(318, 79, 283, 583);
+		tree.setBounds(318, 84, 283, 578);
 		
 		table = new Table(this, SWT.BORDER | SWT.FULL_SELECTION);
-		table.setBounds(607, 79, 401, 583);
+		table.setBounds(607, 84, 401, 578);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
+		
+		ToolBar toolBar = new ToolBar(this, SWT.FLAT | SWT.RIGHT);
+		toolBar.setBounds(10, 0, 998, 24);
 		
 		createContents();
 	}
