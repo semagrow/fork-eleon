@@ -25,6 +25,7 @@ public class MainShell extends Shell {
 	protected Tree tree;
 	protected List list;
 	static protected MainShell shell;
+	private Text text_1;
 
 	/**
 	 * Launch the application.
@@ -63,9 +64,9 @@ public class MainShell extends Shell {
 		mntmAbout.setText("About");
 		
 		text = new Text(this, SWT.BORDER);
-		text.setBounds(92, 30, 811, 24);
+		text.setBounds(378, 30, 630, 24);
 		
-		Button btnLoad = new Button(this, SWT.NONE);
+		/*Button btnLoad = new Button(this, SWT.NONE);
 		btnLoad.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
@@ -78,10 +79,10 @@ public class MainShell extends Shell {
 			}
 		});
 		btnLoad.setBounds(909, 30, 99, 27);
-		btnLoad.setText("Load");
+		btnLoad.setText("Load");*/
 		
 		Label lblEnpoint = new Label(this, SWT.NONE);
-		lblEnpoint.setBounds(10, 30, 76, 18);
+		lblEnpoint.setBounds(318, 30, 54, 18);
 		lblEnpoint.setText("Enpoint");
 		
 		Label lbltree = new Label(this, SWT.NONE);
@@ -109,6 +110,13 @@ public class MainShell extends Shell {
 		
 		ToolBar toolBar = new ToolBar(this, SWT.FLAT | SWT.RIGHT);
 		toolBar.setBounds(10, 0, 998, 24);
+		
+		Label lblTitle = new Label(this, SWT.NONE);
+		lblTitle.setBounds(10, 30, 30, 18);
+		lblTitle.setText("Title");
+		
+		text_1 = new Text(this, SWT.BORDER);
+		text_1.setBounds(46, 30, 266, 24);
 		
 		createContents();
 	}
