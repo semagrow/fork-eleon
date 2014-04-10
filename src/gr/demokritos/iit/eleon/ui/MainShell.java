@@ -19,13 +19,13 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.ToolBar;
 
 public class MainShell extends Shell {
-	protected Text text;
+	protected Text textEndpoint;
 	protected String endpoint;
 	protected Table table;
 	protected Tree tree;
 	protected List list;
 	static protected MainShell shell;
-	private Text text_1;
+	private Text textTitle;
 
 	/**
 	 * Launch the application.
@@ -63,14 +63,14 @@ public class MainShell extends Shell {
 		MenuItem mntmAbout = new MenuItem(menu, SWT.NONE);
 		mntmAbout.setText("About");
 		
-		text = new Text(this, SWT.BORDER);
-		text.setBounds(378, 30, 630, 24);
+		textEndpoint = new Text(this, SWT.BORDER);
+		textEndpoint.setBounds(378, 30, 630, 24);
 		
 		/*Button btnLoad = new Button(this, SWT.NONE);
 		btnLoad.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDown(MouseEvent e) {
-				endpoint = text.getText();
+				endpoint = textEndpoint.getText();
 				clearListTreeTavle();
 				fillList();
 				fillTree();
@@ -115,8 +115,8 @@ public class MainShell extends Shell {
 		lblTitle.setBounds(10, 30, 30, 18);
 		lblTitle.setText("Title");
 		
-		text_1 = new Text(this, SWT.BORDER);
-		text_1.setBounds(46, 30, 266, 24);
+		textTitle = new Text(this, SWT.BORDER);
+		textTitle.setBounds(46, 30, 266, 24);
 		
 		createContents();
 	}
