@@ -17,6 +17,8 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 
 public class MainShell extends Shell {
 	protected Text textEndpoint;
@@ -57,11 +59,36 @@ public class MainShell extends Shell {
 		Menu menu = new Menu(this, SWT.BAR);
 		setMenuBar(menu);
 		
-		MenuItem mntmFile = new MenuItem(menu, SWT.NONE);
-		mntmFile.setText("File");
+		MenuItem mntmFile = new MenuItem(menu, SWT.CASCADE);
+		mntmFile.setText("&File");
+		
+		Menu fileMenu = new Menu(this, SWT.DROP_DOWN);
+		mntmFile.setMenu(fileMenu);
+		
+		MenuItem newItem = new MenuItem(fileMenu, SWT.PUSH);
+		newItem.setText("&New");
+		
+		MenuItem openItem = new MenuItem(fileMenu, SWT.PUSH);
+        openItem.setText("&Open...");
+        
+        MenuItem saveItem = new MenuItem(fileMenu, SWT.PUSH);
+        saveItem.setText("&Save");
+        
+        MenuItem saveAsItem = new MenuItem(fileMenu, SWT.PUSH);
+        saveAsItem.setText("Save &As...");
+        
+        MenuItem exitItem = new MenuItem(fileMenu, SWT.PUSH);
+        exitItem.addSelectionListener(new SelectionAdapter() {
+        	@Override
+        	public void widgetSelected(SelectionEvent arg0) {
+        		getDisplay().dispose();
+                System.exit(0);
+        	}
+        });
+        exitItem.setText("&Exit");
 		
 		MenuItem mntmAbout = new MenuItem(menu, SWT.NONE);
-		mntmAbout.setText("About");
+		mntmAbout.setText("&About");
 		
 		textEndpoint = new Text(this, SWT.BORDER);
 		textEndpoint.setBounds(378, 30, 630, 24);
