@@ -126,6 +126,8 @@ public class MainShell extends Shell {
 		
 		list = new List(this, SWT.BORDER);
 		list.setBounds(10, 78, 302, 584);
+		String[] listItems = {"per property"};
+		list.setItems(listItems);
 		
 		tree = new Tree(this, SWT.BORDER);
 		tree.setBounds(318, 84, 283, 578);
@@ -172,10 +174,10 @@ public class MainShell extends Shell {
 		tblclmnNewColumn_1.setWidth(100);
 	}
 	
-	protected void fillList() {
+	/*protected void fillList() {
 		String[] listItems = {"item1", "item2", "item3"};
 		list.setItems(listItems);
-	}
+	}*/
 	
 	protected void clearListTreeTavle() {
 		list.dispose();
