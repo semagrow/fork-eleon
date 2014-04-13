@@ -117,7 +117,7 @@ public class MainShell extends Shell {
 		lbltree.setText("Tree");
 		
 		Label lblfacet = new Label(this, SWT.NONE);
-		lblfacet.setBounds(10, 54, 76, 18);
+		lblfacet.setBounds(10, 60, 76, 18);
 		lblfacet.setText("Facet");
 		
 		Label lblFields = new Label(this, SWT.NONE);
@@ -125,7 +125,7 @@ public class MainShell extends Shell {
 		lblFields.setText("Fields");
 		
 		list = new List(this, SWT.BORDER);
-		list.setBounds(10, 78, 302, 584);
+		list.setBounds(10, 84, 302, 578);
 		String[] listItems = {"per property"};
 		list.setItems(listItems);
 		
