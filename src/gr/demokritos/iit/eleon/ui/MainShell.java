@@ -93,6 +93,18 @@ public class MainShell extends Shell {
         });
         exitItem.setText("&Exit");
 		
+		MenuItem mntmVocabularies = new MenuItem(menu, SWT.CASCADE);
+		mntmVocabularies.setText("&Vocabularies");
+		
+		Menu vacabulariesMenu = new Menu(mntmVocabularies);
+		mntmVocabularies.setMenu(vacabulariesMenu);
+		
+		MenuItem mntmSkos = new MenuItem(vacabulariesMenu, SWT.CHECK);
+		mntmSkos.setText("skos");
+		
+		MenuItem mntmTf = new MenuItem(vacabulariesMenu, SWT.CHECK);
+		mntmTf.setText("t4f");
+		
 		MenuItem mntmAbout = new MenuItem(menu, SWT.NONE);
 		mntmAbout.setText("&About");
 		
