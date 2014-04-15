@@ -96,13 +96,13 @@ public class MainShell extends Shell {
 		MenuItem mntmVocabularies = new MenuItem(menu, SWT.CASCADE);
 		mntmVocabularies.setText("&Vocabularies");
 		
-		Menu vacabulariesMenu = new Menu(mntmVocabularies);
-		mntmVocabularies.setMenu(vacabulariesMenu);
+		Menu vocabulariesMenu = new Menu(mntmVocabularies);
+		mntmVocabularies.setMenu(vocabulariesMenu);
 		
-		MenuItem mntmSkos = new MenuItem(vacabulariesMenu, SWT.CHECK);
+		MenuItem mntmSkos = new MenuItem(vocabulariesMenu, SWT.CHECK);
 		mntmSkos.setText("skos");
 		
-		MenuItem mntmTf = new MenuItem(vacabulariesMenu, SWT.CHECK);
+		MenuItem mntmTf = new MenuItem(vocabulariesMenu, SWT.CHECK);
 		mntmTf.setText("t4f");
 		
 		MenuItem mntmAbout = new MenuItem(menu, SWT.NONE);
@@ -132,7 +132,6 @@ public class MainShell extends Shell {
 			@Override
 			public void widgetSelected(SelectionEvent selectionEvent) {
 				if (list.getSelection()[0].toString().equals(Constants.perProperty)) {
-					
 				}
 			}
 		});
