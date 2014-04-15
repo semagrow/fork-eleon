@@ -20,6 +20,12 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 
+import gr.demokritos.iit.eleon.commons.Constants;
+
+/**
+ * @author gmouchakis
+ *
+ */
 public class MainShell extends Shell {
 	protected Text textEndpoint;
 	protected String endpoint;
@@ -93,21 +99,6 @@ public class MainShell extends Shell {
 		textEndpoint = new Text(this, SWT.BORDER);
 		textEndpoint.setBounds(378, 30, 630, 24);
 		
-		/*Button btnLoad = new Button(this, SWT.NONE);
-		btnLoad.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseDown(MouseEvent e) {
-				endpoint = textEndpoint.getText();
-				clearListTreeTavle();
-				fillList();
-				fillTree();
-				fillTable();
-				
-			}
-		});
-		btnLoad.setBounds(909, 30, 99, 27);
-		btnLoad.setText("Load");*/
-		
 		Label lblEnpoint = new Label(this, SWT.NONE);
 		lblEnpoint.setBounds(318, 30, 54, 18);
 		lblEnpoint.setText("Enpoint");
@@ -125,8 +116,16 @@ public class MainShell extends Shell {
 		lblFields.setText("Fields");
 		
 		list = new List(this, SWT.BORDER);
+		list.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent selectionEvent) {
+				if (list.getSelection()[0].toString().equals(Constants.perProperty)) {
+					
+				}
+			}
+		});
 		list.setBounds(10, 84, 302, 578);
-		String[] listItems = {"per property"};
+		String[] listItems = {Constants.perProperty};
 		list.setItems(listItems);
 		
 		tree = new Tree(this, SWT.BORDER);
@@ -174,10 +173,6 @@ public class MainShell extends Shell {
 		tblclmnNewColumn_1.setWidth(100);
 	}
 	
-	/*protected void fillList() {
-		String[] listItems = {"item1", "item2", "item3"};
-		list.setItems(listItems);
-	}*/
 	
 	protected void clearListTreeTavle() {
 		list.dispose();
