@@ -96,7 +96,7 @@ public class MainShell extends Shell {
 		MenuItem mntmVocabularies = new MenuItem(menu, SWT.CASCADE);
 		mntmVocabularies.setText("&Vocabularies");
 		
-		Menu vocabulariesMenu = new Menu(mntmVocabularies);
+		final Menu vocabulariesMenu = new Menu(mntmVocabularies);
 		mntmVocabularies.setMenu(vocabulariesMenu);
 		
 		MenuItem mntmSkos = new MenuItem(vocabulariesMenu, SWT.CHECK);
