@@ -1,7 +1,12 @@
 package gr.demokritos.iit.eleon.ui;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.EleonTreeItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -20,6 +25,11 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 
+import com.hp.hpl.jena.ontology.OntModel;
+import com.hp.hpl.jena.ontology.OntModelSpec;
+import com.hp.hpl.jena.ontology.OntProperty;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+
 import gr.demokritos.iit.eleon.commons.Constants;
 
 /**
@@ -34,6 +44,7 @@ public class MainShell extends Shell {
 	protected List list;
 	static protected MainShell shell;
 	private Text textTitle;
+	private OntModel ontModel;
 
 	/**
 	 * Launch the application.
@@ -132,6 +143,18 @@ public class MainShell extends Shell {
 			@Override
 			public void widgetSelected(SelectionEvent selectionEvent) {
 				if (list.getSelection()[0].toString().equals(Constants.perProperty)) {
+					ontModel = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM);
+					for (MenuItem menuItem : vocabulariesMenu.getItems()) {
+						if (menuItem.getSelection()) {//get all checked items
+							if (menuItem.getText().equals("skos")) {
+								ontModel.read("file:////" + (new File("vocabularies/skos.rdf")).getAbsolutePath());
+							} else if (menuItem.getText().equals("t4f")) {
+								ontModel.read("file:////" + (new File("vocabularies/t4f.owl")).getAbsolutePath());
+								//ontModel.read("file:////" + (new File("vocabularies/void.rdf")).getAbsolutePath());
+							}
+						}
+					}
+					createPerPropertyTree(ontModel.listAllOntProperties().toList());
 				}
 			}
 		});
@@ -160,18 +183,58 @@ public class MainShell extends Shell {
 		createContents();
 	}
 	
-	protected void fillTree() {
-		TreeItem child1 = new TreeItem(tree, SWT.NONE, 0);
-		child1.setText("1");
-		TreeItem child2 = new TreeItem(tree, SWT.NONE, 1);
-		child2.setText("2");
-		TreeItem child2a = new TreeItem(child2, SWT.NONE, 0);
-		child2a.setText("2A");
-		TreeItem child2b = new TreeItem(child2, SWT.NONE, 1);
-		child2b.setText("2B");
-		TreeItem child3 = new TreeItem(tree, SWT.NONE, 2);
-		child3.setText("3");
+	protected void createPerPropertyTree(java.util.List<OntProperty> propertiesList) {
+		//EleonTreeItem root = new EleonTreeItem(tree, SWT.NONE, null);
+		TreeItem root = new TreeItem(tree, SWT.NONE);
+		root.setText("root");
+		ArrayList<OntProperty> notInsertedPropertiesList = new ArrayList<OntProperty>();
+		for (OntProperty ontProperty : propertiesList) {
+			OntProperty superProperty = ontProperty.getSuperProperty();
+			if (superProperty == null) {
+				TreeItem treeItem = new TreeItem(root, SWT.NONE);
+				treeItem.setText(ontProperty.toString());
+				treeItem.setData(ontProperty);
+				// EleonTreeItem eleonTreeItem = new EleonTreeItem(root,
+				// SWT.NONE, ontProperty);
+				// eleonTreeItem.setText(ontProperty.toString());
+			} else {	
+					boolean inserted = insertChildInTree(root, ontProperty, superProperty);
+					if ( ! inserted ) {
+						notInsertedPropertiesList.add(ontProperty);
+					}
+			}
+		}
+		while ( ! notInsertedPropertiesList.isEmpty()) {
+			Collections.rotate(notInsertedPropertiesList, 1);
+			OntProperty ontProperty = notInsertedPropertiesList.get(0);
+			OntProperty superProperty = ontProperty.getSuperProperty();
+			boolean inserted = insertChildInTree(root, ontProperty, superProperty);
+			if (inserted) {
+				notInsertedPropertiesList.remove(0);
+			}
+		}
 	}
+	
+	
+	protected boolean insertChildInTree(TreeItem treeItem, OntProperty ontProperty, OntProperty superProperty) {
+		boolean inserted = false;
+		for(TreeItem child : treeItem.getItems()) {
+			//if (((EleonTreeItem) child).getProperty().equals(superProperty)) {
+			if (child.getData().equals(superProperty)) {
+				TreeItem newtreeItem = new TreeItem(child, SWT.NONE);
+				newtreeItem.setText(ontProperty.toString());
+				newtreeItem.setData(ontProperty);
+				inserted = true;
+				/*EleonTreeItem eleonTreeItem = new EleonTreeItem(child, SWT.NONE, ontProperty);
+				eleonTreeItem.setText(ontProperty.toString());*/
+			}
+			if ((!inserted) && child.getItemCount()>0) {//if not leaf check the children
+				inserted = insertChildInTree(child, ontProperty, superProperty);
+			}
+		}
+		return inserted;
+	}
+	
 	
 	protected void fillTable() {
 		TableItem tableItem = new TableItem(table, SWT.NONE);
