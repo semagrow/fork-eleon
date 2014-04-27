@@ -1,6 +1,7 @@
 package gr.demokritos.iit.eleon.ui;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -35,9 +36,11 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntModelSpec;
@@ -106,21 +109,30 @@ public class MainShell extends Shell {
         	@Override
         	public void widgetSelected(SelectionEvent arg0) {
         		FileDialog dialog = new FileDialog (shell, SWT.OPEN);
-        		String [] filterNames = new String [] {/*"Image Files", */"All Files (*)"};
-        		String [] filterExtensions = new String [] {/*"*.gif;*.png;*.xpm;*.jpg;*.jpeg;*.tiff", */"*"};
+        		String [] filterNames = new String [] {"XML Files", "All Files (*)"};
+        		String [] filterExtensions = new String [] {"*.xml", "*"};
         		//String filterPath = "/";
         		String filterPath = System.getProperty("user.dir");
         		String platform = SWT.getPlatform();
         		if (platform.equals("win32") || platform.equals("wpf")) {
-        			filterNames = new String [] {/*"Image Files", */"All Files (*.*)"};
-        			filterExtensions = new String [] {/*"*.gif;*.png;*.bmp;*.jpg;*.jpeg;*.tiff", */"*.*"};
+        			filterNames = new String [] {"XML Files", "All Files (*.*)"};
+        			filterExtensions = new String [] {"*.xml", "*.*"};
         			//filterPath = "c:\\";
         		}
         		dialog.setFilterNames (filterNames);
         		dialog.setFilterExtensions (filterExtensions);
         		dialog.setFilterPath (filterPath);
         		//dialog.setFileName ("myfile");
-        		System.out.println ("Open: " + dialog.open ());
+        		try {
+					open(dialog.open ());
+				} catch (Exception e) {
+					e.printStackTrace();
+			    	MessageBox box = new MessageBox(getShell(), SWT.ERROR);
+	                box.setText("Error");
+	                box.setMessage(e.toString());
+	                box.open();
+				}
+        		//System.out.println ("Open: " + dialog.open ());
         	}
         });
         openItem.setText("&Open...");
@@ -129,7 +141,16 @@ public class MainShell extends Shell {
         saveItem.addSelectionListener(new SelectionAdapter() {
         	@Override
         	public void widgetSelected(SelectionEvent arg0) {
-        		save();
+        		try {
+					save();
+				} catch (Exception e) {
+					e.printStackTrace();
+					e.printStackTrace();
+			    	MessageBox box = new MessageBox(getShell(), SWT.ERROR);
+	                box.setText("Error");
+	                box.setMessage(e.toString());
+	                box.open();
+				}
         	}
         });
         saveItem.setText("&Save");
@@ -138,7 +159,16 @@ public class MainShell extends Shell {
         saveAsItem.addSelectionListener(new SelectionAdapter() {
         	@Override
         	public void widgetSelected(SelectionEvent arg0) {
-        		saveAs();
+        		try {
+					saveAs();
+				} catch (Exception e) {
+					e.printStackTrace();
+					e.printStackTrace();
+			    	MessageBox box = new MessageBox(getShell(), SWT.ERROR);
+	                box.setText("Error");
+	                box.setMessage(e.toString());
+	                box.open();
+				}
         	}
         });
         saveAsItem.setText("Save &As...");
@@ -212,7 +242,7 @@ public class MainShell extends Shell {
 						fillPerPropertyTree(ontModel.listAllOntProperties().toList());
 					} else {
 						MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
-		                box.setText("Error");
+		                box.setText("Info");
 		                box.setMessage("Choose a vocabulary from the \"Vocabularies\" menu first.");
 		                box.open();
 					}
@@ -371,14 +401,14 @@ public class MainShell extends Shell {
 		});
 	}
 	
-	protected void save() {
+	protected void save() throws ParserConfigurationException, TransformerException {
 		
 		if (filename==null) {
 			saveAs();
 			return;
 		}
 		
-		try {
+
 			 
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -418,14 +448,9 @@ public class MainShell extends Shell {
 	 
 			System.out.println("File " + filename + " saved!");
 	 
-		  } catch (ParserConfigurationException pce) {
-			pce.printStackTrace();
-		  } catch (TransformerException tfe) {
-			tfe.printStackTrace();
-		  }
 	}
 	
-	protected void saveAs() {
+	protected void saveAs() throws ParserConfigurationException, TransformerException {
 		FileDialog dialog = new FileDialog (shell, SWT.SAVE);
 		dialog.setOverwrite(true);
 		String [] filterNames = new String [] {"XML Files", "All Files (*)"};
@@ -443,18 +468,20 @@ public class MainShell extends Shell {
 		dialog.setFilterPath (filterPath);
 		dialog.setFileName ("eleon_save");
 		filename = dialog.open();
-		save();
+		if (filename != null) {
+			save();
+		}
 		//System.out.println ("Save to: " + dialog.open ());
 	}
 	
-	protected void createTreeDOM(TreeItem treeItem, Element root, Document doc) {
+	/*protected void createTreeDOM(TreeItem treeItem, Element root, Document doc) {
 		for (TreeItem treeItemCurrent : treeItem.getItems()) {
 			if (treeItemCurrent.getItemCount()>0) {
 				createTreeDOM(treeItemCurrent, root, doc);
 			}
 			Element treeItemNode = doc.createElement("treeItem");
 			//System.out.println(treeItem);
-			treeItemNode.setAttribute("OntProperty", ((PropertyAndValues) treeItemCurrent.getData()).getOntProperty().toString());
+			treeItemNode.setAttribute("name", ((PropertyAndValues) treeItemCurrent.getData()).getOntProperty().toString());
 			Integer void_size = ((PropertyAndValues) treeItemCurrent.getData()).getVoid_size();
 			if (void_size != null) {
 				treeItemNode.setAttribute("void_size", void_size.toString());
@@ -464,8 +491,76 @@ public class MainShell extends Shell {
 			//((PropertyAndValues) treeItem.getData()).getOntProperty();
 			//((PropertyAndValues) treeItem.getData()).getVoid_size();
 		}
+	}*/
+	
+	protected void createTreeDOM(TreeItem treeItem, Element root, Document doc) {
+		for (TreeItem treeItemCurrent : treeItem.getItems()) {
+			Element treeItemNode = doc.createElement("treeItem");
+			// System.out.println(treeItem);
+			treeItemNode.setAttribute("name", ((PropertyAndValues) treeItemCurrent.getData()).getOntProperty().toString());
+			Integer void_size = ((PropertyAndValues) treeItemCurrent.getData()).getVoid_size();
+			if (void_size != null) {
+				treeItemNode.setAttribute("void_size", void_size.toString());
+			}
+			treeItemNode.setAttribute("parent", treeItem.getText());
+			root.appendChild(treeItemNode);
+			if (treeItemCurrent.getItemCount() > 0) {
+				createTreeDOM(treeItemCurrent, treeItemNode, doc);
+			}
+		}
 	}
 	
+	protected void open(String filename) throws ParserConfigurationException, SAXException, IOException, Exception{
+		
+			 
+			File fXmlFile = new File(filename);
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(fXmlFile);
+		 
+			//optional, but recommended
+			//read this - http://stackoverflow.com/questions/13786607/normalization-in-dom-parsing-with-java-how-does-it-work
+			doc.getDocumentElement().normalize();
+		 
+			String rootElement = doc.getDocumentElement().getNodeName();
+			if ( ! rootElement.equals("eleon_save")) {
+				throw new Exception("Tried to open a non-eleon_save document!");
+			}
+			
+			//System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
+			
+			NodeList nListTitle = doc.getElementsByTagName("title");
+			this.textTitle.setText(nListTitle.item(0).getTextContent());
+			//System.out.println(nListTitle.item(0).getTextContent());
+			
+			NodeList nEnpointTitle = doc.getElementsByTagName("endpoint");
+			this.textEndpoint.setText(nEnpointTitle.item(0).getTextContent());
+			//System.out.println(nListTitle.item(0).getTextContent());
+			
+			createTree();
+			createTable();
+			
+			NodeList nList = doc.getElementsByTagName("treeItem");
+		 	 
+			for (int temp = 0; temp < nList.getLength(); temp++) {
+				Node nNode = nList.item(temp);
+				System.out.println("\nCurrent Element :" + nNode.getNodeName());
+				if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+					Element eElement = (Element) nNode;
+					String name = eElement.getAttribute("name");
+					//Integer void_size = new Integer(eElement.getAttribute("void_size"));
+					String parent = eElement.getAttribute("parent");
+					
+					if (name.equals("root")) {
+						TreeItem root = new TreeItem(tree, SWT.NONE);
+						root.setText("root");
+					} else {
+						/*OntProperty ontProperty = */
+					}
+				}
+			}
+
+	}
 	
 	/*protected void clearListTreeTavle() {
 		list.dispose();
