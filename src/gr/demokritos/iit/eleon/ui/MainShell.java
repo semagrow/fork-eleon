@@ -4,6 +4,15 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -26,6 +35,9 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntModelSpec;
@@ -48,6 +60,7 @@ public class MainShell extends Shell {
 	static protected MainShell shell;
 	private Text textTitle;
 	private OntModel ontModel;
+	private String filename = null;
 
 	/**
 	 * Launch the application.
@@ -113,29 +126,19 @@ public class MainShell extends Shell {
         openItem.setText("&Open...");
         
         MenuItem saveItem = new MenuItem(fileMenu, SWT.PUSH);
+        saveItem.addSelectionListener(new SelectionAdapter() {
+        	@Override
+        	public void widgetSelected(SelectionEvent arg0) {
+        		save();
+        	}
+        });
         saveItem.setText("&Save");
         
         MenuItem saveAsItem = new MenuItem(fileMenu, SWT.PUSH);
         saveAsItem.addSelectionListener(new SelectionAdapter() {
         	@Override
         	public void widgetSelected(SelectionEvent arg0) {
-        		FileDialog dialog = new FileDialog (shell, SWT.SAVE);
-        		dialog.setOverwrite(true);
-        		String [] filterNames = new String [] {/*"Image Files", */"All Files (*)"};
-        		String [] filterExtensions = new String [] {/*"*.gif;*.png;*.xpm;*.jpg;*.jpeg;*.tiff", */"*"};
-        		//String filterPath = "/";
-        		String filterPath = System.getProperty("user.dir");
-        		String platform = SWT.getPlatform();
-        		if (platform.equals("win32") || platform.equals("wpf")) {
-        			filterNames = new String [] {/*"Image Files", */"All Files (*.*)"};
-        			filterExtensions = new String [] {/*"*.gif;*.png;*.bmp;*.jpg;*.jpeg;*.tiff", */"*.*"};
-        			//filterPath = "c:\\";
-        		}
-        		dialog.setFilterNames (filterNames);
-        		dialog.setFilterExtensions (filterExtensions);
-        		dialog.setFilterPath (filterPath);
-        		dialog.setFileName ("myfile");
-        		System.out.println ("Save to: " + dialog.open ());
+        		saveAs();
         	}
         });
         saveAsItem.setText("Save &As...");
@@ -366,6 +369,101 @@ public class MainShell extends Shell {
 				editor.setEditor(newEditor, item, 1);
 			}
 		});
+	}
+	
+	protected void save() {
+		
+		if (filename==null) {
+			saveAs();
+			return;
+		}
+		
+		try {
+			 
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+	 
+			// root element
+			Document doc = docBuilder.newDocument();
+			Element rootElement = doc.createElement("eleon_save");
+			doc.appendChild(rootElement);
+			
+			Element title = doc.createElement("title");
+			title.appendChild(doc.createTextNode(textTitle.getText()));
+			rootElement.appendChild(title);
+			
+			Element endpoint = doc.createElement("endpoint");
+			endpoint.appendChild(doc.createTextNode(textEndpoint.getText()));
+			rootElement.appendChild(endpoint);
+			
+			Element tree = doc.createElement("tree");
+			rootElement.appendChild(tree);
+			
+			Element treeRoot = doc.createElement("treeItem");
+			treeRoot.setAttribute("name", "root");
+			tree.appendChild(treeRoot);
+			
+			createTreeDOM(this.tree.getItems()[0], treeRoot, doc);
+			
+			// write the content into xml file
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			Transformer transformer = transformerFactory.newTransformer();
+			DOMSource source = new DOMSource(doc);
+			StreamResult result = new StreamResult(new File(filename));
+	 
+			// Output to console for testing
+			// StreamResult result = new StreamResult(System.out);
+	 
+			transformer.transform(source, result);
+	 
+			System.out.println("File " + filename + " saved!");
+	 
+		  } catch (ParserConfigurationException pce) {
+			pce.printStackTrace();
+		  } catch (TransformerException tfe) {
+			tfe.printStackTrace();
+		  }
+	}
+	
+	protected void saveAs() {
+		FileDialog dialog = new FileDialog (shell, SWT.SAVE);
+		dialog.setOverwrite(true);
+		String [] filterNames = new String [] {"XML Files", "All Files (*)"};
+		String [] filterExtensions = new String [] {"*.xml", "*"};
+		//String filterPath = "/";
+		String filterPath = System.getProperty("user.dir");
+		String platform = SWT.getPlatform();
+		if (platform.equals("win32") || platform.equals("wpf")) {
+			filterNames = new String [] {"XML Files", "All Files (*.*)"};
+			filterExtensions = new String [] {"*.xml", "*.*"};
+			//filterPath = "c:\\";
+		}
+		dialog.setFilterNames (filterNames);
+		dialog.setFilterExtensions (filterExtensions);
+		dialog.setFilterPath (filterPath);
+		dialog.setFileName ("eleon_save");
+		filename = dialog.open();
+		save();
+		//System.out.println ("Save to: " + dialog.open ());
+	}
+	
+	protected void createTreeDOM(TreeItem treeItem, Element root, Document doc) {
+		for (TreeItem treeItemCurrent : treeItem.getItems()) {
+			if (treeItemCurrent.getItemCount()>0) {
+				createTreeDOM(treeItemCurrent, root, doc);
+			}
+			Element treeItemNode = doc.createElement("treeItem");
+			//System.out.println(treeItem);
+			treeItemNode.setAttribute("OntProperty", ((PropertyAndValues) treeItemCurrent.getData()).getOntProperty().toString());
+			Integer void_size = ((PropertyAndValues) treeItemCurrent.getData()).getVoid_size();
+			if (void_size != null) {
+				treeItemNode.setAttribute("void_size", void_size.toString());
+			}
+			treeItemNode.setAttribute("parent", treeItem.getText());
+			root.appendChild(treeItemNode);
+			//((PropertyAndValues) treeItem.getData()).getOntProperty();
+			//((PropertyAndValues) treeItem.getData()).getVoid_size();
+		}
 	}
 	
 	
