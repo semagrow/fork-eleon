@@ -63,6 +63,7 @@ public class MainShell extends Shell {
 	private Text textTitle;
 	private OntModel ontModel;
 	private String filename = null;
+	private MenuItem mntmNew;
 
 	/**
 	 * Launch the application.
@@ -190,11 +191,44 @@ public class MainShell extends Shell {
 		final Menu vocabulariesMenu = new Menu(mntmVocabularies);
 		mntmVocabularies.setMenu(vocabulariesMenu);
 		
+		mntmNew = new MenuItem(vocabulariesMenu, SWT.PUSH);
+		mntmNew.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				FileDialog dialog = new FileDialog (shell, SWT.OPEN);
+        		String [] filterNames = new String [] {"Ont Files", "All Files (*)"};
+        		String [] filterExtensions = new String [] {"*.rdf;*.owl;*.ttl,*.xml", "*"};
+        		//String filterPath = "/";
+        		String filterPath = System.getProperty("user.dir");
+        		String platform = SWT.getPlatform();
+        		if (platform.equals("win32") || platform.equals("wpf")) {
+        			filterNames = new String [] {"Ont Files", "All Files (*.*)"};
+        			filterExtensions = new String [] {"*.rdf;*.owl;*.ttl,*.xml", "*.*"};
+        			//filterPath = "c:\\";
+        		}
+        		dialog.setFilterNames (filterNames);
+        		dialog.setFilterExtensions (filterExtensions);
+        		dialog.setFilterPath (filterPath);
+        		//dialog.setFileName ("myfile");
+        		try {
+        			addVocabularyToMenu(dialog.open(), vocabulariesMenu);
+        			//System.out.println(dialog.open());
+				} catch (Exception ex) {
+					ex.printStackTrace();
+			    	MessageBox box = new MessageBox(getShell(), SWT.ERROR);
+	                box.setText("Error");
+	                box.setMessage(e.toString());
+	                box.open();
+				}
+			}
+		});
+		mntmNew.setText("New...");
+		
 		MenuItem mntmSkos = new MenuItem(vocabulariesMenu, SWT.CHECK);
-		mntmSkos.setText("skos");
+		mntmSkos.setText("skos.rdf");
 		
 		MenuItem mntmTf = new MenuItem(vocabulariesMenu, SWT.CHECK);
-		mntmTf.setText("t4f");
+		mntmTf.setText("t4f.owl");
 		
 		MenuItem mntmAbout = new MenuItem(menu, SWT.NONE);
 		mntmAbout.setText("&About");
@@ -229,12 +263,15 @@ public class MainShell extends Shell {
 					ontModel = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM);
 					for (MenuItem menuItem : vocabulariesMenu.getItems()) {
 						if (menuItem.getSelection()) {//get all checked items
-							if (menuItem.getText().equals("skos")) {
+							if (menuItem.getText().equals("skos.rdf")) {
 								ontModel.read("file:////" + (new File("vocabularies/skos.rdf")).getAbsolutePath());
 								has_vocabulary = true;
-							} else if (menuItem.getText().equals("t4f")) {
+							} else if (menuItem.getText().equals("t4f.owl")) {
 								ontModel.read("file:////" + (new File("vocabularies/t4f.owl")).getAbsolutePath());
 								//ontModel.read("file:////" + (new File("vocabularies/void.rdf")).getAbsolutePath());
+								has_vocabulary = true;
+							} else {
+								ontModel.read("file:////" + (new File((String) menuItem.getData())).getAbsolutePath());
 								has_vocabulary = true;
 							}
 						}
@@ -585,6 +622,16 @@ public class MainShell extends Shell {
 				searchTree(treeItemCurrent, propertyName, list);
 			}
 		}
+	}
+	
+	protected void addVocabularyToMenu(String filename, Menu vocabulariesMenu) {
+		if (filename == null) {
+			return;
+		}
+		File file = new File(filename);
+		MenuItem mntmNewVoc = new MenuItem(vocabulariesMenu, SWT.CHECK);
+		mntmNewVoc.setText(file.getName());
+		mntmNewVoc.setData(filename);
 	}
 	
 	/*protected void clearListTreeTavle() {
