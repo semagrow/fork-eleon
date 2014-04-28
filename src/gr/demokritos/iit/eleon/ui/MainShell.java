@@ -56,7 +56,6 @@ import gr.demokritos.iit.eleon.functionality.PropertyAndValues;
  */
 public class MainShell extends Shell {
 	protected Text textEndpoint;
-	//protected String endpoint;
 	protected Table table;
 	protected Tree tree;
 	protected List list;
@@ -124,7 +123,9 @@ public class MainShell extends Shell {
         		dialog.setFilterPath (filterPath);
         		//dialog.setFileName ("myfile");
         		try {
-					open(dialog.open ());
+        			String openFilename = dialog.open();
+        			if (openFilename == null) return; 
+					open(openFilename);
 				} catch (Exception e) {
 					e.printStackTrace();
 			    	MessageBox box = new MessageBox(getShell(), SWT.ERROR);
@@ -433,7 +434,7 @@ public class MainShell extends Shell {
 			treeRoot.setAttribute("name", "root");
 			tree.appendChild(treeRoot);
 			
-			createTreeDOM(this.tree.getItems()[0], treeRoot, doc);
+			createDOMFromTree(this.tree.getItems()[0], treeRoot, doc);
 			
 			// write the content into xml file
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -474,26 +475,8 @@ public class MainShell extends Shell {
 		//System.out.println ("Save to: " + dialog.open ());
 	}
 	
-	/*protected void createTreeDOM(TreeItem treeItem, Element root, Document doc) {
-		for (TreeItem treeItemCurrent : treeItem.getItems()) {
-			if (treeItemCurrent.getItemCount()>0) {
-				createTreeDOM(treeItemCurrent, root, doc);
-			}
-			Element treeItemNode = doc.createElement("treeItem");
-			//System.out.println(treeItem);
-			treeItemNode.setAttribute("name", ((PropertyAndValues) treeItemCurrent.getData()).getOntProperty().toString());
-			Integer void_size = ((PropertyAndValues) treeItemCurrent.getData()).getVoid_size();
-			if (void_size != null) {
-				treeItemNode.setAttribute("void_size", void_size.toString());
-			}
-			treeItemNode.setAttribute("parent", treeItem.getText());
-			root.appendChild(treeItemNode);
-			//((PropertyAndValues) treeItem.getData()).getOntProperty();
-			//((PropertyAndValues) treeItem.getData()).getVoid_size();
-		}
-	}*/
 	
-	protected void createTreeDOM(TreeItem treeItem, Element root, Document doc) {
+	protected void createDOMFromTree(TreeItem treeItem, Element root, Document doc) {
 		for (TreeItem treeItemCurrent : treeItem.getItems()) {
 			Element treeItemNode = doc.createElement("treeItem");
 			// System.out.println(treeItem);
@@ -502,64 +485,106 @@ public class MainShell extends Shell {
 			if (void_size != null) {
 				treeItemNode.setAttribute("void_size", void_size.toString());
 			}
-			treeItemNode.setAttribute("parent", treeItem.getText());
+			//treeItemNode.setAttribute("parent", treeItem.getText());
 			root.appendChild(treeItemNode);
 			if (treeItemCurrent.getItemCount() > 0) {
-				createTreeDOM(treeItemCurrent, treeItemNode, doc);
+				createDOMFromTree(treeItemCurrent, treeItemNode, doc);
 			}
 		}
 	}
 	
 	protected void open(String filename) throws ParserConfigurationException, SAXException, IOException, Exception{
 		
-			 
 			File fXmlFile = new File(filename);
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 			Document doc = dBuilder.parse(fXmlFile);
 		 
-			//optional, but recommended
-			//read this - http://stackoverflow.com/questions/13786607/normalization-in-dom-parsing-with-java-how-does-it-work
 			doc.getDocumentElement().normalize();
 		 
 			String rootElement = doc.getDocumentElement().getNodeName();
 			if ( ! rootElement.equals("eleon_save")) {
 				throw new Exception("Tried to open a non-eleon_save document!");
 			}
-			
-			//System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
-			
+						
 			NodeList nListTitle = doc.getElementsByTagName("title");
 			this.textTitle.setText(nListTitle.item(0).getTextContent());
-			//System.out.println(nListTitle.item(0).getTextContent());
 			
 			NodeList nEnpointTitle = doc.getElementsByTagName("endpoint");
 			this.textEndpoint.setText(nEnpointTitle.item(0).getTextContent());
-			//System.out.println(nListTitle.item(0).getTextContent());
 			
+			tree.dispose();
+			table.dispose();
 			createTree();
 			createTable();
 			
+			ArrayList<OntProperty> propertiesList = new ArrayList<OntProperty>();
+			
+			OntModel ontModel = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM);
 			NodeList nList = doc.getElementsByTagName("treeItem");
-		 	 
 			for (int temp = 0; temp < nList.getLength(); temp++) {
 				Node nNode = nList.item(temp);
-				System.out.println("\nCurrent Element :" + nNode.getNodeName());
+				//System.out.println("\nCurrent Element :" + nNode.getNodeName());
 				if (nNode.getNodeType() == Node.ELEMENT_NODE) {
 					Element eElement = (Element) nNode;
 					String name = eElement.getAttribute("name");
-					//Integer void_size = new Integer(eElement.getAttribute("void_size"));
-					String parent = eElement.getAttribute("parent");
-					
-					if (name.equals("root")) {
-						TreeItem root = new TreeItem(tree, SWT.NONE);
-						root.setText("root");
-					} else {
-						/*OntProperty ontProperty = */
+					if ( ! name.equals("root")) {
+						OntProperty ontProperty = ontModel.createOntProperty(name);
+						String parent = ((Element)eElement.getParentNode()).getAttribute("name");
+						if ( ! parent.equals("root")) {
+							boolean found_in_list = false;
+							for (OntProperty list_item : propertiesList) {
+								if (list_item.getURI().equals(parent)) {
+									ontProperty.setSuperProperty(list_item);
+									found_in_list = true;
+								}
+							}
+							if ( ! found_in_list) {
+								OntProperty ontParent = ontModel.createOntProperty(parent);
+								ontProperty.setSuperProperty(ontParent);
+								propertiesList.add(ontParent);
+							}
+						}
+						propertiesList.add(ontProperty);
 					}
 				}
 			}
-
+			fillPerPropertyTree(propertiesList);
+			//System.out.println(propertiesList);
+			
+			ArrayList<PropertyAndValues> list = new ArrayList<PropertyAndValues>();
+			//the tree is created. insert void_size
+			for (int temp = 0; temp < nList.getLength(); temp++) {
+				Node nNode = nList.item(temp);
+				//System.out.println("\nCurrent Element :" + nNode.getNodeName());
+				if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+					Element eElement = (Element) nNode;
+					String void_size_str = eElement.getAttribute("void_size");
+					if ( ! void_size_str.equals("")) {
+						Integer void_size = new Integer(void_size_str);
+						String name = eElement.getAttribute("name");
+						list.clear();
+						searchTree(tree.getItems()[0], name, list);
+						//System.out.println(list);
+						for (PropertyAndValues propAndVal : list) {
+							propAndVal.setVoid_size(void_size);
+						}
+					}
+				}
+			}
+			
+	}
+	
+	
+	protected void searchTree(TreeItem treeItem, String propertyName, java.util.List<PropertyAndValues> list){
+		for (TreeItem treeItemCurrent : treeItem.getItems()) {
+			if ( ((PropertyAndValues) treeItemCurrent.getData()).getOntProperty().getURI().equals(propertyName)) {
+				list.add((PropertyAndValues) treeItemCurrent.getData());
+			}
+			if (treeItemCurrent.getItemCount() > 0) {
+				searchTree(treeItemCurrent, propertyName, list);
+			}
+		}
 	}
 	
 	/*protected void clearListTreeTavle() {
