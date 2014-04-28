@@ -101,8 +101,14 @@ public class MainShell extends Shell {
 		Menu fileMenu = new Menu(this, SWT.DROP_DOWN);
 		mntmFile.setMenu(fileMenu);
 		
-		MenuItem newItem = new MenuItem(fileMenu, SWT.PUSH);
-		newItem.setText("&New");
+		/*MenuItem newItem = new MenuItem(fileMenu, SWT.PUSH);
+		newItem.addSelectionListener(new SelectionAdapter() {
+        	@Override
+        	public void widgetSelected(SelectionEvent arg0) {
+        		
+        	}
+        });
+		newItem.setText("&New");*/
 		
 		MenuItem openItem = new MenuItem(fileMenu, SWT.PUSH);
         openItem.addSelectionListener(new SelectionAdapter() {
@@ -230,7 +236,16 @@ public class MainShell extends Shell {
 		MenuItem mntmTf = new MenuItem(vocabulariesMenu, SWT.CHECK);
 		mntmTf.setText("t4f.owl");
 		
-		MenuItem mntmAbout = new MenuItem(menu, SWT.NONE);
+		MenuItem mntmAbout = new MenuItem(menu, SWT.PUSH);
+		mntmAbout.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
+                box.setText("About");
+                box.setMessage("Eleon 3.0 from NCSR \"Demokritos\"");
+                box.open();
+			}
+		});
 		mntmAbout.setText("&About");
 		
 		textEndpoint = new Text(this, SWT.BORDER);
