@@ -204,7 +204,7 @@ public class MainShell extends Shell {
 		
 		Label lblEnpoint = new Label(this, SWT.NONE);
 		lblEnpoint.setBounds(318, 30, 54, 18);
-		lblEnpoint.setText("Enpoint");
+		lblEnpoint.setText("Enpdoint");
 		
 		Label lbltree = new Label(this, SWT.NONE);
 		lbltree.setBounds(318, 60, 283, 18);
