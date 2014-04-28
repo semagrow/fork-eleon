@@ -200,7 +200,7 @@ public class MainShell extends Shell {
 		mntmAbout.setText("&About");
 		
 		textEndpoint = new Text(this, SWT.BORDER);
-		textEndpoint.setBounds(378, 30, 630, 24);
+		textEndpoint.setBounds(378, 30, 709, 24);
 		
 		Label lblEnpoint = new Label(this, SWT.NONE);
 		lblEnpoint.setBounds(318, 30, 54, 18);
@@ -215,7 +215,7 @@ public class MainShell extends Shell {
 		lblfacet.setText("Facet");
 		
 		Label lblFields = new Label(this, SWT.NONE);
-		lblFields.setBounds(607, 60, 76, 18);
+		lblFields.setBounds(693, 60, 76, 18);
 		lblFields.setText("Fields");
 		
 		list = new List(this, SWT.BORDER);
@@ -259,7 +259,7 @@ public class MainShell extends Shell {
 		createTable();
 				
 		ToolBar toolBar = new ToolBar(this, SWT.FLAT | SWT.RIGHT);
-		toolBar.setBounds(10, 0, 998, 24);
+		toolBar.setBounds(10, 0, 1077, 24);
 		
 		Label lblTitle = new Label(this, SWT.NONE);
 		lblTitle.setBounds(10, 30, 30, 18);
@@ -334,12 +334,12 @@ public class MainShell extends Shell {
 				createTableContents(size);
 			}
 		});
-		tree.setBounds(318, 84, 283, 578);
+		tree.setBounds(318, 84, 369, 578);
 	}
 	
 	protected void createTable() {
 		table = new Table(this, SWT.BORDER | SWT.FULL_SELECTION);
-		table.setBounds(607, 84, 401, 578);
+		table.setBounds(693, 84, 394, 578);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		
@@ -606,7 +606,7 @@ public class MainShell extends Shell {
 	 */
 	protected void createContents() {
 		setText("Eleon");
-		setSize(1024, 739);
+		setSize(1103, 739);
 
 	}
 
