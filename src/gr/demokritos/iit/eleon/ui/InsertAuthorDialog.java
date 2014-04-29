@@ -43,7 +43,7 @@ public class InsertAuthorDialog extends Dialog {
             	}
             });
             btnInsert.setBounds(149, 37, 81, 24);
-            btnInsert.setText("Insert");
+            btnInsert.setText("&Insert");
             
             Button btnCancel = new Button(shell, SWT.PUSH);
             btnCancel.addSelectionListener(new SelectionAdapter() {
@@ -54,7 +54,7 @@ public class InsertAuthorDialog extends Dialog {
             	}
             });
             btnCancel.setBounds(236, 37, 81, 24);
-            btnCancel.setText("Cancel");
+            btnCancel.setText("&Cancel");
             
             shell.open();
             Display display = parent.getDisplay();
