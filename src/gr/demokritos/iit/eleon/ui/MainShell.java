@@ -303,8 +303,6 @@ public class MainShell extends Shell {
 		list.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent selectionEvent) {
-				tree.dispose();
-				createTree();
 				boolean has_vocabulary = false;
 				if (list.getSelection()[0].toString().equals(Constants.perProperty)) {
 					ontModel = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM);
@@ -324,6 +322,8 @@ public class MainShell extends Shell {
 						}
 					}
 					if (has_vocabulary) {
+						tree.dispose();
+						createTree();
 						fillPerPropertyTree(ontModel.listAllOntProperties().toList());
 					} else {
 						MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
