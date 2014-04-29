@@ -63,7 +63,7 @@ public class MainShell extends Shell {
 	private Text textTitle;
 	private OntModel ontModel;
 	private String filename = null;
-	private MenuItem mntmNew;
+	//private MenuItem mntmNew;
 
 	/**
 	 * Launch the application.
@@ -197,7 +197,7 @@ public class MainShell extends Shell {
 		final Menu vocabulariesMenu = new Menu(mntmVocabularies);
 		mntmVocabularies.setMenu(vocabulariesMenu);
 		
-		mntmNew = new MenuItem(vocabulariesMenu, SWT.PUSH);
+		MenuItem mntmNew = new MenuItem(vocabulariesMenu, SWT.PUSH);
 		mntmNew.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -235,6 +235,38 @@ public class MainShell extends Shell {
 		
 		MenuItem mntmTf = new MenuItem(vocabulariesMenu, SWT.CHECK);
 		mntmTf.setText("t4f.owl");
+		
+		MenuItem mntmAuthor = new MenuItem(menu, SWT.CASCADE);
+		mntmAuthor.setText("A&uthor");
+		
+		final Menu AuthorMenu = new Menu(mntmAuthor);
+		mntmAuthor.setMenu(AuthorMenu);
+		//here
+		MenuItem mntmNewAuthor = new MenuItem(AuthorMenu, SWT.PUSH);
+		mntmNewAuthor.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				InsertAuthorDialog dialog = new InsertAuthorDialog(shell);
+				String authorName = dialog.open();
+				if (authorName != null && ( ! authorName.equals("") )) {
+					boolean not_found = true;
+					for (MenuItem item : AuthorMenu.getItems()) {
+						if (item.getText().equals(authorName)) {
+							MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
+			                box.setText("Author Exists");
+			                box.setMessage("Author " + authorName + " already exists");
+			                box.open();
+			                break;
+						}
+					}
+					if (not_found) {
+						MenuItem mntmInsertedAuthor = new MenuItem(AuthorMenu, SWT.RADIO);
+						mntmInsertedAuthor.setText(authorName);
+					}
+				}
+			}
+		});
+		mntmNewAuthor.setText("New...");
 		
 		MenuItem mntmAbout = new MenuItem(menu, SWT.PUSH);
 		mntmAbout.addSelectionListener(new SelectionAdapter() {
