@@ -303,8 +303,15 @@ public class MainShell extends Shell {
 		list.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent selectionEvent) {
-				boolean has_vocabulary = false;
+				if ( ! hasSelectedAuthor(AuthorMenu)) {
+					MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
+	                box.setText("Choose author");
+	                box.setMessage("Choose an author from the \"Author\" menu first.");
+	                box.open();
+	                return;
+				}		
 				if (list.getSelection()[0].toString().equals(Constants.perProperty)) {
+					boolean has_vocabulary = false;
 					ontModel = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM);
 					for (MenuItem menuItem : vocabulariesMenu.getItems()) {
 						if (menuItem.getSelection()) {//get all checked items
@@ -706,6 +713,15 @@ public class MainShell extends Shell {
 		MenuItem mntmNewVoc = new MenuItem(vocabulariesMenu, SWT.CHECK);
 		mntmNewVoc.setText(file.getName());
 		mntmNewVoc.setData(filename);
+	}
+	
+	protected boolean hasSelectedAuthor(Menu AuthorMenu) {
+		for (MenuItem item : AuthorMenu.getItems()) {
+			if (item.getSelection()) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	/*protected void clearListTreeTavle() {
