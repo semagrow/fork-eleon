@@ -26,6 +26,7 @@ public class InsertAuthorDialog extends Dialog {
             shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
             shell.setSize(444, 99);
             shell.setText(getText());
+            shell.setActive();
             
             Label lblInsertAuthor = new Label(shell, SWT.NONE);
             lblInsertAuthor.setBounds(10, 10, 84, 15);
