@@ -254,7 +254,7 @@ public class MainShell extends Shell {
 						if (item.getText().equals(authorName)) {
 							MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
 			                box.setText("Author Exists");
-			                box.setMessage("Author " + authorName + " already exists");
+			                box.setMessage("Author \"" + authorName + "\" already exists");
 			                box.open();
 			                break;
 						}
