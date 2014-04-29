@@ -415,7 +415,19 @@ public class MainShell extends Shell {
 				} else {
 					size = (String) propAndVal.getVoid_size().toString();
 				}
-				createTableContents(size);
+				String subjects;
+				if ( ! propAndVal.hasVoid_distinctSubjects()) {
+					subjects = null;
+				} else {
+					subjects = (String) propAndVal.getVoid_distinctSubjects().toString();
+				}
+				String objects;
+				if ( ! propAndVal.hasVoid_distinctObjects()) {
+					objects = null;
+				} else {
+					objects = (String) propAndVal.getVoid_distinctObjects().toString();
+				}
+				createTableContents(size, subjects, objects);
 			}
 		});
 		tree.setBounds(318, 84, 369, 578);
@@ -436,13 +448,19 @@ public class MainShell extends Shell {
 		tblclmnValue.setText("Value");
 	}
 	
-	protected void createTableContents(String size) {
+	protected void createTableContents(String size, String subjects, String objects) {
 		
 		table.dispose();
 		createTable();
 		
-		TableItem item = new TableItem (table, SWT.NONE);
-		item.setText(new String [] {"void:size", size});
+		TableItem item_size = new TableItem (table, SWT.NONE);
+		item_size.setText(new String [] {"void:size", size});
+		
+		TableItem item_Subjects = new TableItem (table, SWT.NONE);
+		item_Subjects.setText(new String [] {"void:distinctSubjects", subjects});
+		
+		TableItem item_Objects = new TableItem (table, SWT.NONE);
+		item_Objects.setText(new String [] {"void:distinctObjects", objects});
 		
 		final TableEditor editor = new TableEditor (table);
 		editor.horizontalAlignment = SWT.LEFT;
@@ -458,6 +476,9 @@ public class MainShell extends Shell {
 				// Identify the selected row
 				TableItem item = (TableItem)e.item;
 				if (item == null) return;
+				
+				//Get Property name
+				final String property = item.getText(0);
 		
 				// The control that will be the editor must be a child of the Table
 				Text newEditor = new Text(table, SWT.NONE);
@@ -468,15 +489,21 @@ public class MainShell extends Shell {
 						Text text = (Text)editor.getEditor();
 						editor.getItem().setText(1, text.getText());
 						try {
-							Integer void_size = new Integer(text.getText());
-							((PropertyAndValues) tree.getSelection()[0].getData()).setVoid_size(void_size);
+							Integer value = new Integer(text.getText());
+							if (property.equals("void:size")) {
+								((PropertyAndValues) tree.getSelection()[0].getData()).setVoid_size(value);
+							} else if (property.equals("void:distinctSubjects")) {
+								((PropertyAndValues) tree.getSelection()[0].getData()).setVoid_distinctSubjects(value);
+							} else if (property.equals("void:distinctObjects")) {
+								((PropertyAndValues) tree.getSelection()[0].getData()).setVoid_distinctObjects(value);
+							}
+							
 						} catch (NumberFormatException e) {
 							MessageBox box = new MessageBox(getShell(), SWT.ERROR);
 			                box.setText("Error");
 			                box.setMessage("Input must be integer!");
 			                box.open();
 						}
-						
 					}
 				});
 				newEditor.selectAll();
