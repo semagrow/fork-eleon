@@ -13,16 +13,9 @@ public class PropertyAndValues {
 	
 	private OntProperty ontProperty = null;
 	private Integer void_size = null;
-	
-	/**
-	 * @param ontProperty
-	 * @param void_size
-	 */
-	public PropertyAndValues(OntProperty ontProperty, Integer void_size) {
-		super();
-		this.ontProperty = ontProperty;
-		this.void_size = void_size;
-	}
+	private Integer void_distinctSubjects = null;
+	private Integer void_distinctObjects = null;
+	private String dc_creator = null;
 	
 	/**
 	 * @param ontProperty
@@ -68,6 +61,50 @@ public class PropertyAndValues {
 	}
 	
 	/**
+	 * @return the void_distinctSubjects
+	 */
+	public Integer getVoid_distinctSubjects() {
+		return void_distinctSubjects;
+	}
+
+	/**
+	 * @param void_distinctSubjects the void_distinctSubjects to set
+	 */
+	public void setVoid_distinctSubjects(Integer void_distinctSubjects) {
+		this.void_distinctSubjects = void_distinctSubjects;
+	}
+
+	/**
+	 * @return the void_distinctObjects
+	 */
+	public Integer getVoid_distinctObjects() {
+		return void_distinctObjects;
+	}
+
+	/**
+	 * @param void_distinctObjects the void_distinctObjects to set
+	 */
+	public void setVoid_distinctObjects(Integer void_distinctObjects) {
+		this.void_distinctObjects = void_distinctObjects;
+	}
+	
+	
+
+	/**
+	 * @return the dc_creator
+	 */
+	public String getDc_creator() {
+		return dc_creator;
+	}
+
+	/**
+	 * @param dc_creator the dc_creator to set
+	 */
+	public void setDc_creator(String dc_creator) {
+		this.dc_creator = dc_creator;
+	}
+
+	/**
 	 * @return true if void_size has been set, false if not
 	 */
 	public boolean hasVoid_size() {
@@ -78,5 +115,37 @@ public class PropertyAndValues {
 		}
 	}
 	
+	/**
+	 * @return true if void_distinctSubjects has been set, false if not
+	 */
+	public boolean hasVoid_distinctSubjects() {
+		if (void_distinctSubjects != null) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * @return true if void_distinctObjects has been set, false if not
+	 */
+	public boolean hasVoid_distinctObjects() {
+		if (void_distinctObjects != null) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * @return true if dc_creator has been set, false if not
+	 */
+	public boolean hasDc_creator() {
+		if (dc_creator != null) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 }
