@@ -312,8 +312,8 @@ public class MainShell extends Shell {
 			public void widgetSelected(SelectionEvent selectionEvent) {
 				if ( ! hasSelectedAuthor(AuthorMenu)) {
 					MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
-	                box.setText("Choose currentAuthor");
-	                box.setMessage("Choose an currentAuthor from the \"Author\" menu first.");
+	                box.setText("Choose author");
+	                box.setMessage("Choose an author from the \"Author\" menu first.");
 	                box.open();
 	                return;
 				}		
@@ -484,10 +484,12 @@ public class MainShell extends Shell {
 		table.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if ( ! canEditItem(tree.getSelection()[0], currentAuthor)) {
+				String creator = ((PropertyAndValues) tree.getSelection()[0].getData()).getDc_creator();
+				if ( ! creator.equals(currentAuthor)) {
+				//if ( ! canEditItem(tree.getSelection()[0], currentAuthor)) {
 					MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
 	                box.setText("Value read-only");
-	                box.setMessage("You cannot edit this value because it was inserted by another currentAuthor.");
+	                box.setMessage("You cannot edit this value because it was inserted by author \"" + creator + "\".");
 	                box.open();
 	                return;
 				}
