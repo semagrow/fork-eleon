@@ -461,7 +461,7 @@ public class MainShell extends Shell {
 		createTable();
 		
 		TableItem item_size = new TableItem (table, SWT.NONE);
-		item_size.setText(new String [] {"void:size", size});
+		item_size.setText(new String [] {"void:triples", size});
 		
 		TableItem item_Subjects = new TableItem (table, SWT.NONE);
 		item_Subjects.setText(new String [] {"void:distinctSubjects", subjects});
@@ -497,7 +497,7 @@ public class MainShell extends Shell {
 						editor.getItem().setText(1, text.getText());
 						try {
 							Integer value = new Integer(text.getText());
-							if (property.equals("void:size")) {
+							if (property.equals("void:triples")) {
 								((PropertyAndValues) tree.getSelection()[0].getData()).setVoid_size(value);
 							} else if (property.equals("void:distinctSubjects")) {
 								((PropertyAndValues) tree.getSelection()[0].getData()).setVoid_distinctSubjects(value);
