@@ -64,6 +64,8 @@ public class MainShell extends Shell {
 	private OntModel ontModel;
 	private String filename = null;
 	private String currentAuthor;
+	protected Tree treePerEntity;
+	protected Tree treePerProperty;
 	//private MenuItem mntmNew;
 
 	/**
@@ -336,15 +338,32 @@ public class MainShell extends Shell {
 						}
 					}
 					if (has_vocabulary) {
-						tree.dispose();
-						createTree();
-						fillPerPropertyTree(ontModel.listAllOntProperties().toList(), currentAuthor);
+						//tree.dispose();
+						if (tree == null) {
+							createTree();
+							fillPerPropertyTree(ontModel.listAllOntProperties().toList(), currentAuthor);
+						}
+						tree.moveAbove(null);
 					} else {
 						MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
 		                box.setText("Info");
 		                box.setMessage("Choose a vocabulary from the \"Vocabularies\" menu first.");
 		                box.open();
 					}
+				} else if (list.getSelection()[0].toString().equals("per entity")) {
+					if (treePerEntity == null) {
+						treePerEntity = new Tree(shell, SWT.BORDER);
+						treePerEntity.setBounds(318, 84, 369, 578);
+						TreeItem root = new TreeItem(treePerEntity, SWT.NONE);
+						root.setText("root");
+					}
+					treePerEntity.moveAbove(null);
+					//tree.dispose();//TODO:remove
+					//tree.
+					/*createPerEntityTree();
+					TreeItem root = new TreeItem(treePerEntity, SWT.NONE);
+					root.setText("root");
+					treePerEntity.moveAbove(null);*/
 				}
 			}
 		});
@@ -352,7 +371,7 @@ public class MainShell extends Shell {
 		String[] listItems = {Constants.perProperty, "per entity"};
 		list.setItems(listItems);
 		
-		createTree();
+		//createTree();
 		
 		createTable();
 				
@@ -447,6 +466,37 @@ public class MainShell extends Shell {
 		});
 		tree.setBounds(318, 84, 369, 578);
 	}
+	
+	/*protected void createPerEntityTree() {
+		treePerEntity = new Tree(this, SWT.BORDER);
+		treePerEntity.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				if (treePerEntity.getSelection()[0].getText().equals("root")) return;
+				PropertyAndValues propAndVal = (PropertyAndValues) treePerEntity.getSelection()[0].getData();
+				String size;
+				if ( ! propAndVal.hasVoid_size()) {
+					size = null;
+				} else {
+					size = (String) propAndVal.getVoid_size().toString();
+				}
+				String subjects;
+				if ( ! propAndVal.hasVoid_distinctSubjects()) {
+					subjects = null;
+				} else {
+					subjects = (String) propAndVal.getVoid_distinctSubjects().toString();
+				}
+				String objects;
+				if ( ! propAndVal.hasVoid_distinctObjects()) {
+					objects = null;
+				} else {
+					objects = (String) propAndVal.getVoid_distinctObjects().toString();
+				}
+				createTableContents(size, subjects, objects);
+			}
+		});
+		treePerEntity.setBounds(318, 84, 369, 578);
+	}*/
 	
 	protected void createTable() {
 		table = new Table(this, SWT.BORDER | SWT.FULL_SELECTION);
