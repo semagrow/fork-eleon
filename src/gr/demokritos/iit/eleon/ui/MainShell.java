@@ -349,7 +349,7 @@ public class MainShell extends Shell {
 			}
 		});
 		list.setBounds(10, 84, 302, 578);
-		String[] listItems = {Constants.perProperty};
+		String[] listItems = {Constants.perProperty, "per entity"};
 		list.setItems(listItems);
 		
 		createTree();
@@ -768,14 +768,14 @@ public class MainShell extends Shell {
 		return false;
 	}
 	
-	protected boolean canEditItem(TreeItem treeItem, String author) {
+	/*protected boolean canEditItem(TreeItem treeItem, String author) {
 		String creator = ((PropertyAndValues) treeItem.getData()).getDc_creator();
 		if (creator.equals(author)) {
 			return true;
 		} else {
 			return false;
 		}
-	}
+	}*/
 	
 	/*protected void clearListTreeTavle() {
 		list.dispose();
