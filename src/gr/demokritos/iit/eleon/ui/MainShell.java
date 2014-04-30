@@ -63,6 +63,7 @@ public class MainShell extends Shell {
 	private Text textTitle;
 	private OntModel ontModel;
 	private String filename = null;
+	private String author;
 	//private MenuItem mntmNew;
 
 	/**
@@ -247,7 +248,7 @@ public class MainShell extends Shell {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				InsertAuthorDialog dialog = new InsertAuthorDialog(shell);
-				String authorName = dialog.open();
+				final String authorName = dialog.open();
 				if (authorName != null && ( ! authorName.equals("") )) {
 					boolean not_found = true;
 					for (MenuItem item : AuthorMenu.getItems()) {
@@ -261,6 +262,12 @@ public class MainShell extends Shell {
 					}
 					if (not_found) {
 						MenuItem mntmInsertedAuthor = new MenuItem(AuthorMenu, SWT.RADIO);
+						mntmInsertedAuthor.addSelectionListener(new SelectionAdapter() {
+							@Override
+							public void widgetSelected(SelectionEvent e) {
+								author = authorName;
+							}
+						});
 						mntmInsertedAuthor.setText(authorName);
 					}
 				}
@@ -331,7 +338,7 @@ public class MainShell extends Shell {
 					if (has_vocabulary) {
 						tree.dispose();
 						createTree();
-						fillPerPropertyTree(ontModel.listAllOntProperties().toList());
+						fillPerPropertyTree(ontModel.listAllOntProperties().toList(), author);
 					} else {
 						MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
 		                box.setText("Info");
@@ -362,7 +369,7 @@ public class MainShell extends Shell {
 		createContents();
 	}
 	
-	protected void fillPerPropertyTree(java.util.List<OntProperty> propertiesList) {
+	protected void fillPerPropertyTree(java.util.List<OntProperty> propertiesList, String author) {
 		TreeItem root = new TreeItem(tree, SWT.NONE);
 		root.setText("root");
 		ArrayList<OntProperty> notInsertedPropertiesList = new ArrayList<OntProperty>();
@@ -372,6 +379,7 @@ public class MainShell extends Shell {
 				TreeItem treeItem = new TreeItem(root, SWT.NONE);
 				treeItem.setText(ontProperty.toString());
 				PropertyAndValues property = new PropertyAndValues(ontProperty);
+				property.setDc_creator(author);
 				treeItem.setData(property);
 			} else {	
 					boolean inserted = insertChildInTree(root, ontProperty, superProperty);
@@ -476,6 +484,14 @@ public class MainShell extends Shell {
 		table.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				if ( ! canEditItem(tree.getSelection()[0], author)) {
+					MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
+	                box.setText("Value read-only");
+	                box.setMessage("You cannot edit this value because it was inserted by another author.");
+	                box.open();
+	                return;
+				}
+				
 				// Clean up any previous editor control
 				Control oldEditor = editor.getEditor();
 				if (oldEditor != null) oldEditor.dispose();
@@ -492,7 +508,11 @@ public class MainShell extends Shell {
 				newEditor.setText(item.getText(1));
 				newEditor.addModifyListener(new ModifyListener() {
 					@Override
+					//TODO:check what happens if the user imputs a non-integer and then does not change it back. maybe a bug here...
 					public void modifyText(ModifyEvent me) {
+						//System.out.println("ksana");
+						//String oldValue = editor.getItem().getText(1);
+						//System.out.println(editor.getItem().getText(1));
 						Text text = (Text)editor.getEditor();
 						editor.getItem().setText(1, text.getText());
 						try {
@@ -527,21 +547,23 @@ public class MainShell extends Shell {
 			return;
 		}
 		
-
-			 
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			docFactory.setNamespaceAware(true);
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-	 
+			
 			// root element
 			Document doc = docBuilder.newDocument();
 			Element rootElement = doc.createElement("eleon_save");
 			doc.appendChild(rootElement);
 			
-			Element title = doc.createElement("title");
+			rootElement.setAttribute("xmlns:void", "http://rdfs.org/ns/void#");
+			rootElement.setAttribute("xmlns:dc", "http://purl.org/dc/elements/1.1/");
+			
+			Element title = doc.createElement("dc:title");
 			title.appendChild(doc.createTextNode(textTitle.getText()));
 			rootElement.appendChild(title);
 			
-			Element endpoint = doc.createElement("endpoint");
+			Element endpoint = doc.createElement("void:sparqlEndpoint");
 			endpoint.appendChild(doc.createTextNode(textEndpoint.getText()));
 			rootElement.appendChild(endpoint);
 			
@@ -599,9 +621,18 @@ public class MainShell extends Shell {
 			Element treeItemNode = doc.createElement("treeItem");
 			// System.out.println(treeItem);
 			treeItemNode.setAttribute("name", ((PropertyAndValues) treeItemCurrent.getData()).getOntProperty().toString());
+			treeItemNode.setAttribute("dc:creator", ((PropertyAndValues) treeItemCurrent.getData()).getDc_creator());
 			Integer void_size = ((PropertyAndValues) treeItemCurrent.getData()).getVoid_size();
 			if (void_size != null) {
-				treeItemNode.setAttribute("void_size", void_size.toString());
+				treeItemNode.setAttribute("void:triples", void_size.toString());
+			}
+			Integer void_distinctSubjects = ((PropertyAndValues) treeItemCurrent.getData()).getVoid_distinctSubjects();
+			if (void_distinctSubjects != null) {
+				treeItemNode.setAttribute("void:distinctSubjects", void_distinctSubjects.toString());
+			}
+			Integer void_distinctObjects = ((PropertyAndValues) treeItemCurrent.getData()).getVoid_distinctObjects();
+			if (void_distinctObjects != null) {
+				treeItemNode.setAttribute("void:distinctObjects", void_distinctObjects.toString());
 			}
 			//treeItemNode.setAttribute("parent", treeItem.getText());
 			root.appendChild(treeItemNode);
@@ -625,10 +656,10 @@ public class MainShell extends Shell {
 				throw new Exception("Tried to open a non-eleon_save document!");
 			}
 						
-			NodeList nListTitle = doc.getElementsByTagName("title");
+			NodeList nListTitle = doc.getElementsByTagName("dc:title");
 			this.textTitle.setText(nListTitle.item(0).getTextContent());
 			
-			NodeList nEnpointTitle = doc.getElementsByTagName("endpoint");
+			NodeList nEnpointTitle = doc.getElementsByTagName("void:sparqlEndpoint");
 			this.textEndpoint.setText(nEnpointTitle.item(0).getTextContent());
 			
 			tree.dispose();
@@ -667,7 +698,7 @@ public class MainShell extends Shell {
 					}
 				}
 			}
-			fillPerPropertyTree(propertiesList);
+			fillPerPropertyTree(propertiesList, "TEMP");
 			//System.out.println(propertiesList);
 			
 			ArrayList<PropertyAndValues> list = new ArrayList<PropertyAndValues>();
@@ -677,15 +708,26 @@ public class MainShell extends Shell {
 				//System.out.println("\nCurrent Element :" + nNode.getNodeName());
 				if (nNode.getNodeType() == Node.ELEMENT_NODE) {
 					Element eElement = (Element) nNode;
-					String void_size_str = eElement.getAttribute("void_size");
-					if ( ! void_size_str.equals("")) {
-						Integer void_size = new Integer(void_size_str);
-						String name = eElement.getAttribute("name");
-						list.clear();
-						searchTree(tree.getItems()[0], name, list);
-						//System.out.println(list);
-						for (PropertyAndValues propAndVal : list) {
+					String name = eElement.getAttribute("name");
+					String dc_creator = eElement.getAttribute("dc:creator");
+					list.clear();
+					searchTree(tree.getItems()[0], name, list);
+					for (PropertyAndValues propAndVal : list) {
+						propAndVal.setDc_creator(dc_creator);
+						String void_size_str = eElement.getAttribute("void:triples");
+						if ( ! void_size_str.equals("")) {
+							Integer void_size = new Integer(void_size_str);
 							propAndVal.setVoid_size(void_size);
+						}
+						String void_distinctSubjects_str = eElement.getAttribute("void:distinctSubjects");
+						if ( ! void_distinctSubjects_str.equals("")) {
+							Integer void_distinctSubjects = new Integer(void_distinctSubjects_str);
+							propAndVal.setVoid_distinctSubjects(void_distinctSubjects);
+						}
+						String void_distinctObjects_str = eElement.getAttribute("void:distinctObjects");
+						if ( ! void_distinctObjects_str.equals("")) {
+							Integer void_distinctObjects = new Integer(void_distinctObjects_str);
+							propAndVal.setVoid_distinctObjects(void_distinctObjects);
 						}
 					}
 				}
@@ -722,6 +764,15 @@ public class MainShell extends Shell {
 			}
 		}
 		return false;
+	}
+	
+	protected boolean canEditItem(TreeItem treeItem, String author) {
+		String creator = ((PropertyAndValues) treeItem.getData()).getDc_creator();
+		if (creator.equals(author)) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	/*protected void clearListTreeTavle() {
