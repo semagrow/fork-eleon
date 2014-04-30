@@ -63,7 +63,7 @@ public class MainShell extends Shell {
 	private Text textTitle;
 	private OntModel ontModel;
 	private String filename = null;
-	private String author;
+	private String currentAuthor;
 	//private MenuItem mntmNew;
 
 	/**
@@ -265,7 +265,7 @@ public class MainShell extends Shell {
 						mntmInsertedAuthor.addSelectionListener(new SelectionAdapter() {
 							@Override
 							public void widgetSelected(SelectionEvent e) {
-								author = authorName;
+								currentAuthor = authorName;
 							}
 						});
 						mntmInsertedAuthor.setText(authorName);
@@ -312,8 +312,8 @@ public class MainShell extends Shell {
 			public void widgetSelected(SelectionEvent selectionEvent) {
 				if ( ! hasSelectedAuthor(AuthorMenu)) {
 					MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
-	                box.setText("Choose author");
-	                box.setMessage("Choose an author from the \"Author\" menu first.");
+	                box.setText("Choose currentAuthor");
+	                box.setMessage("Choose an currentAuthor from the \"Author\" menu first.");
 	                box.open();
 	                return;
 				}		
@@ -338,7 +338,7 @@ public class MainShell extends Shell {
 					if (has_vocabulary) {
 						tree.dispose();
 						createTree();
-						fillPerPropertyTree(ontModel.listAllOntProperties().toList(), author);
+						fillPerPropertyTree(ontModel.listAllOntProperties().toList(), currentAuthor);
 					} else {
 						MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
 		                box.setText("Info");
@@ -484,10 +484,10 @@ public class MainShell extends Shell {
 		table.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if ( ! canEditItem(tree.getSelection()[0], author)) {
+				if ( ! canEditItem(tree.getSelection()[0], currentAuthor)) {
 					MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
 	                box.setText("Value read-only");
-	                box.setMessage("You cannot edit this value because it was inserted by another author.");
+	                box.setMessage("You cannot edit this value because it was inserted by another currentAuthor.");
 	                box.open();
 	                return;
 				}
