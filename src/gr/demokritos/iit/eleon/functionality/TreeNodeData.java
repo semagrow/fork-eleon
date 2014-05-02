@@ -3,47 +3,22 @@
  */
 package gr.demokritos.iit.eleon.functionality;
 
-import com.hp.hpl.jena.ontology.OntProperty;
-
 /**
  * @author gmouchakis
  *
  */
-public class PropertyAndValues {
+public class TreeNodeData {
 	
-	private OntProperty ontProperty = null;
 	private Integer void_size = null;
 	private Integer void_distinctSubjects = null;
 	private Integer void_distinctObjects = null;
 	private String dc_creator = null;
 	
 	/**
-	 * @param ontProperty
-	 */
-	public PropertyAndValues(OntProperty ontProperty) {
-		super();
-		this.ontProperty = ontProperty;
-	}
-
-	/**
 	 * 
 	 */
-	public PropertyAndValues() {
+	public TreeNodeData() {
 		super();
-	}
-
-	/**
-	 * @return the ontProperty
-	 */
-	public OntProperty getOntProperty() {
-		return ontProperty;
-	}
-
-	/**
-	 * @param ontProperty the ontProperty to set
-	 */
-	public void setOntProperty(OntProperty ontProperty) {
-		this.ontProperty = ontProperty;
 	}
 
 	/**

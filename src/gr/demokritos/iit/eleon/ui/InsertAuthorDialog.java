@@ -10,6 +10,10 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 
+/**
+ * @author gmouchakis
+ *
+ */
 public class InsertAuthorDialog extends Dialog {
 	String result;
     private Text text;
@@ -19,8 +23,9 @@ public class InsertAuthorDialog extends Dialog {
             super (parent, style);
     }
     public InsertAuthorDialog (Shell parent) {
-            this (parent, 0); // your default style bits go here (not the Shell's style bits)
+            this (parent, 0); //default style bits go here (not the Shell's style bits)
     }
+    
     public String open () {
             Shell parent = getParent();
             shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
