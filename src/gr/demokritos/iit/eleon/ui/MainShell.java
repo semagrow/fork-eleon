@@ -698,8 +698,8 @@ public class MainShell extends Shell {
 			rootElement.appendChild(endpoint);
 			
 			//per property tree
-			Element perPropertyTreeElement = doc.createElement("tree");
-			perPropertyTreeElement.setAttribute("facet", "per_property");
+			Element perPropertyTreeElement = doc.createElement("facet");
+			perPropertyTreeElement.setAttribute("type", "per_property");
 			rootElement.appendChild(perPropertyTreeElement);
 			
 			Element treeRootProperty = doc.createElement("treeItem");
