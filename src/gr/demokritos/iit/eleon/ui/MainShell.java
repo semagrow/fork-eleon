@@ -296,10 +296,10 @@ public class MainShell extends Shell {
 		mntmAbout.setText("&About");
 		
 		textEndpoint = new Text(this, SWT.BORDER);
-		textEndpoint.setBounds(378, 30, 709, 24);
+		textEndpoint.setBounds(388, 30, 699, 24);
 		
 		Label lblEnpoint = new Label(this, SWT.NONE);
-		lblEnpoint.setBounds(318, 30, 54, 18);
+		lblEnpoint.setBounds(318, 30, 64, 18);
 		lblEnpoint.setText("Enpdoint");
 		
 		Label lbltree = new Label(this, SWT.NONE);
