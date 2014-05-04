@@ -13,6 +13,10 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpression;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
@@ -343,7 +347,7 @@ public class MainShell extends Shell {
 						//tree.dispose();
 						if (tree == null) {
 							createTree();
-							fillPerPropertyTree(ontModel.listAllOntProperties().toList(), currentAuthor);
+							fillPerPropertyTree(ontModel.listAllOntProperties().toList(), currentAuthor, tree.getItems()[0]);
 						}
 						tree.moveAbove(null);
 					} else {
@@ -381,9 +385,9 @@ public class MainShell extends Shell {
 		createContents();
 	}
 	
-	protected void fillPerPropertyTree(java.util.List<OntProperty> propertiesList, String author) {
-		TreeItem root = new TreeItem(tree, SWT.NONE);
-		root.setText("root");
+	protected void fillPerPropertyTree(java.util.List<OntProperty> propertiesList, String author, TreeItem root) {
+		/*TreeItem root = new TreeItem(tree, SWT.NONE);
+		root.setText("root");*/
 		ArrayList<OntProperty> notInsertedPropertiesList = new ArrayList<OntProperty>();
 		for (OntProperty ontProperty : propertiesList) {
 			OntProperty superProperty = ontProperty.getSuperProperty();
@@ -394,7 +398,7 @@ public class MainShell extends Shell {
 				property.setDc_creator(author);
 				treeItem.setData(property);
 			} else {	
-					boolean inserted = insertChildInTree(root, ontProperty, superProperty);
+					boolean inserted = insertChildInTree(root, ontProperty, superProperty, author);
 					if ( ! inserted ) {
 						notInsertedPropertiesList.add(ontProperty);
 					}
@@ -404,7 +408,7 @@ public class MainShell extends Shell {
 			Collections.rotate(notInsertedPropertiesList, 1);
 			OntProperty ontProperty = notInsertedPropertiesList.get(0);
 			OntProperty superProperty = ontProperty.getSuperProperty();
-			boolean inserted = insertChildInTree(root, ontProperty, superProperty);
+			boolean inserted = insertChildInTree(root, ontProperty, superProperty, author);
 			if (inserted) {
 				notInsertedPropertiesList.remove(0);
 			}
@@ -412,24 +416,25 @@ public class MainShell extends Shell {
 	}
 	
 	
-	protected boolean insertChildInTree(TreeItem treeItem, OntProperty ontProperty, OntProperty superProperty) {
+	protected boolean insertChildInTree(TreeItem treeItem, OntProperty ontProperty, OntProperty superProperty, String author) {
 		boolean inserted = false;
 		for(TreeItem child : treeItem.getItems()) {
 			if (((PerPropertyNode) child.getData()).getOntProperty().equals(superProperty)) {
 				TreeItem newtreeItem = new TreeItem(child, SWT.NONE);
 				newtreeItem.setText(ontProperty.toString());
 				PerPropertyNode property = new PerPropertyNode(ontProperty);
+				property.setDc_creator(author);
 				newtreeItem.setData(property);
 				inserted = true;
 			}
 			if ((!inserted) && child.getItemCount()>0) {//if not leaf check the children
-				inserted = insertChildInTree(child, ontProperty, superProperty);
+				inserted = insertChildInTree(child, ontProperty, superProperty, author);
 			}
 		}
 		return inserted;
 	}
 	
-	protected void createTree() {
+	private void createTree() {
 		tree = new Tree(this, SWT.BORDER);
 		tree.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -458,9 +463,11 @@ public class MainShell extends Shell {
 			}
 		});
 		tree.setBounds(318, 84, 369, 578);
+		TreeItem root = new TreeItem(tree, SWT.NONE);
+		root.setText("root");
 	}
 	
-	protected void createTreePerEntity() {
+	private void createTreePerEntity() {
 		treePerEntity = new Tree(this, SWT.BORDER);
 		treePerEntity.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -570,7 +577,6 @@ public class MainShell extends Shell {
 
 		});
 	    remove.setText("Remove");
-		
 	}
 	
 	
@@ -638,7 +644,7 @@ public class MainShell extends Shell {
 				newEditor.setText(item.getText(1));
 				newEditor.addModifyListener(new ModifyListener() {
 					@Override
-					//TODO:check what happens if the user imputs a non-integer and then does not change it back. maybe a bug here...
+					//TODO:check what happens if the user inputs a non-integer and then does not change it back. maybe a bug here...
 					public void modifyText(ModifyEvent me) {
 						//System.out.println("ksana");
 						//String oldValue = editor.getItem().getText(1);
@@ -688,6 +694,7 @@ public class MainShell extends Shell {
 			
 			rootElement.setAttribute("xmlns:void", "http://rdfs.org/ns/void#");
 			rootElement.setAttribute("xmlns:dc", "http://purl.org/dc/elements/1.1/");
+			rootElement.setAttribute("xmlns:rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
 			
 			Element title = doc.createElement("dc:title");
 			title.appendChild(doc.createTextNode(textTitle.getText()));
@@ -702,24 +709,22 @@ public class MainShell extends Shell {
 			perPropertyTreeElement.setAttribute("type", "per_property");
 			rootElement.appendChild(perPropertyTreeElement);
 			
-			Element treeRootProperty = doc.createElement("treeItem");
+			Element treeRootProperty = doc.createElement("node");
 			treeRootProperty.setAttribute("name", "root");
 			perPropertyTreeElement.appendChild(treeRootProperty);
 			
 			createDOMFromTree(perPropertyTree.getItems()[0], treeRootProperty, doc);
-			/*
+			
 			//per element tree
-			Element perEntityTreeElement = doc.createElement("tree");
-			perEntityTreeElement.setAttribute("facet", "per_entity");
+			Element perEntityTreeElement = doc.createElement("facet");
+			perEntityTreeElement.setAttribute("type", "per_entity");
 			rootElement.appendChild(perEntityTreeElement);
 			
-			Element treeRootEntity = doc.createElement("treeItem");
+			Element treeRootEntity = doc.createElement("node");
 			treeRootEntity.setAttribute("name", "root");
 			perEntityTreeElement.appendChild(treeRootEntity);
 			
 			createDOMFromTree(perEntityTree.getItems()[0], treeRootEntity, doc);
-			
-			*/
 			
 			// write the content into xml file
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -761,22 +766,23 @@ public class MainShell extends Shell {
 	}
 	
 	
-	protected void createDOMFromTree(TreeItem treeItem, Element root, Document doc) {
+	private void createDOMFromTree(TreeItem treeItem, Element root, Document doc) {
 		for (TreeItem treeItemCurrent : treeItem.getItems()) {
-			Element treeItemNode = doc.createElement("treeItem");
+			Element treeItemNode = doc.createElement("node");
 			// System.out.println(treeItem);
 			//treeItemNode.setAttribute("name", ((TreeNodeData) treeItemCurrent.getData()).getOntProperty().toString());
 			treeItemNode.setAttribute("name", treeItemCurrent.getText());
-			treeItemNode.setAttribute("dc:creator", ((TreeNodeData) treeItemCurrent.getData()).getDc_creator());
-			Integer void_size = ((TreeNodeData) treeItemCurrent.getData()).getVoid_size();
+			TreeNodeData treeNodeData = (TreeNodeData) treeItemCurrent.getData();
+			treeItemNode.setAttribute("dc:creator", treeNodeData.getDc_creator());
+			Integer void_size = treeNodeData.getVoid_size();
 			if (void_size != null) {
 				treeItemNode.setAttribute("void:triples", void_size.toString());
 			}
-			Integer void_distinctSubjects = ((TreeNodeData) treeItemCurrent.getData()).getVoid_distinctSubjects();
+			Integer void_distinctSubjects = treeNodeData.getVoid_distinctSubjects();
 			if (void_distinctSubjects != null) {
 				treeItemNode.setAttribute("void:distinctSubjects", void_distinctSubjects.toString());
 			}
-			Integer void_distinctObjects = ((TreeNodeData) treeItemCurrent.getData()).getVoid_distinctObjects();
+			Integer void_distinctObjects = treeNodeData.getVoid_distinctObjects();
 			if (void_distinctObjects != null) {
 				treeItemNode.setAttribute("void:distinctObjects", void_distinctObjects.toString());
 			}
@@ -785,15 +791,22 @@ public class MainShell extends Shell {
 				String subjectPattern = perEntityNode.getSubjectPattern();
 				String objectPattern = perEntityNode.getObjectPattern();
 				if (subjectPattern != null) {
-					Element subjectElement = doc.createElement("subject");
+					Element subjectElement = doc.createElement("rdf:subject");
 					subjectElement.setAttribute("void:uriRegexPattern", subjectPattern);
 					treeItemNode.appendChild(subjectElement);
 				}
 				if (objectPattern != null) {
-					Element objectElement = doc.createElement("object");
+					Element objectElement = doc.createElement("rdf:object");
 					objectElement.setAttribute("void:uriRegexPattern", objectPattern);
 					treeItemNode.appendChild(objectElement);
 				}
+			} else if (treeItemCurrent.getData() instanceof PerPropertyNode) {
+				PerPropertyNode perPropertyNode = (PerPropertyNode) treeItemCurrent.getData();
+				OntProperty ontProperty = perPropertyNode.getOntProperty();
+				Element ontPropertyElement = doc.createElement("rdf:Property");
+				ontPropertyElement.setAttribute("rdf:about", ontProperty.toString());
+				treeItemNode.appendChild(ontPropertyElement);
+				//TODO: do we need more details here?
 			}
 			//treeItemNode.setAttribute("parent", treeItem.getText());
 			root.appendChild(treeItemNode);
@@ -828,87 +841,51 @@ public class MainShell extends Shell {
 			createTree();
 			createTable();
 			*/
-			ArrayList<OntProperty> propertiesList = new ArrayList<OntProperty>();
 			
-			OntModel ontModel = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM);
-			NodeList nList = doc.getElementsByTagName("treeItem");
-			for (int temp = 0; temp < nList.getLength(); temp++) {
-				Node nNode = nList.item(temp);
-				//System.out.println("\nCurrent Element :" + nNode.getNodeName());
-				if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-					Element eElement = (Element) nNode;
-					String name = eElement.getAttribute("name");
-					if ( ! name.equals("root")) {
-						OntProperty ontProperty = ontModel.createOntProperty(name);
-						String parent = ((Element)eElement.getParentNode()).getAttribute("name");
-						if ( ! parent.equals("root")) {
-							boolean found_in_list = false;
-							for (OntProperty list_item : propertiesList) {
-								if (list_item.getURI().equals(parent)) {
-									ontProperty.setSuperProperty(list_item);
-									found_in_list = true;
-								}
-							}
-							if ( ! found_in_list) {
-								OntProperty ontParent = ontModel.createOntProperty(parent);
-								ontProperty.setSuperProperty(ontParent);
-								propertiesList.add(ontParent);
-							}
-						}
-						propertiesList.add(ontProperty);
-					}
-				}
+			XPathFactory xPathfactory = XPathFactory.newInstance();
+			XPath xpath = xPathfactory.newXPath();
+			
+			//create the per property tree
+			createTree();
+			XPathExpression expr = xpath.compile("//facet[@type=\"per_property\"]");
+			NodeList nodeList = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+			Element eElement = (Element) nodeList.item(0);
+			Element root = (Element) eElement.getFirstChild();
+			NodeList childrenList = root.getChildNodes();
+			for (int i = 0; i < childrenList.getLength(); i++) {
+				createTreeFromDOM(childrenList.item(i), tree, "per_property", tree.getItems()[0]);
 			}
-			fillPerPropertyTree(propertiesList, "TEMP");
-			//System.out.println(propertiesList);
+			tree.moveAbove(null);
 			
-			ArrayList<PerPropertyNode> list = new ArrayList<PerPropertyNode>();
-			//the tree is created. insert void_size
-			for (int temp = 0; temp < nList.getLength(); temp++) {
-				Node nNode = nList.item(temp);
-				//System.out.println("\nCurrent Element :" + nNode.getNodeName());
-				if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-					Element eElement = (Element) nNode;
-					String name = eElement.getAttribute("name");
-					String dc_creator = eElement.getAttribute("dc:creator");
-					list.clear();
-					searchTree(tree.getItems()[0], name, list);
-					for (TreeNodeData propAndVal : list) {
-						propAndVal.setDc_creator(dc_creator);
-						String void_size_str = eElement.getAttribute("void:triples");
-						if ( ! void_size_str.equals("")) {
-							Integer void_size = new Integer(void_size_str);
-							propAndVal.setVoid_size(void_size);
-						}
-						String void_distinctSubjects_str = eElement.getAttribute("void:distinctSubjects");
-						if ( ! void_distinctSubjects_str.equals("")) {
-							Integer void_distinctSubjects = new Integer(void_distinctSubjects_str);
-							propAndVal.setVoid_distinctSubjects(void_distinctSubjects);
-						}
-						String void_distinctObjects_str = eElement.getAttribute("void:distinctObjects");
-						if ( ! void_distinctObjects_str.equals("")) {
-							Integer void_distinctObjects = new Integer(void_distinctObjects_str);
-							propAndVal.setVoid_distinctObjects(void_distinctObjects);
-						}
-					}
-				}
+			//create the per entity tree
+			createTreePerEntity();
+			expr = xpath.compile("//facet[@type=\"per_entity\"]");
+			nodeList = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+			eElement = (Element) nodeList.item(0);
+			root = (Element) eElement.getFirstChild();
+			childrenList = root.getChildNodes();
+			for (int i = 0; i < childrenList.getLength(); i++) {
+				createTreeFromDOM(childrenList.item(i), treePerEntity, "per_property", treePerEntity.getItems()[0]);
 			}
-			
+			treePerEntity.moveAbove(null);
+
 	}
 	
 	
-	protected void searchTree(TreeItem treeItem, String propertyName, java.util.List<PerPropertyNode> list){
+	private TreeNodeData getDataFromExistingTreeItem(TreeItem treeItem, String name, String dc_creator) {
 		for (TreeItem treeItemCurrent : treeItem.getItems()) {
-			if ( ((PerPropertyNode) treeItemCurrent.getData()).getOntProperty().getURI().equals(propertyName)) {
-				list.add((PerPropertyNode) treeItemCurrent.getData());
+			TreeNodeData treeNodeData = (TreeNodeData) treeItemCurrent.getData();
+			if (treeNodeData.getDc_creator().equals(dc_creator) && treeItemCurrent.getText().equals(name)) {
+				return (TreeNodeData) treeItemCurrent.getData();
 			}
 			if (treeItemCurrent.getItemCount() > 0) {
-				searchTree(treeItemCurrent, propertyName, list);
+				getDataFromExistingTreeItem(treeItemCurrent, name, dc_creator);
 			}
 		}
+		return null;
 	}
 	
-	protected void addVocabularyToMenu(String filename, Menu vocabulariesMenu) {
+	private void addVocabularyToMenu(String filename, Menu vocabulariesMenu) {
 		if (filename == null) {
 			return;
 		}
@@ -918,7 +895,8 @@ public class MainShell extends Shell {
 		mntmNewVoc.setData(filename);
 	}
 	
-	protected boolean hasSelectedAuthor(Menu AuthorMenu) {
+	
+	private boolean hasSelectedAuthor(Menu AuthorMenu) {
 		for (MenuItem item : AuthorMenu.getItems()) {
 			if (item.getSelection()) {
 				return true;
@@ -927,7 +905,8 @@ public class MainShell extends Shell {
 		return false;
 	}
 	
-	protected boolean deleteNode(TreeItem treeItem, String nodeNameToDelete) {
+	
+	private boolean deleteNode(TreeItem treeItem, String nodeNameToDelete) {
 		/*int index = 0;
 		TreeItem[] items = treeItem.getItems();
 		for (int i=0; i<items.length; i++) {
@@ -954,7 +933,97 @@ public class MainShell extends Shell {
 		}
 		return false;
 	}
+	
+	
+	private void createTreeFromDOM(Node node, Tree tree, String facetType, TreeItem parentTreeItem) {
+		if (node.getNodeType() == Node.ELEMENT_NODE) {
+			TreeItem rootItem =tree.getItems()[0];
+			
+			Element eElement = (Element) node;
+			String name = eElement.getAttribute("name");
+			String dc_creator = eElement.getAttribute("dc:creator");
+			
+			TreeNodeData nodeData = getDataFromExistingTreeItem(rootItem, name, dc_creator);
+			
+			TreeItem treeItem = new TreeItem(parentTreeItem, SWT.NONE);
+			treeItem.setText(name);
+			
+			if (nodeData == null) {
+				Integer void_triples = null;
+				String void_size_str = eElement.getAttribute("void:triples");
+				if ( ! void_size_str.equals("")) {
+					void_triples = new Integer(void_size_str);
+				}			
+				Integer void_distinctSubjects = null;
+				String void_distinctSubjects_str = eElement.getAttribute("void:distinctSubjects");
+				if ( ! void_distinctSubjects_str.equals("")) {
+					void_distinctSubjects = new Integer(void_distinctSubjects_str);
+				}		
+				Integer void_distinctObjects = null;
+				String void_distinctObjects_str = eElement.getAttribute("void:distinctObjects");
+				if ( ! void_distinctObjects_str.equals("")) {
+					void_distinctObjects = new Integer(void_distinctObjects_str);
+				}
+				
+				//create data to insert
+				if (facetType.equals("per_property")) {
+					PerPropertyNode data = new PerPropertyNode(void_triples, void_distinctSubjects, void_distinctObjects, dc_creator);
+					OntModel ontModel = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM);
+					NodeList nodeList = node.getChildNodes();
+					for (int i = 0; i < nodeList.getLength(); i++) {
+						Node currentNode = nodeList.item(i);
+						if (currentNode.getNodeType() == Node.ELEMENT_NODE) {
+							if (currentNode.getNodeName().equals("rdf:Property")) {
+								Element element = (Element) currentNode;
+								String rdf_about = element.getAttribute("rdf:about");
+								OntProperty ontProperty = ontModel.createOntProperty(rdf_about);
+								data.setOntProperty(ontProperty);
+							}
+						}
+					}
+					treeItem.setData(data);
+				} else if (facetType.equals("per_entity")) {
+					PerEntityNode data = new PerEntityNode(void_triples, void_distinctSubjects, void_distinctObjects, dc_creator);
+					NodeList nodeList = node.getChildNodes();
+					for (int i = 0; i < nodeList.getLength(); i++) {
+						Node currentNode = nodeList.item(i);
+						if (currentNode.getNodeType() == Node.ELEMENT_NODE) {
+							if (currentNode.getNodeName().equals("rdf:subject")) {
+								Element element = (Element) currentNode;
+								String subjectPattern = null;
+								String uriRegexPattern = element.getAttribute("void:uriRegexPattern");
+								if (uriRegexPattern.equals("")) {
+									subjectPattern = null;
+								}
+								data.setSubjectPattern(subjectPattern);
+							} else if  (currentNode.getNodeName().equals("rdf:object")) {
+								Element element = (Element) currentNode;
+								String objectPattern = null;
+								String uriRegexPattern = element.getAttribute("void:uriRegexPattern");
+								if (uriRegexPattern.equals("")) {
+									objectPattern = null;
+								}
+								data.setSubjectPattern(objectPattern);
+							}
+						}
+					}
+					treeItem.setData(data);
+				}
+			} else {
+				treeItem.setData(nodeData);
+			}
+			NodeList nodeList = node.getChildNodes();
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				Node currentNode = nodeList.item(i);
+				if (currentNode.getNodeType() == Node.ELEMENT_NODE && currentNode.getNodeName().equals("node")) {
+					createTreeFromDOM(currentNode, tree, facetType, treeItem);
+				}
+			}
+		}
+	}
 
+	
+	
 	/*protected boolean canEditItem(TreeItem treeItem, String author) {
 		String creator = ((TreeNodeData) treeItem.getData()).getDc_creator();
 		if (creator.equals(author)) {
