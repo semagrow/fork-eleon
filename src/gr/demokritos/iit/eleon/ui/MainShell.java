@@ -346,7 +346,7 @@ public class MainShell extends Shell {
 					if (has_vocabulary) {
 						//tree.dispose();
 						if (tree == null) {
-							createTree();
+							createPerPropertyTree();
 							fillPerPropertyTree(ontModel.listAllOntProperties().toList(), currentAuthor, tree.getItems()[0]);
 						}
 						tree.moveAbove(null);
@@ -358,7 +358,7 @@ public class MainShell extends Shell {
 					}
 				} else if (list.getSelection()[0].toString().equals("per entity")) {
 					if (treePerEntity == null) {
-						createTreePerEntity();
+						createPerEntityTree();
 					}
 					treePerEntity.moveAbove(null);
 				}
@@ -434,7 +434,7 @@ public class MainShell extends Shell {
 		return inserted;
 	}
 	
-	private void createTree() {
+	private void createPerPropertyTree() {
 		tree = new Tree(this, SWT.BORDER);
 		tree.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -445,7 +445,7 @@ public class MainShell extends Shell {
 				if ( ! propAndVal.hasVoid_size()) {
 					size = null;
 				} else {
-					size = (String) propAndVal.getVoid_size().toString();
+					size = (String) propAndVal.getVoid_triples().toString();
 				}
 				String subjects;
 				if ( ! propAndVal.hasVoid_distinctSubjects()) {
@@ -467,7 +467,7 @@ public class MainShell extends Shell {
 		root.setText("root");
 	}
 	
-	private void createTreePerEntity() {
+	private void createPerEntityTree() {
 		treePerEntity = new Tree(this, SWT.BORDER);
 		treePerEntity.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -478,7 +478,7 @@ public class MainShell extends Shell {
 				if ( ! nodeData.hasVoid_size()) {
 					size = null;
 				} else {
-					size = (String) nodeData.getVoid_size().toString();
+					size = (String) nodeData.getVoid_triples().toString();
 				}
 				String subjects;
 				if ( ! nodeData.hasVoid_distinctSubjects()) {
@@ -528,6 +528,7 @@ public class MainShell extends Shell {
 						if (objectPattern != null) {
 							itemText += "(obj)=" + objectPattern;
 						}
+						//TODO:check if node already exists.
 						item.setText(itemText);
 					}
 					//System.out.println("Insert Into - " + selected[0].getText());
@@ -654,7 +655,7 @@ public class MainShell extends Shell {
 						try {
 							Integer value = new Integer(text.getText());
 							if (property.equals("void:triples")) {
-								((TreeNodeData) tree.getSelection()[0].getData()).setVoid_size(value);
+								((TreeNodeData) tree.getSelection()[0].getData()).setVoid_triples(value);
 							} else if (property.equals("void:distinctSubjects")) {
 								((TreeNodeData) tree.getSelection()[0].getData()).setVoid_distinctSubjects(value);
 							} else if (property.equals("void:distinctObjects")) {
@@ -676,7 +677,7 @@ public class MainShell extends Shell {
 		});
 	}
 	
-	protected void save(Tree perPropertyTree, Tree perEntityTree) throws ParserConfigurationException, TransformerException {
+	private void save(Tree perPropertyTree, Tree perEntityTree) throws ParserConfigurationException, TransformerException {
 		
 		if (filename==null) {
 			saveAs(perPropertyTree, perEntityTree);
@@ -741,7 +742,7 @@ public class MainShell extends Shell {
 	 
 	}
 	
-	protected void saveAs(Tree perPropertyTree, Tree perEntityTree) throws ParserConfigurationException, TransformerException {
+	private void saveAs(Tree perPropertyTree, Tree perEntityTree) throws ParserConfigurationException, TransformerException {
 		FileDialog dialog = new FileDialog (shell, SWT.SAVE);
 		dialog.setOverwrite(true);
 		String [] filterNames = new String [] {"XML Files", "All Files (*)"};
@@ -774,7 +775,7 @@ public class MainShell extends Shell {
 			treeItemNode.setAttribute("name", treeItemCurrent.getText());
 			TreeNodeData treeNodeData = (TreeNodeData) treeItemCurrent.getData();
 			treeItemNode.setAttribute("dc:creator", treeNodeData.getDc_creator());
-			Integer void_size = treeNodeData.getVoid_size();
+			Integer void_size = treeNodeData.getVoid_triples();
 			if (void_size != null) {
 				treeItemNode.setAttribute("void:triples", void_size.toString());
 			}
@@ -786,6 +787,7 @@ public class MainShell extends Shell {
 			if (void_distinctObjects != null) {
 				treeItemNode.setAttribute("void:distinctObjects", void_distinctObjects.toString());
 			}
+			treeItemNode.setAttribute("void:sparqlEndpoint", treeNodeData.getVoid_sparqlEnpoint());
 			if (treeItemCurrent.getData() instanceof PerEntityNode) {
 				PerEntityNode perEntityNode = (PerEntityNode) treeItemCurrent.getData();
 				String subjectPattern = perEntityNode.getSubjectPattern();
@@ -816,7 +818,7 @@ public class MainShell extends Shell {
 		}
 	}
 	
-	protected void open(String filename) throws ParserConfigurationException, SAXException, IOException, Exception{
+	private void open(String filename) throws ParserConfigurationException, SAXException, IOException, Exception{
 		
 			File fXmlFile = new File(filename);
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -846,7 +848,7 @@ public class MainShell extends Shell {
 			XPath xpath = xPathfactory.newXPath();
 			
 			//create the per property tree
-			createTree();
+			createPerPropertyTree();
 			XPathExpression expr = xpath.compile("//facet[@type=\"per_property\"]");
 			NodeList nodeList = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
 			Element eElement = (Element) nodeList.item(0);
@@ -858,7 +860,7 @@ public class MainShell extends Shell {
 			tree.moveAbove(null);
 			
 			//create the per entity tree
-			createTreePerEntity();
+			createPerEntityTree();
 			expr = xpath.compile("//facet[@type=\"per_entity\"]");
 			nodeList = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
 			eElement = (Element) nodeList.item(0);
@@ -964,10 +966,14 @@ public class MainShell extends Shell {
 				if ( ! void_distinctObjects_str.equals("")) {
 					void_distinctObjects = new Integer(void_distinctObjects_str);
 				}
+				String void_sparqlEndpoint = eElement.getAttribute("void:sparqlEndpoint");
+				if (void_sparqlEndpoint.equals("")) {
+					void_sparqlEndpoint = null;
+				}
 				
 				//create data to insert
 				if (facetType.equals("per_property")) {
-					PerPropertyNode data = new PerPropertyNode(void_triples, void_distinctSubjects, void_distinctObjects, dc_creator);
+					PerPropertyNode data = new PerPropertyNode(void_triples, void_distinctSubjects, void_distinctObjects, dc_creator, void_sparqlEndpoint);
 					OntModel ontModel = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM);
 					NodeList nodeList = node.getChildNodes();
 					for (int i = 0; i < nodeList.getLength(); i++) {
@@ -983,7 +989,7 @@ public class MainShell extends Shell {
 					}
 					treeItem.setData(data);
 				} else if (facetType.equals("per_entity")) {
-					PerEntityNode data = new PerEntityNode(void_triples, void_distinctSubjects, void_distinctObjects, dc_creator);
+					PerEntityNode data = new PerEntityNode(void_triples, void_distinctSubjects, void_distinctObjects, dc_creator, void_sparqlEndpoint);
 					NodeList nodeList = node.getChildNodes();
 					for (int i = 0; i < nodeList.getLength(); i++) {
 						Node currentNode = nodeList.item(i);

@@ -13,6 +13,7 @@ public class TreeNodeData {
 	private Integer void_distinctSubjects = null;
 	private Integer void_distinctObjects = null;
 	private String dc_creator = null;
+	private String void_sparqlEnpoint = null;
 	
 	/**
 	 * 
@@ -26,28 +27,30 @@ public class TreeNodeData {
 	 * @param void_distinctSubjects
 	 * @param void_distinctObjects
 	 * @param dc_creator
+	 * @param void_sparqlEnpoint
 	 */
 	public TreeNodeData(Integer void_triples, Integer void_distinctSubjects,
-			Integer void_distinctObjects, String dc_creator) {
+			Integer void_distinctObjects, String dc_creator, String void_sparqlEnpoint) {
 		super();
 		this.void_triples = void_triples;
 		this.void_distinctSubjects = void_distinctSubjects;
 		this.void_distinctObjects = void_distinctObjects;
 		this.dc_creator = dc_creator;
+		this.void_sparqlEnpoint = void_sparqlEnpoint;
 	}
 
 	/**
 	 * @return the void_triples
 	 */
-	public Integer getVoid_size() {
+	public Integer getVoid_triples() {
 		return void_triples;
 	}
 
 	/**
 	 * @param void_triples the void_triples to set
 	 */
-	public void setVoid_size(Integer void_size) {
-		this.void_triples = void_size;
+	public void setVoid_triples(Integer void_triples) {
+		this.void_triples = void_triples;
 	}
 	
 	/**
@@ -77,8 +80,6 @@ public class TreeNodeData {
 	public void setVoid_distinctObjects(Integer void_distinctObjects) {
 		this.void_distinctObjects = void_distinctObjects;
 	}
-	
-	
 
 	/**
 	 * @return the dc_creator
@@ -92,6 +93,22 @@ public class TreeNodeData {
 	 */
 	public void setDc_creator(String dc_creator) {
 		this.dc_creator = dc_creator;
+	}
+
+	
+	
+	/**
+	 * @return the void_sparqlEnpoint
+	 */
+	public String getVoid_sparqlEnpoint() {
+		return void_sparqlEnpoint;
+	}
+
+	/**
+	 * @param void_sparqlEnpoint the void_sparqlEnpoint to set
+	 */
+	public void setVoid_sparqlEnpoint(String void_sparqlEnpoint) {
+		this.void_sparqlEnpoint = void_sparqlEnpoint;
 	}
 
 	/**
