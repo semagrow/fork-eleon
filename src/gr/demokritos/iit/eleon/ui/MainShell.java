@@ -701,9 +701,10 @@ public class MainShell extends Shell {
 			title.appendChild(doc.createTextNode(textTitle.getText()));
 			rootElement.appendChild(title);
 			
-			Element endpoint = doc.createElement("void:sparqlEndpoint");
+			//move to node attribute
+			/*Element endpoint = doc.createElement("void:sparqlEndpoint");
 			endpoint.appendChild(doc.createTextNode(textEndpoint.getText()));
-			rootElement.appendChild(endpoint);
+			rootElement.appendChild(endpoint);*/
 			
 			//per property tree
 			Element perPropertyTreeElement = doc.createElement("facet");
