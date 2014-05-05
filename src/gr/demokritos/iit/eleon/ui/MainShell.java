@@ -653,6 +653,10 @@ public class MainShell extends Shell {
 						//System.out.println(editor.getItem().getText(1));
 						Text text = (Text)editor.getEditor();
 						editor.getItem().setText(1, text.getText());
+						if (property.equals("void:sparqlEndpoint")) {
+							((TreeNodeData) tree.getSelection()[0].getData()).setVoid_sparqlEnpoint(text.getText());
+							return;
+						}
 						try {
 							Integer value = new Integer(text.getText());
 							if (property.equals("void:triples")) {
@@ -667,9 +671,6 @@ public class MainShell extends Shell {
 			                box.setText("Error");
 			                box.setMessage("Input must be integer!");
 			                box.open();
-						}
-						if (property.equals("void:sparqlEndpoint")) {
-							((TreeNodeData) tree.getSelection()[0].getData()).setVoid_sparqlEnpoint(text.getText());
 						}
 					}
 				});
