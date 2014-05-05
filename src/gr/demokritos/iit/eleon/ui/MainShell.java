@@ -61,9 +61,9 @@ import gr.demokritos.iit.eleon.functionality.TreeNodeData;
  *
  */
 public class MainShell extends Shell {
-	protected Text textEndpoint;
+	//protected Text textEndpoint;
 	protected Table table;
-	protected Tree tree;
+	protected Tree treePerProperty;
 	protected List list;
 	static protected MainShell shell;
 	private Text textTitle;
@@ -71,7 +71,6 @@ public class MainShell extends Shell {
 	private String filename = null;
 	private String currentAuthor;
 	protected Tree treePerEntity;
-	//protected Tree treePerProperty;
 	//private MenuItem mntmNew;
 
 	/**
@@ -159,7 +158,7 @@ public class MainShell extends Shell {
         	@Override
         	public void widgetSelected(SelectionEvent arg0) {
         		try {
-					save(tree, treePerEntity);
+					save(treePerProperty, treePerEntity);
 				} catch (Exception e) {
 					e.printStackTrace();
 					e.printStackTrace();
@@ -177,7 +176,7 @@ public class MainShell extends Shell {
         	@Override
         	public void widgetSelected(SelectionEvent arg0) {
         		try {
-					saveAs(tree, treePerEntity);
+					saveAs(treePerProperty, treePerEntity);
 				} catch (Exception e) {
 					e.printStackTrace();
 					e.printStackTrace();
@@ -295,12 +294,12 @@ public class MainShell extends Shell {
 		});
 		mntmAbout.setText("&About");
 		
-		textEndpoint = new Text(this, SWT.BORDER);
-		textEndpoint.setBounds(388, 30, 699, 24);
+		/*textEndpoint = new Text(this, SWT.BORDER);
+		textEndpoint.setBounds(388, 30, 699, 24);*/
 		
-		Label lblEnpoint = new Label(this, SWT.NONE);
+		/*Label lblEnpoint = new Label(this, SWT.NONE);
 		lblEnpoint.setBounds(318, 30, 64, 18);
-		lblEnpoint.setText("Enpdoint");
+		lblEnpoint.setText("Enpdoint");*/
 		
 		Label lbltree = new Label(this, SWT.NONE);
 		lbltree.setBounds(318, 60, 283, 18);
@@ -344,12 +343,12 @@ public class MainShell extends Shell {
 						}
 					}
 					if (has_vocabulary) {
-						//tree.dispose();
-						if (tree == null) {
+						//treePerProperty.dispose();
+						if (treePerProperty == null) {
 							createPerPropertyTree();
-							fillPerPropertyTree(ontModel.listAllOntProperties().toList(), currentAuthor, tree.getItems()[0]);
+							fillPerPropertyTree(ontModel.listAllOntProperties().toList(), currentAuthor, treePerProperty.getItems()[0]);
 						}
-						tree.moveAbove(null);
+						treePerProperty.moveAbove(null);
 					} else {
 						MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
 		                box.setText("Info");
@@ -386,7 +385,7 @@ public class MainShell extends Shell {
 	}
 	
 	protected void fillPerPropertyTree(java.util.List<OntProperty> propertiesList, String author, TreeItem root) {
-		/*TreeItem root = new TreeItem(tree, SWT.NONE);
+		/*TreeItem root = new TreeItem(treePerProperty, SWT.NONE);
 		root.setText("root");*/
 		ArrayList<OntProperty> notInsertedPropertiesList = new ArrayList<OntProperty>();
 		for (OntProperty ontProperty : propertiesList) {
@@ -435,35 +434,35 @@ public class MainShell extends Shell {
 	}
 	
 	private void createPerPropertyTree() {
-		tree = new Tree(this, SWT.BORDER);
-		tree.addSelectionListener(new SelectionAdapter() {
+		treePerProperty = new Tree(this, SWT.BORDER);
+		treePerProperty.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				if (tree.getSelection()[0].getText().equals("root")) return;
-				TreeNodeData propAndVal = (TreeNodeData) tree.getSelection()[0].getData();
-				String size;
-				if ( ! propAndVal.hasVoid_size()) {
-					size = null;
+				if (treePerProperty.getSelection()[0].getText().equals("root")) return;
+				TreeNodeData treeNodeData = (TreeNodeData) treePerProperty.getSelection()[0].getData();
+				String triples;
+				if ( ! treeNodeData.hasVoid_triples()) {
+					triples = null;
 				} else {
-					size = (String) propAndVal.getVoid_triples().toString();
+					triples = (String) treeNodeData.getVoid_triples().toString();
 				}
 				String subjects;
-				if ( ! propAndVal.hasVoid_distinctSubjects()) {
+				if ( ! treeNodeData.hasVoid_distinctSubjects()) {
 					subjects = null;
 				} else {
-					subjects = (String) propAndVal.getVoid_distinctSubjects().toString();
+					subjects = (String) treeNodeData.getVoid_distinctSubjects().toString();
 				}
 				String objects;
-				if ( ! propAndVal.hasVoid_distinctObjects()) {
+				if ( ! treeNodeData.hasVoid_distinctObjects()) {
 					objects = null;
 				} else {
-					objects = (String) propAndVal.getVoid_distinctObjects().toString();
+					objects = (String) treeNodeData.getVoid_distinctObjects().toString();
 				}
-				createTableContents(size, subjects, objects, tree);
+				createTableContents(triples, subjects, objects, treeNodeData.getVoid_sparqlEnpoint(), treePerProperty);
 			}
 		});
-		tree.setBounds(318, 84, 369, 578);
-		TreeItem root = new TreeItem(tree, SWT.NONE);
+		treePerProperty.setBounds(318, 84, 369, 578);
+		TreeItem root = new TreeItem(treePerProperty, SWT.NONE);
 		root.setText("root");
 	}
 	
@@ -473,26 +472,26 @@ public class MainShell extends Shell {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				if (treePerEntity.getSelection()[0].getText().equals("root")) return;
-				TreeNodeData nodeData = (TreeNodeData) treePerEntity.getSelection()[0].getData();
-				String size;
-				if ( ! nodeData.hasVoid_size()) {
-					size = null;
+				TreeNodeData treeNodeData = (TreeNodeData) treePerEntity.getSelection()[0].getData();
+				String triples;
+				if ( ! treeNodeData.hasVoid_triples()) {
+					triples = null;
 				} else {
-					size = (String) nodeData.getVoid_triples().toString();
+					triples = (String) treeNodeData.getVoid_triples().toString();
 				}
 				String subjects;
-				if ( ! nodeData.hasVoid_distinctSubjects()) {
+				if ( ! treeNodeData.hasVoid_distinctSubjects()) {
 					subjects = null;
 				} else {
-					subjects = (String) nodeData.getVoid_distinctSubjects().toString();
+					subjects = (String) treeNodeData.getVoid_distinctSubjects().toString();
 				}
 				String objects;
-				if ( ! nodeData.hasVoid_distinctObjects()) {
+				if ( ! treeNodeData.hasVoid_distinctObjects()) {
 					objects = null;
 				} else {
-					objects = (String) nodeData.getVoid_distinctObjects().toString();
+					objects = (String) treeNodeData.getVoid_distinctObjects().toString();
 				}
-				createTableContents(size, subjects, objects, treePerEntity);
+				createTableContents(triples, subjects, objects, treeNodeData.getVoid_sparqlEnpoint(), treePerEntity);
 			}
 		});
 		treePerEntity.setBounds(318, 84, 369, 578);
@@ -596,21 +595,24 @@ public class MainShell extends Shell {
 		tblclmnValue.setText("Value");
 	}
 	
-	protected void createTableContents(String size, String subjects, String objects, final Tree tree) {
+	protected void createTableContents(String triples, String subjects, String objects, String sparqlEnpoint, final Tree tree) {
 		
 		if (table != null) {
 			table.dispose();
 		}
 		createTable();
 		
-		TableItem item_size = new TableItem (table, SWT.NONE);
-		item_size.setText(new String [] {"void:triples", size});
+		TableItem item_triples = new TableItem (table, SWT.NONE);
+		item_triples.setText(new String [] {"void:triples", triples});
 		
-		TableItem item_Subjects = new TableItem (table, SWT.NONE);
-		item_Subjects.setText(new String [] {"void:distinctSubjects", subjects});
+		TableItem item_subjects = new TableItem (table, SWT.NONE);
+		item_subjects.setText(new String [] {"void:distinctSubjects", subjects});
 		
-		TableItem item_Objects = new TableItem (table, SWT.NONE);
-		item_Objects.setText(new String [] {"void:distinctObjects", objects});
+		TableItem item_objects = new TableItem (table, SWT.NONE);
+		item_objects.setText(new String [] {"void:distinctObjects", objects});
+		
+		TableItem item_sparqlEndpoint = new TableItem (table, SWT.NONE);
+		item_sparqlEndpoint.setText(new String [] {"void:sparqlEndpoint", sparqlEnpoint});
 		
 		final TableEditor editor = new TableEditor (table);
 		editor.horizontalAlignment = SWT.LEFT;
@@ -621,7 +623,6 @@ public class MainShell extends Shell {
 			public void widgetSelected(SelectionEvent e) {
 				String creator = ((TreeNodeData) tree.getSelection()[0].getData()).getDc_creator();
 				if ( ! creator.equals(currentAuthor)) {
-				//if ( ! canEditItem(tree.getSelection()[0], currentAuthor)) {
 					MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
 	                box.setText("Value read-only");
 	                box.setMessage("You cannot edit this value because it was inserted by author \"" + creator + "\".");
@@ -661,12 +662,14 @@ public class MainShell extends Shell {
 							} else if (property.equals("void:distinctObjects")) {
 								((TreeNodeData) tree.getSelection()[0].getData()).setVoid_distinctObjects(value);
 							}
-							
 						} catch (NumberFormatException e) {
 							MessageBox box = new MessageBox(getShell(), SWT.ERROR);
 			                box.setText("Error");
 			                box.setMessage("Input must be integer!");
 			                box.open();
+						}
+						if (property.equals("void:sparqlEndpoint")) {
+							((TreeNodeData) tree.getSelection()[0].getData()).setVoid_sparqlEnpoint(text.getText());
 						}
 					}
 				});
@@ -701,12 +704,12 @@ public class MainShell extends Shell {
 			title.appendChild(doc.createTextNode(textTitle.getText()));
 			rootElement.appendChild(title);
 			
-			//move to node attribute
+			//moved to node attribute
 			/*Element endpoint = doc.createElement("void:sparqlEndpoint");
 			endpoint.appendChild(doc.createTextNode(textEndpoint.getText()));
 			rootElement.appendChild(endpoint);*/
 			
-			//per property tree
+			//per property
 			Element perPropertyTreeElement = doc.createElement("facet");
 			perPropertyTreeElement.setAttribute("type", "per_property");
 			rootElement.appendChild(perPropertyTreeElement);
@@ -717,7 +720,7 @@ public class MainShell extends Shell {
 			
 			createDOMFromTree(perPropertyTree.getItems()[0], treeRootProperty, doc);
 			
-			//per element tree
+			//per entity
 			Element perEntityTreeElement = doc.createElement("facet");
 			perEntityTreeElement.setAttribute("type", "per_entity");
 			rootElement.appendChild(perEntityTreeElement);
@@ -836,10 +839,12 @@ public class MainShell extends Shell {
 			NodeList nListTitle = doc.getElementsByTagName("dc:title");
 			this.textTitle.setText(nListTitle.item(0).getTextContent());
 			
-			NodeList nEnpointTitle = doc.getElementsByTagName("void:sparqlEndpoint");
-			this.textEndpoint.setText(nEnpointTitle.item(0).getTextContent());
+			//moved to node attribute
+			/*NodeList nEnpointTitle = doc.getElementsByTagName("void:sparqlEndpoint");
+			this.textEndpoint.setText(nEnpointTitle.item(0).getTextContent());*/
+			
 			/*
-			tree.dispose();
+			treePerProperty.dispose();
 			table.dispose();
 			createTree();
 			createTable();
@@ -856,11 +861,11 @@ public class MainShell extends Shell {
 			Element root = (Element) eElement.getFirstChild();
 			NodeList childrenList = root.getChildNodes();
 			for (int i = 0; i < childrenList.getLength(); i++) {
-				createTreeFromDOM(childrenList.item(i), tree, "per_property", tree.getItems()[0]);
+				createTreeFromDOM(childrenList.item(i), treePerProperty, "per_property", treePerProperty.getItems()[0]);
 			}
-			tree.moveAbove(null);
+			treePerProperty.moveAbove(null);
 			
-			//create the per entity tree
+			//create the per entity treePerProperty
 			createPerEntityTree();
 			expr = xpath.compile("//facet[@type=\"per_entity\"]");
 			nodeList = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
@@ -1044,9 +1049,9 @@ public class MainShell extends Shell {
 		list.dispose();
 		list = new List(this, SWT.BORDER);
 		list.setBounds(10, 79, 302, 583);
-		tree.dispose();
-		tree = new Tree(this, SWT.BORDER);
-		tree.setBounds(318, 79, 283, 583);
+		treePerProperty.dispose();
+		treePerProperty = new Tree(this, SWT.BORDER);
+		treePerProperty.setBounds(318, 79, 283, 583);
 		table.dispose();
 		table = new Table(this, SWT.BORDER | SWT.FULL_SELECTION);
 		table.setBounds(607, 79, 401, 583);

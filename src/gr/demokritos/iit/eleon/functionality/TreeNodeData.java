@@ -114,7 +114,7 @@ public class TreeNodeData {
 	/**
 	 * @return true if void_triples has been set, false if not
 	 */
-	public boolean hasVoid_size() {
+	public boolean hasVoid_triples() {
 		if (void_triples != null) {
 			return true;
 		} else {
