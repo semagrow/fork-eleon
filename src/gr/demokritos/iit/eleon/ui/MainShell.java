@@ -430,7 +430,7 @@ public class MainShell extends Shell {
 			OntProperty superProperty = ontProperty.getSuperProperty();
 			if (superProperty == null) {
 				TreeItem treeItem = new TreeItem(root, SWT.NONE);
-				treeItem.setText(ontProperty.toString());
+				treeItem.setText("?s " + ontProperty.toString() + " ?o");
 				PerPropertyNode property = new PerPropertyNode(ontProperty);
 				property.setDc_creator(author);
 				treeItem.setData(property);
