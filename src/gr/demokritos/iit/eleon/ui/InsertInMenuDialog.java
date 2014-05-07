@@ -14,31 +14,31 @@ import org.eclipse.swt.events.SelectionEvent;
  * @author gmouchakis
  *
  */
-public class InsertAuthorDialog extends Dialog {
+public class InsertInMenuDialog extends Dialog {
 	String result;
     private Text text;
     Shell shell;
             
-    public InsertAuthorDialog (Shell parent, int style) {
+    public InsertInMenuDialog (Shell parent, int style) {
             super (parent, style);
     }
-    public InsertAuthorDialog (Shell parent) {
+    public InsertInMenuDialog (Shell parent) {
             this (parent, 0); //default style bits go here (not the Shell's style bits)
     }
     
-    public String open () {
+    public String open (String label) {
             Shell parent = getParent();
             shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
-            shell.setSize(444, 99);
+            shell.setSize(444, 115);
             shell.setText(getText());
             shell.setActive();
             
-            Label lblInsertAuthor = new Label(shell, SWT.NONE);
-            lblInsertAuthor.setBounds(10, 10, 84, 15);
-            lblInsertAuthor.setText("Insert Author");
+            Label lblInsert = new Label(shell, SWT.NONE);
+            lblInsert.setBounds(10, 10, 419, 15);
+            lblInsert.setText(label);
             
             text = new Text(shell, SWT.BORDER);
-            text.setBounds(100, 10, 329, 21);
+            text.setBounds(10, 31, 419, 21);
             
             Button btnInsert = new Button(shell, SWT.PUSH);
             btnInsert.addSelectionListener(new SelectionAdapter() {
@@ -48,7 +48,7 @@ public class InsertAuthorDialog extends Dialog {
             		shell.dispose();
             	}
             });
-            btnInsert.setBounds(149, 37, 81, 24);
+            btnInsert.setBounds(135, 58, 81, 24);
             btnInsert.setText("&Insert");
             
             Button btnCancel = new Button(shell, SWT.PUSH);
@@ -59,7 +59,7 @@ public class InsertAuthorDialog extends Dialog {
             		shell.dispose();
             	}
             });
-            btnCancel.setBounds(236, 37, 81, 24);
+            btnCancel.setBounds(222, 58, 81, 24);
             btnCancel.setText("&Cancel");
             
             shell.open();

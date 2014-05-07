@@ -249,13 +249,13 @@ public class MainShell extends Shell {
 		
 		final Menu AuthorMenu = new Menu(mntmAuthor);
 		mntmAuthor.setMenu(AuthorMenu);
-		//here
+		
 		MenuItem mntmNewAuthor = new MenuItem(AuthorMenu, SWT.PUSH);
 		mntmNewAuthor.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				InsertAuthorDialog dialog = new InsertAuthorDialog(shell);
-				final String authorName = dialog.open();
+				InsertInMenuDialog dialog = new InsertInMenuDialog(shell);
+				final String authorName = dialog.open("Insert author");
 				if (authorName != null && ( ! authorName.equals("") )) {
 					boolean not_found = true;
 					for (MenuItem item : AuthorMenu.getItems()) {
@@ -282,6 +282,44 @@ public class MainShell extends Shell {
 		});
 		mntmNewAuthor.setText("New...");
 		
+		MenuItem mntmDatasource = new MenuItem(menu, SWT.CASCADE);
+		mntmDatasource.setText("&Data source");
+		/*
+		final Menu DatasourceMenu = new Menu(mntmDatasource);
+		mntmDatasource.setMenu(DatasourceMenu);
+		
+		MenuItem mntmNewDatasource = new MenuItem(DatasourceMenu, SWT.PUSH);
+		mntmNewDatasource.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				InsertInMenuDialog dialog = new InsertInMenuDialog(shell);
+				final String dataSourceLabel = dialog.open("Insert data source");
+				if (dataSourceLabel != null && ( ! dataSourceLabel.equals("") )) {
+					boolean not_found = true;
+					for (MenuItem item : DatasourceMenu.getItems()) {
+						if (item.getText().equals(dataSourceLabel)) {
+							MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
+			                box.setText("Data Source Exists");
+			                box.setMessage("Data source label \"" + dataSourceLabel + "\" already exists");
+			                box.open();
+			                break;
+						}
+					}
+					if (not_found) {
+						MenuItem mntmInsertedDatasource = new MenuItem(DatasourceMenu, SWT.RADIO);
+						mntmInsertedDatasource.addSelectionListener(new SelectionAdapter() {
+							@Override
+							public void widgetSelected(SelectionEvent e) {
+								//currentAuthor = authorName;
+							}
+						});
+						mntmInsertedDatasource.setText(dataSourceLabel);
+					}
+				}
+			}
+		});
+		mntmNewDatasource.setText("New...");
+		*/
 		MenuItem mntmAbout = new MenuItem(menu, SWT.PUSH);
 		mntmAbout.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -521,11 +559,22 @@ public class MainShell extends Shell {
 						String objectPattern = nodeData.getObjectPattern();
 						nodeData.setDc_creator(currentAuthor);
 						String itemText = "";
-						if (subjectPattern != null) {
+						/*if (subjectPattern != null) {
 							itemText += "(sbj)=" + subjectPattern + " ";
 						}
 						if (objectPattern != null) {
 							itemText += "(obj)=" + objectPattern;
+						}*/
+						if (subjectPattern == null) {
+							itemText += "?s ";
+						} else {
+							itemText += subjectPattern + " ";
+						}
+						itemText += "?p ";
+						if (objectPattern == null) {
+							itemText += "?o";
+						} else {
+							itemText += objectPattern;
 						}
 						//TODO:check if node already exists.
 						item.setText(itemText);
@@ -614,6 +663,9 @@ public class MainShell extends Shell {
 		TableItem item_sparqlEndpoint = new TableItem (table, SWT.NONE);
 		item_sparqlEndpoint.setText(new String [] {"void:sparqlEndpoint", sparqlEnpoint});
 		
+		TableItem item_vocabulary = new TableItem (table, SWT.NONE);
+		item_vocabulary.setText(new String [] {"void:vocabulary", sparqlEnpoint});
+		
 		final TableEditor editor = new TableEditor (table);
 		editor.horizontalAlignment = SWT.LEFT;
 		editor.grabHorizontal = true;
@@ -656,6 +708,9 @@ public class MainShell extends Shell {
 						if (property.equals("void:sparqlEndpoint")) {
 							((TreeNodeData) tree.getSelection()[0].getData()).setVoid_sparqlEnpoint(text.getText());
 							return;
+						} else if (property.equals("void:vocabulary")) {
+							
+							//return;
 						}
 						try {
 							Integer value = new Integer(text.getText());
