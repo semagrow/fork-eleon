@@ -282,9 +282,9 @@ public class MainShell extends Shell {
 		});
 		mntmNewAuthor.setText("New...");
 		
-		MenuItem mntmDatasource = new MenuItem(menu, SWT.CASCADE);
+		/*MenuItem mntmDatasource = new MenuItem(menu, SWT.CASCADE);
 		mntmDatasource.setText("&Data source");
-		/*
+		
 		final Menu DatasourceMenu = new Menu(mntmDatasource);
 		mntmDatasource.setMenu(DatasourceMenu);
 		
@@ -384,7 +384,7 @@ public class MainShell extends Shell {
 						//treePerProperty.dispose();
 						if (treePerProperty == null) {
 							createPerPropertyTree();
-							fillPerPropertyTree(ontModel.listAllOntProperties().toList(), currentAuthor, treePerProperty.getItems()[0]);
+							//fillPerPropertyTree(ontModel.listAllOntProperties().toList(), currentAuthor, treePerProperty.getItems()[0]);
 						}
 						treePerProperty.moveAbove(null);
 					} else {
