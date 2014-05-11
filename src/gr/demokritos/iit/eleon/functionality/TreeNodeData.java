@@ -14,6 +14,7 @@ public class TreeNodeData {
 	private Integer void_distinctObjects = null;
 	private String dc_creator = null;
 	private String void_sparqlEnpoint = null;
+	private String dc_title = null;
 	
 	/**
 	 * 
@@ -30,13 +31,14 @@ public class TreeNodeData {
 	 * @param void_sparqlEnpoint
 	 */
 	public TreeNodeData(Integer void_triples, Integer void_distinctSubjects,
-			Integer void_distinctObjects, String dc_creator, String void_sparqlEnpoint) {
+			Integer void_distinctObjects, String dc_creator, String void_sparqlEnpoint, String dc_title) {
 		super();
 		this.void_triples = void_triples;
 		this.void_distinctSubjects = void_distinctSubjects;
 		this.void_distinctObjects = void_distinctObjects;
 		this.dc_creator = dc_creator;
 		this.void_sparqlEnpoint = void_sparqlEnpoint;
+		this.dc_title = dc_title;
 	}
 
 	/**
@@ -109,6 +111,20 @@ public class TreeNodeData {
 	 */
 	public void setVoid_sparqlEnpoint(String void_sparqlEnpoint) {
 		this.void_sparqlEnpoint = void_sparqlEnpoint;
+	}
+
+	/**
+	 * @return the dc_title
+	 */
+	public String getDc_title() {
+		return dc_title;
+	}
+
+	/**
+	 * @param dc_title the dc_title to set
+	 */
+	public void setDc_title(String dc_title) {
+		this.dc_title = dc_title;
 	}
 
 	/**

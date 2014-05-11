@@ -21,21 +21,21 @@ public class PerPropertyNode extends TreeNodeData {
 		this.ontProperty = ontProperty;
 	}
 	
+	
 	/**
 	 * @param void_triples
 	 * @param void_distinctSubjects
 	 * @param void_distinctObjects
 	 * @param dc_creator
 	 * @param void_sparqlEnpoint
+	 * @param dc_title
 	 */
 	public PerPropertyNode(Integer void_triples, Integer void_distinctSubjects,
 			Integer void_distinctObjects, String dc_creator,
-			String void_sparqlEnpoint) {
+			String void_sparqlEnpoint, String dc_title) {
 		super(void_triples, void_distinctSubjects, void_distinctObjects, dc_creator,
-				void_sparqlEnpoint);
+				void_sparqlEnpoint, dc_title);
 	}
-
-
 
 	/**
 	 * @return the ontProperty

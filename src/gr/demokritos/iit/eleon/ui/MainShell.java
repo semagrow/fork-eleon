@@ -496,7 +496,7 @@ public class MainShell extends Shell {
 				} else {
 					objects = (String) treeNodeData.getVoid_distinctObjects().toString();
 				}
-				createTableContents(triples, subjects, objects, treeNodeData.getVoid_sparqlEnpoint(), treePerProperty);
+				createTableContents(triples, subjects, objects, treeNodeData.getVoid_sparqlEnpoint(), treeNodeData.getDc_title(), treePerProperty);
 			}
 		});
 		treePerProperty.setBounds(318, 84, 369, 578);
@@ -529,7 +529,7 @@ public class MainShell extends Shell {
 				} else {
 					objects = (String) treeNodeData.getVoid_distinctObjects().toString();
 				}
-				createTableContents(triples, subjects, objects, treeNodeData.getVoid_sparqlEnpoint(), treePerEntity);
+				createTableContents(triples, subjects, objects, treeNodeData.getVoid_sparqlEnpoint(), treeNodeData.getDc_title(), treePerEntity);
 			}
 		});
 		treePerEntity.setBounds(318, 84, 369, 578);
@@ -539,6 +539,24 @@ public class MainShell extends Shell {
 		//insert menu for this tree
 		final Menu treeMenu = new Menu(treePerEntity);
 		treePerEntity.setMenu(treeMenu);
+		
+		final MenuItem insertNewDatasource = new MenuItem(treeMenu, SWT.NONE);
+		insertNewDatasource.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				TreeItem[] selected = treePerEntity.getSelection();
+				if (selected.length > 0 && selected[0].getText().equals("root")) {
+					InsertInMenuDialog insert = new InsertInMenuDialog(getShell());
+					String label = insert.open("Insert data source label");
+					TreeItem newItem = new TreeItem(selected[0], SWT.NONE);
+					TreeNodeData data = new TreeNodeData();
+					data.setDc_creator(currentAuthor);
+					newItem.setData(data);
+					newItem.setText(label);
+				}
+			}
+
+		});
+		insertNewDatasource.setText("Insert Data source");
 		
 		final MenuItem insertNewChild = new MenuItem(treeMenu, SWT.NONE);
 	    insertNewChild.addSelectionListener(new SelectionAdapter() {
@@ -614,9 +632,10 @@ public class MainShell extends Shell {
 				TreeItem[] selected = treePerEntity.getSelection();
 				if (selected.length > 0) {
 					TreeItem itemToDelete = selected[0];
-					String name =  itemToDelete.getText();
-					TreeItem parent = itemToDelete.getParentItem();
-					while(deleteNode(parent, name));//We suppose that the user can select only one item to remove.
+					itemToDelete.dispose();//simple delete. to be changed later.
+					//String name =  itemToDelete.getText();
+					//TreeItem parent = itemToDelete.getParentItem();
+					//while(deleteNode(parent, name));//We suppose that the user can select only one item to remove.
 					//treePerEntity.select(parent);
 					//TODO: implement...
 				} else {
@@ -644,7 +663,7 @@ public class MainShell extends Shell {
 		tblclmnValue.setText("Value");
 	}
 	
-	protected void createTableContents(String triples, String subjects, String objects, String sparqlEnpoint, final Tree tree) {
+	protected void createTableContents(String triples, String subjects, String objects, String sparqlEnpoint, String title, final Tree tree) {
 		
 		if (table != null) {
 			table.dispose();
@@ -662,6 +681,9 @@ public class MainShell extends Shell {
 		
 		TableItem item_sparqlEndpoint = new TableItem (table, SWT.NONE);
 		item_sparqlEndpoint.setText(new String [] {"void:sparqlEndpoint", sparqlEnpoint});
+		
+		TableItem item_title = new TableItem (table, SWT.NONE);
+		item_title.setText(new String [] {"dc:title", title});
 		
 		TableItem item_vocabulary = new TableItem (table, SWT.NONE);
 		item_vocabulary.setText(new String [] {"void:vocabulary", sparqlEnpoint});
@@ -708,8 +730,11 @@ public class MainShell extends Shell {
 						if (property.equals("void:sparqlEndpoint")) {
 							((TreeNodeData) tree.getSelection()[0].getData()).setVoid_sparqlEnpoint(text.getText());
 							return;
+						} else if (property.equals("dc:title")) {
+							((TreeNodeData) tree.getSelection()[0].getData()).setDc_title(text.getText());
+							return;
 						} else if (property.equals("void:vocabulary")) {
-							
+							//TODO:implement
 							//return;
 						}
 						try {
@@ -756,9 +781,10 @@ public class MainShell extends Shell {
 			rootElement.setAttribute("xmlns:dc", "http://purl.org/dc/elements/1.1/");
 			rootElement.setAttribute("xmlns:rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
 			
-			Element title = doc.createElement("dc:title");
+			//moved to node attribute
+			/*Element title = doc.createElement("dc:title");
 			title.appendChild(doc.createTextNode(textTitle.getText()));
-			rootElement.appendChild(title);
+			rootElement.appendChild(title);*/
 			
 			//moved to node attribute
 			/*Element endpoint = doc.createElement("void:sparqlEndpoint");
@@ -848,6 +874,7 @@ public class MainShell extends Shell {
 				treeItemNode.setAttribute("void:distinctObjects", void_distinctObjects.toString());
 			}
 			treeItemNode.setAttribute("void:sparqlEndpoint", treeNodeData.getVoid_sparqlEnpoint());
+			treeItemNode.setAttribute("dc:title", treeNodeData.getDc_title());
 			if (treeItemCurrent.getData() instanceof PerEntityNode) {
 				PerEntityNode perEntityNode = (PerEntityNode) treeItemCurrent.getData();
 				String subjectPattern = perEntityNode.getSubjectPattern();
@@ -1032,10 +1059,14 @@ public class MainShell extends Shell {
 				if (void_sparqlEndpoint.equals("")) {
 					void_sparqlEndpoint = null;
 				}
+				String dc_title = eElement.getAttribute("dc:title");
+				if (dc_title.equals("")) {
+					dc_title = null;
+				}
 				
 				//create data to insert
 				if (facetType.equals("per_property")) {
-					PerPropertyNode data = new PerPropertyNode(void_triples, void_distinctSubjects, void_distinctObjects, dc_creator, void_sparqlEndpoint);
+					PerPropertyNode data = new PerPropertyNode(void_triples, void_distinctSubjects, void_distinctObjects, dc_creator, void_sparqlEndpoint, dc_title);
 					OntModel ontModel = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM);
 					NodeList nodeList = node.getChildNodes();
 					for (int i = 0; i < nodeList.getLength(); i++) {
@@ -1051,7 +1082,7 @@ public class MainShell extends Shell {
 					}
 					treeItem.setData(data);
 				} else if (facetType.equals("per_entity")) {
-					PerEntityNode data = new PerEntityNode(void_triples, void_distinctSubjects, void_distinctObjects, dc_creator, void_sparqlEndpoint);
+					PerEntityNode data = new PerEntityNode(void_triples, void_distinctSubjects, void_distinctObjects, dc_creator, void_sparqlEndpoint, dc_title);
 					NodeList nodeList = node.getChildNodes();
 					for (int i = 0; i < nodeList.getLength(); i++) {
 						Node currentNode = nodeList.item(i);
