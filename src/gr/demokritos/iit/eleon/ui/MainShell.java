@@ -61,7 +61,7 @@ import gr.demokritos.iit.eleon.functionality.TreeNodeData;
  *
  */
 public class MainShell extends Shell {
-	//protected Text textEndpoint;
+	protected Text textEndpoint;
 	protected Table table;
 	protected Tree treePerProperty;
 	protected List list;
@@ -71,6 +71,7 @@ public class MainShell extends Shell {
 	private String filename = null;
 	private String currentAuthor;
 	protected Tree treePerEntity;
+	private Menu vocabulariesMenu;
 	//private MenuItem mntmNew;
 
 	/**
@@ -202,7 +203,7 @@ public class MainShell extends Shell {
 		MenuItem mntmVocabularies = new MenuItem(menu, SWT.CASCADE);
 		mntmVocabularies.setText("&Vocabularies");
 		
-		final Menu vocabulariesMenu = new Menu(mntmVocabularies);
+		vocabulariesMenu = new Menu(mntmVocabularies);
 		mntmVocabularies.setMenu(vocabulariesMenu);
 		
 		MenuItem mntmNew = new MenuItem(vocabulariesMenu, SWT.PUSH);
@@ -238,8 +239,11 @@ public class MainShell extends Shell {
 		});
 		mntmNew.setText("New...");
 		
-		MenuItem mntmSkos = new MenuItem(vocabulariesMenu, SWT.CHECK);
-		mntmSkos.setText("skos.rdf");
+		/*MenuItem mntmSkos = new MenuItem(vocabulariesMenu, SWT.CHECK);
+		mntmSkos.setText("skos.rdf");*/
+		
+		MenuItem mntmCrop = new MenuItem(vocabulariesMenu, SWT.CHECK);
+		mntmCrop.setText("crop.owl");
 		
 		MenuItem mntmTf = new MenuItem(vocabulariesMenu, SWT.CHECK);
 		mntmTf.setText("t4f.owl");
@@ -332,12 +336,12 @@ public class MainShell extends Shell {
 		});
 		mntmAbout.setText("&About");
 		
-		/*textEndpoint = new Text(this, SWT.BORDER);
-		textEndpoint.setBounds(388, 30, 699, 24);*/
+		textEndpoint = new Text(this, SWT.BORDER);
+		textEndpoint.setBounds(388, 30, 699, 24);
 		
-		/*Label lblEnpoint = new Label(this, SWT.NONE);
+		Label lblEnpoint = new Label(this, SWT.NONE);
 		lblEnpoint.setBounds(318, 30, 64, 18);
-		lblEnpoint.setText("Enpdoint");*/
+		lblEnpoint.setText("Enpdoint");
 		
 		Label lbltree = new Label(this, SWT.NONE);
 		lbltree.setBounds(318, 60, 283, 18);
@@ -367,10 +371,15 @@ public class MainShell extends Shell {
 					ontModel = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM);
 					for (MenuItem menuItem : vocabulariesMenu.getItems()) {
 						if (menuItem.getSelection()) {//get all checked items
-							if (menuItem.getText().equals("skos.rdf")) {
+							/*if (menuItem.getText().equals("skos.rdf")) {
 								ontModel.read("file:////" + (new File("vocabularies/skos.rdf")).getAbsolutePath());
 								has_vocabulary = true;
-							} else if (menuItem.getText().equals("t4f.owl")) {
+							}*/
+							if (menuItem.getText().equals("crop.owl")) {
+								ontModel.read("file:////" + (new File("vocabularies/crop.owl")).getAbsolutePath());
+								has_vocabulary = true;
+							}
+							else if (menuItem.getText().equals("t4f.owl")) {
 								ontModel.read("file:////" + (new File("vocabularies/t4f.owl")).getAbsolutePath());
 								//ontModel.read("file:////" + (new File("vocabularies/void.rdf")).getAbsolutePath());
 								has_vocabulary = true;
@@ -476,7 +485,11 @@ public class MainShell extends Shell {
 		treePerProperty.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				if (treePerProperty.getSelection()[0].getText().equals("root")) return;
+				if (treePerProperty.getSelection()[0].getText().equals("root")) {
+					textTitle.setText("");
+					textEndpoint.setText("");
+					return;
+				}
 				TreeNodeData treeNodeData = (TreeNodeData) treePerProperty.getSelection()[0].getData();
 				String triples;
 				if ( ! treeNodeData.hasVoid_triples()) {
@@ -496,12 +509,73 @@ public class MainShell extends Shell {
 				} else {
 					objects = (String) treeNodeData.getVoid_distinctObjects().toString();
 				}
+				if (treeNodeData.getDc_title() != null) {
+					textTitle.setText(treeNodeData.getDc_title());
+				} else {
+					textTitle.setText("");
+				}
+				if (treeNodeData.getVoid_sparqlEnpoint() != null) {
+					textEndpoint.setText(treeNodeData.getVoid_sparqlEnpoint());
+				} else {
+					textEndpoint.setText("");
+				}
 				createTableContents(triples, subjects, objects, treeNodeData.getVoid_sparqlEnpoint(), treeNodeData.getDc_title(), treePerProperty);
 			}
 		});
 		treePerProperty.setBounds(318, 84, 369, 578);
+		
 		TreeItem root = new TreeItem(treePerProperty, SWT.NONE);
 		root.setText("root");
+		
+		//insert menu for this tree
+		final Menu treeMenu = new Menu(treePerProperty);
+		treePerProperty.setMenu(treeMenu);
+				
+		final MenuItem insertNewDatasource = new MenuItem(treeMenu, SWT.NONE);
+		insertNewDatasource.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				TreeItem[] selected = treePerProperty.getSelection();
+				if (selected.length > 0/* && selected[0].getText().equals("root")*/) {
+					InsertInMenuDialog insert = new InsertInMenuDialog(getShell());
+					String label = insert.open("Insert data source label");
+					if (label == null) return;
+					TreeItem newItem = new TreeItem(selected[0], SWT.NONE);
+					TreeNodeData data = new TreeNodeData();
+					data.setDc_creator(currentAuthor);
+					newItem.setData(data);
+					newItem.setText(label);
+				}
+			}
+		});
+		insertNewDatasource.setText("Insert Data source");
+
+	    final MenuItem remove = new MenuItem(treeMenu, SWT.NONE);
+	    remove.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				TreeItem[] selected = treePerProperty.getSelection();
+				if (selected.length > 0) {
+					TreeItem itemToDelete = selected[0];
+					if (itemToDelete.getText().equals("root")) {
+						MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
+		                box.setText("Info");
+		                box.setMessage("Cannot remove root node.");
+		                box.open();
+		                return;
+					}
+					itemToDelete.dispose();//simple delete. to be changed later.
+					//String name =  itemToDelete.getText();
+					//TreeItem parent = itemToDelete.getParentItem();
+					//while(deleteNode(parent, name));//We suppose that the user can select only one item to remove.
+					//treePerEntity.select(parent);
+					//TODO: implement...
+				} else {
+					System.out.println("nothing selected.");// TODO:message box...
+				}
+			}
+
+		});
+	    remove.setText("Remove");
+		
 	}
 	
 	private void createPerEntityTree() {
@@ -509,7 +583,11 @@ public class MainShell extends Shell {
 		treePerEntity.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				if (treePerEntity.getSelection()[0].getText().equals("root")) return;
+				if (treePerEntity.getSelection()[0].getText().equals("root")) {
+					textTitle.setText("");
+					textEndpoint.setText("");
+					return;
+				}
 				TreeNodeData treeNodeData = (TreeNodeData) treePerEntity.getSelection()[0].getData();
 				String triples;
 				if ( ! treeNodeData.hasVoid_triples()) {
@@ -529,10 +607,21 @@ public class MainShell extends Shell {
 				} else {
 					objects = (String) treeNodeData.getVoid_distinctObjects().toString();
 				}
+				if (treeNodeData.getDc_title() != null) {
+					textTitle.setText(treeNodeData.getDc_title());
+				} else {
+					textTitle.setText("");
+				}
+				if (treeNodeData.getVoid_sparqlEnpoint() != null) {
+					textEndpoint.setText(treeNodeData.getVoid_sparqlEnpoint());
+				} else {
+					textEndpoint.setText("");
+				}
 				createTableContents(triples, subjects, objects, treeNodeData.getVoid_sparqlEnpoint(), treeNodeData.getDc_title(), treePerEntity);
 			}
 		});
 		treePerEntity.setBounds(318, 84, 369, 578);
+		
 		TreeItem root = new TreeItem(treePerEntity, SWT.NONE);
 		root.setText("root");
 		
@@ -544,9 +633,10 @@ public class MainShell extends Shell {
 		insertNewDatasource.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				TreeItem[] selected = treePerEntity.getSelection();
-				if (selected.length > 0 && selected[0].getText().equals("root")) {
+				if (selected.length > 0/* && selected[0].getText().equals("root")*/) {
 					InsertInMenuDialog insert = new InsertInMenuDialog(getShell());
 					String label = insert.open("Insert data source label");
+					if (label == null) return;
 					TreeItem newItem = new TreeItem(selected[0], SWT.NONE);
 					TreeNodeData data = new TreeNodeData();
 					data.setDc_creator(currentAuthor);
@@ -554,7 +644,6 @@ public class MainShell extends Shell {
 					newItem.setText(label);
 				}
 			}
-
 		});
 		insertNewDatasource.setText("Insert Data source");
 		
@@ -632,6 +721,13 @@ public class MainShell extends Shell {
 				TreeItem[] selected = treePerEntity.getSelection();
 				if (selected.length > 0) {
 					TreeItem itemToDelete = selected[0];
+					if (itemToDelete.getText().equals("root")) {
+						MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
+		                box.setText("Info");
+		                box.setMessage("Cannot remove root node.");
+		                box.open();
+		                return;
+					}
 					itemToDelete.dispose();//simple delete. to be changed later.
 					//String name =  itemToDelete.getText();
 					//TreeItem parent = itemToDelete.getParentItem();
@@ -686,7 +782,7 @@ public class MainShell extends Shell {
 		item_title.setText(new String [] {"dc:title", title});
 		
 		TableItem item_vocabulary = new TableItem (table, SWT.NONE);
-		item_vocabulary.setText(new String [] {"void:vocabulary", sparqlEnpoint});
+		item_vocabulary.setText(new String [] {"void:vocabulary", ""});
 		
 		final TableEditor editor = new TableEditor (table);
 		editor.horizontalAlignment = SWT.LEFT;
@@ -714,6 +810,38 @@ public class MainShell extends Shell {
 				
 				//Get Property name
 				final String property = item.getText(0);
+				
+				 if (property.equals("void:vocabulary")) {
+					SelectVocabulariesDialog dialog = new SelectVocabulariesDialog(getShell());
+					java.util.List<String> selectedVocabularies = dialog.open(vocabulariesMenu);
+					if (selectedVocabularies.isEmpty()) {
+						return;
+					}
+					OntModel ontModel = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM);
+					for (String selectedVocabulary : selectedVocabularies) {
+						item.setText(1, item.getText(1) + selectedVocabulary + ", ");
+						for (MenuItem menuItem : vocabulariesMenu.getItems()) {
+							if (menuItem.getSelection()) {
+								if (selectedVocabulary.equals(menuItem.getText())) {
+									/*if (menuItem.getText().equals("skos.rdf")) {
+										ontModel.read("file:////" + (new File("vocabularies/skos.rdf")).getAbsolutePath());
+									}*/
+									if (menuItem.getText().equals("crop.owl")) {
+										ontModel.read("file:////" + (new File("vocabularies/crop.owl")).getAbsolutePath());
+									}
+									else if (menuItem.getText().equals("t4f.owl")) {
+										ontModel.read("file:////" + (new File("vocabularies/t4f.owl")).getAbsolutePath());
+									} else {
+										ontModel.read("file:////" + (new File((String) menuItem.getData())).getAbsolutePath());
+									}
+								}
+							}
+						}
+					}
+					item.setText(1, item.getText(1).substring(0, item.getText(1).length() - 2));
+					fillPerPropertyTree(ontModel.listAllOntProperties().toList(), currentAuthor, tree.getSelection()[0]);
+					return;
+				 }
 		
 				// The control that will be the editor must be a child of the Table
 				Text newEditor = new Text(table, SWT.NONE);
@@ -722,20 +850,18 @@ public class MainShell extends Shell {
 					@Override
 					//TODO:check what happens if the user inputs a non-integer and then does not change it back. maybe a bug here...
 					public void modifyText(ModifyEvent me) {
-						//System.out.println("ksana");
 						//String oldValue = editor.getItem().getText(1);
 						//System.out.println(editor.getItem().getText(1));
 						Text text = (Text)editor.getEditor();
 						editor.getItem().setText(1, text.getText());
 						if (property.equals("void:sparqlEndpoint")) {
 							((TreeNodeData) tree.getSelection()[0].getData()).setVoid_sparqlEnpoint(text.getText());
+							textEndpoint.setText(text.getText());
 							return;
 						} else if (property.equals("dc:title")) {
 							((TreeNodeData) tree.getSelection()[0].getData()).setDc_title(text.getText());
+							textTitle.setText(text.getText());
 							return;
-						} else if (property.equals("void:vocabulary")) {
-							//TODO:implement
-							//return;
 						}
 						try {
 							Integer value = new Integer(text.getText());
