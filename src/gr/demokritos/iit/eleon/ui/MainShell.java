@@ -67,7 +67,6 @@ public class MainShell extends Shell {
 	protected List list;
 	static protected MainShell shell;
 	private Text textTitle;
-	private OntModel ontModel;
 	private String filename = null;
 	private String currentAuthor;
 	protected Tree treePerEntity;
@@ -368,25 +367,10 @@ public class MainShell extends Shell {
 				}		
 				if (list.getSelection()[0].toString().equals(Constants.perProperty)) {
 					boolean has_vocabulary = false;
-					ontModel = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM);
 					for (MenuItem menuItem : vocabulariesMenu.getItems()) {
-						if (menuItem.getSelection()) {//get all checked items
-							/*if (menuItem.getText().equals("skos.rdf")) {
-								ontModel.read("file:////" + (new File("vocabularies/skos.rdf")).getAbsolutePath());
-								has_vocabulary = true;
-							}*/
-							if (menuItem.getText().equals("crop.owl")) {
-								ontModel.read("file:////" + (new File("vocabularies/crop.owl")).getAbsolutePath());
-								has_vocabulary = true;
-							}
-							else if (menuItem.getText().equals("t4f.owl")) {
-								ontModel.read("file:////" + (new File("vocabularies/t4f.owl")).getAbsolutePath());
-								//ontModel.read("file:////" + (new File("vocabularies/void.rdf")).getAbsolutePath());
-								has_vocabulary = true;
-							} else {
-								ontModel.read("file:////" + (new File((String) menuItem.getData())).getAbsolutePath());
-								has_vocabulary = true;
-							}
+						if (menuItem.getSelection()) {
+							has_vocabulary = true;
+							break; 
 						}
 					}
 					if (has_vocabulary) {
