@@ -671,8 +671,12 @@ public class MainShell extends Shell {
 						item.setText(itemText);
 					}
 					//System.out.println("Insert Into - " + selected[0].getText());
-				} else
-					System.out.println("nothing selected.");// TODO:message box...
+				} else {
+					MessageBox box = new MessageBox(shell, SWT.OK | SWT.ICON_INFORMATION);
+	                box.setText("Info");
+	                box.setMessage("Nothing selected.");
+	                box.open();
+				}
 			}
 
 		});
@@ -683,14 +687,20 @@ public class MainShell extends Shell {
 			public void widgetSelected(SelectionEvent e) {
 				TreeItem[] selected = treePerEntity.getSelection();
 				if (selected.length > 0) {
-					SelectExistingNodesDialog dialog = new SelectExistingNodesDialog(shell);
-					String selectedNodeName = dialog.open(treePerEntity.getItems()[0]);//start from root node.
-					if (selectedNodeName == null) {
+					/*SelectExistingNodesDialog dialog = new SelectExistingNodesDialog(shell);
+					String selectedNodeName = dialog.open(treePerEntity.getItems()[0]);//start from root node.*/
+					CopyExistingNodeDialog dialogCopy = new CopyExistingNodeDialog(shell);
+					TreeItem selectedNode = dialogCopy.open(treePerEntity);
+					if (selectedNode == null) {
 						return;
 					}
-					//TODO:implement insert existing node.
+					copyTree(selectedNode, selected[0]);
+					//TODO:implement insert existing node now org.eclipse.swt.SWTException: Widget is disposed.
 				} else {
-					System.out.println("nothing selected.");// TODO:message box...
+					MessageBox box = new MessageBox(shell, SWT.OK | SWT.ICON_INFORMATION);
+	                box.setText("Info");
+	                box.setMessage("Nothing selected.");
+	                box.open();
 				}
 			}
 
@@ -1231,7 +1241,16 @@ public class MainShell extends Shell {
 		}
 	}
 
-	
+	private void copyTree(TreeItem rootOriginal, TreeItem rootCopy) {
+		for (TreeItem childOriginal : rootOriginal.getItems()) {
+			TreeItem childCopy = new TreeItem(rootCopy, SWT.NONE);
+			childCopy.setText(childOriginal.getText());
+			childCopy.setData(childOriginal.getData());
+			if (childOriginal.getItemCount() > 0) {
+				copyTree(childOriginal, childCopy);
+			}
+		}
+	}
 	
 	/*protected boolean canEditItem(TreeItem treeItem, String author) {
 		String creator = ((TreeNodeData) treeItem.getData()).getDc_creator();
