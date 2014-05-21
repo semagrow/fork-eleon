@@ -448,6 +448,10 @@ public class MainShell extends Shell {
 				if (treePerProperty.getSelection()[0].getText().equals("root")) {
 					textTitle.setText("");
 					textEndpoint.setText("");
+					if ( table!=null && !table.isDisposed() ) {
+						table.dispose();
+						table = null;
+					}
 					return;
 				}
 				TreeNodeData treeNodeData = (TreeNodeData) treePerProperty.getSelection()[0].getData();
@@ -548,6 +552,10 @@ public class MainShell extends Shell {
 				if (treePerEntity.getSelection()[0].getText().equals("root")) {
 					textTitle.setText("");
 					textEndpoint.setText("");
+					if ( table!=null && !table.isDisposed() ) {
+						table.dispose();
+						table = null;
+					}	
 					return;
 				}
 				TreeNodeData treeNodeData = (TreeNodeData) treePerEntity.getSelection()[0].getData();
