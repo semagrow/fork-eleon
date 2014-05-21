@@ -199,54 +199,6 @@ public class MainShell extends Shell {
         });
         exitItem.setText("&Exit");
 		
-		MenuItem mntmDataSchema = new MenuItem(menu, SWT.CASCADE);
-		mntmDataSchema.setText("&Data Schema");
-		
-		dataSchemaMenu = new Menu(mntmDataSchema);
-		mntmDataSchema.setMenu(dataSchemaMenu);
-		
-		MenuItem mntmNew = new MenuItem(dataSchemaMenu, SWT.PUSH);
-		mntmNew.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				FileDialog dialog = new FileDialog (shell, SWT.OPEN);
-        		String [] filterNames = new String [] {"Ont Files", "All Files (*)"};
-        		String [] filterExtensions = new String [] {"*.rdf;*.owl;*.ttl,*.xml", "*"};
-        		//String filterPath = "/";
-        		String filterPath = System.getProperty("user.dir");
-        		String platform = SWT.getPlatform();
-        		if (platform.equals("win32") || platform.equals("wpf")) {
-        			filterNames = new String [] {"Ont Files", "All Files (*.*)"};
-        			filterExtensions = new String [] {"*.rdf;*.owl;*.ttl,*.xml", "*.*"};
-        			//filterPath = "c:\\";
-        		}
-        		dialog.setFilterNames (filterNames);
-        		dialog.setFilterExtensions (filterExtensions);
-        		dialog.setFilterPath (filterPath);
-        		//dialog.setFileName ("myfile");
-        		try {
-        			addVocabularyToMenu(dialog.open(), dataSchemaMenu);
-        			//System.out.println(dialog.open());
-				} catch (Exception ex) {
-					ex.printStackTrace();
-			    	MessageBox box = new MessageBox(getShell(), SWT.ERROR);
-	                box.setText("Error");
-	                box.setMessage(e.toString());
-	                box.open();
-				}
-			}
-		});
-		mntmNew.setText("New...");
-		
-		/*MenuItem mntmSkos = new MenuItem(dataSchemaMenu, SWT.CHECK);
-		mntmSkos.setText("skos.rdf");*/
-		
-		MenuItem mntmCrop = new MenuItem(dataSchemaMenu, SWT.CHECK);
-		mntmCrop.setText("crop.owl");
-		
-		MenuItem mntmTf = new MenuItem(dataSchemaMenu, SWT.CHECK);
-		mntmTf.setText("t4f.owl");
-		
 		MenuItem mntmAuthor = new MenuItem(menu, SWT.CASCADE);
 		mntmAuthor.setText("A&uthor");
 		
@@ -296,6 +248,56 @@ public class MainShell extends Shell {
 		MenuItem mntmVoID_Semagrow = new MenuItem(AnnotationSchemaMenu, SWT.RADIO);
 		mntmVoID_Semagrow.setText("VoID/SemaGrow extension");
 		mntmVoID_Semagrow.setSelection(true);
+		
+		
+		MenuItem mntmDataSchema = new MenuItem(menu, SWT.CASCADE);
+		mntmDataSchema.setText("&Data Schema");
+		
+		dataSchemaMenu = new Menu(mntmDataSchema);
+		mntmDataSchema.setMenu(dataSchemaMenu);
+		
+		MenuItem mntmNew = new MenuItem(dataSchemaMenu, SWT.PUSH);
+		mntmNew.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				FileDialog dialog = new FileDialog (shell, SWT.OPEN);
+        		String [] filterNames = new String [] {"Ont Files", "All Files (*)"};
+        		String [] filterExtensions = new String [] {"*.rdf;*.owl;*.ttl,*.xml", "*"};
+        		//String filterPath = "/";
+        		String filterPath = System.getProperty("user.dir");
+        		String platform = SWT.getPlatform();
+        		if (platform.equals("win32") || platform.equals("wpf")) {
+        			filterNames = new String [] {"Ont Files", "All Files (*.*)"};
+        			filterExtensions = new String [] {"*.rdf;*.owl;*.ttl,*.xml", "*.*"};
+        			//filterPath = "c:\\";
+        		}
+        		dialog.setFilterNames (filterNames);
+        		dialog.setFilterExtensions (filterExtensions);
+        		dialog.setFilterPath (filterPath);
+        		//dialog.setFileName ("myfile");
+        		try {
+        			addVocabularyToMenu(dialog.open(), dataSchemaMenu);
+        			//System.out.println(dialog.open());
+				} catch (Exception ex) {
+					ex.printStackTrace();
+			    	MessageBox box = new MessageBox(getShell(), SWT.ERROR);
+	                box.setText("Error");
+	                box.setMessage(e.toString());
+	                box.open();
+				}
+			}
+		});
+		mntmNew.setText("New...");
+		
+		/*MenuItem mntmSkos = new MenuItem(dataSchemaMenu, SWT.CHECK);
+		mntmSkos.setText("skos.rdf");*/
+		
+		MenuItem mntmCrop = new MenuItem(dataSchemaMenu, SWT.CHECK);
+		mntmCrop.setText("crop.owl");
+		
+		MenuItem mntmTf = new MenuItem(dataSchemaMenu, SWT.CHECK);
+		mntmTf.setText("t4f.owl");
+		
 		
 		MenuItem mntmAbout = new MenuItem(menu, SWT.PUSH);
 		mntmAbout.addSelectionListener(new SelectionAdapter() {
