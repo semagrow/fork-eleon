@@ -295,6 +295,7 @@ public class MainShell extends Shell {
 		mntmVoID.setText("VoID");
 		MenuItem mntmVoID_Semagrow = new MenuItem(AnnotationSchemaMenu, SWT.RADIO);
 		mntmVoID_Semagrow.setText("VoID/SemaGrow extension");
+		mntmVoID_Semagrow.setSelection(true);
 		
 		MenuItem mntmAbout = new MenuItem(menu, SWT.PUSH);
 		mntmAbout.addSelectionListener(new SelectionAdapter() {
