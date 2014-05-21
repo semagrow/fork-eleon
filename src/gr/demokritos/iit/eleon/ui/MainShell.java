@@ -359,7 +359,7 @@ public class MainShell extends Shell {
 					} else {
 						MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
 		                box.setText("Info");
-		                box.setMessage("Choose a vocabulary from the \"Vocabularies\" menu first.");
+		                box.setMessage("Choose a schema from the \"Data Schema\" menu first.");
 		                box.open();
 					}
 				} else if (list.getSelection()[0].toString().equals("per entity")) {
