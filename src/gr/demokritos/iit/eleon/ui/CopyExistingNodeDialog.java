@@ -3,6 +3,9 @@
  */
 package gr.demokritos.iit.eleon.ui;
 
+import gr.demokritos.iit.eleon.functionality.PerEntityNode;
+import gr.demokritos.iit.eleon.functionality.PerPropertyNode;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
@@ -25,7 +28,6 @@ import org.eclipse.swt.widgets.Composite;
 public class CopyExistingNodeDialog extends Dialog {
 
 	protected Shell shell;
-	private TreeItem selectedItem = null;
 	
 	/**
 	 * 
@@ -41,7 +43,7 @@ public class CopyExistingNodeDialog extends Dialog {
 		 this (parent, 0);//default style bits go here (not the Shell's style bits)
 	}
 	
-	public TreeItem open(Tree originalTree) {
+	public void copy(Tree originalTree, final TreeItem selectedItem) {
 		
 		Shell parent = getParent();
 		shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
@@ -68,9 +70,7 @@ public class CopyExistingNodeDialog extends Dialog {
 		new Label(composite, SWT.NONE);
 		new Label(composite, SWT.NONE);
 		new Label(composite, SWT.NONE);
-		
-		selectedItem = null;
-		
+				
 		Button btnOk = new Button(composite, SWT.NONE);
 		btnOk.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -80,16 +80,23 @@ public class CopyExistingNodeDialog extends Dialog {
 	                box.setText("Info");
 	                box.setMessage("You have to select an item from the tree.");
 	                box.open();
-	                selectedItem = null;
 				} else if (treeCopy.getSelection()[0].getText().equals("root")) {
 					MessageBox box = new MessageBox(shell, SWT.OK | SWT.ICON_INFORMATION);
 	                box.setText("Info");
 	                box.setMessage("Cannot select root node to copy.");
 	                box.open();
-	                selectedItem = null;
 				}
-				else {
-					selectedItem = treeCopy.getSelection()[0];
+				//if the selected item is root then only a data source node can be copied as a child.
+				else if (notDatasourceUnderRoot(selectedItem, treeCopy)) {
+					MessageBox box = new MessageBox(shell, SWT.OK | SWT.ICON_INFORMATION);
+	                box.setText("Info");
+	                box.setMessage("You can only copy a non Data Source node under the root node.\n Please choose another node.");
+	                box.open();
+				} else {
+					TreeItem item = new TreeItem(selectedItem, SWT.NONE);
+					item.setText(treeCopy.getSelection()[0].getText());
+					item.setData(treeCopy.getSelection()[0].getData());
+					copyTree(treeCopy.getSelection()[0], item);
 					shell.dispose();
 				}
 			}
@@ -103,7 +110,7 @@ public class CopyExistingNodeDialog extends Dialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				shell.dispose();
-				selectedItem = null;
+				//selectedItem = null;
 			}
 		});
 		btnCancel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
@@ -117,9 +124,7 @@ public class CopyExistingNodeDialog extends Dialog {
 			if (!display.readAndDispatch())
 				display.sleep();
 		}
-		return selectedItem;
 	}
-	
 	
 	private void copyTree(TreeItem rootOriginal, TreeItem rootCopy) {
 		for (TreeItem childOriginal : rootOriginal.getItems()) {
@@ -131,4 +136,21 @@ public class CopyExistingNodeDialog extends Dialog {
 			}
 		}
 	}
+	
+	/**
+	 * @return true if you try to copy a non Data source node under the root node
+	 * which is prohibited by Eleon.
+	 */
+	private boolean notDatasourceUnderRoot(TreeItem selectedItem, Tree treeCopy) {
+		boolean isRoot = selectedItem.getText().equals("root");
+		boolean isPerEntityNode = treeCopy.getSelection()[0].getData() instanceof PerEntityNode;
+		boolean isPerPropertyNode = treeCopy.getSelection()[0].getData() instanceof PerPropertyNode;
+		if ((isRoot && isPerEntityNode) || (isRoot && isPerPropertyNode)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	
 }

@@ -551,9 +551,11 @@ public class MainShell extends Shell {
 					//TreeItem parent = itemToDelete.getParentItem();
 					//while(deleteNode(parent, name));//We suppose that the user can select only one item to remove.
 					//treePerEntity.select(parent);
-					//TODO: implement...
 				} else {
-					System.out.println("nothing selected.");// TODO:message box...
+					MessageBox box = new MessageBox(shell, SWT.OK | SWT.ICON_INFORMATION);
+	                box.setText("Info");
+	                box.setMessage("Nothing selected.");
+	                box.open();
 				}
 			}
 
@@ -687,15 +689,8 @@ public class MainShell extends Shell {
 			public void widgetSelected(SelectionEvent e) {
 				TreeItem[] selected = treePerEntity.getSelection();
 				if (selected.length > 0) {
-					/*SelectExistingNodesDialog dialog = new SelectExistingNodesDialog(shell);
-					String selectedNodeName = dialog.open(treePerEntity.getItems()[0]);//start from root node.*/
 					CopyExistingNodeDialog dialogCopy = new CopyExistingNodeDialog(shell);
-					TreeItem selectedNode = dialogCopy.open(treePerEntity);
-					if (selectedNode == null) {
-						return;
-					}
-					copyTree(selectedNode, selected[0]);
-					//TODO:implement insert existing node now org.eclipse.swt.SWTException: Widget is disposed.
+					dialogCopy.copy(treePerEntity, selected[0]);
 				} else {
 					MessageBox box = new MessageBox(shell, SWT.OK | SWT.ICON_INFORMATION);
 	                box.setText("Info");
@@ -723,13 +718,11 @@ public class MainShell extends Shell {
 		                return;
 					}
 					itemToDelete.dispose();//simple delete. to be changed later.
-					//String name =  itemToDelete.getText();
-					//TreeItem parent = itemToDelete.getParentItem();
-					//while(deleteNode(parent, name));//We suppose that the user can select only one item to remove.
-					//treePerEntity.select(parent);
-					//TODO: implement...
 				} else {
-					System.out.println("nothing selected.");// TODO:message box...
+					MessageBox box = new MessageBox(shell, SWT.OK | SWT.ICON_INFORMATION);
+	                box.setText("Info");
+	                box.setMessage("Nothing selected.");
+	                box.open();
 				}
 			}
 
@@ -1015,7 +1008,6 @@ public class MainShell extends Shell {
 				Element ontPropertyElement = doc.createElement("rdf:Property");
 				ontPropertyElement.setAttribute("rdf:about", ontProperty.toString());
 				treeItemNode.appendChild(ontPropertyElement);
-				//TODO: do we need more details here?
 			}
 			//treeItemNode.setAttribute("parent", treeItem.getText());
 			root.appendChild(treeItemNode);
@@ -1116,9 +1108,9 @@ public class MainShell extends Shell {
 		return false;
 	}
 	
-	
+	/*
 	private boolean deleteNode(TreeItem treeItem, String nodeNameToDelete) {
-		/*int index = 0;
+		int index = 0;
 		TreeItem[] items = treeItem.getItems();
 		for (int i=0; i<items.length; i++) {
 			if (items[i].getText().equals(nodeNameToDelete)) {
@@ -1130,7 +1122,7 @@ public class MainShell extends Shell {
 					}
 				}
 			}
-		}*/
+		}
 		for (TreeItem treeItemCurrent : treeItem.getItems()) {
 			if (treeItemCurrent.getText().equals(nodeNameToDelete)) {
 				//if ( ! treeItemCurrent.isDisposed()) {
@@ -1144,7 +1136,7 @@ public class MainShell extends Shell {
 		}
 		return false;
 	}
-	
+	*/
 	
 	private void createTreeFromDOM(Node node, Tree tree, String facetType, TreeItem parentTreeItem) {
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
@@ -1241,16 +1233,6 @@ public class MainShell extends Shell {
 		}
 	}
 
-	private void copyTree(TreeItem rootOriginal, TreeItem rootCopy) {
-		for (TreeItem childOriginal : rootOriginal.getItems()) {
-			TreeItem childCopy = new TreeItem(rootCopy, SWT.NONE);
-			childCopy.setText(childOriginal.getText());
-			childCopy.setData(childOriginal.getData());
-			if (childOriginal.getItemCount() > 0) {
-				copyTree(childOriginal, childCopy);
-			}
-		}
-	}
 	
 	/*protected boolean canEditItem(TreeItem treeItem, String author) {
 		String creator = ((TreeNodeData) treeItem.getData()).getDc_creator();
