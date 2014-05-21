@@ -285,44 +285,17 @@ public class MainShell extends Shell {
 		});
 		mntmNewAuthor.setText("New...");
 		
-		/*MenuItem mntmDatasource = new MenuItem(menu, SWT.CASCADE);
-		mntmDatasource.setText("&Data source");
+		MenuItem mntmAnnotationSchema = new MenuItem(menu, SWT.CASCADE);
+		mntmAnnotationSchema.setText("Annotation &Schema");
 		
-		final Menu DatasourceMenu = new Menu(mntmDatasource);
-		mntmDatasource.setMenu(DatasourceMenu);
+		Menu AnnotationSchemaMenu = new Menu(mntmAnnotationSchema);
+		mntmAnnotationSchema.setMenu(AnnotationSchemaMenu);
 		
-		MenuItem mntmNewDatasource = new MenuItem(DatasourceMenu, SWT.PUSH);
-		mntmNewDatasource.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				InsertInMenuDialog dialog = new InsertInMenuDialog(shell);
-				final String dataSourceLabel = dialog.open("Insert data source");
-				if (dataSourceLabel != null && ( ! dataSourceLabel.equals("") )) {
-					boolean not_found = true;
-					for (MenuItem item : DatasourceMenu.getItems()) {
-						if (item.getText().equals(dataSourceLabel)) {
-							MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
-			                box.setText("Data Source Exists");
-			                box.setMessage("Data source label \"" + dataSourceLabel + "\" already exists");
-			                box.open();
-			                break;
-						}
-					}
-					if (not_found) {
-						MenuItem mntmInsertedDatasource = new MenuItem(DatasourceMenu, SWT.RADIO);
-						mntmInsertedDatasource.addSelectionListener(new SelectionAdapter() {
-							@Override
-							public void widgetSelected(SelectionEvent e) {
-								//currentAuthor = authorName;
-							}
-						});
-						mntmInsertedDatasource.setText(dataSourceLabel);
-					}
-				}
-			}
-		});
-		mntmNewDatasource.setText("New...");
-		*/
+		MenuItem mntmVoID = new MenuItem(AnnotationSchemaMenu, SWT.CHECK);
+		mntmVoID.setText("VoID");
+		MenuItem mntmVoID_Semagrow = new MenuItem(AnnotationSchemaMenu, SWT.CHECK);
+		mntmVoID_Semagrow.setText("VoID/SemaGrow extension");
+		
 		MenuItem mntmAbout = new MenuItem(menu, SWT.PUSH);
 		mntmAbout.addSelectionListener(new SelectionAdapter() {
 			@Override
