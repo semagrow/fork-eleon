@@ -70,7 +70,7 @@ public class MainShell extends Shell {
 	private String filename = null;
 	private String currentAuthor;
 	protected Tree treePerEntity;
-	private Menu vocabulariesMenu;
+	private Menu dataSchemaMenu;
 	//private MenuItem mntmNew;
 
 	/**
@@ -199,13 +199,13 @@ public class MainShell extends Shell {
         });
         exitItem.setText("&Exit");
 		
-		MenuItem mntmVocabularies = new MenuItem(menu, SWT.CASCADE);
-		mntmVocabularies.setText("&Vocabularies");
+		MenuItem mntmDataSchema = new MenuItem(menu, SWT.CASCADE);
+		mntmDataSchema.setText("&Data Schema");
 		
-		vocabulariesMenu = new Menu(mntmVocabularies);
-		mntmVocabularies.setMenu(vocabulariesMenu);
+		dataSchemaMenu = new Menu(mntmDataSchema);
+		mntmDataSchema.setMenu(dataSchemaMenu);
 		
-		MenuItem mntmNew = new MenuItem(vocabulariesMenu, SWT.PUSH);
+		MenuItem mntmNew = new MenuItem(dataSchemaMenu, SWT.PUSH);
 		mntmNew.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -225,7 +225,7 @@ public class MainShell extends Shell {
         		dialog.setFilterPath (filterPath);
         		//dialog.setFileName ("myfile");
         		try {
-        			addVocabularyToMenu(dialog.open(), vocabulariesMenu);
+        			addVocabularyToMenu(dialog.open(), dataSchemaMenu);
         			//System.out.println(dialog.open());
 				} catch (Exception ex) {
 					ex.printStackTrace();
@@ -238,13 +238,13 @@ public class MainShell extends Shell {
 		});
 		mntmNew.setText("New...");
 		
-		/*MenuItem mntmSkos = new MenuItem(vocabulariesMenu, SWT.CHECK);
+		/*MenuItem mntmSkos = new MenuItem(dataSchemaMenu, SWT.CHECK);
 		mntmSkos.setText("skos.rdf");*/
 		
-		MenuItem mntmCrop = new MenuItem(vocabulariesMenu, SWT.CHECK);
+		MenuItem mntmCrop = new MenuItem(dataSchemaMenu, SWT.CHECK);
 		mntmCrop.setText("crop.owl");
 		
-		MenuItem mntmTf = new MenuItem(vocabulariesMenu, SWT.CHECK);
+		MenuItem mntmTf = new MenuItem(dataSchemaMenu, SWT.CHECK);
 		mntmTf.setText("t4f.owl");
 		
 		MenuItem mntmAuthor = new MenuItem(menu, SWT.CASCADE);
@@ -340,7 +340,7 @@ public class MainShell extends Shell {
 				}		
 				if (list.getSelection()[0].toString().equals(Constants.perProperty)) {
 					boolean has_vocabulary = false;
-					for (MenuItem menuItem : vocabulariesMenu.getItems()) {
+					for (MenuItem menuItem : dataSchemaMenu.getItems()) {
 						if (menuItem.getSelection()) {
 							has_vocabulary = true;
 							break; 
@@ -773,14 +773,14 @@ public class MainShell extends Shell {
 				
 				 if (property.equals("void:vocabulary")) {
 					SelectVocabulariesDialog dialog = new SelectVocabulariesDialog(getShell());
-					java.util.List<String> selectedVocabularies = dialog.open(vocabulariesMenu);
+					java.util.List<String> selectedVocabularies = dialog.open(dataSchemaMenu);
 					if (selectedVocabularies.isEmpty()) {
 						return;
 					}
 					OntModel ontModel = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM);
 					for (String selectedVocabulary : selectedVocabularies) {
 						item.setText(1, item.getText(1) + selectedVocabulary + ", ");
-						for (MenuItem menuItem : vocabulariesMenu.getItems()) {
+						for (MenuItem menuItem : dataSchemaMenu.getItems()) {
 							if (menuItem.getSelection()) {
 								if (selectedVocabulary.equals(menuItem.getText())) {
 									/*if (menuItem.getText().equals("skos.rdf")) {
