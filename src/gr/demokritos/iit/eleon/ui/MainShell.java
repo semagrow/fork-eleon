@@ -291,9 +291,9 @@ public class MainShell extends Shell {
 		Menu AnnotationSchemaMenu = new Menu(mntmAnnotationSchema);
 		mntmAnnotationSchema.setMenu(AnnotationSchemaMenu);
 		
-		MenuItem mntmVoID = new MenuItem(AnnotationSchemaMenu, SWT.CHECK);
+		MenuItem mntmVoID = new MenuItem(AnnotationSchemaMenu, SWT.RADIO);
 		mntmVoID.setText("VoID");
-		MenuItem mntmVoID_Semagrow = new MenuItem(AnnotationSchemaMenu, SWT.CHECK);
+		MenuItem mntmVoID_Semagrow = new MenuItem(AnnotationSchemaMenu, SWT.RADIO);
 		mntmVoID_Semagrow.setText("VoID/SemaGrow extension");
 		
 		MenuItem mntmAbout = new MenuItem(menu, SWT.PUSH);
