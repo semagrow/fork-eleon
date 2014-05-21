@@ -311,7 +311,7 @@ public class MainShell extends Shell {
 		});
 		mntmAbout.setText("&About");
 		
-		textEndpoint = new Text(this, SWT.BORDER);
+		textEndpoint = new Text(this, SWT.BORDER | SWT.READ_ONLY);
 		textEndpoint.setBounds(388, 30, 699, 24);
 		
 		Label lblEnpoint = new Label(this, SWT.NONE);
@@ -385,7 +385,7 @@ public class MainShell extends Shell {
 		lblTitle.setBounds(10, 30, 30, 18);
 		lblTitle.setText("Title");
 		
-		textTitle = new Text(this, SWT.BORDER);
+		textTitle = new Text(this, SWT.BORDER | SWT.READ_ONLY);
 		textTitle.setBounds(46, 30, 266, 24);
 		
 		createContents();
