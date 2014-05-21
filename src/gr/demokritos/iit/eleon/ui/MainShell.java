@@ -790,10 +790,10 @@ public class MainShell extends Shell {
 										ontModel.read("file:////" + (new File("vocabularies/skos.rdf")).getAbsolutePath());
 									}*/
 									if (menuItem.getText().equals("crop.owl")) {
-										ontModel.read("file:////" + (new File("vocabularies/crop.owl")).getAbsolutePath());
+										ontModel.read("file:////" + (new File("schemas/crop.owl")).getAbsolutePath());
 									}
 									else if (menuItem.getText().equals("t4f.owl")) {
-										ontModel.read("file:////" + (new File("vocabularies/t4f.owl")).getAbsolutePath());
+										ontModel.read("file:////" + (new File("schemas/t4f.owl")).getAbsolutePath());
 									} else {
 										ontModel.read("file:////" + (new File((String) menuItem.getData())).getAbsolutePath());
 									}
