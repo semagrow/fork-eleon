@@ -622,16 +622,18 @@ public class MainShell extends Shell {
 			public void widgetSelected(SelectionEvent e) {
 				TreeItem[] selected = treePerEntity.getSelection();
 				if (selected.length > 0) {
+					if (selected[0].getText().equals("root")){
+						MessageBox box = new MessageBox(shell, SWT.OK | SWT.ICON_INFORMATION);
+		                box.setText("Info");
+		                box.setMessage("You cannot add a non-Data source node under root.");
+		                box.open();
+		                return;
+					}
 					// selection.setExpanded(true);
 					PerEntityInsertDialog dialog = new PerEntityInsertDialog(shell);
 					PerEntityNode nodeData = dialog.open();
 					if (nodeData == null) {
 						return;
-					} else if (selected[0].getText().equals("root")){
-						MessageBox box = new MessageBox(shell, SWT.OK | SWT.ICON_INFORMATION);
-		                box.setText("Info");
-		                box.setMessage("You cannot add a non-Data source node under root.");
-		                box.open();
 					} else {
 						TreeItem selection = selected[0];
 						TreeItem item = new TreeItem(selection, SWT.NONE);
@@ -824,7 +826,6 @@ public class MainShell extends Shell {
 				newEditor.setText(item.getText(1));
 				newEditor.addModifyListener(new ModifyListener() {
 					@Override
-					//TODO:check what happens if the user inputs a non-integer and then does not change it back. maybe a bug here...
 					public void modifyText(ModifyEvent me) {
 						//String oldValue = editor.getItem().getText(1);
 						//System.out.println(editor.getItem().getText(1));
