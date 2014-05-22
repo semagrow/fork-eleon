@@ -457,24 +457,6 @@ public class MainShell extends Shell {
 					return;
 				}
 				TreeNodeData treeNodeData = (TreeNodeData) treePerProperty.getSelection()[0].getData();
-				String triples;
-				if ( ! treeNodeData.hasVoid_triples()) {
-					triples = null;
-				} else {
-					triples = (String) treeNodeData.getVoid_triples().toString();
-				}
-				String subjects;
-				if ( ! treeNodeData.hasVoid_distinctSubjects()) {
-					subjects = null;
-				} else {
-					subjects = (String) treeNodeData.getVoid_distinctSubjects().toString();
-				}
-				String objects;
-				if ( ! treeNodeData.hasVoid_distinctObjects()) {
-					objects = null;
-				} else {
-					objects = (String) treeNodeData.getVoid_distinctObjects().toString();
-				}
 				if (treeNodeData.getDc_title() != null) {
 					textTitle.setText(treeNodeData.getDc_title());
 				} else {
@@ -485,7 +467,6 @@ public class MainShell extends Shell {
 				} else {
 					textEndpoint.setText("");
 				}
-				//createTableContents(triples, subjects, objects, treeNodeData.getVoid_sparqlEnpoint(), treeNodeData.getDc_title(), treePerProperty);
 				createTableContents(treePerProperty);
 			}
 		});
@@ -515,6 +496,8 @@ public class MainShell extends Shell {
 			}
 		});
 		insertNewDatasource.setText("Insert dataset label");
+		
+		new MenuItem(treeMenu, SWT.SEPARATOR);
 
 	    final MenuItem remove = new MenuItem(treeMenu, SWT.NONE);
 	    remove.addSelectionListener(new SelectionAdapter() {
@@ -562,24 +545,6 @@ public class MainShell extends Shell {
 					return;
 				}
 				TreeNodeData treeNodeData = (TreeNodeData) treePerEntity.getSelection()[0].getData();
-				String triples;
-				if ( ! treeNodeData.hasVoid_triples()) {
-					triples = null;
-				} else {
-					triples = (String) treeNodeData.getVoid_triples().toString();
-				}
-				String subjects;
-				if ( ! treeNodeData.hasVoid_distinctSubjects()) {
-					subjects = null;
-				} else {
-					subjects = (String) treeNodeData.getVoid_distinctSubjects().toString();
-				}
-				String objects;
-				if ( ! treeNodeData.hasVoid_distinctObjects()) {
-					objects = null;
-				} else {
-					objects = (String) treeNodeData.getVoid_distinctObjects().toString();
-				}
 				if (treeNodeData.getDc_title() != null) {
 					textTitle.setText(treeNodeData.getDc_title());
 				} else {
@@ -590,7 +555,6 @@ public class MainShell extends Shell {
 				} else {
 					textEndpoint.setText("");
 				}
-				//createTableContents(triples, subjects, objects, treeNodeData.getVoid_sparqlEnpoint(), treeNodeData.getDc_title(), treePerEntity);
 				createTableContents(treePerEntity);
 			}
 		});
