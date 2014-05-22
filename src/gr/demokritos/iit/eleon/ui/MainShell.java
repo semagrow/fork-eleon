@@ -222,6 +222,7 @@ public class MainShell extends Shell {
 			                box.setText("Author Exists");
 			                box.setMessage("Author \"" + authorName + "\" already exists");
 			                box.open();
+			                not_found = false;
 			                break;
 						}
 					}
