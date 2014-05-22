@@ -447,6 +447,17 @@ public class MainShell extends Shell {
 		treePerProperty.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
+				//check to avoid strange bug when the listener is activated but no selection exists
+				//causing java.lang.ArrayIndexOutOfBoundsException: 0
+				if (treePerProperty.getSelection().length==0) {
+					textTitle.setText("");
+					textEndpoint.setText("");
+					if ( table!=null && !table.isDisposed() ) {
+						table.dispose();
+						table = null;
+					}
+					return;
+				}
 				if (treePerProperty.getSelection()[0].getText().equals("root")) {
 					textTitle.setText("");
 					textEndpoint.setText("");
@@ -535,6 +546,17 @@ public class MainShell extends Shell {
 		treePerEntity.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
+				//check to avoid strange bug when the listener is activated but no selection exists
+				//causing java.lang.ArrayIndexOutOfBoundsException: 0
+				if (treePerEntity.getSelection().length==0) {
+					textTitle.setText("");
+					textEndpoint.setText("");
+					if ( table!=null && !table.isDisposed() ) {
+						table.dispose();
+						table = null;
+					}
+					return;
+				}
 				if (treePerEntity.getSelection()[0].getText().equals("root")) {
 					textTitle.setText("");
 					textEndpoint.setText("");

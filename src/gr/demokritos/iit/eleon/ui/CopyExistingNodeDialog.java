@@ -3,9 +3,7 @@
  */
 package gr.demokritos.iit.eleon.ui;
 
-import gr.demokritos.iit.eleon.functionality.PerEntityNode;
-import gr.demokritos.iit.eleon.functionality.PerPropertyNode;
-
+import gr.demokritos.iit.eleon.functionality.Functions;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
@@ -61,7 +59,7 @@ public class CopyExistingNodeDialog extends Dialog {
 		TreeItem trtmRoot = new TreeItem(treeCopy, SWT.NONE);
 		trtmRoot.setText("root");
 		
-		copyTree(originalTree.getItems()[0], trtmRoot);
+		Functions.copyTree(originalTree.getItems()[0], trtmRoot);
 		
 		Composite composite = new Composite(shell, SWT.NONE);
 		composite.setLayout(new GridLayout(6, true));
@@ -87,7 +85,7 @@ public class CopyExistingNodeDialog extends Dialog {
 	                box.open();
 				}
 				//if the selected item is root then only a data source node can be copied as a child.
-				else if (notDatasourceUnderRoot(selectedItem, treeCopy)) {
+				else if (Functions.notDatasourceUnderRoot(selectedItem, treeCopy)) {
 					MessageBox box = new MessageBox(shell, SWT.OK | SWT.ICON_INFORMATION);
 	                box.setText("Info");
 	                box.setMessage("You can only copy a non Data Source node under the root node.\n Please choose another node.");
@@ -96,7 +94,7 @@ public class CopyExistingNodeDialog extends Dialog {
 					TreeItem item = new TreeItem(selectedItem, SWT.NONE);
 					item.setText(treeCopy.getSelection()[0].getText());
 					item.setData(treeCopy.getSelection()[0].getData());
-					copyTree(treeCopy.getSelection()[0], item);
+					Functions.copyTree(treeCopy.getSelection()[0], item);
 					shell.dispose();
 				}
 			}
@@ -123,32 +121,6 @@ public class CopyExistingNodeDialog extends Dialog {
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch())
 				display.sleep();
-		}
-	}
-	
-	private void copyTree(TreeItem rootOriginal, TreeItem rootCopy) {
-		for (TreeItem childOriginal : rootOriginal.getItems()) {
-			TreeItem childCopy = new TreeItem(rootCopy, SWT.NONE);
-			childCopy.setText(childOriginal.getText());
-			childCopy.setData(childOriginal.getData());
-			if (childOriginal.getItemCount() > 0) {
-				copyTree(childOriginal, childCopy);
-			}
-		}
-	}
-	
-	/**
-	 * @return true if you try to copy a non Data source node under the root node
-	 * which is prohibited by Eleon.
-	 */
-	private boolean notDatasourceUnderRoot(TreeItem selectedItem, Tree treeCopy) {
-		boolean isRoot = selectedItem.getText().equals("root");
-		boolean isPerEntityNode = treeCopy.getSelection()[0].getData() instanceof PerEntityNode;
-		boolean isPerPropertyNode = treeCopy.getSelection()[0].getData() instanceof PerPropertyNode;
-		if ((isRoot && isPerEntityNode) || (isRoot && isPerPropertyNode)) {
-			return true;
-		} else {
-			return false;
 		}
 	}
 	
