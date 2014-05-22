@@ -9,6 +9,69 @@ package gr.demokritos.iit.eleon.functionality;
  */
 public class TreeNodeData {
 	
+	public Object[][] property_values = new Object[2][20];
+	static public String[][] property_names = new String[2][20];
+	static public Object[][] property_value_types = new Object[2][20];
+	static public boolean[][] property_is_functional = new boolean[2][20];
+	static public String[] annotation_schema_names = {"VoID", "VoID/SemaGrow extension"};
+	static {
+		property_names[0][0] = "dc:title";
+		property_value_types[0][0] = String.class;
+		property_is_functional[0][0] = true;
+
+		property_names[0][1] = "void:endpoint";
+		property_value_types[0][1] = String.class;
+		property_is_functional[0][1] = true;
+		
+		property_names[0][2] = "void:vocabulary";
+		property_value_types[0][2] = String.class;
+		property_is_functional[0][2] = false;
+
+		property_names[0][3] = "void:triples";
+		property_value_types[0][3] = Integer.class;
+		property_is_functional[0][3] = true;
+
+		property_names[0][4] = "void:distinctSubjects";
+		property_value_types[0][4] = Integer.class;
+		property_is_functional[0][4] = true;
+
+		property_names[0][5] = "void:distinctObjects";
+		property_value_types[0][5] = Integer.class;
+		property_is_functional[0][5] = true;
+		
+		property_names[0][6] = null;
+		property_value_types[0][6] = null;
+		//property_is_functional[0][6] = (Boolean) null;
+		
+		property_names[1][0] = "dc:title";
+		property_value_types[1][0] = String.class;
+		property_is_functional[1][0] = true;
+
+		property_names[1][1] = "void:endpoint";
+		property_value_types[1][1] = String.class;
+		property_is_functional[1][1] = true;
+		
+		property_names[1][2] = "void:vocabulary";
+		property_value_types[1][2] = String.class;
+		property_is_functional[1][2] = false;
+
+		property_names[1][3] = "void:triples";
+		property_value_types[1][3] = Integer.class;
+		property_is_functional[1][3] = true;
+
+		property_names[1][4] = "void:distinctSubjects";
+		property_value_types[1][4] = Integer.class;
+		property_is_functional[1][4] = true;
+
+		property_names[1][5] = "void:distinctObjects";
+		property_value_types[1][5] = Integer.class;
+		property_is_functional[1][5] = true;
+		
+		property_names[1][6] = null;
+		property_value_types[1][6] = null;
+		//property_is_functional[0][6] = (Boolean) null;
+	}
+	
 	private Integer void_triples = null;
 	private Integer void_distinctSubjects = null;
 	private Integer void_distinctObjects = null;

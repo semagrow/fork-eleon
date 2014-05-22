@@ -2,6 +2,8 @@ package gr.demokritos.iit.eleon.ui;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -50,6 +52,7 @@ import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntModelSpec;
 import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 import gr.demokritos.iit.eleon.commons.Constants;
 import gr.demokritos.iit.eleon.functionality.PerEntityNode;
@@ -483,7 +486,8 @@ public class MainShell extends Shell {
 				} else {
 					textEndpoint.setText("");
 				}
-				createTableContents(triples, subjects, objects, treeNodeData.getVoid_sparqlEnpoint(), treeNodeData.getDc_title(), treePerProperty);
+				//createTableContents(triples, subjects, objects, treeNodeData.getVoid_sparqlEnpoint(), treeNodeData.getDc_title(), treePerProperty);
+				createTableContents(treePerProperty);
 			}
 		});
 		treePerProperty.setBounds(318, 84, 369, 578);
@@ -501,7 +505,7 @@ public class MainShell extends Shell {
 				TreeItem[] selected = treePerProperty.getSelection();
 				if (selected.length > 0/* && selected[0].getText().equals("root")*/) {
 					InsertInMenuDialog insert = new InsertInMenuDialog(getShell());
-					String label = insert.open("Insert data source label");
+					String label = insert.open("Insert dataset label");
 					if (label == null) return;
 					TreeItem newItem = new TreeItem(selected[0], SWT.NONE);
 					TreeNodeData data = new TreeNodeData();
@@ -511,7 +515,7 @@ public class MainShell extends Shell {
 				}
 			}
 		});
-		insertNewDatasource.setText("Insert Data source");
+		insertNewDatasource.setText("Insert dataset label");
 
 	    final MenuItem remove = new MenuItem(treeMenu, SWT.NONE);
 	    remove.addSelectionListener(new SelectionAdapter() {
@@ -587,7 +591,8 @@ public class MainShell extends Shell {
 				} else {
 					textEndpoint.setText("");
 				}
-				createTableContents(triples, subjects, objects, treeNodeData.getVoid_sparqlEnpoint(), treeNodeData.getDc_title(), treePerEntity);
+				//createTableContents(triples, subjects, objects, treeNodeData.getVoid_sparqlEnpoint(), treeNodeData.getDc_title(), treePerEntity);
+				createTableContents(treePerEntity);
 			}
 		});
 		treePerEntity.setBounds(318, 84, 369, 578);
@@ -605,7 +610,7 @@ public class MainShell extends Shell {
 				TreeItem[] selected = treePerEntity.getSelection();
 				if (selected.length > 0/* && selected[0].getText().equals("root")*/) {
 					InsertInMenuDialog insert = new InsertInMenuDialog(getShell());
-					String label = insert.open("Insert data source label");
+					String label = insert.open("Insert dataset label");
 					if (label == null) return;
 					TreeItem newItem = new TreeItem(selected[0], SWT.NONE);
 					TreeNodeData data = new TreeNodeData();
@@ -615,7 +620,7 @@ public class MainShell extends Shell {
 				}
 			}
 		});
-		insertNewDatasource.setText("Insert Data source");
+		insertNewDatasource.setText("Insert dataset label");
 		
 		final MenuItem insertNewChild = new MenuItem(treeMenu, SWT.NONE);
 	    insertNewChild.addSelectionListener(new SelectionAdapter() {
@@ -625,7 +630,7 @@ public class MainShell extends Shell {
 					if (selected[0].getText().equals("root")){
 						MessageBox box = new MessageBox(shell, SWT.OK | SWT.ICON_INFORMATION);
 		                box.setText("Info");
-		                box.setMessage("You cannot add a non-Data source node under root.");
+		                box.setMessage("You cannot add a subset directly under root.");
 		                box.open();
 		                return;
 					}
@@ -673,7 +678,7 @@ public class MainShell extends Shell {
 			}
 
 		});
-	    insertNewChild.setText("Insert new node");
+	    insertNewChild.setText("Insert new subset");
 	    
 	    final MenuItem insertExistingChild = new MenuItem(treeMenu, SWT.NONE);
 	    insertExistingChild.addSelectionListener(new SelectionAdapter() {
@@ -691,7 +696,7 @@ public class MainShell extends Shell {
 			}
 
 		});
-	    insertExistingChild.setText("Insert existing node as child");
+	    insertExistingChild.setText("Add existing dataset or subset as child");
 	    
 	    new MenuItem(treeMenu, SWT.SEPARATOR);
 	    
@@ -737,30 +742,28 @@ public class MainShell extends Shell {
 		tblclmnValue.setText("Value");
 	}
 	
-	protected void createTableContents(String triples, String subjects, String objects, String sparqlEnpoint, String title, final Tree tree) {
+	//protected void createTableContents(String triples, String subjects, String objects, String sparqlEnpoint, String title, final Tree tree) {
+	protected void createTableContents(/*TreeNodeData treeNodeData, */final Tree tree) {	
 		
 		if (table != null) {
 			table.dispose();
 		}
 		createTable();
 		
-		TableItem item_triples = new TableItem (table, SWT.NONE);
-		item_triples.setText(new String [] {"void:triples", triples});
+		TreeNodeData treeNodeData = ((TreeNodeData) tree.getSelection()[0].getData());
 		
-		TableItem item_subjects = new TableItem (table, SWT.NONE);
-		item_subjects.setText(new String [] {"void:distinctSubjects", subjects});
-		
-		TableItem item_objects = new TableItem (table, SWT.NONE);
-		item_objects.setText(new String [] {"void:distinctObjects", objects});
-		
-		TableItem item_sparqlEndpoint = new TableItem (table, SWT.NONE);
-		item_sparqlEndpoint.setText(new String [] {"void:sparqlEndpoint", sparqlEnpoint});
-		
-		TableItem item_title = new TableItem (table, SWT.NONE);
-		item_title.setText(new String [] {"dc:title", title});
-		
-		TableItem item_vocabulary = new TableItem (table, SWT.NONE);
-		item_vocabulary.setText(new String [] {"void:vocabulary", ""});
+		final int voc = 0;
+		int i = 0;
+		while(TreeNodeData.property_names[voc][i] != null) {
+			TableItem item = new TableItem(table, SWT.NONE);
+			Object value = treeNodeData.property_values[voc][i];
+			String value_str = null;
+			if (value != null) {
+				value_str = value.toString();
+			}
+			item.setText(new String [] {TreeNodeData.property_names[voc][i], value_str});
+			i++;
+		}
 		
 		final TableEditor editor = new TableEditor (table);
 		editor.horizontalAlignment = SWT.LEFT;
@@ -831,30 +834,61 @@ public class MainShell extends Shell {
 						//System.out.println(editor.getItem().getText(1));
 						Text text = (Text)editor.getEditor();
 						editor.getItem().setText(1, text.getText());
+						
+						int i = 0; int index = -1;
+						while( (index < 0) && (TreeNodeData.property_names[0][i] != null) ) {
+							if( property.equals(TreeNodeData.property_names[0][i]) ) { index = i; }
+							++i;
+						}
+						
+						assert(i>=0);
+							
+						TreeNodeData treeNodeData = ((TreeNodeData) tree.getSelection()[0].getData());
+						//Class<?> objClass = TreeNodeData.property_value_types[voc][index].getClass();
+						//boolean functional = TreeNodeData.property_is_functional[voc][index];
+						//Class<?> params[] = new Class[1];
+						//params[0] = String.class;
+						try {
+							//java.lang.reflect.Constructor<?> constr = objClass.getConstructor( params );
+							//Object o = constr.newInstance( text.getText() );
+							Class<?> cls[] = new Class[] { String.class };
+							Constructor<?> c = ((Class<?>) TreeNodeData.property_value_types[voc][index]).getConstructor(cls);
+							Object obj = c.newInstance(text.getText());
+							treeNodeData.property_values[0][index] = obj;
+						} catch (NoSuchMethodException e) {
+							e.printStackTrace();
+						} catch (SecurityException e) {
+							e.printStackTrace();
+						} catch (InstantiationException e) {
+							e.printStackTrace();
+						} catch (IllegalAccessException e) {
+							e.printStackTrace();
+						} catch (IllegalArgumentException e) {
+							e.printStackTrace();
+						} catch (InvocationTargetException e) {
+							e.printStackTrace();
+							MessageBox box = new MessageBox(getShell(), SWT.ERROR);
+			                box.setText("Error");
+			                box.setMessage("Invalid input!");
+			                box.open();
+			                
+						}
+						
 						if (property.equals("void:sparqlEndpoint")) {
-							((TreeNodeData) tree.getSelection()[0].getData()).setVoid_sparqlEnpoint(text.getText());
+							//((TreeNodeData) tree.getSelection()[0].getData()).setVoid_sparqlEnpoint(text.getText());
 							textEndpoint.setText(text.getText());
 							return;
 						} else if (property.equals("dc:title")) {
-							((TreeNodeData) tree.getSelection()[0].getData()).setDc_title(text.getText());
+							//((TreeNodeData) tree.getSelection()[0].getData()).setDc_title(text.getText());
 							textTitle.setText(text.getText());
 							return;
 						}
-						try {
-							Integer value = new Integer(text.getText());
-							if (property.equals("void:triples")) {
-								((TreeNodeData) tree.getSelection()[0].getData()).setVoid_triples(value);
-							} else if (property.equals("void:distinctSubjects")) {
-								((TreeNodeData) tree.getSelection()[0].getData()).setVoid_distinctSubjects(value);
-							} else if (property.equals("void:distinctObjects")) {
-								((TreeNodeData) tree.getSelection()[0].getData()).setVoid_distinctObjects(value);
-							}
-						} catch (NumberFormatException e) {
+						/*} catch (NumberFormatException e) {
 							MessageBox box = new MessageBox(getShell(), SWT.ERROR);
 			                box.setText("Error");
 			                box.setMessage("Input must be integer!");
 			                box.open();
-						}
+						}*/
 					}
 				});
 				newEditor.selectAll();
