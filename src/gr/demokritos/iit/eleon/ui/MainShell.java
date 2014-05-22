@@ -52,8 +52,6 @@ import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntModelSpec;
 import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
-
 import gr.demokritos.iit.eleon.commons.Constants;
 import gr.demokritos.iit.eleon.functionality.PerEntityNode;
 import gr.demokritos.iit.eleon.functionality.PerPropertyNode;
