@@ -52,7 +52,7 @@ public java.util.List<String> open(Menu vocabulariesMenu) {
 
 		Label lblSelectOneFrom = new Label(shell, SWT.NONE);
 		lblSelectOneFrom.setBounds(10, 10, 424, 15);
-		lblSelectOneFrom.setText("Select one or more from the vocabularies bellow.");
+		lblSelectOneFrom.setText("Select one or more from the Data Schemas bellow.");
 
 		list = new List(shell, SWT.BORDER | SWT.MULTI);
 		list.setBounds(10, 31, 533, 496);
