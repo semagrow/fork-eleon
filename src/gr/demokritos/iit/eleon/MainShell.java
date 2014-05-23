@@ -1,3 +1,47 @@
+/***************
+
+<p>Title: Main Shell</p>
+
+<p>Description:
+Entry point for the ELEON application.
+</p>
+
+<p>
+This file is part of the ELEON Ontology Authoring and Enrichment Tool.
+<br> Copyright (c) 2001-2014 National Centre for Scientific Research "Demokritos"
+</p>
+
+<p>
+ELEON is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+</p>
+
+<p>
+ELEON is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+</p>
+
+<p>
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+</p>
+
+@author Dimitris Spiliotopoulos (MPIRO, 2001-2004)
+@author Kostas Stamatakis
+@author Theofilos Nikolaou
+@author Maria Prospathopoulou
+@author Spyros Kallonis
+@author Dimitris Bilidas (XENIOS & INDIGO, 2007-2009; RoboSKEL 2010-2011)
+@author Stasinos Konstantopoulos (INDIGO, 2009; RoboSKEL 2011; SemaGrow 2012-2014)
+@author Giannis Mouchakis (SemaGrow 2014)
+
+***************/
+
 package gr.demokritos.iit.eleon;
 
 import java.io.File;
@@ -62,10 +106,6 @@ import gr.demokritos.iit.eleon.ui.InsertInMenuDialog;
 import gr.demokritos.iit.eleon.ui.PerEntityInsertDialog;
 import gr.demokritos.iit.eleon.ui.SelectVocabulariesDialog;
 
-/**
- * @author gmouchakis
- *
- */
 public class MainShell extends Shell {
 	protected Text textEndpoint;
 	protected Table table;
