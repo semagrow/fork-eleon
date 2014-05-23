@@ -52,7 +52,6 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.*;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.w3c.dom.*;
