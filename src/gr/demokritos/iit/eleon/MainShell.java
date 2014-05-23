@@ -46,8 +46,6 @@ package gr.demokritos.iit.eleon;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -65,27 +63,9 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpression;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.custom.TableEditor;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -105,19 +85,21 @@ import gr.demokritos.iit.eleon.ui.CopyExistingNodeDialog;
 import gr.demokritos.iit.eleon.ui.InsertInMenuDialog;
 import gr.demokritos.iit.eleon.ui.PerEntityInsertDialog;
 import gr.demokritos.iit.eleon.ui.SelectVocabulariesDialog;
+import gr.demokritos.iit.eleon.persistence.*;
 
-public class MainShell extends Shell {
+public class MainShell extends Shell
+{
 	protected Text textEndpoint;
 	protected Table table;
 	protected Tree treePerProperty;
 	protected List list;
 	static protected MainShell shell;
 	private Text textTitle;
-	private String filename = null;
 	private String currentAuthor;
 	protected Tree treePerEntity;
 	private Menu dataSchemaMenu;
 	//private MenuItem mntmNew;
+	private PersistenceBackend persistence;
 
 	/**
 	 * Launch the application.
@@ -127,6 +109,7 @@ public class MainShell extends Shell {
 		try {
 			Display display = Display.getDefault();
 			shell = new MainShell(display);
+			shell.persistence = new ELEONXML();
 			shell.open();
 			shell.layout();
 			while (!shell.isDisposed()) {
@@ -186,8 +169,15 @@ public class MainShell extends Shell {
         		try {
         			String openFilename = dialog.open();
         			if (openFilename == null) return; 
-					open(openFilename);
-				} catch (Exception e) {
+					persistence.open( openFilename );
+					textTitle.setText( persistence.getLabel() );
+					//create the faceted trees
+					createPerPropertyTree();
+					persistence.buildPropertyTree( treePerProperty );
+					createPerEntityTree();
+					persistence.buildEntityTree( treePerEntity );
+				}
+        		catch( Exception e ) {
 					e.printStackTrace();
 			    	MessageBox box = new MessageBox(getShell(), SWT.ERROR);
 	                box.setText("Error");
@@ -204,13 +194,17 @@ public class MainShell extends Shell {
         	@Override
         	public void widgetSelected(SelectionEvent arg0) {
         		try {
-					save(treePerProperty, treePerEntity);
-				} catch (Exception e) {
-					e.printStackTrace();
-					e.printStackTrace();
+					boolean ok = persistence.save( treePerProperty, treePerEntity );
+					if( !ok ) {
+						saveAs( treePerProperty, treePerEntity );
+					}
+				}
+        		catch( Exception ex ) {
+					ex.printStackTrace();
+					ex.printStackTrace();
 			    	MessageBox box = new MessageBox(getShell(), SWT.ERROR);
 	                box.setText("Error");
-	                box.setMessage(e.toString());
+	                box.setMessage(ex.toString());
 	                box.open();
 				}
         	}
@@ -882,7 +876,7 @@ public class MainShell extends Shell {
 							//java.lang.reflect.Constructor<?> constr = objClass.getConstructor( params );
 							//Object o = constr.newInstance( text.getText() );
 							Class<?> cls[] = new Class[] { String.class };
-							Constructor<?> c = ((Class<?>) TreeNodeData.property_value_types[voc][index]).getConstructor(cls);
+							java.lang.reflect.Constructor<?> c = ((Class<?>) TreeNodeData.property_value_types[voc][index]).getConstructor(cls);
 							Object obj = c.newInstance(text.getText());
 							treeNodeData.property_values[0][index] = obj;
 						} catch (NoSuchMethodException e) {
@@ -895,7 +889,7 @@ public class MainShell extends Shell {
 							e.printStackTrace();
 						} catch (IllegalArgumentException e) {
 							e.printStackTrace();
-						} catch (InvocationTargetException e) {
+						} catch (java.lang.reflect.InvocationTargetException e) {
 							e.printStackTrace();
 							MessageBox box = new MessageBox(getShell(), SWT.ERROR);
 			                box.setText("Error");
@@ -928,74 +922,9 @@ public class MainShell extends Shell {
 		});
 	}
 	
-	private void save(Tree perPropertyTree, Tree perEntityTree) throws ParserConfigurationException, TransformerException {
-		
-		if (filename==null) {
-			saveAs(perPropertyTree, perEntityTree);
-			return;
-		}
-		
-			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-			docFactory.setNamespaceAware(true);
-			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-			
-			// root element
-			Document doc = docBuilder.newDocument();
-			Element rootElement = doc.createElement("eleon_save");
-			doc.appendChild(rootElement);
-			
-			rootElement.setAttribute("xmlns:void", "http://rdfs.org/ns/void#");
-			rootElement.setAttribute("xmlns:dc", "http://purl.org/dc/elements/1.1/");
-			rootElement.setAttribute("xmlns:rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
-			
-			//moved to node attribute
-			/*Element title = doc.createElement("dc:title");
-			title.appendChild(doc.createTextNode(textTitle.getText()));
-			rootElement.appendChild(title);*/
-			
-			//moved to node attribute
-			/*Element endpoint = doc.createElement("void:sparqlEndpoint");
-			endpoint.appendChild(doc.createTextNode(textEndpoint.getText()));
-			rootElement.appendChild(endpoint);*/
-			
-			//per property
-			Element perPropertyTreeElement = doc.createElement("facet");
-			perPropertyTreeElement.setAttribute("type", "per_property");
-			rootElement.appendChild(perPropertyTreeElement);
-			
-			Element treeRootProperty = doc.createElement("node");
-			treeRootProperty.setAttribute("name", "root");
-			perPropertyTreeElement.appendChild(treeRootProperty);
-			
-			createDOMFromTree(perPropertyTree.getItems()[0], treeRootProperty, doc);
-			
-			//per entity
-			Element perEntityTreeElement = doc.createElement("facet");
-			perEntityTreeElement.setAttribute("type", "per_entity");
-			rootElement.appendChild(perEntityTreeElement);
-			
-			Element treeRootEntity = doc.createElement("node");
-			treeRootEntity.setAttribute("name", "root");
-			perEntityTreeElement.appendChild(treeRootEntity);
-			
-			createDOMFromTree(perEntityTree.getItems()[0], treeRootEntity, doc);
-			
-			// write the content into xml file
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-			Transformer transformer = transformerFactory.newTransformer();
-			DOMSource source = new DOMSource(doc);
-			StreamResult result = new StreamResult(new File(filename));
-	 
-			// Output to console for testing
-			// StreamResult result = new StreamResult(System.out);
-	 
-			transformer.transform(source, result);
-	 
-			System.out.println("File " + filename + " saved!");
-	 
-	}
-	
-	private void saveAs(Tree perPropertyTree, Tree perEntityTree) throws ParserConfigurationException, TransformerException {
+	private void saveAs( Tree perPropertyTree, Tree perEntityTree )
+	throws IOException
+	{
 		FileDialog dialog = new FileDialog (shell, SWT.SAVE);
 		dialog.setOverwrite(true);
 		String [] filterNames = new String [] {"XML Files", "All Files (*)"};
@@ -1012,134 +941,13 @@ public class MainShell extends Shell {
 		dialog.setFilterExtensions (filterExtensions);
 		dialog.setFilterPath (filterPath);
 		dialog.setFileName ("eleon_save");
-		filename = dialog.open();
-		if (filename != null) {
-			save(perPropertyTree, perEntityTree);
+		String filename = dialog.open();
+		if( filename != null ) {
+			persistence.setBackend( filename );
+			boolean ok = persistence.save( perPropertyTree, perEntityTree );
+			assert ok;
 		}
 		//System.out.println ("Save to: " + dialog.open ());
-	}
-	
-	
-	private void createDOMFromTree(TreeItem treeItem, Element root, Document doc) {
-		for (TreeItem treeItemCurrent : treeItem.getItems()) {
-			Element treeItemNode = doc.createElement("node");
-			// System.out.println(treeItem);
-			//treeItemNode.setAttribute("name", ((TreeNodeData) treeItemCurrent.getData()).getOntProperty().toString());
-			treeItemNode.setAttribute("name", treeItemCurrent.getText());
-			TreeNodeData treeNodeData = (TreeNodeData) treeItemCurrent.getData();
-			treeItemNode.setAttribute("dc:creator", treeNodeData.getDc_creator());
-			Integer void_size = treeNodeData.getVoid_triples();
-			if (void_size != null) {
-				treeItemNode.setAttribute("void:triples", void_size.toString());
-			}
-			Integer void_distinctSubjects = treeNodeData.getVoid_distinctSubjects();
-			if (void_distinctSubjects != null) {
-				treeItemNode.setAttribute("void:distinctSubjects", void_distinctSubjects.toString());
-			}
-			Integer void_distinctObjects = treeNodeData.getVoid_distinctObjects();
-			if (void_distinctObjects != null) {
-				treeItemNode.setAttribute("void:distinctObjects", void_distinctObjects.toString());
-			}
-			treeItemNode.setAttribute("void:sparqlEndpoint", treeNodeData.getVoid_sparqlEnpoint());
-			treeItemNode.setAttribute("dc:title", treeNodeData.getDc_title());
-			if (treeItemCurrent.getData() instanceof PerEntityNode) {
-				PerEntityNode perEntityNode = (PerEntityNode) treeItemCurrent.getData();
-				String subjectPattern = perEntityNode.getSubjectPattern();
-				String objectPattern = perEntityNode.getObjectPattern();
-				if (subjectPattern != null) {
-					Element subjectElement = doc.createElement("rdf:subject");
-					subjectElement.setAttribute("void:uriRegexPattern", subjectPattern);
-					treeItemNode.appendChild(subjectElement);
-				}
-				if (objectPattern != null) {
-					Element objectElement = doc.createElement("rdf:object");
-					objectElement.setAttribute("void:uriRegexPattern", objectPattern);
-					treeItemNode.appendChild(objectElement);
-				}
-			} else if (treeItemCurrent.getData() instanceof PerPropertyNode) {
-				PerPropertyNode perPropertyNode = (PerPropertyNode) treeItemCurrent.getData();
-				OntProperty ontProperty = perPropertyNode.getOntProperty();
-				Element ontPropertyElement = doc.createElement("rdf:Property");
-				ontPropertyElement.setAttribute("rdf:about", ontProperty.toString());
-				treeItemNode.appendChild(ontPropertyElement);
-			}
-			//treeItemNode.setAttribute("parent", treeItem.getText());
-			root.appendChild(treeItemNode);
-			if (treeItemCurrent.getItemCount() > 0) {
-				createDOMFromTree(treeItemCurrent, treeItemNode, doc);
-			}
-		}
-	}
-	
-	private void open(String filename) throws ParserConfigurationException, SAXException, IOException, Exception{
-		
-			File fXmlFile = new File(filename);
-			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			Document doc = dBuilder.parse(fXmlFile);
-		 
-			doc.getDocumentElement().normalize();
-		 
-			String rootElement = doc.getDocumentElement().getNodeName();
-			if ( ! rootElement.equals("eleon_save")) {
-				throw new Exception("Tried to open a non-eleon_save document!");
-			}
-						
-			NodeList nListTitle = doc.getElementsByTagName("dc:title");
-			this.textTitle.setText(nListTitle.item(0).getTextContent());
-			
-			//moved to node attribute
-			/*NodeList nEnpointTitle = doc.getElementsByTagName("void:sparqlEndpoint");
-			this.textEndpoint.setText(nEnpointTitle.item(0).getTextContent());*/
-			
-			/*
-			treePerProperty.dispose();
-			table.dispose();
-			createTree();
-			createTable();
-			*/
-			
-			XPathFactory xPathfactory = XPathFactory.newInstance();
-			XPath xpath = xPathfactory.newXPath();
-			
-			//create the per property tree
-			createPerPropertyTree();
-			XPathExpression expr = xpath.compile("//facet[@type=\"per_property\"]");
-			NodeList nodeList = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
-			Element eElement = (Element) nodeList.item(0);
-			Element root = (Element) eElement.getFirstChild();
-			NodeList childrenList = root.getChildNodes();
-			for (int i = 0; i < childrenList.getLength(); i++) {
-				createTreeFromDOM(childrenList.item(i), treePerProperty, "per_property", treePerProperty.getItems()[0]);
-			}
-			treePerProperty.moveAbove(null);
-			
-			//create the per entity treePerProperty
-			createPerEntityTree();
-			expr = xpath.compile("//facet[@type=\"per_entity\"]");
-			nodeList = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
-			eElement = (Element) nodeList.item(0);
-			root = (Element) eElement.getFirstChild();
-			childrenList = root.getChildNodes();
-			for (int i = 0; i < childrenList.getLength(); i++) {
-				createTreeFromDOM(childrenList.item(i), treePerEntity, "per_property", treePerEntity.getItems()[0]);
-			}
-			treePerEntity.moveAbove(null);
-
-	}
-	
-	
-	private TreeNodeData getDataFromExistingTreeItem(TreeItem treeItem, String name, String dc_creator) {
-		for (TreeItem treeItemCurrent : treeItem.getItems()) {
-			TreeNodeData treeNodeData = (TreeNodeData) treeItemCurrent.getData();
-			if (treeNodeData.getDc_creator().equals(dc_creator) && treeItemCurrent.getText().equals(name)) {
-				return (TreeNodeData) treeItemCurrent.getData();
-			}
-			if (treeItemCurrent.getItemCount() > 0) {
-				getDataFromExistingTreeItem(treeItemCurrent, name, dc_creator);
-			}
-		}
-		return null;
 	}
 	
 	private void addVocabularyToMenu(String filename, Menu vocabulariesMenu) {
@@ -1192,100 +1000,6 @@ public class MainShell extends Shell {
 	}
 	*/
 	
-	private void createTreeFromDOM(Node node, Tree tree, String facetType, TreeItem parentTreeItem) {
-		if (node.getNodeType() == Node.ELEMENT_NODE) {
-			TreeItem rootItem =tree.getItems()[0];
-			
-			Element eElement = (Element) node;
-			String name = eElement.getAttribute("name");
-			String dc_creator = eElement.getAttribute("dc:creator");
-			
-			TreeNodeData nodeData = getDataFromExistingTreeItem(rootItem, name, dc_creator);
-			
-			TreeItem treeItem = new TreeItem(parentTreeItem, SWT.NONE);
-			treeItem.setText(name);
-			
-			if (nodeData == null) {
-				Integer void_triples = null;
-				String void_size_str = eElement.getAttribute("void:triples");
-				if ( ! void_size_str.equals("")) {
-					void_triples = new Integer(void_size_str);
-				}			
-				Integer void_distinctSubjects = null;
-				String void_distinctSubjects_str = eElement.getAttribute("void:distinctSubjects");
-				if ( ! void_distinctSubjects_str.equals("")) {
-					void_distinctSubjects = new Integer(void_distinctSubjects_str);
-				}		
-				Integer void_distinctObjects = null;
-				String void_distinctObjects_str = eElement.getAttribute("void:distinctObjects");
-				if ( ! void_distinctObjects_str.equals("")) {
-					void_distinctObjects = new Integer(void_distinctObjects_str);
-				}
-				String void_sparqlEndpoint = eElement.getAttribute("void:sparqlEndpoint");
-				if (void_sparqlEndpoint.equals("")) {
-					void_sparqlEndpoint = null;
-				}
-				String dc_title = eElement.getAttribute("dc:title");
-				if (dc_title.equals("")) {
-					dc_title = null;
-				}
-				
-				//create data to insert
-				if (facetType.equals("per_property")) {
-					PerPropertyNode data = new PerPropertyNode(void_triples, void_distinctSubjects, void_distinctObjects, dc_creator, void_sparqlEndpoint, dc_title);
-					OntModel ontModel = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM);
-					NodeList nodeList = node.getChildNodes();
-					for (int i = 0; i < nodeList.getLength(); i++) {
-						Node currentNode = nodeList.item(i);
-						if (currentNode.getNodeType() == Node.ELEMENT_NODE) {
-							if (currentNode.getNodeName().equals("rdf:Property")) {
-								Element element = (Element) currentNode;
-								String rdf_about = element.getAttribute("rdf:about");
-								OntProperty ontProperty = ontModel.createOntProperty(rdf_about);
-								data.setOntProperty(ontProperty);
-							}
-						}
-					}
-					treeItem.setData(data);
-				} else if (facetType.equals("per_entity")) {
-					PerEntityNode data = new PerEntityNode(void_triples, void_distinctSubjects, void_distinctObjects, dc_creator, void_sparqlEndpoint, dc_title);
-					NodeList nodeList = node.getChildNodes();
-					for (int i = 0; i < nodeList.getLength(); i++) {
-						Node currentNode = nodeList.item(i);
-						if (currentNode.getNodeType() == Node.ELEMENT_NODE) {
-							if (currentNode.getNodeName().equals("rdf:subject")) {
-								Element element = (Element) currentNode;
-								String subjectPattern = null;
-								String uriRegexPattern = element.getAttribute("void:uriRegexPattern");
-								if (uriRegexPattern.equals("")) {
-									subjectPattern = null;
-								}
-								data.setSubjectPattern(subjectPattern);
-							} else if  (currentNode.getNodeName().equals("rdf:object")) {
-								Element element = (Element) currentNode;
-								String objectPattern = null;
-								String uriRegexPattern = element.getAttribute("void:uriRegexPattern");
-								if (uriRegexPattern.equals("")) {
-									objectPattern = null;
-								}
-								data.setSubjectPattern(objectPattern);
-							}
-						}
-					}
-					treeItem.setData(data);
-				}
-			} else {
-				treeItem.setData(nodeData);
-			}
-			NodeList nodeList = node.getChildNodes();
-			for (int i = 0; i < nodeList.getLength(); i++) {
-				Node currentNode = nodeList.item(i);
-				if (currentNode.getNodeType() == Node.ELEMENT_NODE && currentNode.getNodeName().equals("node")) {
-					createTreeFromDOM(currentNode, tree, facetType, treeItem);
-				}
-			}
-		}
-	}
 
 	
 	/*protected boolean canEditItem(TreeItem treeItem, String author) {
