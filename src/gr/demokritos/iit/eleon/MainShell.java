@@ -356,6 +356,10 @@ public class MainShell extends Shell
 		list.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent selectionEvent) {
+				if (table != null && !table.isDisposed()) {
+					table.dispose();
+					table = null;
+				}
 				if ( ! hasSelectedAuthor(AuthorMenu)) {
 					MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
 	                box.setText("Choose author");
