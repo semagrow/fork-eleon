@@ -37,7 +37,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 package gr.demokritos.iit.eleon.ui;
 
-import gr.demokritos.iit.eleon.functionality.PerEntityNode;
+import gr.demokritos.iit.eleon.facets.dataset.EntityInclusionTreeNode;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Dialog;
@@ -54,7 +54,7 @@ public class PerEntityInsertDialog  extends Dialog {
 	Shell shell;
     private Text textSubject;
     private Text textObject;
-    private PerEntityNode perEntityNode;
+    private EntityInclusionTreeNode perEntityNode;
             
     public PerEntityInsertDialog (Shell parent, int style) {
             super (parent, style);
@@ -62,7 +62,7 @@ public class PerEntityInsertDialog  extends Dialog {
     public PerEntityInsertDialog (Shell parent) {
             this (parent, 0); // your default style bits go here (not the Shell's style bits)
     }
-    public PerEntityNode open () {
+    public EntityInclusionTreeNode open () {
             Shell parent = getParent();
             shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
             shell.setSize(496, 135);
@@ -92,7 +92,7 @@ public class PerEntityInsertDialog  extends Dialog {
             		if (subjectPattern == null && objectPattern == null) {
             			perEntityNode = null;
             		} else {
-            			perEntityNode = new PerEntityNode(subjectPattern, objectPattern);
+            			perEntityNode = new EntityInclusionTreeNode(subjectPattern, objectPattern);
             		}
             		shell.dispose();
             	}

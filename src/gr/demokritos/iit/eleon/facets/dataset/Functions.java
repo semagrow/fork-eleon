@@ -35,7 +35,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 ***************/
 
-package gr.demokritos.iit.eleon.functionality;
+package gr.demokritos.iit.eleon.facets.dataset;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Tree;
@@ -49,8 +49,8 @@ public class Functions {
 	 */
 	public static boolean notDatasourceUnderRoot(TreeItem selectedItem, Tree treeCopy) {
 		boolean isRoot = selectedItem.getText().equals("root");
-		boolean isPerEntityNode = treeCopy.getSelection()[0].getData() instanceof PerEntityNode;
-		boolean isPerPropertyNode = treeCopy.getSelection()[0].getData() instanceof PerPropertyNode;
+		boolean isPerEntityNode = treeCopy.getSelection()[0].getData() instanceof EntityInclusionTreeNode;
+		boolean isPerPropertyNode = treeCopy.getSelection()[0].getData() instanceof PropertyTreeNode;
 		if ((isRoot && isPerEntityNode) || (isRoot && isPerPropertyNode)) {
 			return true;
 		} else {

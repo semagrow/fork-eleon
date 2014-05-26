@@ -53,15 +53,16 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.custom.TableEditor;
+
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntModelSpec;
 import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 import gr.demokritos.iit.eleon.commons.Constants;
-import gr.demokritos.iit.eleon.functionality.PerEntityNode;
-import gr.demokritos.iit.eleon.functionality.PerPropertyNode;
-import gr.demokritos.iit.eleon.functionality.TreeNodeData;
+import gr.demokritos.iit.eleon.facets.dataset.EntityInclusionTreeNode;
+import gr.demokritos.iit.eleon.facets.dataset.PropertyTreeNode;
+import gr.demokritos.iit.eleon.facets.dataset.DatasetNode;
 import gr.demokritos.iit.eleon.ui.CopyExistingNodeDialog;
 import gr.demokritos.iit.eleon.ui.InsertInMenuDialog;
 import gr.demokritos.iit.eleon.ui.PerEntityInsertDialog;
@@ -422,7 +423,7 @@ public class MainShell extends Shell
 			if (superProperty == null) {
 				TreeItem treeItem = new TreeItem(root, SWT.NONE);
 				treeItem.setText("?s " + ontProperty.toString() + " ?o");
-				PerPropertyNode property = new PerPropertyNode(ontProperty);
+				PropertyTreeNode property = new PropertyTreeNode(ontProperty);
 				property.setDc_creator(author);
 				treeItem.setData(property);
 			} else {	
@@ -447,10 +448,10 @@ public class MainShell extends Shell
 	protected boolean insertChildInTree(TreeItem treeItem, OntProperty ontProperty, OntProperty superProperty, String author) {
 		boolean inserted = false;
 		for(TreeItem child : treeItem.getItems()) {
-			if (((PerPropertyNode) child.getData()).getOntProperty().equals(superProperty)) {
+			if (((PropertyTreeNode) child.getData()).getOntProperty().equals(superProperty)) {
 				TreeItem newtreeItem = new TreeItem(child, SWT.NONE);
 				newtreeItem.setText(ontProperty.toString());
-				PerPropertyNode property = new PerPropertyNode(ontProperty);
+				PropertyTreeNode property = new PropertyTreeNode(ontProperty);
 				property.setDc_creator(author);
 				newtreeItem.setData(property);
 				inserted = true;
@@ -487,7 +488,7 @@ public class MainShell extends Shell
 					}
 					return;
 				}
-				TreeNodeData treeNodeData = (TreeNodeData) treePerProperty.getSelection()[0].getData();
+				DatasetNode treeNodeData = (DatasetNode) treePerProperty.getSelection()[0].getData();
 				if (treeNodeData.getDc_title() != null) {
 					textTitle.setText(treeNodeData.getDc_title());
 				} else {
@@ -519,7 +520,7 @@ public class MainShell extends Shell
 					String label = insert.open("Insert dataset label");
 					if (label == null) return;
 					TreeItem newItem = new TreeItem(selected[0], SWT.NONE);
-					TreeNodeData data = new TreeNodeData();
+					DatasetNode data = new DatasetNode();
 					data.setDc_creator(currentAuthor);
 					newItem.setData(data);
 					newItem.setText(label);
@@ -586,7 +587,7 @@ public class MainShell extends Shell
 					}	
 					return;
 				}
-				TreeNodeData treeNodeData = (TreeNodeData) treePerEntity.getSelection()[0].getData();
+				DatasetNode treeNodeData = (DatasetNode) treePerEntity.getSelection()[0].getData();
 				if (treeNodeData.getDc_title() != null) {
 					textTitle.setText(treeNodeData.getDc_title());
 				} else {
@@ -618,7 +619,7 @@ public class MainShell extends Shell
 					String label = insert.open("Insert dataset label");
 					if (label == null) return;
 					TreeItem newItem = new TreeItem(selected[0], SWT.NONE);
-					TreeNodeData data = new TreeNodeData();
+					DatasetNode data = new DatasetNode();
 					data.setDc_creator(currentAuthor);
 					newItem.setData(data);
 					newItem.setText(label);
@@ -641,7 +642,7 @@ public class MainShell extends Shell
 					}
 					// selection.setExpanded(true);
 					PerEntityInsertDialog dialog = new PerEntityInsertDialog(shell);
-					PerEntityNode nodeData = dialog.open();
+					EntityInclusionTreeNode nodeData = dialog.open();
 					if (nodeData == null) {
 						return;
 					} else {
@@ -755,18 +756,18 @@ public class MainShell extends Shell
 		}
 		createTable();
 		
-		TreeNodeData treeNodeData = ((TreeNodeData) tree.getSelection()[0].getData());
+		DatasetNode treeNodeData = ((DatasetNode) tree.getSelection()[0].getData());
 		
 		final int voc = 0;
 		int i = 0;
-		while(TreeNodeData.property_names[voc][i] != null) {
+		while(DatasetNode.property_names[voc][i] != null) {
 			TableItem item = new TableItem(table, SWT.NONE);
 			Object value = treeNodeData.property_values[voc][i];
 			String value_str = null;
 			if (value != null) {
 				value_str = value.toString();
 			}
-			item.setText(new String [] {TreeNodeData.property_names[voc][i], value_str});
+			item.setText(new String [] {DatasetNode.property_names[voc][i], value_str});
 			i++;
 		}
 		
@@ -777,7 +778,7 @@ public class MainShell extends Shell
 		table.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				String creator = ((TreeNodeData) tree.getSelection()[0].getData()).getDc_creator();
+				String creator = ((DatasetNode) tree.getSelection()[0].getData()).getDc_creator();
 				if ( ! creator.equals(currentAuthor)) {
 					MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
 	                box.setText("Value read-only");
@@ -841,14 +842,14 @@ public class MainShell extends Shell
 						editor.getItem().setText(1, text.getText());
 						
 						int i = 0; int index = -1;
-						while( (index < 0) && (TreeNodeData.property_names[0][i] != null) ) {
-							if( property.equals(TreeNodeData.property_names[0][i]) ) { index = i; }
+						while( (index < 0) && (DatasetNode.property_names[0][i] != null) ) {
+							if( property.equals(DatasetNode.property_names[0][i]) ) { index = i; }
 							++i;
 						}
 						
 						assert(i>=0);
 							
-						TreeNodeData treeNodeData = ((TreeNodeData) tree.getSelection()[0].getData());
+						DatasetNode treeNodeData = ((DatasetNode) tree.getSelection()[0].getData());
 						//Class<?> objClass = TreeNodeData.property_value_types[voc][index].getClass();
 						//boolean functional = TreeNodeData.property_is_functional[voc][index];
 						//Class<?> params[] = new Class[1];
@@ -857,7 +858,7 @@ public class MainShell extends Shell
 							//java.lang.reflect.Constructor<?> constr = objClass.getConstructor( params );
 							//Object o = constr.newInstance( text.getText() );
 							Class<?> cls[] = new Class[] { String.class };
-							java.lang.reflect.Constructor<?> c = ((Class<?>) TreeNodeData.property_value_types[voc][index]).getConstructor(cls);
+							java.lang.reflect.Constructor<?> c = ((Class<?>) DatasetNode.property_value_types[voc][index]).getConstructor(cls);
 							Object obj = c.newInstance(text.getText());
 							treeNodeData.property_values[0][index] = obj;
 						} catch (NoSuchMethodException e) {

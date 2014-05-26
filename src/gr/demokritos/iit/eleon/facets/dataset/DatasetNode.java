@@ -35,9 +35,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 ***************/
 
-package gr.demokritos.iit.eleon.functionality;
+package gr.demokritos.iit.eleon.facets.dataset;
 
-public class TreeNodeData {
+public class DatasetNode {
 	
 	public Object[][] property_values = new Object[2][20];
 	static public String[][] property_names = new String[2][20];
@@ -112,7 +112,7 @@ public class TreeNodeData {
 	/**
 	 * 
 	 */
-	public TreeNodeData() {
+	public DatasetNode() {
 		super();
 	}
 	
@@ -123,7 +123,7 @@ public class TreeNodeData {
 	 * @param dc_creator
 	 * @param void_sparqlEnpoint
 	 */
-	public TreeNodeData(Integer void_triples, Integer void_distinctSubjects,
+	public DatasetNode(Integer void_triples, Integer void_distinctSubjects,
 			Integer void_distinctObjects, String dc_creator, String void_sparqlEnpoint, String dc_title) {
 		super();
 		this.void_triples = void_triples;

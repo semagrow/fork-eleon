@@ -1,6 +1,6 @@
 /***************
 
-<p>Title: PerEntityNode</p>
+<p>Title: PerPropertyNode</p>
 
 <p>Description:
 
@@ -35,25 +35,26 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 ***************/
 
-package gr.demokritos.iit.eleon.functionality;
+package gr.demokritos.iit.eleon.facets.dataset;
 
-public class PerEntityNode extends TreeNodeData {
-	
+import gr.demokritos.iit.eleon.facets.TreeFacetNode;
 
-	private String subjectPattern;
-	private String objectPattern;
+import com.hp.hpl.jena.ontology.OntProperty;
+
+public class PropertyTreeNode extends DatasetNode implements TreeFacetNode
+{
 	
+	private OntProperty ontProperty = null;
+
 	/**
-	 * @param subjectPattern
-	 * @param objectPattern
+	 * @param ontProperty
 	 */
-	public PerEntityNode(String subjectPattern,
-			String objectPattern) {
+	public PropertyTreeNode(OntProperty ontProperty) {
 		super();
-		this.subjectPattern = subjectPattern;
-		this.objectPattern = objectPattern;
+		this.ontProperty = ontProperty;
 	}
-
+	
+	
 	/**
 	 * @param void_triples
 	 * @param void_distinctSubjects
@@ -62,42 +63,25 @@ public class PerEntityNode extends TreeNodeData {
 	 * @param void_sparqlEnpoint
 	 * @param dc_title
 	 */
-	public PerEntityNode(Integer void_triples, Integer void_distinctSubjects,
+	public PropertyTreeNode(Integer void_triples, Integer void_distinctSubjects,
 			Integer void_distinctObjects, String dc_creator,
 			String void_sparqlEnpoint, String dc_title) {
 		super(void_triples, void_distinctSubjects, void_distinctObjects, dc_creator,
 				void_sparqlEnpoint, dc_title);
 	}
 
-
-
 	/**
-	 * @return the subjectPattern
+	 * @return the ontProperty
 	 */
-	public String getSubjectPattern() {
-		return subjectPattern;
+	public OntProperty getOntProperty() {
+		return ontProperty;
 	}
 
 	/**
-	 * @param subjectPattern the subjectPattern to set
+	 * @param ontProperty the ontProperty to set
 	 */
-	public void setSubjectPattern(String subjectPattern) {
-		this.subjectPattern = subjectPattern;
+	public void setOntProperty(OntProperty ontProperty) {
+		this.ontProperty = ontProperty;
 	}
-
-	/**
-	 * @return the objectPattern
-	 */
-	public String getObjectPattern() {
-		return objectPattern;
-	}
-
-	/**
-	 * @param objectPattern the objectPattern to set
-	 */
-	public void setObjectPattern(String objectPattern) {
-		this.objectPattern = objectPattern;
-	}
-	
 
 }

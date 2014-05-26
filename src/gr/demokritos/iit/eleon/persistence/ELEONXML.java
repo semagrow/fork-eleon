@@ -38,9 +38,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 package gr.demokritos.iit.eleon.persistence;
 
-import gr.demokritos.iit.eleon.functionality.PerEntityNode;
-import gr.demokritos.iit.eleon.functionality.PerPropertyNode;
-import gr.demokritos.iit.eleon.functionality.TreeNodeData;
+import gr.demokritos.iit.eleon.facets.dataset.EntityInclusionTreeNode;
+import gr.demokritos.iit.eleon.facets.dataset.PropertyTreeNode;
+import gr.demokritos.iit.eleon.facets.dataset.DatasetNode;
 
 import java.io.File;
 import java.io.IOException;
@@ -286,7 +286,7 @@ public class ELEONXML implements PersistenceBackend
 			// System.out.println(treeItem);
 			//treeItemNode.setAttribute("name", ((TreeNodeData) treeItemCurrent.getData()).getOntProperty().toString());
 			treeItemNode.setAttribute("name", treeItemCurrent.getText());
-			TreeNodeData treeNodeData = (TreeNodeData) treeItemCurrent.getData();
+			DatasetNode treeNodeData = (DatasetNode) treeItemCurrent.getData();
 			treeItemNode.setAttribute("dc:creator", treeNodeData.getDc_creator());
 			Integer void_size = treeNodeData.getVoid_triples();
 			if (void_size != null) {
@@ -302,8 +302,8 @@ public class ELEONXML implements PersistenceBackend
 			}
 			treeItemNode.setAttribute("void:sparqlEndpoint", treeNodeData.getVoid_sparqlEnpoint());
 			treeItemNode.setAttribute("dc:title", treeNodeData.getDc_title());
-			if (treeItemCurrent.getData() instanceof PerEntityNode) {
-				PerEntityNode perEntityNode = (PerEntityNode) treeItemCurrent.getData();
+			if (treeItemCurrent.getData() instanceof EntityInclusionTreeNode) {
+				EntityInclusionTreeNode perEntityNode = (EntityInclusionTreeNode) treeItemCurrent.getData();
 				String subjectPattern = perEntityNode.getSubjectPattern();
 				String objectPattern = perEntityNode.getObjectPattern();
 				if (subjectPattern != null) {
@@ -316,8 +316,8 @@ public class ELEONXML implements PersistenceBackend
 					objectElement.setAttribute("void:uriRegexPattern", objectPattern);
 					treeItemNode.appendChild(objectElement);
 				}
-			} else if (treeItemCurrent.getData() instanceof PerPropertyNode) {
-				PerPropertyNode perPropertyNode = (PerPropertyNode) treeItemCurrent.getData();
+			} else if (treeItemCurrent.getData() instanceof PropertyTreeNode) {
+				PropertyTreeNode perPropertyNode = (PropertyTreeNode) treeItemCurrent.getData();
 				OntProperty ontProperty = perPropertyNode.getOntProperty();
 				Element ontPropertyElement = doc.createElement("rdf:Property");
 				ontPropertyElement.setAttribute("rdf:about", ontProperty.toString());
@@ -340,7 +340,7 @@ public class ELEONXML implements PersistenceBackend
 			String name = eElement.getAttribute("name");
 			String dc_creator = eElement.getAttribute("dc:creator");
 			
-			TreeNodeData nodeData = getDataFromExistingTreeItem(rootItem, name, dc_creator);
+			DatasetNode nodeData = getDataFromExistingTreeItem(rootItem, name, dc_creator);
 			
 			TreeItem treeItem = new TreeItem(parentTreeItem, SWT.NONE);
 			treeItem.setText(name);
@@ -372,7 +372,7 @@ public class ELEONXML implements PersistenceBackend
 				
 				//create data to insert
 				if (facetType.equals("per_property")) {
-					PerPropertyNode data = new PerPropertyNode(void_triples, void_distinctSubjects, void_distinctObjects, dc_creator, void_sparqlEndpoint, dc_title);
+					PropertyTreeNode data = new PropertyTreeNode(void_triples, void_distinctSubjects, void_distinctObjects, dc_creator, void_sparqlEndpoint, dc_title);
 					OntModel ontModel = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM);
 					NodeList nodeList = node.getChildNodes();
 					for (int i = 0; i < nodeList.getLength(); i++) {
@@ -388,7 +388,7 @@ public class ELEONXML implements PersistenceBackend
 					}
 					treeItem.setData(data);
 				} else if (facetType.equals("per_entity")) {
-					PerEntityNode data = new PerEntityNode(void_triples, void_distinctSubjects, void_distinctObjects, dc_creator, void_sparqlEndpoint, dc_title);
+					EntityInclusionTreeNode data = new EntityInclusionTreeNode(void_triples, void_distinctSubjects, void_distinctObjects, dc_creator, void_sparqlEndpoint, dc_title);
 					NodeList nodeList = node.getChildNodes();
 					for (int i = 0; i < nodeList.getLength(); i++) {
 						Node currentNode = nodeList.item(i);
@@ -427,11 +427,11 @@ public class ELEONXML implements PersistenceBackend
 		}
 	}
 
-	private TreeNodeData getDataFromExistingTreeItem(TreeItem treeItem, String name, String dc_creator) {
+	private DatasetNode getDataFromExistingTreeItem(TreeItem treeItem, String name, String dc_creator) {
 		for (TreeItem treeItemCurrent : treeItem.getItems()) {
-			TreeNodeData treeNodeData = (TreeNodeData) treeItemCurrent.getData();
+			DatasetNode treeNodeData = (DatasetNode) treeItemCurrent.getData();
 			if (treeNodeData.getDc_creator().equals(dc_creator) && treeItemCurrent.getText().equals(name)) {
-				return (TreeNodeData) treeItemCurrent.getData();
+				return (DatasetNode) treeItemCurrent.getData();
 			}
 			if (treeItemCurrent.getItemCount() > 0) {
 				getDataFromExistingTreeItem(treeItemCurrent, name, dc_creator);

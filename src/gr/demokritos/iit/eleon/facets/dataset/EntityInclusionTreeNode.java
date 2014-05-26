@@ -1,6 +1,6 @@
 /***************
 
-<p>Title: PerPropertyNode</p>
+<p>Title: PerEntityNode</p>
 
 <p>Description:
 
@@ -35,23 +35,27 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 ***************/
 
-package gr.demokritos.iit.eleon.functionality;
+package gr.demokritos.iit.eleon.facets.dataset;
 
-import com.hp.hpl.jena.ontology.OntProperty;
+import gr.demokritos.iit.eleon.facets.TreeFacetNode;
 
-public class PerPropertyNode extends TreeNodeData {
+public class EntityInclusionTreeNode extends DatasetNode implements TreeFacetNode
+{
 	
-	private OntProperty ontProperty = null;
-
+	private String subjectPattern;
+	private String objectPattern;
+	
 	/**
-	 * @param ontProperty
+	 * @param subjectPattern
+	 * @param objectPattern
 	 */
-	public PerPropertyNode(OntProperty ontProperty) {
+	public EntityInclusionTreeNode(String subjectPattern,
+			String objectPattern) {
 		super();
-		this.ontProperty = ontProperty;
+		this.subjectPattern = subjectPattern;
+		this.objectPattern = objectPattern;
 	}
-	
-	
+
 	/**
 	 * @param void_triples
 	 * @param void_distinctSubjects
@@ -60,27 +64,42 @@ public class PerPropertyNode extends TreeNodeData {
 	 * @param void_sparqlEnpoint
 	 * @param dc_title
 	 */
-	public PerPropertyNode(Integer void_triples, Integer void_distinctSubjects,
+	public EntityInclusionTreeNode(Integer void_triples, Integer void_distinctSubjects,
 			Integer void_distinctObjects, String dc_creator,
 			String void_sparqlEnpoint, String dc_title) {
 		super(void_triples, void_distinctSubjects, void_distinctObjects, dc_creator,
 				void_sparqlEnpoint, dc_title);
 	}
 
+
+
 	/**
-	 * @return the ontProperty
+	 * @return the subjectPattern
 	 */
-	public OntProperty getOntProperty() {
-		return ontProperty;
+	public String getSubjectPattern() {
+		return subjectPattern;
 	}
 
 	/**
-	 * @param ontProperty the ontProperty to set
+	 * @param subjectPattern the subjectPattern to set
 	 */
-	public void setOntProperty(OntProperty ontProperty) {
-		this.ontProperty = ontProperty;
+	public void setSubjectPattern(String subjectPattern) {
+		this.subjectPattern = subjectPattern;
 	}
 
+	/**
+	 * @return the objectPattern
+	 */
+	public String getObjectPattern() {
+		return objectPattern;
+	}
+
+	/**
+	 * @param objectPattern the objectPattern to set
+	 */
+	public void setObjectPattern(String objectPattern) {
+		this.objectPattern = objectPattern;
+	}
 	
 
 }

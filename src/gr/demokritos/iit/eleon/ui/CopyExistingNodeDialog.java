@@ -37,7 +37,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 package gr.demokritos.iit.eleon.ui;
 
-import gr.demokritos.iit.eleon.functionality.Functions;
+import gr.demokritos.iit.eleon.facets.dataset.Functions;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
