@@ -61,6 +61,7 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 import gr.demokritos.iit.eleon.commons.Constants;
 import gr.demokritos.iit.eleon.facets.dataset.EntityInclusionTreeNode;
+import gr.demokritos.iit.eleon.facets.dataset.PropertyTreeFacet;
 import gr.demokritos.iit.eleon.facets.dataset.PropertyTreeNode;
 import gr.demokritos.iit.eleon.facets.dataset.DatasetNode;
 import gr.demokritos.iit.eleon.ui.CopyExistingNodeDialog;
@@ -72,12 +73,12 @@ import gr.demokritos.iit.eleon.persistence.*;
 public class MainShell extends Shell
 {
 	protected Text textEndpoint;
-	protected Table table;
-	protected Tree treePerProperty;
+	public Table table;
+	PropertyTreeFacet propertyTree;
 	protected List list;
 	static protected MainShell shell;
 	private Text textTitle;
-	private String currentAuthor;
+	public String currentAuthor;
 	protected Tree treePerEntity;
 	private Menu dataSchemaMenu;
 	//private MenuItem mntmNew;
@@ -129,6 +130,7 @@ public class MainShell extends Shell
         });
 		newItem.setText("&New");*/
 		
+		propertyTree = new PropertyTreeFacet( this );
 		MenuItem openItem = new MenuItem(fileMenu, SWT.PUSH);
         openItem.addSelectionListener(new SelectionAdapter() {
         	@Override
@@ -154,8 +156,10 @@ public class MainShell extends Shell
 					persistence.open( openFilename );
 					textTitle.setText( persistence.getLabel() );
 					//create the faceted trees
-					createPerPropertyTree();
-					persistence.buildPropertyTree( treePerProperty );
+					propertyTree.createPerPropertyTree();
+					textTitle.setText( propertyTree.getTitle() );
+					textEndpoint.setText( propertyTree.getInfo() );
+					persistence.buildPropertyTree( propertyTree.getTree() );
 					createPerEntityTree();
 					persistence.buildEntityTree( treePerEntity );
 				}
@@ -176,9 +180,9 @@ public class MainShell extends Shell
         	@Override
         	public void widgetSelected(SelectionEvent arg0) {
         		try {
-					boolean ok = persistence.save( treePerProperty, treePerEntity );
+					boolean ok = persistence.save( propertyTree.getTree(), treePerEntity );
 					if( !ok ) {
-						saveAs( treePerProperty, treePerEntity );
+						saveAs( propertyTree.getTree(), treePerEntity );
 					}
 				}
         		catch( Exception ex ) {
@@ -198,7 +202,7 @@ public class MainShell extends Shell
         	@Override
         	public void widgetSelected(SelectionEvent arg0) {
         		try {
-					saveAs(treePerProperty, treePerEntity);
+					saveAs(propertyTree.getTree(), treePerEntity);
 				} catch (Exception e) {
 					e.printStackTrace();
 					e.printStackTrace();
@@ -372,13 +376,15 @@ public class MainShell extends Shell
 							break; 
 						}
 					}
-					if (has_vocabulary) {
+					if( has_vocabulary ) {
 						//treePerProperty.dispose();
-						if (treePerProperty == null) {
-							createPerPropertyTree();
+						if (propertyTree.getTree() == null) {
+							propertyTree.createPerPropertyTree();
+							textTitle.setText( propertyTree.getTitle() );
+							textEndpoint.setText( propertyTree.getInfo() );
 							//fillPerPropertyTree(ontModel.listAllOntProperties().toList(), currentAuthor, treePerProperty.getItems()[0]);
 						}
-						treePerProperty.moveAbove(null);
+						propertyTree.getTree().moveAbove(null);
 					} else {
 						MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
 		                box.setText("Info");
@@ -461,105 +467,6 @@ public class MainShell extends Shell
 			}
 		}
 		return inserted;
-	}
-	
-	private void createPerPropertyTree() {
-		treePerProperty = new Tree(this, SWT.BORDER);
-		treePerProperty.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				//check to avoid strange bug when the listener is activated but no selection exists
-				//causing java.lang.ArrayIndexOutOfBoundsException: 0
-				if (treePerProperty.getSelection().length==0) {
-					textTitle.setText("");
-					textEndpoint.setText("");
-					if ( table!=null && !table.isDisposed() ) {
-						table.dispose();
-						table = null;
-					}
-					return;
-				}
-				if (treePerProperty.getSelection()[0].getText().equals("root")) {
-					textTitle.setText("");
-					textEndpoint.setText("");
-					if ( table!=null && !table.isDisposed() ) {
-						table.dispose();
-						table = null;
-					}
-					return;
-				}
-				DatasetNode treeNodeData = (DatasetNode) treePerProperty.getSelection()[0].getData();
-				if (treeNodeData.getDc_title() != null) {
-					textTitle.setText(treeNodeData.getDc_title());
-				} else {
-					textTitle.setText("");
-				}
-				if (treeNodeData.getVoid_sparqlEnpoint() != null) {
-					textEndpoint.setText(treeNodeData.getVoid_sparqlEnpoint());
-				} else {
-					textEndpoint.setText("");
-				}
-				createTableContents(treePerProperty);
-			}
-		});
-		treePerProperty.setBounds(318, 84, 369, 578);
-		
-		TreeItem root = new TreeItem(treePerProperty, SWT.NONE);
-		root.setText("root");
-		
-		//insert menu for this tree
-		final Menu treeMenu = new Menu(treePerProperty);
-		treePerProperty.setMenu(treeMenu);
-				
-		final MenuItem insertNewDatasource = new MenuItem(treeMenu, SWT.NONE);
-		insertNewDatasource.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				TreeItem[] selected = treePerProperty.getSelection();
-				if (selected.length > 0/* && selected[0].getText().equals("root")*/) {
-					InsertInMenuDialog insert = new InsertInMenuDialog(getShell());
-					String label = insert.open("Insert dataset label");
-					if (label == null) return;
-					TreeItem newItem = new TreeItem(selected[0], SWT.NONE);
-					DatasetNode data = new DatasetNode();
-					data.setDc_creator(currentAuthor);
-					newItem.setData(data);
-					newItem.setText(label);
-				}
-			}
-		});
-		insertNewDatasource.setText("Insert dataset label");
-		
-		new MenuItem(treeMenu, SWT.SEPARATOR);
-
-	    final MenuItem remove = new MenuItem(treeMenu, SWT.NONE);
-	    remove.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				TreeItem[] selected = treePerProperty.getSelection();
-				if (selected.length > 0) {
-					TreeItem itemToDelete = selected[0];
-					if (itemToDelete.getText().equals("root")) {
-						MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
-		                box.setText("Info");
-		                box.setMessage("Cannot remove root node.");
-		                box.open();
-		                return;
-					}
-					itemToDelete.dispose();//simple delete. to be changed later.
-					//String name =  itemToDelete.getText();
-					//TreeItem parent = itemToDelete.getParentItem();
-					//while(deleteNode(parent, name));//We suppose that the user can select only one item to remove.
-					//treePerEntity.select(parent);
-				} else {
-					MessageBox box = new MessageBox(shell, SWT.OK | SWT.ICON_INFORMATION);
-	                box.setText("Info");
-	                box.setMessage("Nothing selected.");
-	                box.open();
-				}
-			}
-
-		});
-	    remove.setText("Remove");
-		
 	}
 	
 	private void createPerEntityTree() {
@@ -749,7 +656,7 @@ public class MainShell extends Shell
 	}
 	
 	//protected void createTableContents(String triples, String subjects, String objects, String sparqlEnpoint, String title, final Tree tree) {
-	protected void createTableContents(/*TreeNodeData treeNodeData, */final Tree tree) {	
+	public void createTableContents(/*TreeNodeData treeNodeData, */final Tree tree) {	
 		
 		if (table != null) {
 			table.dispose();
