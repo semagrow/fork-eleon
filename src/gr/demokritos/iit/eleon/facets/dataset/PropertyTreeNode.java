@@ -1,6 +1,6 @@
 /***************
 
-<p>Title: PerPropertyNode</p>
+<p>Title: Property Tree Node</p>
 
 <p>Description:
 

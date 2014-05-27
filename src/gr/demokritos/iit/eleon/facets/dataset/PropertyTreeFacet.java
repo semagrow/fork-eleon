@@ -1,6 +1,6 @@
 /***************
 
-<p>Title: Property Hierarchy Facet</p>
+<p>Title: Property Tree Facet</p>
 
 <p>Description:
 
@@ -47,13 +47,8 @@ import gr.demokritos.iit.eleon.MainShell;
 import gr.demokritos.iit.eleon.facets.TreeFacet;
 import gr.demokritos.iit.eleon.ui.InsertInMenuDialog;
 
-public class PropertyTreeFacet implements TreeFacet
+public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 {
-	private Tree treePerProperty;
-	private MainShell myShell;
-	private String title;
-	private String info;
-
 	
 	/*
 	 * CONSTRUCTOR
@@ -67,71 +62,66 @@ public class PropertyTreeFacet implements TreeFacet
 	
 
 	/*
-	 * Facet IMPLEMENTATION
-	 */
-
-	public String getTitle() { return this.title; }
-	public String getInfo() { return this.info; }
-
-
-	/*
 	 * TreeFacet IMPLEMENTATION
 	 */
 
 
-	public Tree getTree() { return this.treePerProperty; }
-
-	public void createPerPropertyTree()
+	@Override
+	public void initTree()
 	{
-		treePerProperty = new Tree( this.myShell, SWT.BORDER );
-		treePerProperty.addSelectionListener(new SelectionAdapter() {
+		myTree = new Tree( this.myShell, SWT.BORDER );
+		myTree.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				//check to avoid strange bug when the listener is activated but no selection exists
 				//causing java.lang.ArrayIndexOutOfBoundsException: 0
-				if (treePerProperty.getSelection().length==0) {
-					title = "";
-					info = "";
+				if (myTree.getSelection().length==0) {
+					setTitle( "" );
+					setInfo( "" );
 					if ( myShell.table!=null && !myShell.table.isDisposed() ) {
 						myShell.table.dispose();
 						myShell.table = null;
 					}
 					return;
 				}
-				if (treePerProperty.getSelection()[0].getText().equals("root")) {
-					title = "";
-					info = "";
+				if (myTree.getSelection()[0].getText().equals("root")) {
+					setTitle( "" );
+					setInfo( "" );
 					if ( myShell.table!=null && !myShell.table.isDisposed() ) {
 						myShell.table.dispose();
 						myShell.table = null;
 					}
 					return;
 				}
-				DatasetNode treeNodeData = (DatasetNode) treePerProperty.getSelection()[0].getData();
+				DatasetNode treeNodeData = (DatasetNode) myTree.getSelection()[0].getData();
 				if (treeNodeData.getDc_title() != null) {
-					title = treeNodeData.getDc_title();
+					setTitle( treeNodeData.getDc_title() );
 				}
-				else { title = ""; }
+				else {
+					setTitle( "" );
+				}
 				if (treeNodeData.getVoid_sparqlEnpoint() != null) {
-					info = treeNodeData.getVoid_sparqlEnpoint();
+					setInfo( treeNodeData.getVoid_sparqlEnpoint() );
 				}
-				else { info = ""; }
-				myShell.createTableContents(treePerProperty);
+				else {
+					setInfo( "" );
+				}
+				myShell.createTableContents(myTree);
 			}
 		});
-		treePerProperty.setBounds(318, 84, 369, 578);
+		myTree.setBounds(318, 84, 369, 578);
 		
-		TreeItem root = new TreeItem(treePerProperty, SWT.NONE);
+		TreeItem root = new TreeItem(myTree, SWT.NONE);
 		root.setText("root");
 		
 		//insert menu for this tree
-		final Menu treeMenu = new Menu(treePerProperty);
-		treePerProperty.setMenu(treeMenu);
+		final Menu treeMenu = new Menu(myTree);
+		myTree.setMenu(treeMenu);
 				
 		final MenuItem insertNewDatasource = new MenuItem(treeMenu, SWT.NONE);
 		insertNewDatasource.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				TreeItem[] selected = treePerProperty.getSelection();
+				TreeItem[] selected = myTree.getSelection();
 				if (selected.length > 0/* && selected[0].getText().equals("root")*/) {
 					InsertInMenuDialog insert = new InsertInMenuDialog( myShell.getShell() );
 					String label = insert.open("Insert dataset label");
@@ -151,7 +141,7 @@ public class PropertyTreeFacet implements TreeFacet
 	    final MenuItem remove = new MenuItem(treeMenu, SWT.NONE);
 	    remove.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				TreeItem[] selected = treePerProperty.getSelection();
+				TreeItem[] selected = myTree.getSelection();
 				if (selected.length > 0) {
 					TreeItem itemToDelete = selected[0];
 					if (itemToDelete.getText().equals("root")) {
@@ -179,6 +169,6 @@ public class PropertyTreeFacet implements TreeFacet
 	    remove.setText("Remove");
 		
 	}
-	
+
 
 }

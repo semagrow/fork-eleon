@@ -1,9 +1,9 @@
 /***************
 
-<p>Title: Facet Interface</p>
+<p>Title: Dataset Facet</p>
 
 <p>Description:
-
+This is the base class for all facets defined in this package. 
 </p>
 
 <p>
@@ -35,14 +35,57 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 ***************/
 
+package gr.demokritos.iit.eleon.facets.dataset;
 
-package gr.demokritos.iit.eleon.facets;
+import org.eclipse.swt.widgets.Tree;
 
-public interface Facet
+import gr.demokritos.iit.eleon.MainShell;
+import gr.demokritos.iit.eleon.facets.TreeFacet;
+
+
+public abstract class DatasetFacet implements TreeFacet
 {
+	protected Tree myTree;
+	protected MainShell myShell;
+	private String title = "";
+	private String info = "";
 
-	String getTitle();
+	
+	/*
+	 * GETTERS AND SETTERS
+	 */
 
-	String getInfo();
+	protected void setTitle( String title )
+	{ this.title = (title == null)? "" : title; }
+
+	protected void setInfo( String info )
+	{ this.info = (info == null)? "" : info; }
+
+	/*
+	 * Facet IMPLEMENTATION
+	 */
+
+
+	@Override
+	public String getTitle()
+	{
+		assert this.title != null;
+		return this.title;
+	}
+
+	@Override
+	public String getInfo()
+	{
+		assert this.info != null;
+		return this.info;
+	}
+
+	
+	/*
+	 * TreeFacet IMPLEMENTATION
+	 */
+
+	@Override
+	public Tree getTree() { return this.myTree; }
 
 }

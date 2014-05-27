@@ -60,13 +60,12 @@ import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 import gr.demokritos.iit.eleon.commons.Constants;
-import gr.demokritos.iit.eleon.facets.dataset.EntityInclusionTreeNode;
+import gr.demokritos.iit.eleon.facets.TreeFacet;
+import gr.demokritos.iit.eleon.facets.dataset.EntityInclusionTreeFacet;
 import gr.demokritos.iit.eleon.facets.dataset.PropertyTreeFacet;
 import gr.demokritos.iit.eleon.facets.dataset.PropertyTreeNode;
 import gr.demokritos.iit.eleon.facets.dataset.DatasetNode;
-import gr.demokritos.iit.eleon.ui.CopyExistingNodeDialog;
 import gr.demokritos.iit.eleon.ui.InsertInMenuDialog;
-import gr.demokritos.iit.eleon.ui.PerEntityInsertDialog;
 import gr.demokritos.iit.eleon.ui.SelectVocabulariesDialog;
 import gr.demokritos.iit.eleon.persistence.*;
 
@@ -74,12 +73,11 @@ public class MainShell extends Shell
 {
 	protected Text textEndpoint;
 	public Table table;
-	PropertyTreeFacet propertyTree;
+	TreeFacet propertyTree, entityTree;
 	protected List list;
 	static protected MainShell shell;
 	private Text textTitle;
 	public String currentAuthor;
-	protected Tree treePerEntity;
 	private Menu dataSchemaMenu;
 	//private MenuItem mntmNew;
 	private PersistenceBackend persistence;
@@ -131,6 +129,7 @@ public class MainShell extends Shell
 		newItem.setText("&New");*/
 		
 		propertyTree = new PropertyTreeFacet( this );
+		entityTree = new EntityInclusionTreeFacet( this );
 		MenuItem openItem = new MenuItem(fileMenu, SWT.PUSH);
         openItem.addSelectionListener(new SelectionAdapter() {
         	@Override
@@ -156,12 +155,14 @@ public class MainShell extends Shell
 					persistence.open( openFilename );
 					textTitle.setText( persistence.getLabel() );
 					//create the faceted trees
-					propertyTree.createPerPropertyTree();
+					propertyTree.initTree();
 					textTitle.setText( propertyTree.getTitle() );
 					textEndpoint.setText( propertyTree.getInfo() );
 					persistence.buildPropertyTree( propertyTree.getTree() );
-					createPerEntityTree();
-					persistence.buildEntityTree( treePerEntity );
+					entityTree.initTree();
+					textTitle.setText( entityTree.getTitle() );
+					textEndpoint.setText( entityTree.getInfo() );
+					persistence.buildEntityTree( entityTree.getTree() );
 				}
         		catch( Exception e ) {
 					e.printStackTrace();
@@ -180,9 +181,9 @@ public class MainShell extends Shell
         	@Override
         	public void widgetSelected(SelectionEvent arg0) {
         		try {
-					boolean ok = persistence.save( propertyTree.getTree(), treePerEntity );
+					boolean ok = persistence.save( propertyTree.getTree(), entityTree.getTree() );
 					if( !ok ) {
-						saveAs( propertyTree.getTree(), treePerEntity );
+						saveAs( propertyTree.getTree(), entityTree.getTree() );
 					}
 				}
         		catch( Exception ex ) {
@@ -202,7 +203,7 @@ public class MainShell extends Shell
         	@Override
         	public void widgetSelected(SelectionEvent arg0) {
         		try {
-					saveAs(propertyTree.getTree(), treePerEntity);
+					saveAs( propertyTree.getTree(), entityTree.getTree() );
 				} catch (Exception e) {
 					e.printStackTrace();
 					e.printStackTrace();
@@ -383,12 +384,12 @@ public class MainShell extends Shell
 					if( has_vocabulary ) {
 						//treePerProperty.dispose();
 						if (propertyTree.getTree() == null) {
-							propertyTree.createPerPropertyTree();
+							propertyTree.initTree();
 							textTitle.setText( propertyTree.getTitle() );
 							textEndpoint.setText( propertyTree.getInfo() );
 							//fillPerPropertyTree(ontModel.listAllOntProperties().toList(), currentAuthor, treePerProperty.getItems()[0]);
 						}
-						propertyTree.getTree().moveAbove(null);
+						propertyTree.getTree().moveAbove( null );
 					} else {
 						MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
 		                box.setText("Info");
@@ -396,10 +397,12 @@ public class MainShell extends Shell
 		                box.open();
 					}
 				} else if (list.getSelection()[0].toString().equals("per entity")) {
-					if (treePerEntity == null) {
-						createPerEntityTree();
+					if( entityTree.getTree() == null ) {
+						entityTree.initTree();
+						textTitle.setText( entityTree.getTitle() );
+						textEndpoint.setText( entityTree.getInfo() );
 					}
-					treePerEntity.moveAbove(null);
+					entityTree.getTree().moveAbove( null );
 				}
 			}
 		});
@@ -444,12 +447,14 @@ public class MainShell extends Shell
 			}
 		}
 		while ( ! notInsertedPropertiesList.isEmpty()) {
-			Collections.rotate(notInsertedPropertiesList, 1);
-			OntProperty ontProperty = notInsertedPropertiesList.get(0);
+			Collections.rotate( notInsertedPropertiesList, 1 );
+			OntProperty ontProperty = notInsertedPropertiesList.get( 0 );
 			OntProperty superProperty = ontProperty.getSuperProperty();
+			// All properties with null super-properties have been consumed by the for loop above 
+			assert superProperty != null;
 			boolean inserted = insertChildInTree(root, ontProperty, superProperty, author);
-			if (inserted) {
-				notInsertedPropertiesList.remove(0);
+			if( inserted ) {
+				notInsertedPropertiesList.remove( 0 );
 			}
 		}
 	}
@@ -472,177 +477,6 @@ public class MainShell extends Shell
 		}
 		return inserted;
 	}
-	
-	private void createPerEntityTree() {
-		treePerEntity = new Tree(this, SWT.BORDER);
-		treePerEntity.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				//check to avoid strange bug when the listener is activated but no selection exists
-				//causing java.lang.ArrayIndexOutOfBoundsException: 0
-				if (treePerEntity.getSelection().length==0) {
-					textTitle.setText("");
-					textEndpoint.setText("");
-					if ( table!=null && !table.isDisposed() ) {
-						table.dispose();
-						table = null;
-					}
-					return;
-				}
-				if (treePerEntity.getSelection()[0].getText().equals("root")) {
-					textTitle.setText("");
-					textEndpoint.setText("");
-					if ( table!=null && !table.isDisposed() ) {
-						table.dispose();
-						table = null;
-					}	
-					return;
-				}
-				DatasetNode treeNodeData = (DatasetNode) treePerEntity.getSelection()[0].getData();
-				if (treeNodeData.getDc_title() != null) {
-					textTitle.setText(treeNodeData.getDc_title());
-				} else {
-					textTitle.setText("");
-				}
-				if (treeNodeData.getVoid_sparqlEnpoint() != null) {
-					textEndpoint.setText(treeNodeData.getVoid_sparqlEnpoint());
-				} else {
-					textEndpoint.setText("");
-				}
-				createTableContents(treePerEntity);
-			}
-		});
-		treePerEntity.setBounds(318, 84, 369, 578);
-		
-		TreeItem root = new TreeItem(treePerEntity, SWT.NONE);
-		root.setText("root");
-		
-		//insert menu for this tree
-		final Menu treeMenu = new Menu(treePerEntity);
-		treePerEntity.setMenu(treeMenu);
-		
-		final MenuItem insertNewDatasource = new MenuItem(treeMenu, SWT.NONE);
-		insertNewDatasource.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				TreeItem[] selected = treePerEntity.getSelection();
-				if (selected.length > 0/* && selected[0].getText().equals("root")*/) {
-					InsertInMenuDialog insert = new InsertInMenuDialog(getShell());
-					String label = insert.open("Insert dataset label");
-					if (label == null) return;
-					TreeItem newItem = new TreeItem(selected[0], SWT.NONE);
-					DatasetNode data = new DatasetNode();
-					data.setDc_creator(currentAuthor);
-					newItem.setData(data);
-					newItem.setText(label);
-				}
-			}
-		});
-		insertNewDatasource.setText("Insert dataset label");
-		
-		final MenuItem insertNewChild = new MenuItem(treeMenu, SWT.NONE);
-	    insertNewChild.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				TreeItem[] selected = treePerEntity.getSelection();
-				if (selected.length > 0) {
-					if (selected[0].getText().equals("root")){
-						MessageBox box = new MessageBox(shell, SWT.OK | SWT.ICON_INFORMATION);
-		                box.setText("Info");
-		                box.setMessage("You cannot add a subset directly under root.");
-		                box.open();
-		                return;
-					}
-					// selection.setExpanded(true);
-					PerEntityInsertDialog dialog = new PerEntityInsertDialog(shell);
-					EntityInclusionTreeNode nodeData = dialog.open();
-					if (nodeData == null) {
-						return;
-					} else {
-						TreeItem selection = selected[0];
-						TreeItem item = new TreeItem(selection, SWT.NONE);
-						nodeData.setDc_creator(currentAuthor);
-						item.setData(nodeData);
-						String subjectPattern = nodeData.getSubjectPattern();
-						String objectPattern = nodeData.getObjectPattern();
-						nodeData.setDc_creator(currentAuthor);
-						String itemText = "";
-						/*if (subjectPattern != null) {
-							itemText += "(sbj)=" + subjectPattern + " ";
-						}
-						if (objectPattern != null) {
-							itemText += "(obj)=" + objectPattern;
-						}*/
-						if (subjectPattern == null) {
-							itemText += "?s ";
-						} else {
-							itemText += subjectPattern + " ";
-						}
-						itemText += "?p ";
-						if (objectPattern == null) {
-							itemText += "?o";
-						} else {
-							itemText += objectPattern;
-						}
-						//TODO:check if node already exists.
-						item.setText(itemText);
-					}
-					//System.out.println("Insert Into - " + selected[0].getText());
-				} else {
-					MessageBox box = new MessageBox(shell, SWT.OK | SWT.ICON_INFORMATION);
-	                box.setText("Info");
-	                box.setMessage("Nothing selected.");
-	                box.open();
-				}
-			}
-
-		});
-	    insertNewChild.setText("Insert new subset");
-	    
-	    final MenuItem insertExistingChild = new MenuItem(treeMenu, SWT.NONE);
-	    insertExistingChild.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				TreeItem[] selected = treePerEntity.getSelection();
-				if (selected.length > 0) {
-					CopyExistingNodeDialog dialogCopy = new CopyExistingNodeDialog(shell);
-					dialogCopy.copy(treePerEntity, selected[0]);
-				} else {
-					MessageBox box = new MessageBox(shell, SWT.OK | SWT.ICON_INFORMATION);
-	                box.setText("Info");
-	                box.setMessage("Nothing selected.");
-	                box.open();
-				}
-			}
-
-		});
-	    insertExistingChild.setText("Add existing dataset or subset as child");
-	    
-	    new MenuItem(treeMenu, SWT.SEPARATOR);
-	    
-	    final MenuItem remove = new MenuItem(treeMenu, SWT.NONE);
-	    remove.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				TreeItem[] selected = treePerEntity.getSelection();
-				if (selected.length > 0) {
-					TreeItem itemToDelete = selected[0];
-					if (itemToDelete.getText().equals("root")) {
-						MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
-		                box.setText("Info");
-		                box.setMessage("Cannot remove root node.");
-		                box.open();
-		                return;
-					}
-					itemToDelete.dispose();//simple delete. to be changed later.
-				} else {
-					MessageBox box = new MessageBox(shell, SWT.OK | SWT.ICON_INFORMATION);
-	                box.setText("Info");
-	                box.setMessage("Nothing selected.");
-	                box.open();
-				}
-			}
-
-		});
-	    remove.setText("Remove");
-	}
-	
 	
 	protected void createTable() {
 		table = new Table(this, SWT.BORDER | SWT.FULL_SELECTION);
@@ -715,7 +549,7 @@ public class MainShell extends Shell
 					if (selectedVocabularies.isEmpty()) {
 						return;
 					}
-					OntModel ontModel = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM);
+					OntModel ontModel = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM );
 					for (String selectedVocabulary : selectedVocabularies) {
 						item.setText(1, item.getText(1) + selectedVocabulary + ", ");
 						for (MenuItem menuItem : dataSchemaMenu.getItems()) {

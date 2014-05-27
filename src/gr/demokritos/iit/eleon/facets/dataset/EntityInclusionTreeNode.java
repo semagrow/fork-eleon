@@ -1,6 +1,6 @@
 /***************
 
-<p>Title: PerEntityNode</p>
+<p>Title: Entity Inclusion Tree Node</p>
 
 <p>Description:
 

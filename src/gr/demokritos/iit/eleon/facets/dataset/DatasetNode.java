@@ -1,9 +1,9 @@
 /***************
 
-<p>Title: TreeNode Data</p>
+<p>Title: Dataset Node</p>
 
 <p>Description:
-
+This is the base class for all node types defined in this package. 
 </p>
 
 <p>
@@ -34,6 +34,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 @author Giannis Mouchakis (SemaGrow 2014)
 
 ***************/
+
 
 package gr.demokritos.iit.eleon.facets.dataset;
 
