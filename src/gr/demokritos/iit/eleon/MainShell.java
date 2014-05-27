@@ -60,6 +60,7 @@ import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 import gr.demokritos.iit.eleon.commons.Constants;
+import gr.demokritos.iit.eleon.facets.Facet;
 import gr.demokritos.iit.eleon.facets.TreeFacet;
 import gr.demokritos.iit.eleon.facets.dataset.EntityInclusionTreeFacet;
 import gr.demokritos.iit.eleon.facets.dataset.PropertyTreeFacet;
@@ -181,13 +182,15 @@ public class MainShell extends Shell
         	@Override
         	public void widgetSelected(SelectionEvent arg0) {
         		try {
-					boolean ok = persistence.save( propertyTree.getTree(), entityTree.getTree() );
+        			Facet[] arr = new Facet[2];
+        			arr[0] = propertyTree;
+        			arr[1] = entityTree;
+					boolean ok = persistence.save( arr );
 					if( !ok ) {
 						saveAs( propertyTree.getTree(), entityTree.getTree() );
 					}
 				}
         		catch( Exception ex ) {
-					ex.printStackTrace();
 					ex.printStackTrace();
 			    	MessageBox box = new MessageBox(getShell(), SWT.ERROR);
 	                box.setText("Error");
@@ -671,7 +674,10 @@ public class MainShell extends Shell
 		String filename = dialog.open();
 		if( filename != null ) {
 			persistence.setBackend( filename );
-			boolean ok = persistence.save( perPropertyTree, perEntityTree );
+			Facet[] arr = new Facet[2];
+			arr[0] = propertyTree;
+			arr[1] = entityTree;
+			boolean ok = persistence.save( arr );
 			assert ok;
 		}
 		//System.out.println ("Save to: " + dialog.open ());

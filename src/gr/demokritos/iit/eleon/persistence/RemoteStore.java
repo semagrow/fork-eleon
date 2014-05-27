@@ -1,9 +1,9 @@
 /***************
 
-<p>Title: Persistence Backend Interface</p>
+<p>Title: Remote Store</p>
 
 <p>Description:
-
+Persistence backend, at remote SPARQL store.
 </p>
 
 <p>
@@ -32,9 +32,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 </p>
 
 @author Stasinos Konstantopoulos (INDIGO, 2009; RoboSKEL 2011; SemaGrow 2012-2014)
-@author Giannis Mouchakis (SemaGrow 2014)
 
 ***************/
+
 
 package gr.demokritos.iit.eleon.persistence;
 
@@ -45,20 +45,72 @@ import java.util.List;
 
 import org.eclipse.swt.widgets.Tree;
 
-public interface PersistenceBackend
+public class RemoteStore implements PersistenceBackend
 {
-	String getLabel();
+	private String label = null;
 
-	void setBackend( Object parameter );
 
-	void open( Object backendParam )
-	throws IllegalArgumentException, IOException;
+	/*
+	 * Constructors 
+	 */
 
-	boolean save( Facet[] facets )
-	throws IOException;
+	public RemoteStore()
+	{
+		
+	}
+	
 
-	void buildPropertyTree( Tree treePerProperty );
+	/*
+	 * Getters and Setters 
+	 */
 
-	void buildEntityTree( Tree entityTree );
+
+	@Override
+	public String getLabel() { return this.label; }
+
+	@Override
+	public void setBackend( Object parameter )
+	{
+		// TODO Auto-generated method stub
+	}
+
+
+	/*
+	 * PersistenceBackend implementation
+	 */
+
+
+	@Override
+	public void open( Object backendParam )
+	throws IllegalArgumentException, IOException
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+	@Override
+	public boolean save( Facet[] facets )
+	throws IOException
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	
+	@Override
+	public void buildPropertyTree( Tree treePerProperty )
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+	@Override
+	public void buildEntityTree( Tree entityTree )
+	{
+		// TODO Auto-generated method stub
+		
+	}
 
 }

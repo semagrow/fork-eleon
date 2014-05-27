@@ -38,9 +38,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 package gr.demokritos.iit.eleon.persistence;
 
-import gr.demokritos.iit.eleon.facets.dataset.EntityInclusionTreeNode;
-import gr.demokritos.iit.eleon.facets.dataset.PropertyTreeNode;
-import gr.demokritos.iit.eleon.facets.dataset.DatasetNode;
+import gr.demokritos.iit.eleon.facets.Facet;
+import gr.demokritos.iit.eleon.facets.TreeFacet;
+import gr.demokritos.iit.eleon.facets.dataset.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -62,6 +62,7 @@ import com.hp.hpl.jena.ontology.OntModelSpec;
 import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
+
 public class ELEONXML implements PersistenceBackend
 {
 	private String filename = null;
@@ -74,7 +75,7 @@ public class ELEONXML implements PersistenceBackend
 	 */
 
 	
-	public ELEONXML(  )
+	public ELEONXML()
 	{
 		
 	}
@@ -146,7 +147,7 @@ public class ELEONXML implements PersistenceBackend
 	}
 	
 	@Override
-	public boolean save( Tree perPropertyTree, Tree perEntityTree )
+	public boolean save( Facet[] facets ) //Tree perPropertyTree, Tree perEntityTree )
 	throws IOException
 	{
 		if( this.filename == null ) { return false; }
@@ -179,27 +180,29 @@ public class ELEONXML implements PersistenceBackend
 			endpoint.appendChild(doc.createTextNode(textEndpoint.getText()));
 			rootElement.appendChild(endpoint);*/
 
-		//per property
-		Element perPropertyTreeElement = doc.createElement("facet");
-		perPropertyTreeElement.setAttribute("type", "per_property");
-		rootElement.appendChild(perPropertyTreeElement);
+		for( Facet facet : facets ) {
 
-		Element treeRootProperty = doc.createElement("node");
-		treeRootProperty.setAttribute("name", "root");
-		perPropertyTreeElement.appendChild(treeRootProperty);
+			Element element = doc.createElement( "facet" );
 
-		createDOMFromTree(perPropertyTree.getItems()[0], treeRootProperty, doc);
+			if( facet instanceof PropertyTreeFacet ) {
+				element.setAttribute("type", "per_property");
+			}
+			else if( facet instanceof EntityInclusionTreeFacet ) {
+				element.setAttribute("type", "per_entity");
+			}
+			else {
+				assert 1 == 0;
+			}
+			rootElement.appendChild( element );
 
-		//per entity
-		Element perEntityTreeElement = doc.createElement("facet");
-		perEntityTreeElement.setAttribute("type", "per_entity");
-		rootElement.appendChild(perEntityTreeElement);
+			Element treeRootEntity = doc.createElement("node");
+			treeRootEntity.setAttribute("name", "root");
+			element.appendChild(treeRootEntity);
 
-		Element treeRootEntity = doc.createElement("node");
-		treeRootEntity.setAttribute("name", "root");
-		perEntityTreeElement.appendChild(treeRootEntity);
-
-		createDOMFromTree(perEntityTree.getItems()[0], treeRootEntity, doc);
+			createDOMFromTree(
+					((TreeFacet)facet).getTree().getItems()[0],
+					treeRootEntity, doc );
+		}
 
 		// write the DOM into an XML file
 		try {
