@@ -166,6 +166,10 @@ public class DatasetNode implements TreeFacetNode{
 		property_values[annotationSchemaIndex][0] = author;
 	}
 
+	public int getAnnotationSchemaIndex() {
+		return this.annotationSchemaIndex;
+	}
+	
 	/**
 	 * @return the void_triples
 	 */

@@ -533,16 +533,17 @@ public class MainShell extends Shell
 		
 		DatasetNode treeNodeData = ((DatasetNode) tree.getSelection()[0].getData());
 		
-		final int voc = 0;
+		final int schemaIndex = treeNodeData.getAnnotationSchemaIndex();
+		
 		int i = 0;
-		while(DatasetNode.property_names[voc][i] != null) {
+		while(DatasetNode.property_names[schemaIndex][i] != null) {
 			TableItem item = new TableItem(table, SWT.NONE);
-			Object value = treeNodeData.property_values[voc][i];
+			Object value = treeNodeData.property_values[schemaIndex][i];
 			String value_str = null;
 			if (value != null) {
 				value_str = value.toString();
 			}
-			item.setText(new String [] {DatasetNode.property_names[voc][i], value_str});
+			item.setText(new String [] {DatasetNode.property_names[schemaIndex][i], value_str});
 			i++;
 		}
 		
@@ -573,7 +574,12 @@ public class MainShell extends Shell
 				//Get Property name
 				final String property = item.getText(0);
 				
-				 if (property.equals("void:vocabulary")) {
+				 if (property.equals("dc:creator")) {//TODO:breaks independence from property names!
+					 item.setText(1, ((DatasetNode) tree.getSelection()[0].getData()).getAuthor());
+					 return;
+				 }
+				
+				 if (property.equals("void:vocabulary")) {//TODO:breaks independence from property names!
 					SelectVocabulariesDialog dialog = new SelectVocabulariesDialog(getShell());
 					java.util.List<String> selectedVocabularies = dialog.open(dataSchemaMenu);
 					if (selectedVocabularies.isEmpty()) {
@@ -633,7 +639,7 @@ public class MainShell extends Shell
 							//java.lang.reflect.Constructor<?> constr = objClass.getConstructor( params );
 							//Object o = constr.newInstance( text.getText() );
 							Class<?> cls[] = new Class[] { String.class };
-							java.lang.reflect.Constructor<?> c = ((Class<?>) DatasetNode.property_value_types[voc][index]).getConstructor(cls);
+							java.lang.reflect.Constructor<?> c = ((Class<?>) DatasetNode.property_value_types[schemaIndex][index]).getConstructor(cls);
 							Object obj = c.newInstance(text.getText());
 							treeNodeData.property_values[0][index] = obj;
 						} catch (NoSuchMethodException e) {
