@@ -62,6 +62,7 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import gr.demokritos.iit.eleon.commons.Constants;
 import gr.demokritos.iit.eleon.facets.Facet;
 import gr.demokritos.iit.eleon.facets.TreeFacet;
+import gr.demokritos.iit.eleon.facets.TreeFacetNode;
 import gr.demokritos.iit.eleon.facets.dataset.EntityInclusionTreeFacet;
 import gr.demokritos.iit.eleon.facets.dataset.PropertyTreeFacet;
 import gr.demokritos.iit.eleon.facets.dataset.PropertyTreeNode;
@@ -554,7 +555,7 @@ public class MainShell extends Shell
 		table.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				String creator = ((DatasetNode) tree.getSelection()[0].getData()).getAuthor();
+				String creator = ((TreeFacetNode) tree.getSelection()[0].getData()).getAuthor();
 				if ( ! creator.equals(currentAuthor)) {
 					MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
 	                box.setText("Value read-only");
@@ -575,7 +576,7 @@ public class MainShell extends Shell
 				final String property = item.getText(0);
 				
 				 if (property.equals("dc:creator")) {//TODO:breaks independence from property names!
-					 item.setText(1, ((DatasetNode) tree.getSelection()[0].getData()).getAuthor());
+					 item.setText(1, ((TreeFacetNode) tree.getSelection()[0].getData()).getAuthor());
 					 return;
 				 }
 				
