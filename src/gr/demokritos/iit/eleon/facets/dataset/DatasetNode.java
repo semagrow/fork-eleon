@@ -272,6 +272,38 @@ public class DatasetNode implements TreeFacetNode{
 			return false;
 		}
 	}
+
+	@Override
+	public String getTitle() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getEndpoint() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object[][] getProperty_values() {
+		return this.property_values;
+	}
+
+	@Override
+	public String[][] getProperty_names() {
+		return DatasetNode.property_names;
+	}
+
+	@Override
+	public Object[][] getProperty_value_types() {
+		return DatasetNode.property_value_types;
+	}
+
+	@Override
+	public boolean[][] getProperty_is_functional() {
+		return DatasetNode.property_is_functional;
+	}
 	
 
 }

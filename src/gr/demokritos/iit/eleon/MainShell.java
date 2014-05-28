@@ -555,7 +555,8 @@ public class MainShell extends Shell
 		table.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				String creator = ((TreeFacetNode) tree.getSelection()[0].getData()).getAuthor();
+				TreeFacetNode treeFacetNode = (TreeFacetNode) tree.getSelection()[0].getData();
+				String creator = treeFacetNode.getAuthor();
 				if ( ! creator.equals(currentAuthor)) {
 					MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
 	                box.setText("Value read-only");
@@ -576,7 +577,7 @@ public class MainShell extends Shell
 				final String property = item.getText(0);
 				
 				 if (property.equals("dc:creator")) {//TODO:breaks independence from property names!
-					 item.setText(1, ((TreeFacetNode) tree.getSelection()[0].getData()).getAuthor());
+					 item.setText(1, creator);
 					 return;
 				 }
 				
@@ -607,7 +608,22 @@ public class MainShell extends Shell
 							}
 						}
 					}
-					item.setText(1, item.getText(1).substring(0, item.getText(1).length() - 2));
+					
+					String proper_text = item.getText(1).substring(0, item.getText(1).length() - 2);
+					
+					String[][] property_names = treeFacetNode.getProperty_names();
+					int i = 0; int index = -1;
+					while( (index < 0) && (property_names[schemaIndex][i] != null) ) {
+						if("void:vocabulary".equals(property_names[schemaIndex][i]) ) { index = i; }
+						++i;
+					}
+
+					assert(i>=0);
+					
+					Object[][] property_values = ((DatasetNode) treeFacetNode).property_values;
+					property_values[schemaIndex][index] = proper_text;
+					
+					item.setText(1, proper_text);
 					fillPerPropertyTree(ontModel.listAllOntProperties().toList(), currentAuthor, tree.getSelection()[0]);
 					return;
 				 }
@@ -624,8 +640,8 @@ public class MainShell extends Shell
 						editor.getItem().setText(1, text.getText());
 						
 						int i = 0; int index = -1;
-						while( (index < 0) && (DatasetNode.property_names[0][i] != null) ) {
-							if( property.equals(DatasetNode.property_names[0][i]) ) { index = i; }
+						while( (index < 0) && (DatasetNode.property_names[schemaIndex][i] != null) ) {
+							if( property.equals(DatasetNode.property_names[schemaIndex][i]) ) { index = i; }
 							++i;
 						}
 						
@@ -642,7 +658,7 @@ public class MainShell extends Shell
 							Class<?> cls[] = new Class[] { String.class };
 							java.lang.reflect.Constructor<?> c = ((Class<?>) DatasetNode.property_value_types[schemaIndex][index]).getConstructor(cls);
 							Object obj = c.newInstance(text.getText());
-							treeNodeData.property_values[0][index] = obj;
+							treeNodeData.property_values[schemaIndex][index] = obj;
 						} catch (NoSuchMethodException e) {
 							e.printStackTrace();
 						} catch (SecurityException e) {

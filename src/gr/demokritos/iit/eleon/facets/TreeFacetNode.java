@@ -44,13 +44,23 @@ public interface TreeFacetNode {
 	 * @return the name of the author that created this node.
 	 */
 	String getAuthor();
-	/*
-	*//**
+	
+	/**
 	 * the title of the node.
 	 * @return
-	 *//*
+	 */
 	String getTitle();
-	*/
 	
+	/**
+	 * 
+	 * @return the sparqlEndpoint//TODO:I can do better than that later.
+	 */
+	String getEndpoint();
+	
+	//TODO:add javadoc
+	Object[][] getProperty_values();
+	String[][] getProperty_names();
+	Object[][] getProperty_value_types();
+	boolean[][] getProperty_is_functional();
 
 }
