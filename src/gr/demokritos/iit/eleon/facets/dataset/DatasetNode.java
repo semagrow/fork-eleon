@@ -38,7 +38,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 package gr.demokritos.iit.eleon.facets.dataset;
 
-public class DatasetNode {
+import gr.demokritos.iit.eleon.facets.TreeFacetNode;
+
+public class DatasetNode implements TreeFacetNode{
 	
 	public Object[][] property_values = new Object[2][20];
 	static public String[][] property_names = new String[2][20];
@@ -46,75 +48,96 @@ public class DatasetNode {
 	static public boolean[][] property_is_functional = new boolean[2][20];
 	static public String[] annotation_schema_names = {"VoID", "VoID/SemaGrow extension"};
 	static {
-		property_names[0][0] = "dc:title";
+		property_names[0][0] = "dc:creator";
 		property_value_types[0][0] = String.class;
 		property_is_functional[0][0] = true;
-
-		property_names[0][1] = "void:endpoint";
+		
+		property_names[0][1] = "dc:title";
 		property_value_types[0][1] = String.class;
 		property_is_functional[0][1] = true;
-		
-		property_names[0][2] = "void:vocabulary";
+
+		property_names[0][2] = "void:endpoint";
 		property_value_types[0][2] = String.class;
-		property_is_functional[0][2] = false;
+		property_is_functional[0][2] = true;
+		
+		property_names[0][3] = "void:vocabulary";
+		property_value_types[0][3] = String.class;
+		property_is_functional[0][3] = false;
 
-		property_names[0][3] = "void:triples";
-		property_value_types[0][3] = Integer.class;
-		property_is_functional[0][3] = true;
-
-		property_names[0][4] = "void:distinctSubjects";
+		property_names[0][4] = "void:triples";
 		property_value_types[0][4] = Integer.class;
 		property_is_functional[0][4] = true;
 
-		property_names[0][5] = "void:distinctObjects";
+		property_names[0][5] = "void:distinctSubjects";
 		property_value_types[0][5] = Integer.class;
 		property_is_functional[0][5] = true;
+
+		property_names[0][6] = "void:distinctObjects";
+		property_value_types[0][6] = Integer.class;
+		property_is_functional[0][6] = true;
 		
-		property_names[0][6] = null;
-		property_value_types[0][6] = null;
-		//property_is_functional[0][6] = (Boolean) null;
+		property_names[0][7] = null;
+		property_value_types[0][7] = null;
+		//property_is_functional[0][7] = (Boolean) null;
 		
-		property_names[1][0] = "dc:title";
+		property_names[1][0] = "dc:creator";
 		property_value_types[1][0] = String.class;
 		property_is_functional[1][0] = true;
-
-		property_names[1][1] = "void:endpoint";
+		
+		property_names[1][1] = "dc:title";
 		property_value_types[1][1] = String.class;
 		property_is_functional[1][1] = true;
-		
-		property_names[1][2] = "void:vocabulary";
+
+		property_names[1][2] = "void:endpoint";
 		property_value_types[1][2] = String.class;
-		property_is_functional[1][2] = false;
+		property_is_functional[1][2] = true;
+		
+		property_names[1][3] = "void:vocabulary";
+		property_value_types[1][3] = String.class;
+		property_is_functional[1][3] = false;
 
-		property_names[1][3] = "void:triples";
-		property_value_types[1][3] = Integer.class;
-		property_is_functional[1][3] = true;
-
-		property_names[1][4] = "void:distinctSubjects";
+		property_names[1][4] = "void:triples";
 		property_value_types[1][4] = Integer.class;
 		property_is_functional[1][4] = true;
 
-		property_names[1][5] = "void:distinctObjects";
+		property_names[1][5] = "void:distinctSubjects";
 		property_value_types[1][5] = Integer.class;
 		property_is_functional[1][5] = true;
+
+		property_names[1][6] = "void:distinctObjects";
+		property_value_types[1][6] = Integer.class;
+		property_is_functional[1][6] = true;
 		
-		property_names[1][6] = null;
-		property_value_types[1][6] = null;
-		//property_is_functional[0][6] = (Boolean) null;
+		property_names[1][7] = null;
+		property_value_types[1][7] = null;
+		//property_is_functional[0][7] = (Boolean) null;
 	}
 	
 	private Integer void_triples = null;
 	private Integer void_distinctSubjects = null;
 	private Integer void_distinctObjects = null;
-	private String dc_creator = null;
+	//private String dc_creator = null;
 	private String void_sparqlEnpoint = null;
 	private String dc_title = null;
+	
+	//private String annotationShema;
+	private int annotationSchemaIndex = -1;
 	
 	/**
 	 * 
 	 */
-	public DatasetNode() {
+	public DatasetNode(String annotationSchema) {
 		super();
+		//this.annotationShema = annotationSchema;
+		int i = 0;
+		for (String annotation_shema_main : annotation_schema_names ) {
+			if (annotation_shema_main.equals(annotationSchema)) {
+				annotationSchemaIndex = i;
+				break;
+			}
+			i++;
+		}
+		assert annotationSchemaIndex != -1;
 	}
 	
 	/**
@@ -125,14 +148,22 @@ public class DatasetNode {
 	 * @param void_sparqlEnpoint
 	 */
 	public DatasetNode(Integer void_triples, Integer void_distinctSubjects,
-			Integer void_distinctObjects, String dc_creator, String void_sparqlEnpoint, String dc_title) {
+			Integer void_distinctObjects, String author, String void_sparqlEnpoint, String dc_title) {
 		super();
 		this.void_triples = void_triples;
 		this.void_distinctSubjects = void_distinctSubjects;
 		this.void_distinctObjects = void_distinctObjects;
-		this.dc_creator = dc_creator;
+		//property_values[annotationSchemaIndex][0] = author;//TODO: annotationSchemaIndex has not been set here!
 		this.void_sparqlEnpoint = void_sparqlEnpoint;
 		this.dc_title = dc_title;
+	}
+	
+	public String getAuthor() {
+		return (String) property_values[annotationSchemaIndex][0];
+	}
+	
+	public void setAuthor(String author) {
+		property_values[annotationSchemaIndex][0] = author;
 	}
 
 	/**
@@ -177,22 +208,6 @@ public class DatasetNode {
 		this.void_distinctObjects = void_distinctObjects;
 	}
 
-	/**
-	 * @return the dc_creator
-	 */
-	public String getDc_creator() {
-		return dc_creator;
-	}
-
-	/**
-	 * @param dc_creator the dc_creator to set
-	 */
-	public void setDc_creator(String dc_creator) {
-		this.dc_creator = dc_creator;
-	}
-
-	
-	
 	/**
 	 * @return the void_sparqlEnpoint
 	 */
@@ -254,15 +269,5 @@ public class DatasetNode {
 		}
 	}
 	
-	/**
-	 * @return true if dc_creator has been set, false if not
-	 */
-	public boolean hasDc_creator() {
-		if (dc_creator != null) {
-			return true;
-		} else {
-			return false;
-		}
-	}
 
 }

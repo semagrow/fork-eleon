@@ -37,11 +37,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 package gr.demokritos.iit.eleon.ui;
 
-import gr.demokritos.iit.eleon.facets.dataset.EntityInclusionTreeNode;
+//import gr.demokritos.iit.eleon.facets.dataset.EntityInclusionTreeNode;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -54,7 +55,11 @@ public class PerEntityInsertDialog  extends Dialog {
 	Shell shell;
     private Text textSubject;
     private Text textObject;
-    private EntityInclusionTreeNode perEntityNode;
+    //private EntityInclusionTreeNode perEntityNode;
+    /**
+     * 0 subject object pattern or null if none and 1 contains object pattern or null if none
+     */
+    String[] result = new String[2];
             
     public PerEntityInsertDialog (Shell parent, int style) {
             super (parent, style);
@@ -62,7 +67,7 @@ public class PerEntityInsertDialog  extends Dialog {
     public PerEntityInsertDialog (Shell parent) {
             this (parent, 0); // your default style bits go here (not the Shell's style bits)
     }
-    public EntityInclusionTreeNode open () {
+    public String[] open () {
             Shell parent = getParent();
             shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
             shell.setSize(496, 135);
@@ -83,17 +88,26 @@ public class PerEntityInsertDialog  extends Dialog {
             		String subjectPattern = textSubject.getText();
             		String objectPattern = textObject.getText();
             		//it seems that when the text field is left empty its value is String "". we prefer it null.
-            		if (subjectPattern.equals("")) {
+            		if (subjectPattern.equals("")) {//TODO:check also for withspaces, tabs, etc.
             			subjectPattern = null;
             		}
-            		if (objectPattern.equals("")) {
+            		if (objectPattern.equals("")) {//TODO:check also for withspaces, tabs, etc.
             			objectPattern = null;
             		}
             		if (subjectPattern == null && objectPattern == null) {
+            			MessageBox box = new MessageBox(shell, SWT.OK | SWT.ICON_INFORMATION);
+    	                box.setText("Info");
+    	                box.setMessage("You must select at least one pattern.");
+    	                box.open();
+    	                return;
+            		}
+            		result[0] = subjectPattern;
+            		result[1] = objectPattern;
+            		/*if (subjectPattern == null && objectPattern == null) {
             			perEntityNode = null;
             		} else {
-            			perEntityNode = new EntityInclusionTreeNode(subjectPattern, objectPattern);
-            		}
+            			perEntityNode = new EntityInclusionTreeNode(subjectPattern, objectPattern, activeAnnotationSchema);
+            		}*/
             		shell.dispose();
             	}
             });
@@ -104,7 +118,9 @@ public class PerEntityInsertDialog  extends Dialog {
             btnCancel.addSelectionListener(new SelectionAdapter() {
             	@Override
             	public void widgetSelected(SelectionEvent e) {
-            		perEntityNode = null;
+            		//perEntityNode = null;
+            		result[0] = null;
+            		result[1] = null;
             		shell.dispose();
             	}
             });
@@ -127,6 +143,7 @@ public class PerEntityInsertDialog  extends Dialog {
             while (!shell.isDisposed()) {
                     if (!display.readAndDispatch()) display.sleep();
             }
-            return perEntityNode;
+            //return perEntityNode;
+            return result;
     }
 }

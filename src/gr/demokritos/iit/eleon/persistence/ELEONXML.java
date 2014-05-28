@@ -290,7 +290,7 @@ public class ELEONXML implements PersistenceBackend
 			//treeItemNode.setAttribute("name", ((TreeNodeData) treeItemCurrent.getData()).getOntProperty().toString());
 			treeItemNode.setAttribute("name", treeItemCurrent.getText());
 			DatasetNode treeNodeData = (DatasetNode) treeItemCurrent.getData();
-			treeItemNode.setAttribute("dc:creator", treeNodeData.getDc_creator());
+			treeItemNode.setAttribute("dc:creator", treeNodeData.getAuthor());
 			Integer void_size = treeNodeData.getVoid_triples();
 			if (void_size != null) {
 				treeItemNode.setAttribute("void:triples", void_size.toString());
@@ -433,7 +433,7 @@ public class ELEONXML implements PersistenceBackend
 	private DatasetNode getDataFromExistingTreeItem(TreeItem treeItem, String name, String dc_creator) {
 		for (TreeItem treeItemCurrent : treeItem.getItems()) {
 			DatasetNode treeNodeData = (DatasetNode) treeItemCurrent.getData();
-			if (treeNodeData.getDc_creator().equals(dc_creator) && treeItemCurrent.getText().equals(name)) {
+			if (treeNodeData.getAuthor().equals(dc_creator) && treeItemCurrent.getText().equals(name)) {
 				return (DatasetNode) treeItemCurrent.getData();
 			}
 			if (treeItemCurrent.getItemCount() > 0) {

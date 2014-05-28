@@ -82,6 +82,9 @@ public class MainShell extends Shell
 	private Menu dataSchemaMenu;
 	//private MenuItem mntmNew;
 	private PersistenceBackend persistence;
+	//Menu annotationSchemaMenu;
+	public String activeAnnotationSchema;
+	public Integer activeAnnotationSchemaIndex;
 
 	/**
 	 * Launch the application.
@@ -129,8 +132,8 @@ public class MainShell extends Shell
         });
 		newItem.setText("&New");*/
 		
-		propertyTree = new PropertyTreeFacet( this );
-		entityTree = new EntityInclusionTreeFacet( this );
+		/*propertyTree = new PropertyTreeFacet( this );
+		entityTree = new EntityInclusionTreeFacet( this );*/
 		MenuItem openItem = new MenuItem(fileMenu, SWT.PUSH);
         openItem.addSelectionListener(new SelectionAdapter() {
         	@Override
@@ -271,14 +274,35 @@ public class MainShell extends Shell
 		MenuItem mntmAnnotationSchema = new MenuItem(menu, SWT.CASCADE);
 		mntmAnnotationSchema.setText("Annotation &Schema");
 		
-		Menu AnnotationSchemaMenu = new Menu(mntmAnnotationSchema);
-		mntmAnnotationSchema.setMenu(AnnotationSchemaMenu);
+		Menu annotationSchemaMenu = new Menu(mntmAnnotationSchema);
+		mntmAnnotationSchema.setMenu(annotationSchemaMenu);
 		
-		MenuItem mntmVoID = new MenuItem(AnnotationSchemaMenu, SWT.RADIO);
+		final MenuItem mntmVoID = new MenuItem(annotationSchemaMenu, SWT.RADIO);
 		mntmVoID.setText("VoID");
-		MenuItem mntmVoID_Semagrow = new MenuItem(AnnotationSchemaMenu, SWT.RADIO);
+		mntmVoID.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (mntmVoID.getSelection()) {
+					activeAnnotationSchemaIndex = 0;
+					activeAnnotationSchema = mntmVoID.getText();
+				}
+			}
+		});
+		
+		final MenuItem mntmVoID_Semagrow = new MenuItem(annotationSchemaMenu, SWT.RADIO);
 		mntmVoID_Semagrow.setText("VoID/SemaGrow extension");
+		mntmVoID_Semagrow.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (mntmVoID_Semagrow.getSelection()) {
+					activeAnnotationSchemaIndex = 1;
+					activeAnnotationSchema = mntmVoID_Semagrow.getText();
+				}
+			}
+		});
 		mntmVoID_Semagrow.setSelection(true);
+		activeAnnotationSchemaIndex = 1;
+		activeAnnotationSchema = mntmVoID_Semagrow.getText();
 		
 		
 		MenuItem mntmDataSchema = new MenuItem(menu, SWT.CASCADE);
@@ -427,6 +451,9 @@ public class MainShell extends Shell
 		textTitle = new Text(this, SWT.BORDER | SWT.READ_ONLY);
 		textTitle.setBounds(46, 30, 266, 24);
 		
+		propertyTree = new PropertyTreeFacet( this );
+		entityTree = new EntityInclusionTreeFacet( this );
+		
 		createContents();
 	}
 	
@@ -439,8 +466,8 @@ public class MainShell extends Shell
 			if (superProperty == null) {
 				TreeItem treeItem = new TreeItem(root, SWT.NONE);
 				treeItem.setText("?s " + ontProperty.toString() + " ?o");
-				PropertyTreeNode property = new PropertyTreeNode(ontProperty);
-				property.setDc_creator(author);
+				PropertyTreeNode property = new PropertyTreeNode(ontProperty, activeAnnotationSchema);
+				property.setAuthor(author);
 				treeItem.setData(property);
 			} else {	
 					boolean inserted = insertChildInTree(root, ontProperty, superProperty, author);
@@ -469,8 +496,8 @@ public class MainShell extends Shell
 			if (((PropertyTreeNode) child.getData()).getOntProperty().equals(superProperty)) {
 				TreeItem newtreeItem = new TreeItem(child, SWT.NONE);
 				newtreeItem.setText(ontProperty.toString());
-				PropertyTreeNode property = new PropertyTreeNode(ontProperty);
-				property.setDc_creator(author);
+				PropertyTreeNode property = new PropertyTreeNode(ontProperty, activeAnnotationSchema);
+				property.setAuthor(author);
 				newtreeItem.setData(property);
 				inserted = true;
 			}
@@ -526,7 +553,7 @@ public class MainShell extends Shell
 		table.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				String creator = ((DatasetNode) tree.getSelection()[0].getData()).getDc_creator();
+				String creator = ((DatasetNode) tree.getSelection()[0].getData()).getAuthor();
 				if ( ! creator.equals(currentAuthor)) {
 					MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
 	                box.setText("Value read-only");
@@ -702,6 +729,7 @@ public class MainShell extends Shell
 		}
 		return false;
 	}
+	
 	
 	/*
 	private boolean deleteNode(TreeItem treeItem, String nodeNameToDelete) {

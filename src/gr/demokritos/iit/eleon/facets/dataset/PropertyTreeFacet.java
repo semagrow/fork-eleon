@@ -127,8 +127,8 @@ public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 					String label = insert.open("Insert dataset label");
 					if (label == null) return;
 					TreeItem newItem = new TreeItem(selected[0], SWT.NONE);
-					DatasetNode data = new DatasetNode();
-					data.setDc_creator( myShell.currentAuthor );
+					DatasetNode data = new DatasetNode(myShell.activeAnnotationSchema);
+					data.setAuthor( myShell.currentAuthor );
 					newItem.setData(data);
 					newItem.setText(label);
 				}

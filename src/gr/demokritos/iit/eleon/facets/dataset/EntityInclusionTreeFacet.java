@@ -134,8 +134,8 @@ public class EntityInclusionTreeFacet extends DatasetFacet implements TreeFacet
 					String label = insert.open("Insert dataset label");
 					if (label == null) return;
 					TreeItem newItem = new TreeItem(selected[0], SWT.NONE);
-					DatasetNode data = new DatasetNode();
-					data.setDc_creator( myShell.currentAuthor );
+					DatasetNode data = new DatasetNode(myShell.activeAnnotationSchema);
+					data.setAuthor( myShell.currentAuthor );
 					newItem.setData(data);
 					newItem.setText(label);
 				}
@@ -157,17 +157,19 @@ public class EntityInclusionTreeFacet extends DatasetFacet implements TreeFacet
 					}
 					// selection.setExpanded(true);
 					PerEntityInsertDialog dialog = new PerEntityInsertDialog( myShell );
-					EntityInclusionTreeNode nodeData = dialog.open();
-					if (nodeData == null) {
+					String[] result = dialog.open();//result[0] containts the subject pattern and result[1] the object pattern
+					//EntityInclusionTreeNode nodeData = dialog.open();
+					if (result[0] == null && result[0] == null ) {
 						return;
 					} else {
 						TreeItem selection = selected[0];
 						TreeItem item = new TreeItem(selection, SWT.NONE);
-						nodeData.setDc_creator( myShell.currentAuthor );
+						EntityInclusionTreeNode nodeData = new EntityInclusionTreeNode(result[0], result[1], myShell.activeAnnotationSchema);
+						nodeData.setAuthor( myShell.currentAuthor );
 						item.setData(nodeData);
-						String subjectPattern = nodeData.getSubjectPattern();
-						String objectPattern = nodeData.getObjectPattern();
-						nodeData.setDc_creator( myShell.currentAuthor );
+						String subjectPattern = result[0];
+						String objectPattern = result[1];
+						nodeData.setAuthor( myShell.currentAuthor );
 						String itemText = "";
 						/*if (subjectPattern != null) {
 							itemText += "(sbj)=" + subjectPattern + " ";

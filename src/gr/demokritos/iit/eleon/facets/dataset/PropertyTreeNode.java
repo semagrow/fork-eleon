@@ -49,8 +49,8 @@ public class PropertyTreeNode extends DatasetNode implements TreeFacetNode
 	/**
 	 * @param ontProperty
 	 */
-	public PropertyTreeNode(OntProperty ontProperty) {
-		super();
+	public PropertyTreeNode(OntProperty ontProperty, String activeAnnotationSchema) {
+		super(activeAnnotationSchema);
 		this.ontProperty = ontProperty;
 	}
 	

@@ -50,8 +50,8 @@ public class EntityInclusionTreeNode extends DatasetNode implements TreeFacetNod
 	 * @param objectPattern
 	 */
 	public EntityInclusionTreeNode(String subjectPattern,
-			String objectPattern) {
-		super();
+			String objectPattern, String activeAnnotationSchema) {
+		super(activeAnnotationSchema);
 		this.subjectPattern = subjectPattern;
 		this.objectPattern = objectPattern;
 	}
