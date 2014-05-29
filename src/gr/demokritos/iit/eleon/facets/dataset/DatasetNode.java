@@ -121,15 +121,14 @@ public class DatasetNode implements TreeFacetNode{
 	private String dc_title = null;
 	
 	//private String annotationShema;
-	private int annotationSchemaIndex = -1;
+	//private int annotationSchemaIndex = -1;
 	
 	/**
 	 * 
 	 */
 	public DatasetNode(String annotationSchema) {
 		super();
-		//this.annotationShema = annotationSchema;
-		int i = 0;
+/*		int i = 0;
 		for (String annotation_shema_main : annotation_schema_names ) {
 			if (annotation_shema_main.equals(annotationSchema)) {
 				annotationSchemaIndex = i;
@@ -137,7 +136,7 @@ public class DatasetNode implements TreeFacetNode{
 			}
 			i++;
 		}
-		assert annotationSchemaIndex != -1;
+		assert annotationSchemaIndex != -1;*/
 	}
 	
 	/**
@@ -159,16 +158,18 @@ public class DatasetNode implements TreeFacetNode{
 	}
 	
 	public String getAuthor() {
-		return (String) property_values[annotationSchemaIndex][0];
+		//return (String) property_values[annotationSchemaIndex][0];
+		return (String) property_values[1][0];
 	}
 	
 	public void setAuthor(String author) {
-		property_values[annotationSchemaIndex][0] = author;
+		//property_values[annotationSchemaIndex][0] = author;
+		property_values[1][0] = author;
 	}
 
-	public int getAnnotationSchemaIndex() {
+	/*public int getAnnotationSchemaIndex() {
 		return this.annotationSchemaIndex;
-	}
+	}*/
 	
 	/**
 	 * @return the void_triples

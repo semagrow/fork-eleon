@@ -285,8 +285,8 @@ public class MainShell extends Shell
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (mntmVoID.getSelection()) {
-					activeAnnotationSchemaIndex = 0;
-					activeAnnotationSchema = mntmVoID.getText();
+					//activeAnnotationSchemaIndex = 0;
+					//activeAnnotationSchema = mntmVoID.getText();
 				}
 			}
 		});
@@ -297,8 +297,8 @@ public class MainShell extends Shell
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (mntmVoID_Semagrow.getSelection()) {
-					activeAnnotationSchemaIndex = 1;
-					activeAnnotationSchema = mntmVoID_Semagrow.getText();
+					//activeAnnotationSchemaIndex = 1;
+					//activeAnnotationSchema = mntmVoID_Semagrow.getText();
 				}
 			}
 		});
@@ -535,7 +535,8 @@ public class MainShell extends Shell
 		
 		DatasetNode treeNodeData = ((DatasetNode) tree.getSelection()[0].getData());
 		
-		final int schemaIndex = treeNodeData.getAnnotationSchemaIndex();
+		//final int schemaIndex = treeNodeData.getAnnotationSchemaIndex();
+		final int schemaIndex = 1;
 		
 		int i = 0;
 		while(DatasetNode.property_names[schemaIndex][i] != null) {
