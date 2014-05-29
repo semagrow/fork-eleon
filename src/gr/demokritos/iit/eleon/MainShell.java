@@ -62,12 +62,13 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import gr.demokritos.iit.eleon.commons.Constants;
 import gr.demokritos.iit.eleon.facets.Facet;
 import gr.demokritos.iit.eleon.facets.TreeFacet;
-import gr.demokritos.iit.eleon.facets.TreeFacetNode;
 import gr.demokritos.iit.eleon.facets.dataset.EntityInclusionTreeFacet;
+import gr.demokritos.iit.eleon.facets.dataset.NominalSet;
 import gr.demokritos.iit.eleon.facets.dataset.PropertyTreeFacet;
 import gr.demokritos.iit.eleon.facets.dataset.PropertyTreeNode;
 import gr.demokritos.iit.eleon.facets.dataset.DatasetNode;
 import gr.demokritos.iit.eleon.ui.InsertInMenuDialog;
+import gr.demokritos.iit.eleon.ui.SelectNominalSetDialog;
 import gr.demokritos.iit.eleon.ui.SelectVocabulariesDialog;
 import gr.demokritos.iit.eleon.persistence.*;
 
@@ -616,18 +617,53 @@ public class MainShell extends Shell
 					String[][] property_names = DatasetNode.property_names;
 					int i = 0; int index = -1;
 					while( (index < 0) && (property_names[schemaIndex][i] != null) ) {
-						if("void:vocabulary".equals(property_names[schemaIndex][i]) ) { index = i; }
+						if("void:vocabulary".equals(property_names[schemaIndex][i]) ) { 
+							index = i;
+							break;
+						}
 						++i;
 					}
-
 					assert(i>=0);
 					
 					Object[][] property_values = ((DatasetNode) treeFacetNode).property_values;
-					property_values[schemaIndex][index] = proper_text;
+					property_values[schemaIndex][index] = proper_text;//TODO:check what happens if user clicks cancel in the dialog
 					
 					item.setText(1, proper_text);
 					fillPerPropertyTree(ontModel.listAllOntProperties().toList(), currentAuthor, tree.getSelection()[0]);
 					return;
+				 }
+				 
+				 if (property.equals("void:subjectsTarget")) {//TODO:breaks independence from property names!
+					 String[][] property_names = DatasetNode.property_names;
+					 int i = 0; int index = -1;
+					 while( (index < 0) && (property_names[schemaIndex][i] != null) ) {
+						 if("void:subjectsTarget".equals(property_names[schemaIndex][i]) ) { 
+							 index = i;
+							 break;
+						 }
+						 ++i;
+					 }
+					 assert(i>=0);
+					 
+					 Object nominalSet = ((DatasetNode) treeFacetNode).property_values[schemaIndex][index];
+					 if (nominalSet == null) {
+						 nominalSet = new NominalSet();
+					 }/* else {
+						 nominalSet = (NominalSet) nominalSet;
+					 }*/
+					 nominalSet = ((NominalSet) nominalSet);			
+					 
+					 SelectNominalSetDialog dialog = new SelectNominalSetDialog(getShell());
+					 java.util.List<String> selectedNominals = dialog.select(NominalSet.availableNomilas, ((NominalSet) nominalSet).getContainingNominals());
+					 if (selectedNominals.isEmpty()) {
+						 ((DatasetNode) treeFacetNode).property_values[schemaIndex][index] = null;
+						 return;
+					 }
+					 ((NominalSet) nominalSet).setContainingNominals(selectedNominals);
+					 ((DatasetNode) treeFacetNode).property_values[schemaIndex][index] = (NominalSet) nominalSet;
+
+					 item.setText(1, ((NominalSet) nominalSet).toString());
+					 return;
 				 }
 		
 				// The control that will be the editor must be a child of the Table

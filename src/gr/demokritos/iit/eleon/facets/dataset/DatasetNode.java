@@ -108,8 +108,12 @@ public class DatasetNode implements TreeFacetNode{
 		property_value_types[1][6] = Integer.class;
 		property_is_functional[1][6] = true;
 		
-		property_names[1][7] = null;
-		property_value_types[1][7] = null;
+		property_names[1][7] = "void:subjectsTarget";
+		property_value_types[1][7] = Integer.class;
+		property_is_functional[1][7] = true;		
+		
+		property_names[1][8] = null;
+		property_value_types[1][8] = null;
 		//property_is_functional[0][7] = (Boolean) null;
 	}
 	
