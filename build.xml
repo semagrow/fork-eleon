@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Create Runnable Jar for Project eleon-trunk">
+    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
+    <!--ANT 1.7 is required                                        -->
+    <target name="create_run_jar">
+        <jar destfile="${basedir}/eleon.jar" filesetmanifest="mergewithoutmain">
+            <manifest>
+                <attribute name="Main-Class" value="gr.demokritos.iit.eleon.MainShell"/>
+                <attribute name="Class-Path" value="."/>
+            </manifest>
+            <fileset dir="${basedir}/classes"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/giannis/git/eleon/lib/jena/commons-codec-1.6.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/giannis/git/eleon/lib/jena/httpclient-4.2.3.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/giannis/git/eleon/lib/jena/httpcore-4.2.2.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/giannis/git/eleon/lib/jena/jcl-over-slf4j-1.6.4.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/giannis/git/eleon/lib/jena/jena-arq-2.11.1.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/giannis/git/eleon/lib/jena/jena-core-2.11.1.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/giannis/git/eleon/lib/jena/jena-iri-1.0.1.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/giannis/git/eleon/lib/jena/jena-sdb-1.4.1.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/giannis/git/eleon/lib/jena/jena-tdb-1.0.1.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/giannis/git/eleon/lib/jena/log4j-1.2.16.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/giannis/git/eleon/lib/jena/slf4j-api-1.6.4.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/giannis/git/eleon/lib/jena/slf4j-log4j12-1.6.4.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/giannis/git/eleon/lib/jena/xercesImpl-2.11.0.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/giannis/git/eleon/lib/jena/xml-apis-1.4.01.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="/home/giannis/git/eleon/lib/swt.jar"/>
+        </jar>
+    </target>
+</project>
