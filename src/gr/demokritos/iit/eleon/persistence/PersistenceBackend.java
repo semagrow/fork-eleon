@@ -41,24 +41,41 @@ package gr.demokritos.iit.eleon.persistence;
 import gr.demokritos.iit.eleon.facets.Facet;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.eclipse.swt.widgets.Tree;
 
+
 public interface PersistenceBackend
 {
-	String getLabel();
+	public String getLabel();
 
-	void setBackend( Object parameter );
+	public void setBackend( Object parameter )
+	throws IllegalArgumentException;
 
-	void open( Object backendParam )
-	throws IllegalArgumentException, IOException;
+	public Object getBackend();
 
-	boolean save( Facet[] facets )
+	public void open()
 	throws IOException;
 
-	void buildPropertyTree( Tree treePerProperty );
+	/**
+	 * Saves the given facets to this PersistenceBackend
+	 * @param facets The facets that should be saved.
+	 * @return
+	 * @throws IOException
+	 */
+	public boolean save( Facet[] facets )
+	throws IOException;
 
-	void buildEntityTree( Tree entityTree );
+	/**
+	 * Loads the property tree facet
+	 * @param treePerProperty
+	 */
+	public void buildPropertyTree( Tree treePerProperty );
+
+	/**
+	 * Loads the entity inclusion tree facet
+	 * @param treePerProperty
+	 */
+	public void buildEntityTree( Tree entityTree );
 
 }

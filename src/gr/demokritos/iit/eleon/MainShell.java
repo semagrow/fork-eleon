@@ -36,8 +36,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 @author Theofilos Nikolaou
 @author Maria Prospathopoulou
 @author Spyros Kallonis
-@author Dimitris Bilidas (XENIOS & INDIGO, 2007-2009; RoboSKEL 2010-2011)
-@author Stasinos Konstantopoulos (INDIGO, 2009; RoboSKEL 2011; SemaGrow 2012-2014)
+@author Dimitris Bilidas (XENIOS & INDIGO, 2007-2009; Roboskel 2010-2011)
+@author Stasinos Konstantopoulos (INDIGO, 2009; Roboskel 2011; SemaGrow 2012-2014)
 @author Giannis Mouchakis (SemaGrow 2014)
 
 ***************/
@@ -156,8 +156,9 @@ public class MainShell extends Shell
         		//dialog.setFileName ("myfile");
         		try {
         			String openFilename = dialog.open();
-        			if (openFilename == null) return; 
-					persistence.open( openFilename );
+        			if (openFilename == null) return;
+        			persistence.setBackend( openFilename );
+					persistence.open();
 					textTitle.setText( persistence.getLabel() );
 					//create the faceted trees
 					propertyTree.initTree();

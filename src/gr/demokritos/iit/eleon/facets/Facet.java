@@ -44,5 +44,7 @@ public interface Facet
 	String getTitle();
 
 	String getInfo();
+	
+	
 
 }

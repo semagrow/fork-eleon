@@ -41,7 +41,6 @@ package gr.demokritos.iit.eleon.persistence;
 import gr.demokritos.iit.eleon.facets.Facet;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.eclipse.swt.widgets.Tree;
 
@@ -74,6 +73,13 @@ public class RemoteStore implements PersistenceBackend
 		// TODO Auto-generated method stub
 	}
 
+	@Override
+	public Object getBackend()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 	/*
 	 * PersistenceBackend implementation
@@ -81,8 +87,8 @@ public class RemoteStore implements PersistenceBackend
 
 
 	@Override
-	public void open( Object backendParam )
-	throws IllegalArgumentException, IOException
+	public void open()
+	throws IOException
 	{
 		// TODO Auto-generated method stub
 		

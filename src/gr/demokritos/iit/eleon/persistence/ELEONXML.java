@@ -92,30 +92,32 @@ public class ELEONXML implements PersistenceBackend
 	@Override
 	public void setBackend( Object parameter )
 	{
-		assert parameter instanceof String; 
-		this.filename = (String)parameter;
+		try { this.filename = (String)filename; }
+		catch( ClassCastException ex ) {
+			throw new IllegalArgumentException( "Argument should be a String", ex );
+		}
 	}
 
+	@Override
+	public String getBackend()
+	{ return this.filename; }
 	
+
 	/*
 	 * PersistenceBackend implementation
 	 */
 
 
 	@Override
-	public void open( Object filename )
+	public void open()
 	throws IllegalArgumentException, IOException
 	{
 			try {
-				this.filename = (String)filename;
 				File fXmlFile = new File( this.filename );
 				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 				DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 				doc = dBuilder.parse( fXmlFile );
 				doc.getDocumentElement().normalize();
-			}
-			catch( ClassCastException ex ) {
-				throw new IllegalArgumentException( "Argument should be a String", ex );
 			}
 			catch( ParserConfigurationException ex ) {
 				// This should never happen
@@ -147,7 +149,7 @@ public class ELEONXML implements PersistenceBackend
 	}
 	
 	@Override
-	public boolean save( Facet[] facets ) //Tree perPropertyTree, Tree perEntityTree )
+	public boolean save( Facet[] facets )
 	throws IOException
 	{
 		if( this.filename == null ) { return false; }
@@ -157,7 +159,7 @@ public class ELEONXML implements PersistenceBackend
 		DocumentBuilder docBuilder = null;
 		try { docBuilder = docFactory.newDocumentBuilder(); }
 		catch( ParserConfigurationException ex ) {
-			// THis never happens
+			// This never happens
 		}
 		assert docBuilder != null;
 
