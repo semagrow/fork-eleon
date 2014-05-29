@@ -56,7 +56,7 @@ public class DatasetNode implements TreeFacetNode{
 		property_value_types[0][1] = String.class;
 		property_is_functional[0][1] = true;
 
-		property_names[0][2] = "void:endpoint";
+		property_names[0][2] = "void:sparqlEndpoint";
 		property_value_types[0][2] = String.class;
 		property_is_functional[0][2] = true;
 		
@@ -88,7 +88,7 @@ public class DatasetNode implements TreeFacetNode{
 		property_value_types[1][1] = String.class;
 		property_is_functional[1][1] = true;
 
-		property_names[1][2] = "void:endpoint";
+		property_names[1][2] = "void:sparqlEndpoint";
 		property_value_types[1][2] = String.class;
 		property_is_functional[1][2] = true;
 		
