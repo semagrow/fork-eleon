@@ -557,7 +557,7 @@ public class MainShell extends Shell
 		table.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				TreeFacetNode treeFacetNode = (TreeFacetNode) tree.getSelection()[0].getData();
+				DatasetNode treeFacetNode = (DatasetNode) tree.getSelection()[0].getData();
 				String creator = treeFacetNode.getAuthor();
 				if ( ! creator.equals(currentAuthor)) {
 					MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
@@ -613,7 +613,7 @@ public class MainShell extends Shell
 					
 					String proper_text = item.getText(1).substring(0, item.getText(1).length() - 2);
 					
-					String[][] property_names = treeFacetNode.getProperty_names();
+					String[][] property_names = DatasetNode.property_names;
 					int i = 0; int index = -1;
 					while( (index < 0) && (property_names[schemaIndex][i] != null) ) {
 						if("void:vocabulary".equals(property_names[schemaIndex][i]) ) { index = i; }

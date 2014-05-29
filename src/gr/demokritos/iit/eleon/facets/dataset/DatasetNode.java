@@ -273,7 +273,7 @@ public class DatasetNode implements TreeFacetNode{
 			return false;
 		}
 	}
-
+/*
 	@Override
 	public String getTitle() {
 		// TODO Auto-generated method stub
@@ -305,6 +305,6 @@ public class DatasetNode implements TreeFacetNode{
 	public boolean[][] getProperty_is_functional() {
 		return DatasetNode.property_is_functional;
 	}
-	
+	*/
 
 }
