@@ -92,7 +92,7 @@ public class ELEONXML implements PersistenceBackend
 	@Override
 	public void setBackend( Object parameter )
 	{
-		try { this.filename = (String)filename; }
+		try { this.filename = (String)parameter; }
 		catch( ClassCastException ex ) {
 			throw new IllegalArgumentException( "Argument should be a String", ex );
 		}
