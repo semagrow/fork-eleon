@@ -46,7 +46,6 @@ import java.util.List;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.*;
 
 import com.hp.hpl.jena.rdf.model.*;
@@ -163,6 +162,11 @@ public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 		                return;
 					}
 					itemToDelete.dispose();//simple delete. to be changed later.
+					Table table = PropertyTreeFacet.this.myShell.table;
+					if (table != null && !table.isDisposed()) {
+						table.dispose();
+						table = null;
+					}
 					//String name =  itemToDelete.getText();
 					//TreeItem parent = itemToDelete.getParentItem();
 					//while(deleteNode(parent, name));//We suppose that the user can select only one item to remove.
