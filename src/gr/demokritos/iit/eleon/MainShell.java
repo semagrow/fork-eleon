@@ -165,11 +165,11 @@ public class MainShell extends Shell
 					propertyTree.initTree();
 					textTitle.setText( propertyTree.getTitle() );
 					textEndpoint.setText( propertyTree.getInfo() );
-					persistence.buildPropertyTree( propertyTree.getTree() );
+					persistence.buildPropertyTree( (PropertyTreeFacet)propertyTree );
 					entityTree.initTree();
 					textTitle.setText( entityTree.getTitle() );
 					textEndpoint.setText( entityTree.getInfo() );
-					persistence.buildEntityTree( entityTree.getTree() );
+					persistence.buildEntityTree( (EntityInclusionTreeFacet)entityTree );
 				}
         		catch( Exception e ) {
 					e.printStackTrace();
@@ -469,7 +469,8 @@ public class MainShell extends Shell
 			if (superProperty == null) {
 				TreeItem treeItem = new TreeItem(root, SWT.NONE);
 				treeItem.setText("?s " + ontProperty.toString() + " ?o");
-				PropertyTreeNode property = new PropertyTreeNode(ontProperty, activeAnnotationSchema);
+				PropertyTreeNode property =
+						new PropertyTreeNode( (PropertyTreeFacet)this.propertyTree, ontProperty, activeAnnotationSchema );
 				property.setAuthor(author);
 				treeItem.setData(property);
 			} else {	
@@ -496,10 +497,11 @@ public class MainShell extends Shell
 	protected boolean insertChildInTree(TreeItem treeItem, OntProperty ontProperty, OntProperty superProperty, String author) {
 		boolean inserted = false;
 		for(TreeItem child : treeItem.getItems()) {
-			if (((PropertyTreeNode) child.getData()).getOntProperty().equals(superProperty)) {
+			if (((PropertyTreeNode) child.getData()).getProperty().equals(superProperty)) {
 				TreeItem newtreeItem = new TreeItem(child, SWT.NONE);
 				newtreeItem.setText(ontProperty.toString());
-				PropertyTreeNode property = new PropertyTreeNode(ontProperty, activeAnnotationSchema);
+				PropertyTreeNode property =
+						new PropertyTreeNode( (PropertyTreeFacet)this.propertyTree, ontProperty, activeAnnotationSchema);
 				property.setAuthor(author);
 				newtreeItem.setData(property);
 				inserted = true;
@@ -540,14 +542,14 @@ public class MainShell extends Shell
 		final int schemaIndex = 1;
 		
 		int i = 0;
-		while(DatasetNode.property_names[schemaIndex][i] != null) {
+		while(DatasetNode.property_qnames[schemaIndex][i] != null) {
 			TableItem item = new TableItem(table, SWT.NONE);
 			Object value = treeNodeData.property_values[schemaIndex][i];
 			String value_str = null;
 			if (value != null) {
 				value_str = value.toString();
 			}
-			item.setText(new String [] {DatasetNode.property_names[schemaIndex][i], value_str});
+			item.setText(new String [] {DatasetNode.property_qnames[schemaIndex][i], value_str});
 			i++;
 		}
 		
@@ -614,7 +616,7 @@ public class MainShell extends Shell
 					
 					String proper_text = item.getText(1).substring(0, item.getText(1).length() - 2);
 					
-					String[][] property_names = DatasetNode.property_names;
+					String[][] property_names = DatasetNode.property_qnames;
 					int i = 0; int index = -1;
 					while( (index < 0) && (property_names[schemaIndex][i] != null) ) {
 						if("void:vocabulary".equals(property_names[schemaIndex][i]) ) { 
@@ -634,7 +636,7 @@ public class MainShell extends Shell
 				 }
 				 
 				 if (property.equals("void:subjectsTarget")) {//TODO:breaks independence from property names!
-					 String[][] property_names = DatasetNode.property_names;
+					 String[][] property_names = DatasetNode.property_qnames;
 					 int i = 0; int index = -1;
 					 while( (index < 0) && (property_names[schemaIndex][i] != null) ) {
 						 if("void:subjectsTarget".equals(property_names[schemaIndex][i]) ) { 
@@ -678,8 +680,8 @@ public class MainShell extends Shell
 						editor.getItem().setText(1, text.getText());
 						
 						int i = 0; int index = -1;
-						while( (index < 0) && (DatasetNode.property_names[schemaIndex][i] != null) ) {
-							if( property.equals(DatasetNode.property_names[schemaIndex][i]) ) { index = i; }
+						while( (index < 0) && (DatasetNode.property_qnames[schemaIndex][i] != null) ) {
+							if( property.equals(DatasetNode.property_qnames[schemaIndex][i]) ) { index = i; }
 							++i;
 						}
 						

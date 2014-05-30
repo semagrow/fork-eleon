@@ -53,6 +53,8 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
+import com.hp.hpl.jena.ontology.OntModel;
+
 public class EntityInclusionTreeFacet extends DatasetFacet implements TreeFacet
 {
 	
@@ -134,7 +136,7 @@ public class EntityInclusionTreeFacet extends DatasetFacet implements TreeFacet
 					String label = insert.open("Insert dataset label");
 					if (label == null) return;
 					TreeItem newItem = new TreeItem(selected[0], SWT.NONE);
-					DatasetNode data = new DatasetNode(myShell.activeAnnotationSchema);
+					DatasetNode data = new DatasetNode( mySelf, myShell.activeAnnotationSchema );
 					data.setAuthor( myShell.currentAuthor );
 					newItem.setData(data);
 					newItem.setText(label);
@@ -164,7 +166,7 @@ public class EntityInclusionTreeFacet extends DatasetFacet implements TreeFacet
 					} else {
 						TreeItem selection = selected[0];
 						TreeItem item = new TreeItem(selection, SWT.NONE);
-						EntityInclusionTreeNode nodeData = new EntityInclusionTreeNode(result[0], result[1], myShell.activeAnnotationSchema);
+						EntityInclusionTreeNode nodeData = new EntityInclusionTreeNode(mySelf, result[0], result[1], myShell.activeAnnotationSchema);
 						nodeData.setAuthor( myShell.currentAuthor );
 						item.setData(nodeData);
 						String subjectPattern = result[0];
@@ -248,7 +250,19 @@ public class EntityInclusionTreeFacet extends DatasetFacet implements TreeFacet
 		});
 	    remove.setText("Remove");
 	}
-	
-	
+
+
+	@Override
+	public void syncFrom( OntModel ont )
+	{
+		// TODO Auto-generated method stub
+	}
+
+
+	@Override
+	public void syncTo( OntModel ont )
+	{
+		// TODO Auto-generated method stub
+	}
 
 }

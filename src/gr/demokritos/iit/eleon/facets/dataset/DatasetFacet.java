@@ -38,6 +38,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 package gr.demokritos.iit.eleon.facets.dataset;
 
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 
 import gr.demokritos.iit.eleon.MainShell;
 import gr.demokritos.iit.eleon.facets.TreeFacet;
@@ -45,10 +46,22 @@ import gr.demokritos.iit.eleon.facets.TreeFacet;
 
 public abstract class DatasetFacet implements TreeFacet
 {
+	// TODO: These will be moved to the class representing the annotation schema
+	static final String entityTop = "http://rdf.iit.demokritos.gr/2013/sevod#datasetTop";
+	static final String propSubsumes = "http://rdfs.org/ns/void#subset";
+	static final String propPropertyDataset = "http://rdf.iit.demokritos.gr/2013/sevod#PropertyDataset";
+	static final String propEntityDataset = "http://rdf.iit.demokritos.gr/2013/sevod#EntityDataset";
+
 	protected Tree myTree;
 	protected MainShell myShell;
+	protected DatasetFacet mySelf;
 	private String title = "";
 	private String info = "";
+
+	protected DatasetFacet()
+	{
+		this.mySelf = this;
+	}
 
 	
 	/*
@@ -87,5 +100,13 @@ public abstract class DatasetFacet implements TreeFacet
 
 	@Override
 	public Tree getTree() { return this.myTree; }
+	
+	@Override
+	public TreeItem getRoot()
+	{
+		TreeItem[] q = this.myTree.getItems();
+		if( (q != null) && (q.length > 0) ) { return q[0]; }
+		else { return null; }
+	}
 
 }

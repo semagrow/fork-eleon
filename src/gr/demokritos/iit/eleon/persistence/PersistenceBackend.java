@@ -39,6 +39,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 package gr.demokritos.iit.eleon.persistence;
 
 import gr.demokritos.iit.eleon.facets.Facet;
+import gr.demokritos.iit.eleon.facets.dataset.EntityInclusionTreeFacet;
+import gr.demokritos.iit.eleon.facets.dataset.PropertyTreeFacet;
 
 import java.io.IOException;
 
@@ -68,14 +70,16 @@ public interface PersistenceBackend
 
 	/**
 	 * Loads the property tree facet
-	 * @param treePerProperty
+	 * @param facet
 	 */
-	public void buildPropertyTree( Tree treePerProperty );
+	public void buildPropertyTree( PropertyTreeFacet facet );
 
 	/**
 	 * Loads the entity inclusion tree facet
-	 * @param treePerProperty
+	 * @param facet
 	 */
-	public void buildEntityTree( Tree entityTree );
+	public void buildEntityTree( EntityInclusionTreeFacet facet );
+
+	
 
 }

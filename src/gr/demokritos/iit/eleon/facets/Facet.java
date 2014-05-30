@@ -38,13 +38,17 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 package gr.demokritos.iit.eleon.facets;
 
+import com.hp.hpl.jena.ontology.OntModel;
+
 public interface Facet
 {
 
 	String getTitle();
 
 	String getInfo();
-	
-	
 
+	void syncFrom( OntModel ont );
+	
+	void syncTo( OntModel ont );
+	
 }

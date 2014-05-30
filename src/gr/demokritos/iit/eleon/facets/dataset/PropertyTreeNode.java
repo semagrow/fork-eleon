@@ -39,18 +39,19 @@ package gr.demokritos.iit.eleon.facets.dataset;
 
 import gr.demokritos.iit.eleon.facets.TreeFacetNode;
 
-import com.hp.hpl.jena.ontology.OntProperty;
+import com.hp.hpl.jena.rdf.model.Resource;
+
 
 public class PropertyTreeNode extends DatasetNode implements TreeFacetNode
 {
-	
-	private OntProperty ontProperty = null;
+	private Resource ontProperty = null;
 
 	/**
 	 * @param ontProperty
 	 */
-	public PropertyTreeNode(OntProperty ontProperty, String activeAnnotationSchema) {
-		super(activeAnnotationSchema);
+	public PropertyTreeNode( DatasetFacet myFacet, Resource ontProperty, String activeAnnotationSchema )
+	{
+		super( myFacet, activeAnnotationSchema );
 		this.ontProperty = ontProperty;
 	}
 	
@@ -63,25 +64,24 @@ public class PropertyTreeNode extends DatasetNode implements TreeFacetNode
 	 * @param void_sparqlEnpoint
 	 * @param dc_title
 	 */
-	public PropertyTreeNode(Integer void_triples, Integer void_distinctSubjects,
-			Integer void_distinctObjects, String dc_creator,
-			String void_sparqlEnpoint, String dc_title) {
-		super(void_triples, void_distinctSubjects, void_distinctObjects, dc_creator,
-				void_sparqlEnpoint, dc_title);
+	public PropertyTreeNode( DatasetFacet myFacet,
+			Integer void_triples, Integer void_distinctSubjects, Integer void_distinctObjects,
+			String dc_creator, String void_sparqlEnpoint, String dc_title )
+	{
+		super( myFacet, void_triples, void_distinctSubjects, void_distinctObjects, dc_creator,
+				void_sparqlEnpoint, dc_title );
 	}
 
 	/**
 	 * @return the ontProperty
 	 */
-	public OntProperty getOntProperty() {
-		return ontProperty;
-	}
+	public Resource getProperty()
+	{ return ontProperty; }
 
 	/**
 	 * @param ontProperty the ontProperty to set
 	 */
-	public void setOntProperty(OntProperty ontProperty) {
-		this.ontProperty = ontProperty;
-	}
+	public void setProperty( Resource ontProperty )
+	{ this.ontProperty = ontProperty; }
 
 }

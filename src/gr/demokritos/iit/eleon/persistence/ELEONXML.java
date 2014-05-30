@@ -230,8 +230,9 @@ public class ELEONXML implements PersistenceBackend
 	
 	
 	@Override
-	public void buildPropertyTree( Tree propertyTree )
+	public void buildPropertyTree( PropertyTreeFacet facet )
 	{
+		Tree propertyTree = facet.getTree();
 		XPathFactory xPathfactory = XPathFactory.newInstance();
 		XPath xpath = xPathfactory.newXPath();
 		NodeList nodeList = null;
@@ -248,15 +249,16 @@ public class ELEONXML implements PersistenceBackend
 		Element root = (Element) eElement.getFirstChild();
 		NodeList childrenList = root.getChildNodes();
 		for( int i = 0; i < childrenList.getLength(); i++ ) {
-			createTreeFromDOM( childrenList.item(i), propertyTree, "per_property", propertyTree.getItems()[0] );
+			createTreeFromDOM( childrenList.item(i), facet, propertyTree.getItems()[0] );
 		}
 		propertyTree.moveAbove( null );
 	}
 	
 
 	@Override
-	public void buildEntityTree( Tree entityTree )
+	public void buildEntityTree( EntityInclusionTreeFacet facet )
 	{
+		Tree entityTree = facet.getTree();
 		XPathFactory xPathfactory = XPathFactory.newInstance();
 		XPath xpath = xPathfactory.newXPath();
 		NodeList nodeList = null;
@@ -273,7 +275,7 @@ public class ELEONXML implements PersistenceBackend
 		Element root = (Element) eElement.getFirstChild();
 		NodeList childrenList = root.getChildNodes();
 		for( int i = 0; i < childrenList.getLength(); i++ ) {
-			createTreeFromDOM(childrenList.item(i), entityTree, "per_property", entityTree.getItems()[0]);
+			createTreeFromDOM( childrenList.item(i), facet, entityTree.getItems()[0]);
 		}
 		entityTree.moveAbove(null);
 	}
@@ -323,9 +325,9 @@ public class ELEONXML implements PersistenceBackend
 				}
 			} else if (treeItemCurrent.getData() instanceof PropertyTreeNode) {
 				PropertyTreeNode perPropertyNode = (PropertyTreeNode) treeItemCurrent.getData();
-				OntProperty ontProperty = perPropertyNode.getOntProperty();
+				com.hp.hpl.jena.rdf.model.Resource ontProperty = perPropertyNode.getProperty();
 				Element ontPropertyElement = doc.createElement("rdf:Property");
-				ontPropertyElement.setAttribute("rdf:about", ontProperty.toString());
+				ontPropertyElement.setAttribute( "rdf:about", ontProperty.getURI() );
 				treeItemNode.appendChild(ontPropertyElement);
 			}
 			//treeItemNode.setAttribute("parent", treeItem.getText());
@@ -336,8 +338,9 @@ public class ELEONXML implements PersistenceBackend
 		}
 	}
 	
-	private void createTreeFromDOM( Node node, Tree tree, String facetType, TreeItem parentTreeItem )
+	private void createTreeFromDOM( Node node, DatasetFacet facet, TreeItem parentTreeItem )
 	{
+		Tree tree = facet.getTree();
 		if (node.getNodeType() == Node.ELEMENT_NODE) {
 			TreeItem rootItem =tree.getItems()[0];
 			
@@ -376,8 +379,8 @@ public class ELEONXML implements PersistenceBackend
 				}
 				
 				//create data to insert
-				if (facetType.equals("per_property")) {
-					PropertyTreeNode data = new PropertyTreeNode(void_triples, void_distinctSubjects, void_distinctObjects, dc_creator, void_sparqlEndpoint, dc_title);
+				if( facet.getClass().equals(PropertyTreeFacet.class) ) {
+					PropertyTreeNode data = new PropertyTreeNode(facet, void_triples, void_distinctSubjects, void_distinctObjects, dc_creator, void_sparqlEndpoint, dc_title);
 					OntModel ontModel = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM);
 					NodeList nodeList = node.getChildNodes();
 					for (int i = 0; i < nodeList.getLength(); i++) {
@@ -387,13 +390,13 @@ public class ELEONXML implements PersistenceBackend
 								Element element = (Element) currentNode;
 								String rdf_about = element.getAttribute("rdf:about");
 								OntProperty ontProperty = ontModel.createOntProperty(rdf_about);
-								data.setOntProperty(ontProperty);
+								data.setProperty(ontProperty);
 							}
 						}
 					}
 					treeItem.setData(data);
-				} else if (facetType.equals("per_entity")) {
-					EntityInclusionTreeNode data = new EntityInclusionTreeNode(void_triples, void_distinctSubjects, void_distinctObjects, dc_creator, void_sparqlEndpoint, dc_title);
+				} else if( facet.getClass().equals(EntityInclusionTreeFacet.class) ) {
+					EntityInclusionTreeNode data = new EntityInclusionTreeNode( facet, void_triples, void_distinctSubjects, void_distinctObjects, dc_creator, void_sparqlEndpoint, dc_title );
 					NodeList nodeList = node.getChildNodes();
 					for (int i = 0; i < nodeList.getLength(); i++) {
 						Node currentNode = nodeList.item(i);
@@ -426,7 +429,7 @@ public class ELEONXML implements PersistenceBackend
 			for (int i = 0; i < nodeList.getLength(); i++) {
 				Node currentNode = nodeList.item(i);
 				if (currentNode.getNodeType() == Node.ELEMENT_NODE && currentNode.getNodeName().equals("node")) {
-					createTreeFromDOM(currentNode, tree, facetType, treeItem);
+					createTreeFromDOM( currentNode, facet, treeItem );
 				}
 			}
 		}

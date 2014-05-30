@@ -39,12 +39,25 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 package gr.demokritos.iit.eleon.persistence;
 
 import gr.demokritos.iit.eleon.facets.Facet;
+import gr.demokritos.iit.eleon.facets.dataset.DatasetNode;
+import gr.demokritos.iit.eleon.facets.dataset.EntityInclusionTreeFacet;
+import gr.demokritos.iit.eleon.facets.dataset.EntityInclusionTreeNode;
+import gr.demokritos.iit.eleon.facets.dataset.PropertyTreeFacet;
+import gr.demokritos.iit.eleon.facets.dataset.PropertyTreeNode;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
+import com.hp.hpl.jena.ontology.Individual;
+import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntModelSpec;
 import com.hp.hpl.jena.ontology.OntProperty;
@@ -134,48 +147,17 @@ public class OWLFile implements PersistenceBackend
 	}
 
 
-	// TODO: extends the schema, to avoid having to re-build the tree 
 	@Override
-	public void buildPropertyTree( Tree propertyTree )
+	public void buildPropertyTree( PropertyTreeFacet facet )
 	{
-		ExtendedIterator<OntProperty> it = this.ont.listAllOntProperties();
-		while( it.hasNext() ) {
-			OntProperty p = it.next();
-			ExtendedIterator<? extends OntProperty> it2 = p.listSuperProperties( true );
-			while( it2.hasNext() ) {
-				OntProperty superp = it2.next();
-				// TODO
-			}
-		}
-	}
-	
-
-	@Override
-	public void buildEntityTree( Tree entityTree )
-	{
-		/*
-		XPathFactory xPathfactory = XPathFactory.newInstance();
-		XPath xpath = xPathfactory.newXPath();
-		NodeList nodeList = null;
-		try {
-			XPathExpression expr = xpath.compile("//facet[@type=\"per_entity\"]");
-			nodeList = (NodeList) expr.evaluate( doc, XPathConstants.NODESET );
-		}
-		catch( XPathExpressionException ex ) {
-			// Should never happen
-		}
-		assert nodeList != null;
-
-		Element eElement = (Element) nodeList.item(0);
-		Element root = (Element) eElement.getFirstChild();
-		NodeList childrenList = root.getChildNodes();
-		for( int i = 0; i < childrenList.getLength(); i++ ) {
-			createTreeFromDOM(childrenList.item(i), entityTree, "per_property", entityTree.getItems()[0]);
-		}
-		entityTree.moveAbove(null);
-		*/
+		// TODO Auto-generated method stub
 	}
 
 
+	@Override
+	public void buildEntityTree( EntityInclusionTreeFacet facet )
+	{
+		// TODO Auto-generated method stub
+	}
 
 }

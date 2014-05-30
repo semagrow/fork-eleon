@@ -40,106 +40,156 @@ package gr.demokritos.iit.eleon.facets.dataset;
 
 import gr.demokritos.iit.eleon.facets.TreeFacetNode;
 
-public class DatasetNode implements TreeFacetNode{
+
+public class DatasetNode implements TreeFacetNode
+{
 	
 	public Object[][] property_values = new Object[2][20];
-	static public String[][] property_names = new String[2][20];
+	static public String[][] property_qnames = new String[2][20];
+	static public String[][] property_uris = new String[2][20];
 	static public Object[][] property_value_types = new Object[2][20];
 	static public boolean[][] property_is_functional = new boolean[2][20];
 	static public String[] annotation_schema_names = {"VoID", "VoID/SemaGrow extension"};
 	static {
-		property_names[0][0] = "dc:creator";
-		property_value_types[0][0] = String.class;
-		property_is_functional[0][0] = true;
+		// Shared Void and Sevod properties
+		int i=0;
+		property_qnames[0][i] = "dc:creator";
+		property_uris[0][i] = "http://purl.org/dc/terms/creator";
+		property_value_types[0][i] = String.class;
+		property_is_functional[0][i] = true;
+		property_qnames[1][i] = property_qnames[0][i];
+		property_uris[1][i] = property_uris[0][i];
+		property_value_types[1][i] = property_value_types[0][i];
+		property_is_functional[1][i] = property_is_functional[0][i];
 		
-		property_names[0][1] = "dc:title";
-		property_value_types[0][1] = String.class;
-		property_is_functional[0][1] = true;
+		++i;
+		property_qnames[0][i] = "dc:title";
+		property_uris[0][i] = "http://purl.org/dc/terms/title";
+		property_value_types[0][i] = String.class;
+		property_is_functional[0][i] = true;
+		property_qnames[1][i] = property_qnames[0][i];
+		property_uris[1][i] = property_uris[0][i];
+		property_value_types[1][i] = property_value_types[0][i];
+		property_is_functional[1][i] = property_is_functional[0][i];
+		
+		++i;
+		property_qnames[0][i] = "void:sparqlEndpoint";
+		property_uris[0][i] = "http://rdfs.org/ns/void#sparqlEndpoint";
+		property_value_types[0][i] = String.class;
+		property_is_functional[0][i] = true;
+		property_qnames[1][i] = property_qnames[0][i];
+		property_uris[1][i] = property_uris[0][i];
+		property_value_types[1][i] = property_value_types[0][i];
+		property_is_functional[1][i] = property_is_functional[0][i];
 
-		property_names[0][2] = "void:sparqlEndpoint";
-		property_value_types[0][2] = String.class;
-		property_is_functional[0][2] = true;
-		
-		property_names[0][3] = "void:vocabulary";
-		property_value_types[0][3] = String.class;
-		property_is_functional[0][3] = false;
+		++i;
+		property_qnames[0][i] = "void:vocabulary";
+		property_uris[0][i] = "http://rdfs.org/ns/void#vocabulary";
+		property_value_types[0][i] = String.class;
+		property_is_functional[0][i] = false;
+		property_qnames[1][i] = property_qnames[0][i];
+		property_uris[1][i] = property_uris[0][i];
+		property_value_types[1][i] = property_value_types[0][i];
+		property_is_functional[1][i] = property_is_functional[0][i];
 
-		property_names[0][4] = "void:triples";
-		property_value_types[0][4] = Integer.class;
-		property_is_functional[0][4] = true;
+		++i;
+		property_qnames[0][i] = "void:class";
+		property_uris[0][i] = "http://rdfs.org/ns/void#class";
+		property_value_types[0][i] = String.class;
+		property_is_functional[0][i] = true;
+		property_qnames[1][i] = property_qnames[0][i];
+		property_uris[1][i] = property_uris[0][i];
+		property_value_types[1][i] = property_value_types[0][i];
+		property_is_functional[1][i] = property_is_functional[0][i];
 
-		property_names[0][5] = "void:distinctSubjects";
-		property_value_types[0][5] = Integer.class;
-		property_is_functional[0][5] = true;
+		++i;
+		property_qnames[0][i] = "void:property";
+		property_uris[0][i] = "http://rdfs.org/ns/void#property";
+		property_value_types[0][i] = String.class;
+		property_is_functional[0][i] = true;
+		property_qnames[1][i] = property_qnames[0][i];
+		property_uris[1][i] = property_uris[0][i];
+		property_value_types[1][i] = property_value_types[0][i];
+		property_is_functional[1][i] = property_is_functional[0][i];
 
-		property_names[0][6] = "void:distinctObjects";
-		property_value_types[0][6] = Integer.class;
-		property_is_functional[0][6] = true;
-		
-		property_names[0][7] = null;
-		property_value_types[0][7] = null;
-		//property_is_functional[0][7] = (Boolean) null;
-		
-		property_names[1][0] = "dc:creator";
-		property_value_types[1][0] = String.class;
-		property_is_functional[1][0] = true;
-		
-		property_names[1][1] = "dc:title";
-		property_value_types[1][1] = String.class;
-		property_is_functional[1][1] = true;
+		++i;
+		property_qnames[0][i] = "void:triples";
+		property_uris[0][i] = "http://rdfs.org/ns/void#triples";
+		property_value_types[0][i] = Integer.class;
+		property_is_functional[0][i] = true;
+		property_qnames[1][i] = property_qnames[0][i];
+		property_uris[1][i] = property_uris[0][i];
+		property_value_types[1][i] = property_value_types[0][i];
+		property_is_functional[1][i] = property_is_functional[0][i];
 
-		property_names[1][2] = "void:sparqlEndpoint";
-		property_value_types[1][2] = String.class;
-		property_is_functional[1][2] = true;
-		
-		property_names[1][3] = "void:vocabulary";
-		property_value_types[1][3] = String.class;
-		property_is_functional[1][3] = false;
+		++i;
+		property_qnames[0][i] = "void:distinctSubjects";
+		property_uris[0][i] = "http://rdfs.org/ns/void#distinctSubjects";
+		property_value_types[0][i] = Integer.class;
+		property_is_functional[0][i] = true;
+		property_qnames[1][i] = property_qnames[0][i];
+		property_uris[1][i] = property_uris[0][i];
+		property_value_types[1][i] = property_value_types[0][i];
+		property_is_functional[1][i] = property_is_functional[0][i];
 
-		property_names[1][4] = "void:triples";
-		property_value_types[1][4] = Integer.class;
-		property_is_functional[1][4] = true;
+		++i;
+		property_qnames[0][i] = "void:distinctObjects";
+		property_uris[0][i] = "http://rdfs.org/ns/void#distinctObjects";
+		property_value_types[0][i] = Integer.class;
+		property_is_functional[0][i] = true;
+		property_qnames[1][i] = property_qnames[0][i];
+		property_uris[1][i] = property_uris[0][i];
+		property_value_types[1][i] = property_value_types[0][i];
+		property_is_functional[1][i] = property_is_functional[0][i];
 
-		property_names[1][5] = "void:distinctSubjects";
-		property_value_types[1][5] = Integer.class;
-		property_is_functional[1][5] = true;
+		/*
+		++i;
+		property_qnames[0][i] = "";
+		property_uris[0][i] = "http://rdfs.org/ns/void#";
+		property_value_types[0][i] = ;
+		property_is_functional[0][i] = true;
+		property_qnames[1][i] = property_qnames[0][i];
+		property_uris[1][i] = property_uris[0][i];
+		property_value_types[1][i] = property_value_types[0][i];
+		property_is_functional[1][i] = property_is_functional[0][i];
+		 */
 
-		property_names[1][6] = "void:distinctObjects";
-		property_value_types[1][6] = Integer.class;
-		property_is_functional[1][6] = true;
+		++i;
+		// End of VoID
+		property_qnames[0][i] = null;
+		property_uris[0][i] = null;
+		property_value_types[0][i] = null;
+		// Sevod extension
+		property_qnames[1][i] = "svd:selectivity";
+		property_uris[1][i] = "http://rdf.iit.demokritos.gr/2013/sevod#selectivity";
+		property_value_types[1][i] = Integer.class;
+		property_is_functional[1][i] = true;	
 		
-		property_names[1][7] = "void:subjectsTarget";
-		property_value_types[1][7] = NominalSet.class;
-		property_is_functional[1][7] = true;		
+		++i;
+		property_qnames[1][i] = "svd:cardinality";
+		property_uris[1][i] = "http://rdf.iit.demokritos.gr/2013/sevod#cardinality";
+		property_value_types[1][i] = Integer.class;
+		property_is_functional[1][i] = true;	
 		
-		property_names[1][8] = "svd:selectivity";
-		property_value_types[1][8] = Integer.class;
-		property_is_functional[1][8] = true;	
-		
-		property_names[1][9] = "svd:cardinality";
-		property_value_types[1][9] = Integer.class;
-		property_is_functional[1][9] = true;	
-		
-		property_names[1][10] = null;
-		property_value_types[1][10] = null;
-		//property_is_functional[0][7] = (Boolean) null;
+		++i;
+		property_qnames[1][i] = null;
+		property_uris[1][i] = null;
+		property_value_types[1][i] = null;
+
 	}
 	
 	private Integer void_triples = null;
 	private Integer void_distinctSubjects = null;
 	private Integer void_distinctObjects = null;
-	//private String dc_creator = null;
 	private String void_sparqlEnpoint = null;
 	private String dc_title = null;
 	
-	//private String annotationShema;
-	//private int annotationSchemaIndex = -1;
-	
-	/**
-	 * 
-	 */
-	public DatasetNode(String annotationSchema) {
+	private final DatasetFacet myFacet;
+
+	public DatasetNode( DatasetFacet myFacet, String annotationSchema )
+	{
 		super();
+		this.myFacet = myFacet;
 /*		int i = 0;
 		for (String annotation_shema_main : annotation_schema_names ) {
 			if (annotation_shema_main.equals(annotationSchema)) {
@@ -158,9 +208,12 @@ public class DatasetNode implements TreeFacetNode{
 	 * @param dc_creator
 	 * @param void_sparqlEnpoint
 	 */
-	public DatasetNode(Integer void_triples, Integer void_distinctSubjects,
-			Integer void_distinctObjects, String author, String void_sparqlEnpoint, String dc_title) {
+	public DatasetNode(  DatasetFacet myFacet,
+			Integer void_triples, Integer void_distinctSubjects, Integer void_distinctObjects,
+			String author, String void_sparqlEnpoint, String dc_title )
+	{
 		super();
+		this.myFacet = myFacet;
 		this.void_triples = void_triples;
 		this.void_distinctSubjects = void_distinctSubjects;
 		this.void_distinctObjects = void_distinctObjects;
@@ -169,6 +222,9 @@ public class DatasetNode implements TreeFacetNode{
 		this.dc_title = dc_title;
 	}
 	
+	public DatasetFacet getFacet()
+	{ return this.myFacet; }
+
 	public String getAuthor() {
 		//return (String) property_values[annotationSchemaIndex][0];
 		return (String) property_values[1][0];

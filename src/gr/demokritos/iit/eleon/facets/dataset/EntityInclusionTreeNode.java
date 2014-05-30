@@ -49,9 +49,10 @@ public class EntityInclusionTreeNode extends DatasetNode implements TreeFacetNod
 	 * @param subjectPattern
 	 * @param objectPattern
 	 */
-	public EntityInclusionTreeNode(String subjectPattern,
-			String objectPattern, String activeAnnotationSchema) {
-		super(activeAnnotationSchema);
+	public EntityInclusionTreeNode( DatasetFacet facet, String subjectPattern,
+			String objectPattern, String activeAnnotationSchema )
+	{
+		super( facet, activeAnnotationSchema );
 		this.subjectPattern = subjectPattern;
 		this.objectPattern = objectPattern;
 	}
@@ -64,11 +65,12 @@ public class EntityInclusionTreeNode extends DatasetNode implements TreeFacetNod
 	 * @param void_sparqlEnpoint
 	 * @param dc_title
 	 */
-	public EntityInclusionTreeNode(Integer void_triples, Integer void_distinctSubjects,
+	public EntityInclusionTreeNode(DatasetFacet facet, Integer void_triples, Integer void_distinctSubjects,
 			Integer void_distinctObjects, String dc_creator,
-			String void_sparqlEnpoint, String dc_title) {
-		super(void_triples, void_distinctSubjects, void_distinctObjects, dc_creator,
-				void_sparqlEnpoint, dc_title);
+			String void_sparqlEnpoint, String dc_title)
+	{
+		super( facet, void_triples, void_distinctSubjects, void_distinctObjects,
+				dc_creator, void_sparqlEnpoint, dc_title );
 	}
 
 
