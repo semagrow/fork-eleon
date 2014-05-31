@@ -49,7 +49,7 @@ public class DatasetNode implements TreeFacetNode
 	static public String[][] property_uris = new String[2][20];
 	static public Object[][] property_value_types = new Object[2][20];
 	static public boolean[][] property_is_functional = new boolean[2][20];
-	static public String[] annotation_schema_names = {"VoID", "VoID/SemaGrow extension"};
+	static public String[] annotation_schema_names = {"VoID", "Sevod: VoID SemaGrow extension"};
 	static {
 		// Shared Void and Sevod properties
 		int i=0;
