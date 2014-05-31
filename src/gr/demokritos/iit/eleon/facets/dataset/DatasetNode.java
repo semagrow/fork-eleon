@@ -186,6 +186,7 @@ public class DatasetNode implements TreeFacetNode
 	
 	private final DatasetFacet myFacet;
 
+
 	public DatasetNode( DatasetFacet myFacet, String annotationSchema )
 	{
 		super();
@@ -200,6 +201,7 @@ public class DatasetNode implements TreeFacetNode
 		}
 		assert annotationSchemaIndex != -1;*/
 	}
+	
 	
 	/**
 	 * @param void_triples
@@ -221,6 +223,31 @@ public class DatasetNode implements TreeFacetNode
 		this.void_sparqlEnpoint = void_sparqlEnpoint;
 		this.dc_title = dc_title;
 	}
+
+	
+	/*
+	 *  Object IMPLEMENTATION
+	 */
+
+
+	@Override
+	public boolean equals( Object that )
+	{
+		if( that instanceof DatasetNode ) {
+			String thatLabel = ((DatasetNode)that).getDc_title();
+			String thisLabel = this.getDc_title();
+			if( thatLabel == null ) { return thisLabel == null; }
+			else { return thatLabel.equals( thisLabel ); }
+		}
+		else {
+			return false;
+		}
+	}
+	
+
+	/*
+	 * FacetNode IMPLEMENTATION
+	 */
 	
 	public DatasetFacet getFacet()
 	{ return this.myFacet; }
@@ -305,14 +332,18 @@ public class DatasetNode implements TreeFacetNode
 	/**
 	 * @param dc_title the dc_title to set
 	 */
-	public void setDc_title(String dc_title) {
+
+	public void setDc_title( String dc_title )
+	{
 		this.dc_title = dc_title;
 	}
 
 	/**
 	 * @return true if void_triples has been set, false if not
 	 */
-	public boolean hasVoid_triples() {
+
+	public boolean hasVoid_triples()
+	{
 		if (void_triples != null) {
 			return true;
 		} else {

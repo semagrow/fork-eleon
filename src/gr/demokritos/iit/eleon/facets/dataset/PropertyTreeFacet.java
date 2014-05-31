@@ -46,7 +46,6 @@ import java.util.List;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.*;
 
 import com.hp.hpl.jena.rdf.model.*;
@@ -197,7 +196,7 @@ public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 	}
 	*/
 
-	
+
 	@Override
 	public void syncFrom( OntModel ont )
 	{
@@ -219,7 +218,8 @@ public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 				Statement stmt = stmts.next();
 				if( stmt.getSubject().equals(top) ) {
 					OntProperty p = ont.getOntProperty( stmt.getObject().asResource().getURI() );
-					PropertyTreeNode n = makeNode( p, null );
+					// top level nodes should always have an explicit owner statement
+					PropertyTreeNode n = makeNode( p, (String)null );
 					TreeItem treeItem = new TreeItem( this.getRoot(), SWT.NONE );
 					treeItem.setText( n.getDc_title() );
 					treeItem.setData( n );
@@ -248,14 +248,29 @@ public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 				Iterator<TreeItem> it2 = done.iterator();
 				while( (father == null) && it2.hasNext() ) {
 					TreeItem treeItem = it2.next();
-					if( ((PropertyTreeNode)treeItem.getData()).getProperty().asResource().equals(superSet) ) {
+					if( superSet.equals(treeItem.getData()) ) {
 						// found my dad
 						father = treeItem;
 					}
 				} // end looking for superSet in done List
 				if( father != null ) {
+					// create a new Node
+					
+					PropertyTreeNode n = makeNode( subSet, (DatasetNode)father.getData() );
+					// look for a Tree item that points to the same Node
+					// (this happens if already added under a different father node)
+					Iterator<TreeItem> it3 = done.iterator();
+					boolean found = false;
+					while( !found && it3.hasNext() ) {
+						TreeItem treeItem = it3.next();
+						if( n.equals(treeItem.getData()) ) {
+							// found a node that equals n
+							// the new n should be thrown away 
+							n = (PropertyTreeNode)treeItem.getData();
+							found = true;
+						}
+					}
 					// add to tree
-					PropertyTreeNode n = makeNode( subSet, null );
 					TreeItem treeItem = new TreeItem( father, SWT.NONE );
 					treeItem.setText( n.getDc_title() );
 					treeItem.setData( n );
@@ -290,7 +305,6 @@ public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 	public void syncTo( OntModel ont )
 	{
 		// TODO Auto-generated method stub
-		
 	}
 
 	
@@ -298,6 +312,8 @@ public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 	 * INTERNAL HELPERS 
 	 */
 
+	private PropertyTreeNode makeNode( Resource dataset, DatasetNode parent )
+	{ return makeNode( dataset, parent.getAuthor() ); }
 	
 	private PropertyTreeNode makeNode( Resource dataset, String defaultOwner )
 	{
