@@ -1,0 +1,81 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix adms: <http://www.w3.org/ns/adms#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix vann: <http://purl.org/vocab/vann/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix void: <http://rdfs.org/ns/void#> .
+@prefix svd: <http://rdf.iit.demokritos.gr/2013/sevod#> .
+
+<http://rdf.iit.demokritos.gr/2013/sevod> a owl:Ontology, adms:SemanticAsset;
+    dct:title "Semagrow Vocabulary for Dataset Descriptions (Sevod)";
+    dct:description "The Semagrow Vocabulary for Dataset Descriptions (Sevod) is an RDF Schema vocabulary for expressing metadata about RDF datasets, focusing on the kinds of metadata most useful for query optimization. This document provides a formal definition of the new RDF classes and properties introduced for Sevod. It is a companion to the main specification document for Sevod, <em><a href=\"http://rdf.iit.demokritos.gr/2014/sevod/doc\">Describing Datasets with the Sevod Vocabulary</a></em>.";
+    dct:modified "2014-05-31"^^xsd:date;
+    vann:preferredNamespaceUri "http://rdf.iit.demokritos.gr/2014/sevod#";
+    vann:preferredNamespacePrefix "svd";
+    foaf:homepage <http://rdf.iit.demokritos.gr/2014/sevod/doc>;
+    dct:created "2013"^^xsd:date;
+    dct:publisher "http://iit.demokritos.gr";
+    dct:partOf <http://rdf.iit.demokritos.gr>;
+    dct:type <http://purl.org/adms/assettype/Ontology>;
+    dct:status <http://purl.org/adms/status/UnderDevelopment>;
+    dc:creator
+        <http://konstant.gr/stasinos>,
+        <http://rdf.iit.demokritos.gr/2014/sevod#agcharal> .
+
+<http://konstant.gr/stasinos> a foaf:Person;
+    foaf:name "Stasinos Konstantopoulos";
+    foaf:homepage <http://users.iit.demokritos.gr/~konstant> .
+
+<http://rdf.iit.demokritos.gr/2014/sevod#agcharal> a foaf:Person;
+    foaf:name "Angelos Charalambidis" .
+
+
+svd:selectivity a rdf:Property ;
+    rdfs:label "subjectRegexPattern" ;
+    rdfs:comment "TODO: definition" ;
+    rdfs:domain void:Dataset ;
+    rdfs:range xsd:string .
+
+svd:selectivity a rdf:Property ;
+    rdfs:label "objectRegexPattern" ;
+    rdfs:comment "TODO: definition" ;
+    rdfs:domain void:Dataset ;
+    rdfs:range xsd:string .
+
+
+svd:Facet a rdfs:Class ;
+    rdfs:label "Facet" ;
+    rdfs:comment "TODO: definition" .
+
+svd:facet a rdf:Property ;
+    rdfs:label "facet" ;
+    rdfs:comment "TODO: definition" ;
+    rdfs:domain void:Dataset ;
+    rdfs:range svd:Facet .
+
+svd:propertyFacet a svd:Facet ;
+    rdfs:label "facet";
+    rdfs:comment "TODO: definition" .
+svd:entityFacet a svd:Facet ;
+    rdfs:label "facet";
+    rdfs:comment "TODO: definition" .
+
+
+svd:JoinSet a rdfs:Class ;
+    rdfs:label "JoinSet" ;
+    rdfs:comment "TODO: definition" .
+
+svd:selectivity a rdf:Property ;
+    rdfs:label "Selectivity" ;
+    rdfs:comment "TODO: definition" ;
+    rdfs:domain svd:JoinSet ;
+    rdfs:range xsd:integer .
+
+svd:cardinality a rdf:Property ;
+    rdfs:label "Cardinality" ;
+    rdfs:comment "TODO: definition" ;
+    rdfs:domain svd:JoinSet ;
+    rdfs:range xsd:integer .

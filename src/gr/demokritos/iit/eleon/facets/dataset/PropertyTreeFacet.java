@@ -207,9 +207,9 @@ public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 	{
 		Individual top = ont.getIndividual( DatasetFacet.entityTop );
 		
-		// Get all statements ?r void:subset ?o rdf:type void:Dataset
+		// Get all statements ?r void:subset ?o svd:facet svd:propertyFacet
 		OntProperty sub = ont.getOntProperty( DatasetFacet.propSubsumes );
-		OntClass propFacet = ont.getOntClass( DatasetFacet.propPropertyDataset );
+		OntClass propFacet = ont.getOntClass( DatasetFacet.propPropertyFacet );
 		ExtendedIterator<Individual> it = ont.listIndividuals( propFacet );
 		List<Statement> todo = new ArrayList<Statement>();
 

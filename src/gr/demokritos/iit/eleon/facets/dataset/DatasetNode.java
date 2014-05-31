@@ -73,6 +73,16 @@ public class DatasetNode implements TreeFacetNode
 		property_is_functional[1][i] = property_is_functional[0][i];
 		
 		++i;
+		property_qnames[0][i] = "dc:subject";
+		property_uris[0][i] = "http://purl.org/dc/terms/subject";
+		property_value_types[0][i] = String.class; //TODO: DBPedia, SKOS, any URI
+		property_is_functional[0][i] = false;
+		property_qnames[1][i] = property_qnames[0][i];
+		property_uris[1][i] = property_uris[0][i];
+		property_value_types[1][i] = property_value_types[0][i];
+		property_is_functional[1][i] = property_is_functional[0][i];
+
+		++i;
 		property_qnames[0][i] = "void:sparqlEndpoint";
 		property_uris[0][i] = "http://rdfs.org/ns/void#sparqlEndpoint";
 		property_value_types[0][i] = String.class;
@@ -105,6 +115,16 @@ public class DatasetNode implements TreeFacetNode
 		++i;
 		property_qnames[0][i] = "void:property";
 		property_uris[0][i] = "http://rdfs.org/ns/void#property";
+		property_value_types[0][i] = String.class;
+		property_is_functional[0][i] = true;
+		property_qnames[1][i] = property_qnames[0][i];
+		property_uris[1][i] = property_uris[0][i];
+		property_value_types[1][i] = property_value_types[0][i];
+		property_is_functional[1][i] = property_is_functional[0][i];
+
+		++i;
+		property_qnames[0][i] = "void:uriRegexPattern";
+		property_uris[0][i] = "http://rdfs.org/ns/void#uriRegexPattern";
 		property_value_types[0][i] = String.class;
 		property_is_functional[0][i] = true;
 		property_qnames[1][i] = property_qnames[0][i];
@@ -160,14 +180,14 @@ public class DatasetNode implements TreeFacetNode
 		property_uris[0][i] = null;
 		property_value_types[0][i] = null;
 		// Sevod extension
-		property_qnames[1][i] = "svd:selectivity";
-		property_uris[1][i] = "http://rdf.iit.demokritos.gr/2013/sevod#selectivity";
+		property_qnames[1][i] = "svd:subjectRegexPattern";
+		property_uris[1][i] = "http://rdf.iit.demokritos.gr/2013/sevod#subjectRegexPattern";
 		property_value_types[1][i] = Integer.class;
 		property_is_functional[1][i] = true;	
 		
 		++i;
-		property_qnames[1][i] = "svd:cardinality";
-		property_uris[1][i] = "http://rdf.iit.demokritos.gr/2013/sevod#cardinality";
+		property_qnames[1][i] = "svd:objectRegexPattern";
+		property_uris[1][i] = "http://rdf.iit.demokritos.gr/2013/sevod#objectRegexPattern";
 		property_value_types[1][i] = Integer.class;
 		property_is_functional[1][i] = true;	
 		
@@ -175,7 +195,6 @@ public class DatasetNode implements TreeFacetNode
 		property_qnames[1][i] = null;
 		property_uris[1][i] = null;
 		property_value_types[1][i] = null;
-
 	}
 	
 	private Integer void_triples = null;
@@ -372,38 +391,5 @@ public class DatasetNode implements TreeFacetNode
 			return false;
 		}
 	}
-/*
-	@Override
-	public String getTitle() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getEndpoint() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Object[][] getProperty_values() {
-		return this.property_values;
-	}
-
-	@Override
-	public String[][] getProperty_names() {
-		return DatasetNode.property_names;
-	}
-
-	@Override
-	public Object[][] getProperty_value_types() {
-		return DatasetNode.property_value_types;
-	}
-
-	@Override
-	public boolean[][] getProperty_is_functional() {
-		return DatasetNode.property_is_functional;
-	}
-	*/
 
 }
