@@ -162,6 +162,11 @@ public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 		                return;
 					}
 					itemToDelete.dispose();//simple delete. to be changed later.
+					Table table = PropertyTreeFacet.this.myShell.table;
+					if (table != null && !table.isDisposed()) {
+						table.dispose();
+						table = null;
+					}
 					//String name =  itemToDelete.getText();
 					//TreeItem parent = itemToDelete.getParentItem();
 					//while(deleteNode(parent, name));//We suppose that the user can select only one item to remove.

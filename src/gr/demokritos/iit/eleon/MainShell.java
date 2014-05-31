@@ -531,8 +531,9 @@ public class MainShell extends Shell
 	//protected void createTableContents(String triples, String subjects, String objects, String sparqlEnpoint, String title, final Tree tree) {
 	public void createTableContents(/*TreeNodeData treeNodeData, */final Tree tree) {	
 		
-		if (table != null) {
+		if (table != null && !table.isDisposed()) {
 			table.dispose();
+			table = null;
 		}
 		createTable();
 		
@@ -560,6 +561,17 @@ public class MainShell extends Shell
 		table.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				
+				if (tree.getSelectionCount() == 0) {
+					MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
+	                box.setText("Select item from the tree.");
+	                box.setMessage("Please select an item from the tree first.");
+	                box.open();
+	                MainShell.this.table.dispose();
+	                MainShell.this.table = null;
+	                return;
+				}
+				
 				DatasetNode treeFacetNode = (DatasetNode) tree.getSelection()[0].getData();
 				String creator = treeFacetNode.getAuthor();
 				if ( ! creator.equals(currentAuthor)) {

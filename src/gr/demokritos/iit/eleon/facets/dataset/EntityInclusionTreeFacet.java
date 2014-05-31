@@ -50,6 +50,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
@@ -237,6 +238,11 @@ public class EntityInclusionTreeFacet extends DatasetFacet implements TreeFacet
 		                box.setMessage("Cannot remove root node.");
 		                box.open();
 		                return;
+					}
+					Table table = EntityInclusionTreeFacet.this.myShell.table;
+					if (table != null && !table.isDisposed()) {
+						table.dispose();
+						table = null;
 					}
 					itemToDelete.dispose();//simple delete. to be changed later.
 				} else {
