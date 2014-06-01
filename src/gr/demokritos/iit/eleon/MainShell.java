@@ -58,6 +58,7 @@ import com.hp.hpl.jena.ontology.OntModelSpec;
 import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
+import gr.demokritos.iit.eleon.annotations.NominalSet;
 import gr.demokritos.iit.eleon.commons.Constants;
 import gr.demokritos.iit.eleon.facets.*;
 import gr.demokritos.iit.eleon.facets.dataset.*;

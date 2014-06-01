@@ -1,4 +1,4 @@
-package gr.demokritos.iit.eleon.facets.dataset;
+package gr.demokritos.iit.eleon.annotations;
 
 import java.util.ArrayList;
 import java.util.List;
