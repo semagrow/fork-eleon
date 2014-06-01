@@ -49,29 +49,13 @@ public class PropertyTreeNode extends DatasetNode implements TreeFacetNode
 	/**
 	 * @param ontProperty
 	 */
-	public PropertyTreeNode( DatasetFacet myFacet, Resource ontProperty, String activeAnnotationSchema )
+	public PropertyTreeNode( Resource res, DatasetFacet myFacet, Resource ontProperty, String activeAnnotationSchema )
 	{
-		super( myFacet, activeAnnotationSchema );
+		super( res, myFacet, activeAnnotationSchema );
 		this.ontProperty = ontProperty;
 	}
 	
 	
-	/**
-	 * @param void_triples
-	 * @param void_distinctSubjects
-	 * @param void_distinctObjects
-	 * @param dc_creator
-	 * @param void_sparqlEnpoint
-	 * @param dc_title
-	 */
-	public PropertyTreeNode( DatasetFacet myFacet,
-			Integer void_triples, Integer void_distinctSubjects, Integer void_distinctObjects,
-			String dc_creator, String void_sparqlEnpoint, String dc_title )
-	{
-		super( myFacet, void_triples, void_distinctSubjects, void_distinctObjects, dc_creator,
-				void_sparqlEnpoint, dc_title );
-	}
-
 	/**
 	 * @return the ontProperty
 	 */
@@ -83,5 +67,6 @@ public class PropertyTreeNode extends DatasetNode implements TreeFacetNode
 	 */
 	public void setProperty( Resource ontProperty )
 	{ this.ontProperty = ontProperty; }
+
 
 }

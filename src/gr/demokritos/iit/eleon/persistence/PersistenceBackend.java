@@ -39,47 +39,35 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 package gr.demokritos.iit.eleon.persistence;
 
 import gr.demokritos.iit.eleon.facets.Facet;
-import gr.demokritos.iit.eleon.facets.dataset.EntityInclusionTreeFacet;
-import gr.demokritos.iit.eleon.facets.dataset.PropertyTreeFacet;
 
 import java.io.IOException;
-
-import org.eclipse.swt.widgets.Tree;
 
 
 public interface PersistenceBackend
 {
 	public String getLabel();
 
-	public void setBackend( Object parameter )
-	throws IllegalArgumentException;
-
 	public Object getBackend();
 
-	public void open()
-	throws IOException;
+	public void open( Object parameter )
+	throws IOException, IllegalArgumentException;
+
 
 	/**
-	 * Saves the given facets to this PersistenceBackend
+	 * Saves the given facets to this PersistenceBackend.
 	 * @param facets The facets that should be saved.
-	 * @return
+	 * @param parameter The backend parameters to use (e.g., filename, connection details).
+	 * If null, the same parameters are used as when this backend was open'ed.
+	 * If not null, the backend parameters in this instance are updated, and will be used
+	 * in subsequent invocations with null parameter.
+	 * @return true if successfully saved, false otherwise
 	 * @throws IOException
+	 * @throws IllegalArgumentException if {@param parameter} is not an instance
+	 * of the class specified by each implementation of this interface
 	 */
-	public boolean save( Facet[] facets )
-	throws IOException;
 
-	/**
-	 * Loads the property tree facet
-	 * @param facet
-	 */
-	public void buildPropertyTree( PropertyTreeFacet facet );
+	public boolean save( Facet[] facets, Object parameter )
+	throws IOException, IllegalArgumentException;
 
-	/**
-	 * Loads the entity inclusion tree facet
-	 * @param facet
-	 */
-	public void buildEntityTree( EntityInclusionTreeFacet facet );
-
-	
 
 }

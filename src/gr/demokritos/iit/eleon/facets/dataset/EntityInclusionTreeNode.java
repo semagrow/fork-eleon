@@ -37,6 +37,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 package gr.demokritos.iit.eleon.facets.dataset;
 
+import com.hp.hpl.jena.rdf.model.Resource;
+
 import gr.demokritos.iit.eleon.facets.TreeFacetNode;
 
 public class EntityInclusionTreeNode extends DatasetNode implements TreeFacetNode
@@ -49,30 +51,13 @@ public class EntityInclusionTreeNode extends DatasetNode implements TreeFacetNod
 	 * @param subjectPattern
 	 * @param objectPattern
 	 */
-	public EntityInclusionTreeNode( DatasetFacet facet, String subjectPattern,
-			String objectPattern, String activeAnnotationSchema )
+	public EntityInclusionTreeNode(  Resource res, DatasetFacet facet,
+			String subjectPattern, String objectPattern, String activeAnnotationSchema )
 	{
-		super( facet, activeAnnotationSchema );
+		super( res, facet, activeAnnotationSchema );
 		this.subjectPattern = subjectPattern;
 		this.objectPattern = objectPattern;
 	}
-
-	/**
-	 * @param void_triples
-	 * @param void_distinctSubjects
-	 * @param void_distinctObjects
-	 * @param dc_creator
-	 * @param void_sparqlEnpoint
-	 * @param dc_title
-	 */
-	public EntityInclusionTreeNode(DatasetFacet facet, Integer void_triples, Integer void_distinctSubjects,
-			Integer void_distinctObjects, String dc_creator,
-			String void_sparqlEnpoint, String dc_title)
-	{
-		super( facet, void_triples, void_distinctSubjects, void_distinctObjects,
-				dc_creator, void_sparqlEnpoint, dc_title );
-	}
-
 
 
 	/**

@@ -40,6 +40,8 @@ package gr.demokritos.iit.eleon.facets.dataset;
 
 import gr.demokritos.iit.eleon.MainShell;
 import gr.demokritos.iit.eleon.facets.TreeFacet;
+import gr.demokritos.iit.eleon.persistence.OWLFile;
+import gr.demokritos.iit.eleon.persistence.PersistenceBackend;
 import gr.demokritos.iit.eleon.ui.CopyExistingNodeDialog;
 import gr.demokritos.iit.eleon.ui.InsertInMenuDialog;
 import gr.demokritos.iit.eleon.ui.PerEntityInsertDialog;
@@ -104,18 +106,15 @@ public class EntityInclusionTreeFacet extends DatasetFacet implements TreeFacet
 					return;
 				}
 				DatasetNode treeNodeData = (DatasetNode) myTree.getSelection()[0].getData();
-				if (treeNodeData.getDc_title() != null) {
-					setTitle( treeNodeData.getDc_title() );
+				if (treeNodeData.getLabel() != null) {
+					setTitle( treeNodeData.getLabel() );
 				}
 				else {
 					setTitle( "" );
 				}
-				if (treeNodeData.getVoid_sparqlEnpoint() != null) {
-					setInfo( treeNodeData.getVoid_sparqlEnpoint() );
-				}
-				else {
-					setInfo( "" );
-				}
+				String se = (String)treeNodeData.getValue("void:sparqlEnpoint");
+				if( se != null) { setInfo( se ); }
+				else { setInfo( "" ); }
 				myShell.createTableContents( myTree );
 			}
 		});
@@ -137,8 +136,8 @@ public class EntityInclusionTreeFacet extends DatasetFacet implements TreeFacet
 					String label = insert.open("Insert dataset label");
 					if (label == null) return;
 					TreeItem newItem = new TreeItem(selected[0], SWT.NONE);
-					DatasetNode data = new DatasetNode( mySelf, myShell.activeAnnotationSchema );
-					data.setAuthor( myShell.currentAuthor );
+					DatasetNode data = new DatasetNode( null, mySelf, myShell.activeAnnSchemaName );
+					data.setOwner( myShell.currentAuthor );
 					newItem.setData(data);
 					newItem.setText(label);
 				}
@@ -167,12 +166,12 @@ public class EntityInclusionTreeFacet extends DatasetFacet implements TreeFacet
 					} else {
 						TreeItem selection = selected[0];
 						TreeItem item = new TreeItem(selection, SWT.NONE);
-						EntityInclusionTreeNode nodeData = new EntityInclusionTreeNode(mySelf, result[0], result[1], myShell.activeAnnotationSchema);
-						nodeData.setAuthor( myShell.currentAuthor );
+						EntityInclusionTreeNode nodeData = new EntityInclusionTreeNode(null, mySelf, result[0], result[1], myShell.activeAnnSchemaName);
+						nodeData.setOwner( myShell.currentAuthor );
 						item.setData(nodeData);
 						String subjectPattern = result[0];
 						String objectPattern = result[1];
-						nodeData.setAuthor( myShell.currentAuthor );
+						nodeData.setOwner( myShell.currentAuthor );
 						String itemText = "";
 						/*if (subjectPattern != null) {
 							itemText += "(sbj)=" + subjectPattern + " ";
@@ -270,5 +269,6 @@ public class EntityInclusionTreeFacet extends DatasetFacet implements TreeFacet
 	{
 		// TODO Auto-generated method stub
 	}
+
 
 }

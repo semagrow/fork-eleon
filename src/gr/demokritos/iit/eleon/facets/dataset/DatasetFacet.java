@@ -50,7 +50,8 @@ public abstract class DatasetFacet implements TreeFacet
 	static final String entityTop = "http://rdf.iit.demokritos.gr/2013/sevod#datasetTop";
 	static final String propSubsumes = "http://rdfs.org/ns/void#subset";
 	static final String Facet = "http://rdf.iit.demokritos.gr/2013/sevod#Facet";
-	static final String propPropertyFacet = "http://rdf.iit.demokritos.gr/2013/sevod#propertyFacet";
+	static final String propFacet = "http://rdf.iit.demokritos.gr/2013/sevod#facet";
+	static final String propertyFacet = "http://rdf.iit.demokritos.gr/2013/sevod#propertyFacet";
 	static final String propEntityFacet = "http://rdf.iit.demokritos.gr/2013/sevod#entityFacet";
 
 	protected Tree myTree;

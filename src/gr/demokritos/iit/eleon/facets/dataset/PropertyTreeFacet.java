@@ -50,15 +50,17 @@ import org.eclipse.swt.widgets.*;
 
 import com.hp.hpl.jena.rdf.model.*;
 import com.hp.hpl.jena.ontology.*;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 import gr.demokritos.iit.eleon.MainShell;
 import gr.demokritos.iit.eleon.facets.TreeFacet;
+import gr.demokritos.iit.eleon.persistence.OWLFile;
+import gr.demokritos.iit.eleon.persistence.PersistenceBackend;
 import gr.demokritos.iit.eleon.ui.InsertInMenuDialog;
 
 
 public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 {
+	static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger( PropertyTreeFacet.class );
 	
 	/*
 	 * CONSTRUCTOR
@@ -104,18 +106,15 @@ public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 					return;
 				}
 				DatasetNode treeNodeData = (DatasetNode) myTree.getSelection()[0].getData();
-				if (treeNodeData.getDc_title() != null) {
-					setTitle( treeNodeData.getDc_title() );
+				if (treeNodeData.getLabel() != null) {
+					setTitle( treeNodeData.getLabel() );
 				}
 				else {
 					setTitle( "" );
 				}
-				if (treeNodeData.getVoid_sparqlEnpoint() != null) {
-					setInfo( treeNodeData.getVoid_sparqlEnpoint() );
-				}
-				else {
-					setInfo( "" );
-				}
+				String se = (String)treeNodeData.getValue("void:sparqlEnpoint");
+				if( se != null) { setInfo( se ); }
+				else { setInfo( "" ); }
 				myShell.createTableContents(myTree);
 			}
 		});
@@ -137,8 +136,8 @@ public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 					String label = insert.open("Insert dataset label");
 					if (label == null) return;
 					TreeItem newItem = new TreeItem(selected[0], SWT.NONE);
-					DatasetNode data = new DatasetNode( mySelf, myShell.activeAnnotationSchema );
-					data.setAuthor( myShell.currentAuthor );
+					DatasetNode data = new DatasetNode( null, mySelf, myShell.activeAnnSchemaName );
+					data.setOwner( myShell.currentAuthor );
 					newItem.setData(data);
 					newItem.setText(label);
 				}
@@ -208,27 +207,39 @@ public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 		Individual top = ont.getIndividual( DatasetFacet.entityTop );
 		
 		// Get all statements ?r void:subset ?o svd:facet svd:propertyFacet
-		OntProperty sub = ont.getOntProperty( DatasetFacet.propSubsumes );
-		OntClass propFacet = ont.getOntClass( DatasetFacet.propPropertyFacet );
-		ExtendedIterator<Individual> it = ont.listIndividuals( propFacet );
-		List<Statement> todo = new ArrayList<Statement>();
+		OntProperty void_subset = ont.getOntProperty( DatasetFacet.propSubsumes );
+		OntProperty svd_facet = ont.getOntProperty( DatasetFacet.propFacet );
+		Individual svd_propertyFacet = ont.getIndividual( DatasetFacet.propertyFacet );
+		//OntIndividual 
 
-		List<Individual> dangling = new ArrayList<Individual>();
+		List<Statement> todo = new ArrayList<Statement>();
+		List<Resource> dangling = new ArrayList<Resource>();
 		List<TreeItem> done = new ArrayList<TreeItem>();
+
+		List<Resource> datasets = new ArrayList<Resource>();
+		StmtIterator stmtss = ont.listStatements( null, svd_facet, svd_propertyFacet );
+		while( stmtss.hasNext() ) {
+			
+			datasets.add( stmtss.next().getSubject() );
+		}
+		Iterator<Resource> it = datasets.iterator();
 		while( it.hasNext() ) {
-			Individual r = it.next();
-			StmtIterator stmts = ont.listStatements( null, sub, r );
+			Resource r = it.next();
+			StmtIterator stmts = ont.listStatements( null, void_subset, r );
 			boolean at_least_one = false;
 			while( stmts.hasNext() ) {
 				Statement stmt = stmts.next();
+				logger.debug( "Doing Statement: %s", stmt.toString() );
 				if( stmt.getSubject().equals(top) ) {
-					OntProperty p = ont.getOntProperty( stmt.getObject().asResource().getURI() );
+					Resource subSet = stmt.getObject().asResource();
 					// top level nodes should always have an explicit owner statement
-					PropertyTreeNode n = makeNode( p, (String)null );
+					PropertyTreeNode n = makeNode( subSet, (String)null );
 					TreeItem treeItem = new TreeItem( this.getRoot(), SWT.NONE );
-					treeItem.setText( n.getDc_title() );
+					treeItem.setText( n.getLabel() );
 					treeItem.setData( n );
+					// TODO update owners' list
 					done.add( treeItem );
+					logger.debug( "Added under Root" );
 				}
 				else {
 					todo.add( stmt );	
@@ -253,7 +264,8 @@ public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 				Iterator<TreeItem> it2 = done.iterator();
 				while( (father == null) && it2.hasNext() ) {
 					TreeItem treeItem = it2.next();
-					if( superSet.equals(treeItem.getData()) ) {
+					DatasetNode doneNode = (DatasetNode)treeItem.getData();
+					if( superSet.equals(doneNode.getResource() ) ) {
 						// found my dad
 						father = treeItem;
 					}
@@ -261,7 +273,7 @@ public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 				if( father != null ) {
 					// create a new Node
 					
-					PropertyTreeNode n = makeNode( subSet, (DatasetNode)father.getData() );
+					PropertyTreeNode n = makeNode( subSet, ((DatasetNode)father.getData()).getOwner() );
 					// look for a Tree item that points to the same Node
 					// (this happens if already added under a different father node)
 					Iterator<TreeItem> it3 = done.iterator();
@@ -277,9 +289,10 @@ public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 					}
 					// add to tree
 					TreeItem treeItem = new TreeItem( father, SWT.NONE );
-					treeItem.setText( n.getDc_title() );
+					treeItem.setText( n.getLabel() );
 					treeItem.setData( n );
 					done.add( treeItem );
+					logger.debug( "Added under %s", ((PropertyTreeNode)father.getData()).getLabel() );
 				}
 				else {
 					// keep for next iteration
@@ -317,22 +330,25 @@ public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 	 * INTERNAL HELPERS 
 	 */
 
-	private PropertyTreeNode makeNode( Resource dataset, DatasetNode parent )
-	{ return makeNode( dataset, parent.getAuthor() ); }
-	
 	private PropertyTreeNode makeNode( Resource dataset, String defaultOwner )
 	{
 		Property prop = dataset.getModel().getProperty( "http://rdfs.org/ns/void#property" );
 		Statement stmt = dataset.getProperty( prop );
-		if( stmt == null ) { return null; }
-		Resource myProperty = stmt.getObject().asResource();
+		Resource myProperty;
+		if( stmt == null ) {
+			// This node is part of a per-property tree, but not a property partition
+			myProperty = null;
+		}
+		else {
+			myProperty = stmt.getObject().asResource();
+		}
 		PropertyTreeNode retv =
-				new PropertyTreeNode( this, myProperty, "activeAnnotationSchema" );
+				new PropertyTreeNode( dataset, this, myProperty, "activeAnnotationSchema" );
 
 		int i = 0;
-		while( DatasetNode.property_qnames[1][i] != null ) {
-			String uri = DatasetNode.property_uris[0][i];
-			Property p = myProperty.getModel().getProperty( uri );
+		while( DatasetNode.property_qnames[MainShell.shell.activeAnnSchema][i] != null ) {
+			String uri = DatasetNode.property_uris[MainShell.shell.activeAnnSchema][i];
+			Property p = dataset.getModel().getProperty( uri );
 			stmt = dataset.getProperty( p );
 			if( stmt != null ) {
 				RDFNode v = stmt.getObject();
@@ -340,21 +356,37 @@ public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 					retv.property_values[1][i] = v;
 				}
 				else if( v.canAs(Literal.class) ) {
-					if( Integer.class.equals(v.asLiteral().getDatatype().getJavaClass()) ) {
-						retv.property_values[1][i] = new Integer( v.asLiteral().getInt() );
+					com.hp.hpl.jena.datatypes.RDFDatatype dt = v.asLiteral().getDatatype();
+					if( dt == null ) {
+						// untyped literal, effectively a string
+						retv.property_values[MainShell.shell.activeAnnSchema][i] = v.asLiteral().getLexicalForm();
+					}
+					else if( Integer.class.equals(dt.getJavaClass()) ) {
+						retv.property_values[MainShell.shell.activeAnnSchema][i] = new Integer( v.asLiteral().getInt() );
 					}
 					else {
-						retv.property_values[1][i] = v.asLiteral().getLexicalForm();
+						retv.property_values[MainShell.shell.activeAnnSchema][i] = v.asLiteral().getLexicalForm();
 					}
 				}
 			}
 			else {
-				retv.property_values[1][i] = null;
+				retv.property_values[MainShell.shell.activeAnnSchema][i] = null;
 			}
+			++i;
 		}
 		
-		if( retv.property_values[1][0] == null ) {
-			retv.property_values[1][0] = defaultOwner;
+		if( retv.getOwner() == null ) {
+			retv.setOwner( defaultOwner );
+		}
+		if( retv.getLabel() == null ) {
+			if( myProperty != null ) {
+				// label defaults to property name
+				String qname = this.myShell.ont.shortForm( myProperty.getURI() );
+				retv.setLabel( qname );
+			}
+			else {
+				throw new IllegalArgumentException( "Cannot make a property node without label and without a property" );
+			}
 		}
 		return retv;
 	}

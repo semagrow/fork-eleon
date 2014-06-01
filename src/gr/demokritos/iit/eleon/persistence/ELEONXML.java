@@ -58,9 +58,7 @@ import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
 import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntModelSpec;
 import com.hp.hpl.jena.ontology.OntProperty;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 
 public class ELEONXML implements PersistenceBackend
@@ -68,6 +66,7 @@ public class ELEONXML implements PersistenceBackend
 	private String filename = null;
 	private Document doc = null;
 	private String label = null;
+	private OntModel ont = null;
 
 	
 	/*
@@ -75,9 +74,9 @@ public class ELEONXML implements PersistenceBackend
 	 */
 
 	
-	public ELEONXML()
+	public ELEONXML( OntModel ont )
 	{
-		
+		this.ont = ont;
 	}
 
 	
@@ -90,15 +89,6 @@ public class ELEONXML implements PersistenceBackend
 	public String getLabel() { return this.label; }
 
 	@Override
-	public void setBackend( Object parameter )
-	{
-		try { this.filename = (String)parameter; }
-		catch( ClassCastException ex ) {
-			throw new IllegalArgumentException( "Argument should be a String", ex );
-		}
-	}
-
-	@Override
 	public String getBackend()
 	{ return this.filename; }
 	
@@ -109,49 +99,60 @@ public class ELEONXML implements PersistenceBackend
 
 
 	@Override
-	public void open()
+	public void open( Object parameter )
 	throws IllegalArgumentException, IOException
 	{
-			try {
-				File fXmlFile = new File( this.filename );
-				DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-				DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-				doc = dBuilder.parse( fXmlFile );
-				doc.getDocumentElement().normalize();
-			}
-			catch( ParserConfigurationException ex ) {
-				// This should never happen
-				assert 1 == 0;
-			}
-			catch( SAXException ex ) {
-				throw new IllegalArgumentException( "Not an XML file", ex );
-			}
-			
-			if( doc != null ) {
-				String rootElement = doc.getDocumentElement().getNodeName();
-				if ( ! rootElement.equals("eleon_save")) {
-					throw new IllegalArgumentException( "Bad format document" );
-				}
+		try { this.filename = (String)parameter; }
+		catch( ClassCastException ex ) {
+			throw new IllegalArgumentException( "Argument should be a String", ex );
+		}
 
-				NodeList nListTitle = doc.getElementsByTagName("dc:title");
-				this.label = nListTitle.item(0).getTextContent();
+		try {
+			File fXmlFile = new File( this.filename );
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			doc = dBuilder.parse( fXmlFile );
+			doc.getDocumentElement().normalize();
+		}
+		catch( ParserConfigurationException ex ) {
+			// This should never happen
+			assert 1 == 0;
+		}
+		catch( SAXException ex ) {
+			throw new IllegalArgumentException( "Not an XML file", ex );
+		}
 
-				//moved to node attribute
-				/*NodeList nEnpointTitle = doc.getElementsByTagName("void:sparqlEndpoint");
+		if( doc != null ) {
+			String rootElement = doc.getDocumentElement().getNodeName();
+			if ( ! rootElement.equals("eleon_save")) {
+				throw new IllegalArgumentException( "Bad format document" );
+			}
+
+			NodeList nListTitle = doc.getElementsByTagName("dc:title");
+			this.label = nListTitle.item(0).getTextContent();
+
+			//moved to node attribute
+			/*NodeList nEnpointTitle = doc.getElementsByTagName("void:sparqlEndpoint");
 				this.textEndpoint.setText(nEnpointTitle.item(0).getTextContent());*/
-				/*
+			/*
 				treePerProperty.dispose();
 				table.dispose();
 				createTree();
 				createTable();
-				 */
-			}
+			 */
+		}
 	}
 	
 	@Override
-	public boolean save( Facet[] facets )
+	public boolean save( Facet[] facets, Object parameter )
 	throws IOException
 	{
+		if( parameter != null ) {
+			try { this.filename = (String)parameter; }
+			catch( ClassCastException ex ) {
+				throw new IllegalArgumentException( "Argument should be a String", ex );
+			}
+		}
 		if( this.filename == null ) { return false; }
 
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -228,7 +229,7 @@ public class ELEONXML implements PersistenceBackend
 		return true;
 	}
 	
-	
+	/*
 	@Override
 	public void buildPropertyTree( PropertyTreeFacet facet )
 	{
@@ -279,7 +280,7 @@ public class ELEONXML implements PersistenceBackend
 		}
 		entityTree.moveAbove(null);
 	}
-
+	*/
 
 	/*
 	 * Internals 
@@ -294,21 +295,21 @@ public class ELEONXML implements PersistenceBackend
 			//treeItemNode.setAttribute("name", ((TreeNodeData) treeItemCurrent.getData()).getOntProperty().toString());
 			treeItemNode.setAttribute("name", treeItemCurrent.getText());
 			DatasetNode treeNodeData = (DatasetNode) treeItemCurrent.getData();
-			treeItemNode.setAttribute("dc:creator", treeNodeData.getAuthor());
-			Integer void_size = treeNodeData.getVoid_triples();
+			treeItemNode.setAttribute("dc:creator", treeNodeData.getOwner());
+			Integer void_size = (Integer)treeNodeData.getValue( "void:triples" );
 			if (void_size != null) {
 				treeItemNode.setAttribute("void:triples", void_size.toString());
 			}
-			Integer void_distinctSubjects = treeNodeData.getVoid_distinctSubjects();
+			Integer void_distinctSubjects = (Integer)treeNodeData.getValue( "void:distinctSubjects" );
 			if (void_distinctSubjects != null) {
 				treeItemNode.setAttribute("void:distinctSubjects", void_distinctSubjects.toString());
 			}
-			Integer void_distinctObjects = treeNodeData.getVoid_distinctObjects();
+			Integer void_distinctObjects = (Integer)treeNodeData.getValue( "void:distinctObjects" );
 			if (void_distinctObjects != null) {
 				treeItemNode.setAttribute("void:distinctObjects", void_distinctObjects.toString());
 			}
-			treeItemNode.setAttribute("void:sparqlEndpoint", treeNodeData.getVoid_sparqlEnpoint());
-			treeItemNode.setAttribute("dc:title", treeNodeData.getDc_title());
+			treeItemNode.setAttribute("void:sparqlEndpoint", (String)treeNodeData.getValue("void:sparqlEnpoint") );
+			treeItemNode.setAttribute("dc:title", treeNodeData.getLabel());
 			if (treeItemCurrent.getData() instanceof EntityInclusionTreeNode) {
 				EntityInclusionTreeNode perEntityNode = (EntityInclusionTreeNode) treeItemCurrent.getData();
 				String subjectPattern = perEntityNode.getSubjectPattern();
@@ -380,46 +381,65 @@ public class ELEONXML implements PersistenceBackend
 				
 				//create data to insert
 				if( facet.getClass().equals(PropertyTreeFacet.class) ) {
-					PropertyTreeNode data = new PropertyTreeNode(facet, void_triples, void_distinctSubjects, void_distinctObjects, dc_creator, void_sparqlEndpoint, dc_title);
-					OntModel ontModel = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM);
 					NodeList nodeList = node.getChildNodes();
+					OntProperty ontProperty = null;
 					for (int i = 0; i < nodeList.getLength(); i++) {
 						Node currentNode = nodeList.item(i);
 						if (currentNode.getNodeType() == Node.ELEMENT_NODE) {
 							if (currentNode.getNodeName().equals("rdf:Property")) {
 								Element element = (Element) currentNode;
 								String rdf_about = element.getAttribute("rdf:about");
-								OntProperty ontProperty = ontModel.createOntProperty(rdf_about);
-								data.setProperty(ontProperty);
+								ontProperty = ont.createOntProperty( rdf_about );
 							}
 						}
 					}
+					PropertyTreeNode data = new PropertyTreeNode( null, facet, ontProperty, "activeAnnotationSchema" );
+					data.setValue( "dc:title", dc_title );
+					data.setValue( "dc:creator", dc_creator );
+					data.setValue( "void:triples", void_triples );
+					data.setValue( "void:distinctSubjects", void_distinctSubjects );
+					data.setValue( "void:distinctObjects", void_distinctObjects );
+					data.setValue( "void:sparqlEndpoint", void_sparqlEndpoint );
 					treeItem.setData(data);
-				} else if( facet.getClass().equals(EntityInclusionTreeFacet.class) ) {
-					EntityInclusionTreeNode data = new EntityInclusionTreeNode( facet, void_triples, void_distinctSubjects, void_distinctObjects, dc_creator, void_sparqlEndpoint, dc_title );
+				}
+				else if( facet.getClass().equals(EntityInclusionTreeFacet.class) ) {
 					NodeList nodeList = node.getChildNodes();
+					String subjectPattern = null;
+					String objectPattern = null;
 					for (int i = 0; i < nodeList.getLength(); i++) {
 						Node currentNode = nodeList.item(i);
 						if (currentNode.getNodeType() == Node.ELEMENT_NODE) {
-							if (currentNode.getNodeName().equals("rdf:subject")) {
+							if( currentNode.getNodeName().equals("rdf:subject") ) {
 								Element element = (Element) currentNode;
-								String subjectPattern = null;
 								String uriRegexPattern = element.getAttribute("void:uriRegexPattern");
 								if (uriRegexPattern.equals("")) {
 									subjectPattern = null;
 								}
-								data.setSubjectPattern(subjectPattern);
-							} else if  (currentNode.getNodeName().equals("rdf:object")) {
+								else {
+									subjectPattern = uriRegexPattern;
+								}
+							}
+							else if( currentNode.getNodeName().equals("rdf:object") ) {
 								Element element = (Element) currentNode;
-								String objectPattern = null;
 								String uriRegexPattern = element.getAttribute("void:uriRegexPattern");
-								if (uriRegexPattern.equals("")) {
+								if( uriRegexPattern.equals("") ) {
 									objectPattern = null;
 								}
-								data.setSubjectPattern(objectPattern);
+								else {
+									objectPattern = uriRegexPattern;
+								}
 							}
 						}
 					}
+					// FIXME: Resource should not be null, but be read in from DOM
+					// MIght not be worth fixing, if ELEON/XML is going to disappear
+					EntityInclusionTreeNode data = new EntityInclusionTreeNode( null, facet, subjectPattern, objectPattern, "activeAnnotationSchema" );
+					data.setValue( "dc:title", dc_title );
+					data.setValue( "dc:creator", dc_creator );
+					data.setValue( "void:triples", void_triples );
+					data.setValue( "void:distinctSubjects", void_distinctSubjects );
+					data.setValue( "void:distinctObjects", void_distinctObjects );
+					data.setValue( "void:sparqlEndpoint", void_sparqlEndpoint );
 					treeItem.setData(data);
 				}
 			} else {
@@ -438,7 +458,7 @@ public class ELEONXML implements PersistenceBackend
 	private DatasetNode getDataFromExistingTreeItem(TreeItem treeItem, String name, String dc_creator) {
 		for (TreeItem treeItemCurrent : treeItem.getItems()) {
 			DatasetNode treeNodeData = (DatasetNode) treeItemCurrent.getData();
-			if (treeNodeData.getAuthor().equals(dc_creator) && treeItemCurrent.getText().equals(name)) {
+			if (treeNodeData.getOwner().equals(dc_creator) && treeItemCurrent.getText().equals(name)) {
 				return (DatasetNode) treeItemCurrent.getData();
 			}
 			if (treeItemCurrent.getItemCount() > 0) {

@@ -40,6 +40,7 @@ package gr.demokritos.iit.eleon.facets;
 
 import com.hp.hpl.jena.ontology.OntModel;
 
+
 public interface Facet
 {
 
@@ -47,8 +48,8 @@ public interface Facet
 
 	String getInfo();
 
-	void syncFrom( OntModel ont );
+	void syncFrom(  OntModel ont );
 	
-	void syncTo( OntModel ont );
+	void syncTo(  OntModel ont );
 	
 }

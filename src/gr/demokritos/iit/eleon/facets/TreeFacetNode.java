@@ -37,30 +37,30 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 package gr.demokritos.iit.eleon.facets;
 
-public interface TreeFacetNode {
-	
+public interface TreeFacetNode
+{
+
 	/**
 	 * 
-	 * @return the name of the author that created this node.
+	 * @return the name of the owner of this node.
 	 */
-	String getAuthor();
-/*	
-	*//**
-	 * the title of the node.
-	 * @return
-	 *//*
-	String getTitle();
-	
-	*//**
+
+	public String getOwner();
+
+
+	/**
 	 * 
-	 * @return the sparqlEndpoint//TODO:I can do better than that later.
-	 *//*
-	String getEndpoint();
+	 * @return
+	 */
+
+	public String getLabel();
 	
-	//TODO:add javadoc
-	Object[][] getProperty_values();
-	String[][] getProperty_names();
-	Object[][] getProperty_value_types();
-	boolean[][] getProperty_is_functional();
-*/
+
+	/**
+	 * 
+	 * @return
+	 */
+
+	public String getDescription();
+
 }

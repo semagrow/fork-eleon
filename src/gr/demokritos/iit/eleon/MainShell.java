@@ -47,7 +47,6 @@ package gr.demokritos.iit.eleon;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
@@ -60,60 +59,69 @@ import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 import gr.demokritos.iit.eleon.commons.Constants;
-import gr.demokritos.iit.eleon.facets.Facet;
-import gr.demokritos.iit.eleon.facets.TreeFacet;
-import gr.demokritos.iit.eleon.facets.dataset.EntityInclusionTreeFacet;
-import gr.demokritos.iit.eleon.facets.dataset.NominalSet;
-import gr.demokritos.iit.eleon.facets.dataset.PropertyTreeFacet;
-import gr.demokritos.iit.eleon.facets.dataset.PropertyTreeNode;
-import gr.demokritos.iit.eleon.facets.dataset.DatasetNode;
-import gr.demokritos.iit.eleon.ui.InsertInMenuDialog;
-import gr.demokritos.iit.eleon.ui.SelectNominalSetDialog;
-import gr.demokritos.iit.eleon.ui.SelectVocabulariesDialog;
+import gr.demokritos.iit.eleon.facets.*;
+import gr.demokritos.iit.eleon.facets.dataset.*;
+import gr.demokritos.iit.eleon.ui.*;
 import gr.demokritos.iit.eleon.persistence.*;
+
 
 public class MainShell extends Shell
 {
+	public static MainShell shell;
+
+	// infoboxes acros the top of the screen
 	protected Text textEndpoint;
-	public Table table;
+
+	// hierarchy trees in the middle
 	TreeFacet propertyTree, entityTree;
+	// property values at the right
+	public Table table;
 	protected List list;
-	static protected MainShell shell;
 	private Text textTitle;
 	public String currentAuthor;
 	private Menu dataSchemaMenu;
 	//private MenuItem mntmNew;
-	private PersistenceBackend persistence;
+	public PersistenceBackend persistence;
 	//Menu annotationSchemaMenu;
-	public String activeAnnotationSchema;
-	public Integer activeAnnotationSchemaIndex;
+	public String activeAnnSchemaName;
+	public Integer activeAnnSchema;
+
+	public OntModel ont = null;
+
 
 	/**
 	 * Launch the application.
 	 * @param args
 	 */
-	public static void main(String args[]) {
+
+	public static void main( String args[] )
+	{
 		try {
 			Display display = Display.getDefault();
-			shell = new MainShell(display);
-			shell.persistence = new ELEONXML();
-			shell.open();
-			shell.layout();
-			while (!shell.isDisposed()) {
-				if (!display.readAndDispatch()) {
+			MainShell.shell = new MainShell(display);
+			MainShell.shell.persistence = new OWLFile( MainShell.shell );
+			// shell.persistence = new ELEONXML();
+			MainShell.shell.open();
+			MainShell.shell.layout();
+			while( !MainShell.shell.isDisposed() ) {
+				if( !display.readAndDispatch() ) {
 					display.sleep();
 				}
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		}
+		catch( Exception ex ) {
+			ex.printStackTrace();
 		}
 	}
 
+
 	/**
-	 * Create the shell.
+	 * Create the main shell.
 	 * @param display
 	 */
-	public MainShell(Display display) {
+
+	public MainShell( Display display )
+	{
 		super(display, SWT.SHELL_TRIM);
 		
 		Menu menu = new Menu(this, SWT.BAR);
@@ -141,14 +149,14 @@ public class MainShell extends Shell
         	@Override
         	public void widgetSelected(SelectionEvent arg0) {
         		FileDialog dialog = new FileDialog (shell, SWT.OPEN);
-        		String [] filterNames = new String [] {"XML Files", "All Files (*)"};
-        		String [] filterExtensions = new String [] {"*.xml", "*"};
+        		String [] filterNames = new String [] {"TTL Files", "XML Files", "All Files (*)"};
+        		String [] filterExtensions = new String [] {"*.ttl", "*.xml", "*"};
         		//String filterPath = "/";
         		String filterPath = System.getProperty("user.dir");
         		String platform = SWT.getPlatform();
         		if (platform.equals("win32") || platform.equals("wpf")) {
-        			filterNames = new String [] {"XML Files", "All Files (*.*)"};
-        			filterExtensions = new String [] {"*.xml", "*.*"};
+        			filterNames = new String [] {"TTL Files", "XML Files", "All Files (*.*)"};
+        			filterExtensions = new String [] {"*.ttl", "*.xml", "*.*"};
         			//filterPath = "c:\\";
         		}
         		dialog.setFilterNames (filterNames);
@@ -157,19 +165,19 @@ public class MainShell extends Shell
         		//dialog.setFileName ("myfile");
         		try {
         			String openFilename = dialog.open();
-        			if (openFilename == null) return;
-        			persistence.setBackend( openFilename );
-					persistence.open();
-					textTitle.setText( persistence.getLabel() );
+        			if( openFilename == null ) { return; }
+        			MainShell.shell.persistence.open( openFilename );
+					textTitle.setText( MainShell.shell.persistence.getLabel() );
 					//create the faceted trees
-					propertyTree.initTree();
-					textTitle.setText( propertyTree.getTitle() );
-					textEndpoint.setText( propertyTree.getInfo() );
-					persistence.buildPropertyTree( (PropertyTreeFacet)propertyTree );
-					entityTree.initTree();
-					textTitle.setText( entityTree.getTitle() );
-					textEndpoint.setText( entityTree.getInfo() );
-					persistence.buildEntityTree( (EntityInclusionTreeFacet)entityTree );
+					MainShell.shell.propertyTree.initTree();
+					MainShell.shell.textTitle.setText( propertyTree.getTitle() );
+					MainShell.shell.textEndpoint.setText( propertyTree.getInfo() );
+					MainShell.shell.propertyTree.syncFrom( MainShell.shell.ont );
+
+					MainShell.shell.entityTree.initTree();
+					MainShell.shell.textTitle.setText( MainShell.shell.entityTree.getTitle() );
+					MainShell.shell.textEndpoint.setText( MainShell.shell.entityTree.getInfo() );
+					MainShell.shell.entityTree.syncFrom( MainShell.shell.ont );
 				}
         		catch( Exception e ) {
 					e.printStackTrace();
@@ -191,7 +199,7 @@ public class MainShell extends Shell
         			Facet[] arr = new Facet[2];
         			arr[0] = propertyTree;
         			arr[1] = entityTree;
-					boolean ok = persistence.save( arr );
+					boolean ok = persistence.save( arr, null );
 					if( !ok ) {
 						saveAs( propertyTree.getTree(), entityTree.getTree() );
 					}
@@ -304,8 +312,8 @@ public class MainShell extends Shell
 			}
 		});
 		mntmVoID_Semagrow.setSelection(true);
-		activeAnnotationSchemaIndex = 1;
-		activeAnnotationSchema = mntmVoID_Semagrow.getText();
+		activeAnnSchema = 1;
+		activeAnnSchemaName = mntmVoID_Semagrow.getText();
 		
 		
 		MenuItem mntmDataSchema = new MenuItem(menu, SWT.CASCADE);
@@ -470,8 +478,8 @@ public class MainShell extends Shell
 				TreeItem treeItem = new TreeItem(root, SWT.NONE);
 				treeItem.setText("?s " + ontProperty.toString() + " ?o");
 				PropertyTreeNode property =
-						new PropertyTreeNode( (PropertyTreeFacet)this.propertyTree, ontProperty, activeAnnotationSchema );
-				property.setAuthor(author);
+						new PropertyTreeNode( null, (PropertyTreeFacet)this.propertyTree, ontProperty, activeAnnSchemaName );
+				property.setOwner(author);
 				treeItem.setData(property);
 			} else {	
 					boolean inserted = insertChildInTree(root, ontProperty, superProperty, author);
@@ -481,7 +489,7 @@ public class MainShell extends Shell
 			}
 		}
 		while ( ! notInsertedPropertiesList.isEmpty()) {
-			Collections.rotate( notInsertedPropertiesList, 1 );
+			java.util.Collections.rotate( notInsertedPropertiesList, 1 );
 			OntProperty ontProperty = notInsertedPropertiesList.get( 0 );
 			OntProperty superProperty = ontProperty.getSuperProperty();
 			// All properties with null super-properties have been consumed by the for loop above 
@@ -501,8 +509,8 @@ public class MainShell extends Shell
 				TreeItem newtreeItem = new TreeItem(child, SWT.NONE);
 				newtreeItem.setText(ontProperty.toString());
 				PropertyTreeNode property =
-						new PropertyTreeNode( (PropertyTreeFacet)this.propertyTree, ontProperty, activeAnnotationSchema);
-				property.setAuthor(author);
+						new PropertyTreeNode( null, (PropertyTreeFacet)this.propertyTree, ontProperty, activeAnnSchemaName);
+				property.setOwner(author);
 				newtreeItem.setData(property);
 				inserted = true;
 			}
@@ -573,7 +581,7 @@ public class MainShell extends Shell
 				}
 				
 				DatasetNode treeFacetNode = (DatasetNode) tree.getSelection()[0].getData();
-				String creator = treeFacetNode.getAuthor();
+				String creator = treeFacetNode.getOwner();
 				if ( ! creator.equals(currentAuthor)) {
 					MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
 	                box.setText("Value read-only");
@@ -775,11 +783,10 @@ public class MainShell extends Shell
 		dialog.setFileName ("eleon_save");
 		String filename = dialog.open();
 		if( filename != null ) {
-			persistence.setBackend( filename );
 			Facet[] arr = new Facet[2];
 			arr[0] = propertyTree;
 			arr[1] = entityTree;
-			boolean ok = persistence.save( arr );
+			boolean ok = persistence.save( arr, filename );
 			assert ok;
 		}
 		//System.out.println ("Save to: " + dialog.open ());

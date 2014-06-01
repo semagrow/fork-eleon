@@ -49,6 +49,7 @@ import org.eclipse.swt.widgets.Tree;
 public class RemoteStore implements PersistenceBackend
 {
 	private String label = null;
+	private String connection;
 
 
 	/*
@@ -69,11 +70,6 @@ public class RemoteStore implements PersistenceBackend
 	@Override
 	public String getLabel() { return this.label; }
 
-	@Override
-	public void setBackend( Object parameter )
-	{
-		// TODO Auto-generated method stub
-	}
 
 	@Override
 	public Object getBackend()
@@ -89,8 +85,8 @@ public class RemoteStore implements PersistenceBackend
 
 
 	@Override
-	public void open()
-	throws IOException
+	public void open( Object parameter )
+	throws IOException, IllegalArgumentException
 	{
 		// TODO Auto-generated method stub
 		
@@ -98,25 +94,19 @@ public class RemoteStore implements PersistenceBackend
 
 	
 	@Override
-	public boolean save( Facet[] facets )
-	throws IOException
+	public boolean save( Facet[] facets, Object parameter )
+	throws IOException, IllegalArgumentException
 	{
+		if( parameter != null ) {
+			try { this.connection = (String)parameter; }
+			catch( ClassCastException ex ) {
+				throw new IllegalArgumentException( "Argument should be a String", ex );
+			}
+		}
+		if( this.connection == null ) { return false; }
+
 		// TODO Auto-generated method stub
 		return false;
-	}
-
-	
-	@Override
-	public void buildPropertyTree( PropertyTreeFacet facet )
-	{
-		// TODO Auto-generated method stub
-	}
-
-
-	@Override
-	public void buildEntityTree( EntityInclusionTreeFacet facet )
-	{
-		// TODO Auto-generated method stub
 	}
 
 }
