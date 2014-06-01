@@ -40,11 +40,7 @@ package gr.demokritos.iit.eleon.facets.dataset;
 
 import gr.demokritos.iit.eleon.MainShell;
 import gr.demokritos.iit.eleon.facets.TreeFacet;
-import gr.demokritos.iit.eleon.persistence.OWLFile;
-import gr.demokritos.iit.eleon.persistence.PersistenceBackend;
-import gr.demokritos.iit.eleon.ui.CopyExistingNodeDialog;
-import gr.demokritos.iit.eleon.ui.InsertInMenuDialog;
-import gr.demokritos.iit.eleon.ui.PerEntityInsertDialog;
+import gr.demokritos.iit.eleon.ui.*;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -56,7 +52,8 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
-import com.hp.hpl.jena.ontology.OntModel;
+import com.hp.hpl.jena.rdf.model.*;
+
 
 public class EntityInclusionTreeFacet extends DatasetFacet implements TreeFacet
 {
@@ -69,7 +66,7 @@ public class EntityInclusionTreeFacet extends DatasetFacet implements TreeFacet
 	
 	public EntityInclusionTreeFacet( MainShell shell )
 	{
-		this.myShell = shell;
+		super( shell );
 	}
 	
 
@@ -257,18 +254,43 @@ public class EntityInclusionTreeFacet extends DatasetFacet implements TreeFacet
 	}
 
 
-	@Override
-	public void syncFrom( OntModel ont )
+	
+	/*
+	 * INTERNAL HELPERS
+	 */
+
+	
+	protected PropertyTreeNode makeNode( Resource dataset, String defaultOwner )
 	{
-		// TODO Auto-generated method stub
+		Property prop = dataset.getModel().getProperty( "http://rdfs.org/ns/void#property" );
+		Statement stmt = dataset.getProperty( prop );
+		Resource myProperty;
+		if( stmt == null ) {
+			// This node is part of a per-property tree, but not a property partition
+			myProperty = null;
+		}
+		else {
+			myProperty = stmt.getObject().asResource();
+		}
+		PropertyTreeNode retv =
+				new PropertyTreeNode( dataset, this, myProperty, "activeAnnotationSchema" );
+
+		copyValues( dataset, retv );
+		
+		if( retv.getOwner() == null ) {
+			retv.setOwner( defaultOwner );
+		}
+		if( retv.getLabel() == null ) {
+			if( myProperty != null ) {
+				// label defaults to property name
+				String qname = this.myShell.ont.shortForm( myProperty.getURI() );
+				retv.setLabel( qname );
+			}
+			else {
+				throw new IllegalArgumentException( "Cannot make a property node without label and without a property" );
+			}
+		}
+		return retv;
 	}
-
-
-	@Override
-	public void syncTo( OntModel ont )
-	{
-		// TODO Auto-generated method stub
-	}
-
 
 }

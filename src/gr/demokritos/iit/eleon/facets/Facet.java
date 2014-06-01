@@ -50,6 +50,6 @@ public interface Facet
 
 	void syncFrom(  OntModel ont );
 	
-	void syncTo(  OntModel ont );
+	void syncTo( OntModel ont );
 	
 }

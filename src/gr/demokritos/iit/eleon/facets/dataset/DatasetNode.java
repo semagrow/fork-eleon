@@ -41,6 +41,7 @@ package gr.demokritos.iit.eleon.facets.dataset;
 import com.hp.hpl.jena.rdf.model.Resource;
 
 import gr.demokritos.iit.eleon.MainShell;
+import gr.demokritos.iit.eleon.annotations.AnnotationVocabulary;
 import gr.demokritos.iit.eleon.facets.TreeFacetNode;
 
 
@@ -48,243 +49,6 @@ public class DatasetNode implements TreeFacetNode
 {
 	
 	public Object[][] property_values = new Object[2][20];
-	static public String[][] property_qnames = new String[2][20];
-	static public String[][] property_uris = new String[2][20];
-	static public Object[][] property_value_types = new Object[2][20];
-	static public boolean[][] property_is_functional = new boolean[2][20];
-	static public boolean[][] property_is_visible = new boolean[2][20];
-	static public boolean[][] property_is_editable = new boolean[2][20];
-	static public String[] annotation_schema_names = {"VoID", "Sevod: VoID SemaGrow extension"};
-	static {
-		// Internal
-		int i=0;
-		property_qnames[0][i] = "wdrs:issuedby";
-		property_uris[0][i] = "http://www.w3.org/2007/05/powder-s#issuedby";
-		property_value_types[0][i] = String.class;
-		property_is_functional[0][i] = true;
-		property_is_visible[0][i] = false;
-		property_is_editable[0][i] = false;
-		property_qnames[1][i] = property_qnames[0][i];
-		property_uris[1][i] = property_uris[0][i];
-		property_value_types[1][i] = property_value_types[0][i];
-		property_is_functional[1][i] = property_is_functional[0][i];
-		property_is_visible[1][i] = property_is_visible[0][i];
-		property_is_editable[1][i] = property_is_editable[0][i];
-		
-		// Shared Void and Sevod properties
-		++i;
-		property_qnames[0][i] = "dc:title";
-		property_uris[0][i] = "http://purl.org/dc/terms/title";
-		property_value_types[0][i] = String.class;
-		property_is_functional[0][i] = true;
-		property_is_visible[0][i] = true;
-		property_is_editable[0][i] = true;
-		property_qnames[1][i] = property_qnames[0][i];
-		property_uris[1][i] = property_uris[0][i];
-		property_value_types[1][i] = property_value_types[0][i];
-		property_is_functional[1][i] = property_is_functional[0][i];
-		property_is_visible[1][i] = property_is_visible[0][i];
-		property_is_editable[1][i] = property_is_editable[0][i];
-		
-		++i;
-		property_qnames[0][i] = "dc:description";
-		property_uris[0][i] = "http://purl.org/dc/terms/description";
-		property_value_types[0][i] = String.class;
-		property_is_functional[0][i] = true;
-		property_is_visible[0][i] = true;
-		property_is_editable[0][i] = true;
-		property_qnames[1][i] = property_qnames[0][i];
-		property_uris[1][i] = property_uris[0][i];
-		property_value_types[1][i] = property_value_types[0][i];
-		property_is_functional[1][i] = property_is_functional[0][i];
-		property_is_visible[1][i] = property_is_visible[0][i];
-		property_is_editable[1][i] = property_is_editable[0][i];
-
-		++i;
-		property_qnames[0][i] = "dc:creator";
-		property_uris[0][i] = "http://purl.org/dc/terms/creator";
-		property_value_types[0][i] = String.class;
-		property_is_functional[0][i] = true;
-		property_is_visible[0][i] = true;
-		property_is_editable[0][i] = true;
-		property_qnames[1][i] = property_qnames[0][i];
-		property_uris[1][i] = property_uris[0][i];
-		property_value_types[1][i] = property_value_types[0][i];
-		property_is_functional[1][i] = property_is_functional[0][i];
-		property_is_visible[1][i] = property_is_visible[0][i];
-		property_is_editable[1][i] = property_is_editable[0][i];
-
-		++i;
-		property_qnames[0][i] = "dc:subject";
-		property_uris[0][i] = "http://purl.org/dc/terms/subject";
-		property_value_types[0][i] = String.class; //TODO: DBPedia, SKOS, any URI
-		property_is_functional[0][i] = false;
-		property_is_visible[0][i] = true;
-		property_is_editable[0][i] = true;
-		property_qnames[1][i] = property_qnames[0][i];
-		property_uris[1][i] = property_uris[0][i];
-		property_value_types[1][i] = property_value_types[0][i];
-		property_is_functional[1][i] = property_is_functional[0][i];
-		property_is_visible[1][i] = property_is_visible[0][i];
-		property_is_editable[1][i] = property_is_editable[0][i];
-
-		++i;
-		property_qnames[0][i] = "void:sparqlEndpoint";
-		property_uris[0][i] = "http://rdfs.org/ns/void#sparqlEndpoint";
-		property_value_types[0][i] = String.class;
-		property_is_functional[0][i] = true;
-		property_is_visible[0][i] = true;
-		property_is_editable[0][i] = true;
-		property_qnames[1][i] = property_qnames[0][i];
-		property_uris[1][i] = property_uris[0][i];
-		property_value_types[1][i] = property_value_types[0][i];
-		property_is_functional[1][i] = property_is_functional[0][i];
-		property_is_visible[1][i] = property_is_visible[0][i];
-		property_is_editable[1][i] = property_is_editable[0][i];
-
-		++i;
-		property_qnames[0][i] = "void:vocabulary";
-		property_uris[0][i] = "http://rdfs.org/ns/void#vocabulary";
-		property_value_types[0][i] = String.class;
-		property_is_functional[0][i] = false;
-		property_is_visible[0][i] = true;
-		property_is_editable[0][i] = true;
-		property_qnames[1][i] = property_qnames[0][i];
-		property_uris[1][i] = property_uris[0][i];
-		property_value_types[1][i] = property_value_types[0][i];
-		property_is_functional[1][i] = property_is_functional[0][i];
-		property_is_visible[1][i] = property_is_visible[0][i];
-		property_is_editable[1][i] = property_is_editable[0][i];
-
-		++i;
-		property_qnames[0][i] = "void:class";
-		property_uris[0][i] = "http://rdfs.org/ns/void#class";
-		property_value_types[0][i] = String.class;
-		property_is_functional[0][i] = true;
-		property_is_visible[0][i] = true;
-		property_is_editable[0][i] = true;
-		property_qnames[1][i] = property_qnames[0][i];
-		property_uris[1][i] = property_uris[0][i];
-		property_value_types[1][i] = property_value_types[0][i];
-		property_is_functional[1][i] = property_is_functional[0][i];
-		property_is_visible[1][i] = property_is_visible[0][i];
-		property_is_editable[1][i] = property_is_editable[0][i];
-
-		++i;
-		property_qnames[0][i] = "void:property";
-		property_uris[0][i] = "http://rdfs.org/ns/void#property";
-		property_value_types[0][i] = String.class;
-		property_is_functional[0][i] = true;
-		property_is_visible[0][i] = true;
-		property_is_editable[0][i] = true;
-		property_qnames[1][i] = property_qnames[0][i];
-		property_uris[1][i] = property_uris[0][i];
-		property_value_types[1][i] = property_value_types[0][i];
-		property_is_functional[1][i] = property_is_functional[0][i];
-		property_is_visible[1][i] = property_is_visible[0][i];
-		property_is_editable[1][i] = property_is_editable[0][i];
-
-		++i;
-		property_qnames[0][i] = "void:uriRegexPattern";
-		property_uris[0][i] = "http://rdfs.org/ns/void#uriRegexPattern";
-		property_value_types[0][i] = String.class;
-		property_is_functional[0][i] = true;
-		property_is_visible[0][i] = true;
-		property_is_editable[0][i] = true;
-		property_qnames[1][i] = property_qnames[0][i];
-		property_uris[1][i] = property_uris[0][i];
-		property_value_types[1][i] = property_value_types[0][i];
-		property_is_functional[1][i] = property_is_functional[0][i];
-		property_is_visible[1][i] = property_is_visible[0][i];
-		property_is_editable[1][i] = property_is_editable[0][i];
-
-		++i;
-		property_qnames[0][i] = "void:triples";
-		property_uris[0][i] = "http://rdfs.org/ns/void#triples";
-		property_value_types[0][i] = Integer.class;
-		property_is_functional[0][i] = true;
-		property_is_visible[0][i] = true;
-		property_is_editable[0][i] = true;
-		property_qnames[1][i] = property_qnames[0][i];
-		property_uris[1][i] = property_uris[0][i];
-		property_value_types[1][i] = property_value_types[0][i];
-		property_is_functional[1][i] = property_is_functional[0][i];
-		property_is_visible[1][i] = property_is_visible[0][i];
-		property_is_editable[1][i] = property_is_editable[0][i];
-
-		++i;
-		property_qnames[0][i] = "void:distinctSubjects";
-		property_uris[0][i] = "http://rdfs.org/ns/void#distinctSubjects";
-		property_value_types[0][i] = Integer.class;
-		property_is_functional[0][i] = true;
-		property_is_visible[0][i] = true;
-		property_is_editable[0][i] = true;
-		property_qnames[1][i] = property_qnames[0][i];
-		property_uris[1][i] = property_uris[0][i];
-		property_value_types[1][i] = property_value_types[0][i];
-		property_is_functional[1][i] = property_is_functional[0][i];
-		property_is_visible[1][i] = property_is_visible[0][i];
-		property_is_editable[1][i] = property_is_editable[0][i];
-
-		++i;
-		property_qnames[0][i] = "void:distinctObjects";
-		property_uris[0][i] = "http://rdfs.org/ns/void#distinctObjects";
-		property_value_types[0][i] = Integer.class;
-		property_is_functional[0][i] = true;
-		property_is_visible[0][i] = true;
-		property_is_editable[0][i] = true;
-		property_qnames[1][i] = property_qnames[0][i];
-		property_uris[1][i] = property_uris[0][i];
-		property_value_types[1][i] = property_value_types[0][i];
-		property_is_functional[1][i] = property_is_functional[0][i];
-		property_is_visible[1][i] = property_is_visible[0][i];
-		property_is_editable[1][i] = property_is_editable[0][i];
-
-		/*
-		++i;
-		property_qnames[0][i] = "";
-		property_uris[0][i] = "http://rdfs.org/ns/void#";
-		property_value_types[0][i] = ;
-		property_is_functional[0][i] = true;
-		property_is_visible[0][i] = true;
-		property_is_editable[0][i] = true;
-		property_qnames[1][i] = property_qnames[0][i];
-		property_uris[1][i] = property_uris[0][i];
-		property_value_types[1][i] = property_value_types[0][i];
-		property_is_functional[1][i] = property_is_functional[0][i];
-		property_is_visible[1][i] = property_is_visible[0][i];
-		property_is_editable[1][i] = property_is_editable[0][i];
-		 */
-
-		++i;
-		// End of VoID
-		property_qnames[0][i] = null;
-		property_uris[0][i] = null;
-		property_value_types[0][i] = null;
-		// Sevod extension
-		property_qnames[1][i] = "svd:subjectRegexPattern";
-		property_uris[1][i] = "http://rdf.iit.demokritos.gr/2013/sevod#subjectRegexPattern";
-		property_value_types[1][i] = Integer.class;
-		property_is_functional[1][i] = true;	
-		property_is_visible[1][i] = true;
-		property_is_editable[1][i] = true;
-		
-		++i;
-		property_qnames[1][i] = "svd:objectRegexPattern";
-		property_uris[1][i] = "http://rdf.iit.demokritos.gr/2013/sevod#objectRegexPattern";
-		property_value_types[1][i] = Integer.class;
-		property_is_functional[1][i] = true;	
-		property_is_visible[1][i] = true;
-		property_is_editable[1][i] = true;
-		
-		++i;
-		property_qnames[1][i] = null;
-		property_uris[1][i] = null;
-		property_value_types[1][i] = null;
-		property_is_visible[1][i] = true;
-		property_is_editable[1][i] = true;
-	}
-	
 	private final DatasetFacet myFacet;
 	private final Resource res;
 
@@ -378,8 +142,8 @@ public class DatasetNode implements TreeFacetNode
 		Object retv = null;
 		int i = 0;
 		while( (retv == null) &&
-				(DatasetNode.property_qnames[MainShell.shell.activeAnnSchema][i] != null) ) {
-			if( DatasetNode.property_qnames[MainShell.shell.activeAnnSchema][i].equals(qname) ) {
+				(AnnotationVocabulary.property_qnames[MainShell.shell.activeAnnSchema][i] != null) ) {
+			if( AnnotationVocabulary.property_qnames[MainShell.shell.activeAnnSchema][i].equals(qname) ) {
 				retv = this.property_values[MainShell.shell.activeAnnSchema][i];
 			}
 			++i;
@@ -391,8 +155,8 @@ public class DatasetNode implements TreeFacetNode
 	{
 		int i = 0;
 		boolean done = false;
-		while( !done && (DatasetNode.property_qnames[MainShell.shell.activeAnnSchema][i] != null) ) {
-			if( DatasetNode.property_qnames[MainShell.shell.activeAnnSchema][i].equals(qname) ) {
+		while( !done && (AnnotationVocabulary.property_qnames[MainShell.shell.activeAnnSchema][i] != null) ) {
+			if( AnnotationVocabulary.property_qnames[MainShell.shell.activeAnnSchema][i].equals(qname) ) {
 				this.property_values[MainShell.shell.activeAnnSchema][i] = value;
 				done = true;
 			}

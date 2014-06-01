@@ -58,6 +58,7 @@ import com.hp.hpl.jena.ontology.OntModelSpec;
 import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
+import gr.demokritos.iit.eleon.annotations.AnnotationVocabulary;
 import gr.demokritos.iit.eleon.annotations.NominalSet;
 import gr.demokritos.iit.eleon.commons.Constants;
 import gr.demokritos.iit.eleon.facets.*;
@@ -552,14 +553,14 @@ public class MainShell extends Shell
 		final int schemaIndex = 1;
 		
 		int i = 0;
-		while(DatasetNode.property_qnames[schemaIndex][i] != null) {
+		while(AnnotationVocabulary.property_qnames[schemaIndex][i] != null) {
 			TableItem item = new TableItem(table, SWT.NONE);
 			Object value = treeNodeData.property_values[schemaIndex][i];
 			String value_str = null;
 			if (value != null) {
 				value_str = value.toString();
 			}
-			item.setText(new String [] {DatasetNode.property_qnames[schemaIndex][i], value_str});
+			item.setText(new String [] {AnnotationVocabulary.property_qnames[schemaIndex][i], value_str});
 			i++;
 		}
 		
@@ -637,7 +638,7 @@ public class MainShell extends Shell
 					
 					String proper_text = item.getText(1).substring(0, item.getText(1).length() - 2);
 					
-					String[][] property_names = DatasetNode.property_qnames;
+					String[][] property_names = AnnotationVocabulary.property_qnames;
 					int i = 0; int index = -1;
 					while( (index < 0) && (property_names[schemaIndex][i] != null) ) {
 						if("void:vocabulary".equals(property_names[schemaIndex][i]) ) { 
@@ -657,7 +658,7 @@ public class MainShell extends Shell
 				 }
 				 
 				 if (property.equals("void:subjectsTarget")) {//TODO:breaks independence from property names!
-					 String[][] property_names = DatasetNode.property_qnames;
+					 String[][] property_names = AnnotationVocabulary.property_qnames;
 					 int i = 0; int index = -1;
 					 while( (index < 0) && (property_names[schemaIndex][i] != null) ) {
 						 if("void:subjectsTarget".equals(property_names[schemaIndex][i]) ) { 
@@ -701,8 +702,8 @@ public class MainShell extends Shell
 						editor.getItem().setText(1, text.getText());
 						
 						int i = 0; int index = -1;
-						while( (index < 0) && (DatasetNode.property_qnames[schemaIndex][i] != null) ) {
-							if( property.equals(DatasetNode.property_qnames[schemaIndex][i]) ) { index = i; }
+						while( (index < 0) && (AnnotationVocabulary.property_qnames[schemaIndex][i] != null) ) {
+							if( property.equals(AnnotationVocabulary.property_qnames[schemaIndex][i]) ) { index = i; }
 							++i;
 						}
 						
@@ -717,7 +718,7 @@ public class MainShell extends Shell
 							//java.lang.reflect.Constructor<?> constr = objClass.getConstructor( params );
 							//Object o = constr.newInstance( text.getText() );
 							Class<?> cls[] = new Class[] { String.class };
-							java.lang.reflect.Constructor<?> c = ((Class<?>) DatasetNode.property_value_types[schemaIndex][index]).getConstructor(cls);
+							java.lang.reflect.Constructor<?> c = ((Class<?>) AnnotationVocabulary.property_value_types[schemaIndex][index]).getConstructor(cls);
 							Object obj = c.newInstance(text.getText());
 							treeNodeData.property_values[schemaIndex][index] = obj;
 						} catch (NoSuchMethodException e) {
