@@ -60,6 +60,7 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Resource;
 
 import gr.demokritos.iit.eleon.annotations.AnnotationVocabulary;
+import gr.demokritos.iit.eleon.annotations.Annotator;
 import gr.demokritos.iit.eleon.annotations.AnnotatorList;
 import gr.demokritos.iit.eleon.annotations.NominalSet;
 import gr.demokritos.iit.eleon.commons.Constants;
@@ -274,7 +275,8 @@ public class MainShell extends Shell
 					}
 					if (not_found) {
 						MenuItem mntmInsertedAuthor = new MenuItem(annotators.annMenu, SWT.RADIO);
-						MainShell.shell.annotators.insertAnnotator(annotatorName);
+						Annotator ann = Annotator.getAnnotator( annotatorName );
+						MainShell.shell.annotators.insert( ann );
 						mntmInsertedAuthor.addSelectionListener(new SelectionAdapter() {
 							@Override
 							public void widgetSelected(SelectionEvent e) {

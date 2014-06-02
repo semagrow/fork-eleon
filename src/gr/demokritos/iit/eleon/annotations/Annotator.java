@@ -38,18 +38,72 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 package gr.demokritos.iit.eleon.annotations;
 
+import gr.demokritos.iit.eleon.MainShell;
+
+import java.util.HashMap;
+
 import com.hp.hpl.jena.rdf.model.Resource;
 
 
 public class Annotator implements Comparable<Annotator>
 {
+	static private final String uriPrefix = "http://eleon.iit.demokritos.gr/user#";
+	static private final HashMap<String,Annotator> masterList;
+	static {
+		masterList = new HashMap<String,Annotator>( 10 );
+	}
+	
 	private final Resource uri;
 	private final String login;
 	
-	public Annotator( Resource uri, String login )
+	private Annotator( Resource uri, String login )
 	{
 		this.uri = uri;
 		this.login = login;
+	}
+
+
+	/*
+	 * INSTANCE FACTORY
+	 */
+
+
+	/**
+	 * This method returns an {@link Annotator} object by the
+	 * given id. 
+	 * @param id The local identifier of the Annotator
+	 * @return
+	 */
+
+	static public Annotator getAnnotator( String id )
+	{
+		if( (id == null) || (id.length() == 0) ) { return null; }
+
+		Annotator retv = Annotator.masterList.get( id );
+		if( retv == null ) {
+			Resource u = MainShell.shell.ont.createResource( uriPrefix + id );
+			retv = new Annotator( u, id );
+			Annotator.masterList.put( id, retv );
+		}
+		return retv;
+	}
+
+
+	static public Annotator getAnnotator( Resource u, String id )
+	throws IllegalArgumentException
+	{
+		if( (id == null) || (id.length() == 0) ) { return null; }
+
+		Annotator retv = Annotator.masterList.get( id );
+		if( retv == null ) {
+			retv = new Annotator( u, id );
+			Annotator.masterList.put( id, retv );
+		}
+		else if( ! retv.getResource().equals(u) ) {
+			// id is used for a different annotator
+			throw new IllegalArgumentException( "Local identifier \"" + id + "\" is not unique: already used for " + retv.getResource().toString() );
+		}
+		return retv;
 	}
 
 

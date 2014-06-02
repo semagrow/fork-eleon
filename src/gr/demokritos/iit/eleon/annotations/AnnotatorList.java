@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 </p>
 
 @author Stasinos Konstantopoulos (INDIGO, 2009; RoboSKEL 2011; SemaGrow 2012-2014)
+@author Giannis Mouchakis (SemaGrow 2014)
 
 ***************/
 
@@ -39,6 +40,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 package gr.demokritos.iit.eleon.annotations;
 
 import gr.demokritos.iit.eleon.MainShell;
+import gr.demokritos.iit.eleon.facets.dataset.DatasetFacet;
 import gr.demokritos.iit.eleon.ui.InsertInMenuDialog;
 
 import java.util.ArrayList;
@@ -53,25 +55,18 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
 
 import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.rdf.model.Literal;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
+import com.hp.hpl.jena.rdf.model.*;
 
-/*
- * FIXME:
- * In various places in the code there is the assumption when referring to the
- * active annotator that login == uri.getLocalName()
- */
 
 public class AnnotatorList
 {
+	static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger( DatasetFacet.class );
+
 	public final Menu annMenu;
 	private List<Annotator> annList;
 	private Annotator active;
 	
+
 	public AnnotatorList( org.eclipse.swt.widgets.MenuItem parent )
 	{
 		this.annMenu = new Menu( parent );
@@ -79,6 +74,14 @@ public class AnnotatorList
 		this.active = null;
 	}
 
+
+	public void insert( Annotator newAnn )
+	{
+		if( ! this.annList.contains(newAnn) ) {
+			this.annList.add( newAnn );
+		}
+	}
+	
 	public Resource getActiveResource()
 	{
 		if( this.active == null ) { return null; }
@@ -96,19 +99,6 @@ public class AnnotatorList
 		if( this.annList.contains(newActive) ) {
 			this.active = newActive;
 		}
-	}
-	
-	public void insertAnnotator( String login ) {
-		for( Annotator ann : this.annList ) {
-			if( ann.getLogin().equals(login) ) {
-				this.active = ann;
-				return;
-			}
-		}
-		Annotator ann = new Annotator(
-				ResourceFactory.createResource("http://purl.org/dc/terms/identifier"
-						+ login), login);//TODO: will wee use this resource?
-		this.annList.add(ann);
 	}
 	
 	public void setActive( String login )
@@ -129,6 +119,11 @@ public class AnnotatorList
 		return false;
 	}
 	
+	/**
+	 * Loads information from an OntModel into the Java objects that support the
+	 * visual elements of the GUI.
+	 * @param model
+	 */
 	public void syncFrom( OntModel model )
 	{
 		annList.clear();
@@ -136,22 +131,32 @@ public class AnnotatorList
 		Property p2 = model.getProperty( "http://purl.org/dc/terms/identifier" );
 		StmtIterator stmts = model.listStatements( null, p1, (RDFNode)null );
 		while( stmts.hasNext() ) {
-			RDFNode o = stmts.next().getObject();
+			Statement s = stmts.next();
+			RDFNode o = s.getObject();
 			if( o.canAs(Resource.class) ) {
 				StmtIterator stmts2 = model.listStatements( o.asResource(), p2, (RDFNode)null );
 				if( stmts2.hasNext() ) {
-					RDFNode o2 = stmts2.next().getObject();
+					Statement s2 = stmts2.next();
+					RDFNode o2 = s2.getObject();
 					if( o2.canAs(Literal.class) ) {
-						Annotator ann = new Annotator( o.asResource(), o2.asLiteral().getString() );
-						if( !this.annList.contains(ann) ) { this.annList.add( ann ); }
+						Annotator ann;
+						try {
+							ann = Annotator.getAnnotator( o.asResource(), o2.asLiteral().getString() );
+							this.insert( ann );
+						}
+						catch( IllegalArgumentException ex ) {
+							// identifier is not unique
+							logger.warn( "Tried to map \"%s\" to %s:" + ex.getMessage(),
+									o2.asLiteral().getString(), o.asResource().getURI() );
+						}
 					}
 					else {
-						//TODO: explode
+						logger.warn( "Ignored statement %s: value is not a literal string", s2 );
 					}
 				}
 			}
 			else {
-				//TODO: explode
+				logger.warn( "Ignored statement %s: value is not a URI resource", s );
 			}
 		}
 		Collections.sort( this.annList );
@@ -202,7 +207,6 @@ public class AnnotatorList
 			mntmInsertedAuthor.setText( ann.getLogin() );
 			mntmInsertedAuthor.setData( ann );
 		}
-		
 	}
 
 	
