@@ -55,7 +55,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import com.hp.hpl.jena.rdf.model.*;
 
 
-public class EntityInclusionTreeFacet extends DatasetFacet implements TreeFacet
+public class TriplePatternTreeFacet extends DatasetFacet implements TreeFacet
 {
 	
 	
@@ -64,7 +64,7 @@ public class EntityInclusionTreeFacet extends DatasetFacet implements TreeFacet
 	 */
 
 	
-	public EntityInclusionTreeFacet( MainShell shell )
+	public TriplePatternTreeFacet( MainShell shell )
 	{
 		super( shell );
 	}
@@ -133,8 +133,8 @@ public class EntityInclusionTreeFacet extends DatasetFacet implements TreeFacet
 					String label = insert.open("Insert dataset label");
 					if (label == null) return;
 					TreeItem newItem = new TreeItem(selected[0], SWT.NONE);
-					DatasetNode data = new DatasetNode( null, mySelf, myShell.activeAnnSchemaName );
-					data.setOwner( myShell.currentAuthor );
+					DatasetNode data = new DatasetNode( null, mySelf );
+					data.setOwner( myShell.currentAnnotator );
 					newItem.setData(data);
 					newItem.setText(label);
 				}
@@ -163,12 +163,13 @@ public class EntityInclusionTreeFacet extends DatasetFacet implements TreeFacet
 					} else {
 						TreeItem selection = selected[0];
 						TreeItem item = new TreeItem(selection, SWT.NONE);
-						EntityInclusionTreeNode nodeData = new EntityInclusionTreeNode(null, mySelf, result[0], result[1], myShell.activeAnnSchemaName);
-						nodeData.setOwner( myShell.currentAuthor );
+						TriplePatternTreeNode nodeData =
+								new TriplePatternTreeNode( null, mySelf, null, result[0], null, null, result[1] );
+						nodeData.setOwner( myShell.currentAnnotator );
 						item.setData(nodeData);
 						String subjectPattern = result[0];
 						String objectPattern = result[1];
-						nodeData.setOwner( myShell.currentAuthor );
+						nodeData.setOwner( myShell.currentAnnotator );
 						String itemText = "";
 						/*if (subjectPattern != null) {
 							itemText += "(sbj)=" + subjectPattern + " ";
@@ -235,7 +236,7 @@ public class EntityInclusionTreeFacet extends DatasetFacet implements TreeFacet
 		                box.open();
 		                return;
 					}
-					Table table = EntityInclusionTreeFacet.this.myShell.table;
+					Table table = TriplePatternTreeFacet.this.myShell.table;
 					if (table != null && !table.isDisposed()) {
 						table.dispose();
 						table = null;
@@ -260,20 +261,65 @@ public class EntityInclusionTreeFacet extends DatasetFacet implements TreeFacet
 	 */
 
 	
-	protected PropertyTreeNode makeNode( Resource dataset, String defaultOwner )
+	protected TriplePatternTreeNode makeNode( Resource dataset, String defaultOwner )
 	{
-		Property prop = dataset.getModel().getProperty( "http://rdfs.org/ns/void#property" );
-		Statement stmt = dataset.getProperty( prop );
-		Resource myProperty;
-		if( stmt == null ) {
-			// This node is part of a per-property tree, but not a property partition
-			myProperty = null;
+		Property p; Statement stmt;
+		String label = "";
+
+		String subC = "";
+		p = dataset.getModel().getProperty( "http://rdf.iit.demokritos.gr/2013/sevod#subjectClass" );
+		stmt = dataset.getProperty( p );
+		if( stmt != null ) {
+			subC = stmt.getObject().asResource().getURI();
+			subC = this.myShell.ont.shortForm( subC );
+			label = "(" + subC + ")";
+		}
+		
+		String subR = "";
+		p = dataset.getModel().getProperty( "http://rdf.iit.demokritos.gr/2013/sevod#subjectRegexPattern" );
+		stmt = dataset.getProperty( p );
+		if( stmt != null ) {
+			subR = stmt.getObject().asLiteral().getString();
+			label += " " + subR; 
 		}
 		else {
-			myProperty = stmt.getObject().asResource();
+			label += " ?r";
 		}
-		PropertyTreeNode retv =
-				new PropertyTreeNode( dataset, this, myProperty, "activeAnnotationSchema" );
+		
+		String pred = "";
+		p = dataset.getModel().getProperty( "http://rdfs.org/ns/void#property" );
+		stmt = dataset.getProperty( p );
+		if( stmt != null ) {
+			pred = stmt.getObject().asResource().getURI();
+			pred = this.myShell.ont.shortForm( pred );
+			label += " " + pred; 
+		}
+		else {
+			label += " ?p ";
+		}
+		
+		String objC = "";
+		p = dataset.getModel().getProperty( "http://rdf.iit.demokritos.gr/2013/sevod#objectClass" );
+		stmt = dataset.getProperty( p );
+		if( stmt != null ) {
+			objC = stmt.getObject().asResource().getURI();
+			objC = this.myShell.ont.shortForm( objC );
+			label = "(" + objC + ") ";
+		}
+		
+		String objR = "";
+		p = dataset.getModel().getProperty( "http://rdf.iit.demokritos.gr/2013/sevod#objectRegexPattern" );
+		stmt = dataset.getProperty( p );
+		if( stmt != null ) {
+			objR = stmt.getObject().asLiteral().getString();
+			label += objR;
+		}
+		else {
+			label += "?v";
+		}
+
+		TriplePatternTreeNode retv =
+				new TriplePatternTreeNode( dataset, this, subC, subR, pred, objC, objR );
 
 		copyValues( dataset, retv );
 		
@@ -281,14 +327,7 @@ public class EntityInclusionTreeFacet extends DatasetFacet implements TreeFacet
 			retv.setOwner( defaultOwner );
 		}
 		if( retv.getLabel() == null ) {
-			if( myProperty != null ) {
-				// label defaults to property name
-				String qname = this.myShell.ont.shortForm( myProperty.getURI() );
-				retv.setLabel( qname );
-			}
-			else {
-				throw new IllegalArgumentException( "Cannot make a property node without label and without a property" );
-			}
+			retv.setLabel( label );
 		}
 		return retv;
 	}

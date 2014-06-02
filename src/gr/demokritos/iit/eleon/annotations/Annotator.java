@@ -1,6 +1,6 @@
 /***************
 
-<p>Title: Property Tree Node</p>
+<p>Title: Annotator</p>
 
 <p>Description:
 
@@ -31,42 +31,61 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 </p>
 
-@author Giannis Mouchakis (SemaGrow 2014)
+@author Stasinos Konstantopoulos (INDIGO, 2009; RoboSKEL 2011; SemaGrow 2012-2014)
 
 ***************/
 
-package gr.demokritos.iit.eleon.facets.dataset;
 
-import gr.demokritos.iit.eleon.facets.TreeFacetNode;
+package gr.demokritos.iit.eleon.annotations;
 
 import com.hp.hpl.jena.rdf.model.Resource;
 
 
-public class PropertyTreeNode extends DatasetNode implements TreeFacetNode
+public class Annotator implements Comparable<Annotator>
 {
-	private Resource ontProperty = null;
-
-	/**
-	 * @param ontProperty
-	 */
-	public PropertyTreeNode( Resource res, DatasetFacet myFacet, Resource ontProperty, String activeAnnotationSchema )
+	private final Resource uri;
+	private final String login;
+	
+	public Annotator( Resource uri, String login )
 	{
-		super( res, myFacet );
-		this.ontProperty = ontProperty;
+		this.uri = uri;
+		this.login = login;
+	}
+
+
+	/*
+	 * Object IMPLEMENTATION
+	 */
+	
+
+	public boolean equals( Object that )
+	{
+		if( that == null ) { return false; }
+		else if( that instanceof Annotator ) {
+			return ((Annotator)that).login.equals( this.login );
+		}
+		else { return false; }
+	}
+
+	
+	
+	/*
+	 * Comparable IMPLEMENTATION
+	 */
+
+	
+	@Override
+	public int compareTo( Annotator that )
+	{
+		return this.login.compareTo( that.login );
 	}
 	
+
+	/*
+	 * Annotator METHODS 
+	 */
 	
-	/**
-	 * @return the ontProperty
-	 */
-	public Resource getProperty()
-	{ return ontProperty; }
-
-	/**
-	 * @param ontProperty the ontProperty to set
-	 */
-	public void setProperty( Resource ontProperty )
-	{ this.ontProperty = ontProperty; }
-
+	Resource getResource() { return this.uri; }
+	String getLogin() { return this.login; }
 
 }

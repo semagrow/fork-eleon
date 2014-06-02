@@ -129,6 +129,7 @@ public class OWLFile implements PersistenceBackend
 
 		// TODO: find the label
 		this.label = "LABEL";
+		this.myShell.annotators.syncFrom( this.myShell.ont );
 	}
 
 	
@@ -151,6 +152,7 @@ public class OWLFile implements PersistenceBackend
 	private void loadSchemas()
 	throws IOException
 	{
+		// TODO: only load what is needed
 		java.io.BufferedInputStream io =
 				new java.io.BufferedInputStream(
 						ClassLoader.getSystemClassLoader().getResourceAsStream( "void.rdf" ) );

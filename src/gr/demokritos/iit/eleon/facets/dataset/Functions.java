@@ -49,7 +49,7 @@ public class Functions {
 	 */
 	public static boolean notDatasourceUnderRoot(TreeItem selectedItem, Tree treeCopy) {
 		boolean isRoot = selectedItem.getText().equals("root");
-		boolean isPerEntityNode = treeCopy.getSelection()[0].getData() instanceof EntityInclusionTreeNode;
+		boolean isPerEntityNode = treeCopy.getSelection()[0].getData() instanceof TriplePatternTreeNode;
 		boolean isPerPropertyNode = treeCopy.getSelection()[0].getData() instanceof PropertyTreeNode;
 		if ((isRoot && isPerEntityNode) || (isRoot && isPerPropertyNode)) {
 			return true;

@@ -1,4 +1,4 @@
-@prefix : <http://www.konstant.gr/ontologies/2014/4/untitled-ontology-59#> .
+@prefix : <http://rdf.iit.demokritos.gr/2014/eleon-testcases/test1#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix svd: <http://rdf.iit.demokritos.gr/2013/sevod#> .
@@ -8,9 +8,9 @@
 @prefix void: <http://rdfs.org/ns/void#> .
 @prefix wdrs: <http://www.w3.org/2007/05/powder-s#> .
 
-@base <http://www.konstant.gr/ontologies/2014/4/untitled-ontology-59> .
+@base <http://rdf.iit.demokritos.gr/2014/eleon-testcases/test1> .
 
-<http://www.konstant.gr/ontologies/2014/4/untitled-ontology-59>
+<http://rdf.iit.demokritos.gr/2014/eleon-testcases/test1>
           rdf:type owl:Ontology ;
           owl:imports <http://rdf.iit.demokritos.gr/2013/sevod> , <http://vocab.deri.ie/void> .
 
@@ -27,27 +27,30 @@ svd:facet a rdf:Property .
 svd:datasetTop void:subset :dataset1, :dataset2 ;
           <http://purl.org/dc/terms/title> "root" .
 
+:stasinos <http://purl.org/dc/terms/identifier> "stasinos" .
+:isi <http://purl.org/dc/terms/identifier> "ISI" .
+
 :dataset1 rdf:type void:Dataset ;
-          wdrs:issuedby "stasinos" ;
+          wdrs:issuedby :stasinos ;
           <http://purl.org/dc/terms/title> "T4F" ;
           <http://purl.org/dc/elements/1.1/creator> "DLO" ;
           svd:facet svd:propertyFacet ;
           void:subset :dataset1a , :dataset1b .
 
 :dataset1a rdf:type void:Dataset ;
-          wdrs:issuedby "stasinos" ;
+          wdrs:issuedby :stasinos ;
           void:property rdf:type ;
           svd:facet svd:propertyFacet .
 
 :dataset1b rdf:type void:Dataset ;
-          wdrs:issuedby "stasinos" ;
+          wdrs:issuedby :stasinos ;
           <http://purl.org/dc/terms/title> "subclass" ;
           void:property rdfs:subClassOf ;
           svd:facet svd:propertyFacet ;
           void:property <http://xmlns.com/foaf/0.1/homepage> .
 
 :dataset2 rdf:type void:Dataset ;
-          wdrs:issuedby "isi" ;
+          wdrs:issuedby :isi ;
           <http://purl.org/dc/terms/title> "ISI-MIP" ;
           <http://purl.org/dc/elements/1.1/creator> "isimip" ;
           svd:facet svd:propertyFacet ;

@@ -59,6 +59,7 @@ import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 import gr.demokritos.iit.eleon.annotations.AnnotationVocabulary;
+import gr.demokritos.iit.eleon.annotations.AnnotatorList;
 import gr.demokritos.iit.eleon.annotations.NominalSet;
 import gr.demokritos.iit.eleon.commons.Constants;
 import gr.demokritos.iit.eleon.facets.*;
@@ -71,6 +72,11 @@ public class MainShell extends Shell
 {
 	public static MainShell shell;
 
+	// Menu Items
+	private Menu dataSchemaMenu;
+	public final AnnotatorList annotators;
+	public String currentAnnotator;
+	
 	// infoboxes acros the top of the screen
 	protected Text textEndpoint;
 
@@ -80,9 +86,6 @@ public class MainShell extends Shell
 	public Table table;
 	protected List list;
 	private Text textTitle;
-	public String currentAuthor;
-	private Menu dataSchemaMenu;
-	//private MenuItem mntmNew;
 	public PersistenceBackend persistence;
 	//Menu annotationSchemaMenu;
 	public String activeAnnSchemaName;
@@ -243,41 +246,41 @@ public class MainShell extends Shell
                 System.exit(0);
         	}
         });
-        exitItem.setText("&Exit");
+        exitItem.setText( "&Exit" );
 		
 		MenuItem mntmAuthor = new MenuItem(menu, SWT.CASCADE);
-		mntmAuthor.setText("A&uthor");
+		mntmAuthor.setText( "&Annotator" );
 		
-		final Menu AuthorMenu = new Menu(mntmAuthor);
-		mntmAuthor.setMenu(AuthorMenu);
+		this.annotators = new AnnotatorList( mntmAuthor );
+		mntmAuthor.setMenu( this.annotators.annMenu );
 		
-		MenuItem mntmNewAuthor = new MenuItem(AuthorMenu, SWT.PUSH);
+		MenuItem mntmNewAuthor = new MenuItem(this.annotators.annMenu, SWT.PUSH);
 		mntmNewAuthor.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				InsertInMenuDialog dialog = new InsertInMenuDialog(shell);
-				final String authorName = dialog.open("Insert author");
-				if (authorName != null && ( ! authorName.equals("") )) {
+				final String annotatorName = dialog.open("Insert new annotator");
+				if (annotatorName != null && ( ! annotatorName.equals("") )) {
 					boolean not_found = true;
-					for (MenuItem item : AuthorMenu.getItems()) {
-						if (item.getText().equals(authorName)) {
+					for (MenuItem item : annotators.annMenu.getItems()) {
+						if (item.getText().equals(annotatorName)) {
 							MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
-			                box.setText("Author Exists");
-			                box.setMessage("Author \"" + authorName + "\" already exists");
+			                box.setText("Annotator name already used");
+			                box.setMessage("Annotator name \"" + annotatorName + "\" already used");
 			                box.open();
 			                not_found = false;
 			                break;
 						}
 					}
 					if (not_found) {
-						MenuItem mntmInsertedAuthor = new MenuItem(AuthorMenu, SWT.RADIO);
+						MenuItem mntmInsertedAuthor = new MenuItem(annotators.annMenu, SWT.RADIO);
 						mntmInsertedAuthor.addSelectionListener(new SelectionAdapter() {
 							@Override
 							public void widgetSelected(SelectionEvent e) {
-								currentAuthor = authorName;
+								currentAnnotator = annotatorName;
 							}
 						});
-						mntmInsertedAuthor.setText(authorName);
+						mntmInsertedAuthor.setText(annotatorName);
 					}
 				}
 			}
@@ -303,7 +306,7 @@ public class MainShell extends Shell
 		});
 		
 		final MenuItem mntmVoID_Semagrow = new MenuItem(annotationSchemaMenu, SWT.RADIO);
-		mntmVoID_Semagrow.setText("VoID/SemaGrow extension");
+		mntmVoID_Semagrow.setText("Sevod");
 		mntmVoID_Semagrow.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -373,7 +376,7 @@ public class MainShell extends Shell
 			public void widgetSelected(SelectionEvent e) {
 				MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
                 box.setText("About");
-                box.setMessage("Eleon 3.0 from NCSR \"Demokritos\"");
+                box.setMessage("Eleon 3.0 \\ Copyright (c) 2001-2014 National Centre for Scientific Research \"Demokritos\"");
                 box.open();
 			}
 		});
@@ -406,10 +409,10 @@ public class MainShell extends Shell
 					table.dispose();
 					table = null;
 				}
-				if ( ! hasSelectedAuthor(AuthorMenu)) {
+				if ( ! annotators.hasSelected() ) {
 					MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
 	                box.setText("Choose author");
-	                box.setMessage("Choose an author from the \"Author\" menu first.");
+	                box.setMessage("Choose an author from the \"Annotator\" menu first.");
 	                box.open();
 	                return;
 				}		
@@ -465,7 +468,7 @@ public class MainShell extends Shell
 		textTitle.setBounds(46, 30, 266, 24);
 		
 		propertyTree = new PropertyTreeFacet( this );
-		entityTree = new EntityInclusionTreeFacet( this );
+		entityTree = new TriplePatternTreeFacet( this );
 		
 		createContents();
 	}
@@ -584,7 +587,7 @@ public class MainShell extends Shell
 				
 				DatasetNode treeFacetNode = (DatasetNode) tree.getSelection()[0].getData();
 				String creator = treeFacetNode.getOwner();
-				if ( ! creator.equals(currentAuthor)) {
+				if ( ! creator.equals(currentAnnotator)) {
 					MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
 	                box.setText("Value read-only");
 	                box.setMessage("You cannot edit this value because it was inserted by author \"" + creator + "\".");
@@ -653,7 +656,7 @@ public class MainShell extends Shell
 					property_values[schemaIndex][index] = proper_text;//TODO:check what happens if user clicks cancel in the dialog
 					
 					item.setText(1, proper_text);
-					fillPerPropertyTree(ontModel.listAllOntProperties().toList(), currentAuthor, tree.getSelection()[0]);
+					fillPerPropertyTree(ontModel.listAllOntProperties().toList(), currentAnnotator, tree.getSelection()[0]);
 					return;
 				 }
 				 
@@ -804,15 +807,6 @@ public class MainShell extends Shell
 		mntmNewVoc.setData(filename);
 	}
 	
-	
-	private boolean hasSelectedAuthor(Menu AuthorMenu) {
-		for (MenuItem item : AuthorMenu.getItems()) {
-			if (item.getSelection()) {
-				return true;
-			}
-		}
-		return false;
-	}
 	
 	
 	/*

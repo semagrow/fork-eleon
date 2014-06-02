@@ -41,7 +41,7 @@ import com.hp.hpl.jena.rdf.model.Resource;
 
 import gr.demokritos.iit.eleon.facets.TreeFacetNode;
 
-public class EntityInclusionTreeNode extends DatasetNode implements TreeFacetNode
+public class TriplePatternTreeNode extends DatasetNode implements TreeFacetNode
 {
 	
 	private String subjectPattern;
@@ -51,10 +51,11 @@ public class EntityInclusionTreeNode extends DatasetNode implements TreeFacetNod
 	 * @param subjectPattern
 	 * @param objectPattern
 	 */
-	public EntityInclusionTreeNode(  Resource res, DatasetFacet facet,
-			String subjectPattern, String objectPattern, String activeAnnotationSchema )
+	public TriplePatternTreeNode(  Resource res, DatasetFacet facet,
+			String subjectPattern, String subjectClass,
+			String predicate, String objectClass, String objectPattern )
 	{
-		super( res, facet, activeAnnotationSchema );
+		super( res, facet );
 		this.subjectPattern = subjectPattern;
 		this.objectPattern = objectPattern;
 	}

@@ -190,7 +190,7 @@ public class ELEONXML implements PersistenceBackend
 			if( facet instanceof PropertyTreeFacet ) {
 				element.setAttribute("type", "per_property");
 			}
-			else if( facet instanceof EntityInclusionTreeFacet ) {
+			else if( facet instanceof TriplePatternTreeFacet ) {
 				element.setAttribute("type", "per_entity");
 			}
 			else {
@@ -310,8 +310,8 @@ public class ELEONXML implements PersistenceBackend
 			}
 			treeItemNode.setAttribute("void:sparqlEndpoint", (String)treeNodeData.getValue("void:sparqlEnpoint") );
 			treeItemNode.setAttribute("dc:title", treeNodeData.getLabel());
-			if (treeItemCurrent.getData() instanceof EntityInclusionTreeNode) {
-				EntityInclusionTreeNode perEntityNode = (EntityInclusionTreeNode) treeItemCurrent.getData();
+			if (treeItemCurrent.getData() instanceof TriplePatternTreeNode) {
+				TriplePatternTreeNode perEntityNode = (TriplePatternTreeNode) treeItemCurrent.getData();
 				String subjectPattern = perEntityNode.getSubjectPattern();
 				String objectPattern = perEntityNode.getObjectPattern();
 				if (subjectPattern != null) {
@@ -402,7 +402,7 @@ public class ELEONXML implements PersistenceBackend
 					data.setValue( "void:sparqlEndpoint", void_sparqlEndpoint );
 					treeItem.setData(data);
 				}
-				else if( facet.getClass().equals(EntityInclusionTreeFacet.class) ) {
+				else if( facet.getClass().equals(TriplePatternTreeFacet.class) ) {
 					NodeList nodeList = node.getChildNodes();
 					String subjectPattern = null;
 					String objectPattern = null;
@@ -433,7 +433,8 @@ public class ELEONXML implements PersistenceBackend
 					}
 					// FIXME: Resource should not be null, but be read in from DOM
 					// MIght not be worth fixing, if ELEON/XML is going to disappear
-					EntityInclusionTreeNode data = new EntityInclusionTreeNode( null, facet, subjectPattern, objectPattern, "activeAnnotationSchema" );
+					TriplePatternTreeNode data =
+							new TriplePatternTreeNode( null, facet, subjectPattern, null, null, objectPattern, null );
 					data.setValue( "dc:title", dc_title );
 					data.setValue( "dc:creator", dc_creator );
 					data.setValue( "void:triples", void_triples );

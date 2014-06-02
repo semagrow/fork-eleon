@@ -272,9 +272,25 @@ public class AnnotationVocabulary
 		property_is_editable[1][i] = true;
 		
 		++i;
+		property_qnames[1][i] = "svd:subjectClass";
+		property_uris[1][i] = "http://rdf.iit.demokritos.gr/2013/sevod#subjectClass";
+		property_value_types[1][i] = String.class;
+		property_is_functional[1][i] = true;	
+		property_is_visible[1][i] = true;
+		property_is_editable[1][i] = true;
+		
+		++i;
 		property_qnames[1][i] = "svd:objectRegexPattern";
 		property_uris[1][i] = "http://rdf.iit.demokritos.gr/2013/sevod#objectRegexPattern";
 		property_value_types[1][i] = Integer.class;
+		property_is_functional[1][i] = true;	
+		property_is_visible[1][i] = true;
+		property_is_editable[1][i] = true;
+		
+		++i;
+		property_qnames[1][i] = "svd:objectClass";
+		property_uris[1][i] = "http://rdf.iit.demokritos.gr/2013/sevod#objectClass";
+		property_value_types[1][i] = String.class;
 		property_is_functional[1][i] = true;	
 		property_is_visible[1][i] = true;
 		property_is_editable[1][i] = true;

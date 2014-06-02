@@ -52,7 +52,7 @@ public class DatasetNode implements TreeFacetNode
 	private final DatasetFacet myFacet;
 	private final Resource res;
 
-	public DatasetNode( Resource res, DatasetFacet myFacet, String annotationSchema )
+	public DatasetNode( Resource res, DatasetFacet myFacet )
 	{
 		super();
 		this.myFacet = myFacet;
@@ -108,7 +108,7 @@ public class DatasetNode implements TreeFacetNode
 
 	public String getOwner()
 	{
-		return (String) property_values[MainShell.shell.activeAnnSchema][0];
+		return ((Resource)property_values[MainShell.shell.activeAnnSchema][0]).getURI();
 	}
 	
 	public void setOwner( String owner )

@@ -147,7 +147,7 @@ public abstract class DatasetFacet implements TreeFacet
 				if( stmt.getSubject().equals(top) ) {
 					Resource subSet = stmt.getObject().asResource();
 					// top level nodes should always have an explicit owner statement
-					PropertyTreeNode n = makeNode( subSet, (String)null );
+					DatasetNode n = makeNode( subSet, (String)null );
 					TreeItem treeItem = new TreeItem( this.getRoot(), SWT.NONE );
 					treeItem.setText( n.getLabel() );
 					treeItem.setData( n );
@@ -187,7 +187,7 @@ public abstract class DatasetFacet implements TreeFacet
 				if( father != null ) {
 					// create a new Node
 					
-					PropertyTreeNode n = makeNode( subSet, ((DatasetNode)father.getData()).getOwner() );
+					DatasetNode n = makeNode( subSet, ((DatasetNode)father.getData()).getOwner() );
 					// look for a Tree item that points to the same Node
 					// (this happens if already added under a different father node)
 					Iterator<TreeItem> it3 = done.iterator();
@@ -197,7 +197,7 @@ public abstract class DatasetFacet implements TreeFacet
 						if( n.equals(treeItem.getData()) ) {
 							// found a node that equals n
 							// the new n should be thrown away 
-							n = (PropertyTreeNode)treeItem.getData();
+							n = (DatasetNode)treeItem.getData();
 							found = true;
 						}
 					}
@@ -206,7 +206,7 @@ public abstract class DatasetFacet implements TreeFacet
 					treeItem.setText( n.getLabel() );
 					treeItem.setData( n );
 					done.add( treeItem );
-					logger.debug( "Added under %s", ((PropertyTreeNode)father.getData()).getLabel() );
+					logger.debug( "Added under %s", ((DatasetNode)father.getData()).getLabel() );
 				}
 				else {
 					// keep for next iteration
@@ -261,7 +261,7 @@ public abstract class DatasetFacet implements TreeFacet
 	 */
 
 
-	abstract protected PropertyTreeNode makeNode( Resource dataset, String defaultOwner );
+	abstract protected DatasetNode makeNode( Resource dataset, String defaultOwner );
 	
 	protected void copyValues( Resource dataset, DatasetNode retv )
 	{
