@@ -295,7 +295,7 @@ public class ELEONXML implements PersistenceBackend
 			//treeItemNode.setAttribute("name", ((TreeNodeData) treeItemCurrent.getData()).getOntProperty().toString());
 			treeItemNode.setAttribute("name", treeItemCurrent.getText());
 			DatasetNode treeNodeData = (DatasetNode) treeItemCurrent.getData();
-			treeItemNode.setAttribute("dc:creator", treeNodeData.getOwner());
+			treeItemNode.setAttribute("dc:creator", treeNodeData.getOwner().getLocalName());
 			Integer void_size = (Integer)treeNodeData.getValue( "void:triples" );
 			if (void_size != null) {
 				treeItemNode.setAttribute("void:triples", void_size.toString());

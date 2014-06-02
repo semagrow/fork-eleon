@@ -106,12 +106,12 @@ public class DatasetNode implements TreeFacetNode
 	public DatasetFacet getFacet()
 	{ return this.myFacet; }
 
-	public String getOwner()
+	public Resource getOwner()
 	{
-		return ((Resource)property_values[MainShell.shell.activeAnnSchema][0]).getURI();
+		return (Resource)property_values[MainShell.shell.activeAnnSchema][0];
 	}
 	
-	public void setOwner( String owner )
+	public void setOwner( Resource owner )
 	{
 		property_values[MainShell.shell.activeAnnSchema][0] = owner;
 	}

@@ -147,7 +147,7 @@ public abstract class DatasetFacet implements TreeFacet
 				if( stmt.getSubject().equals(top) ) {
 					Resource subSet = stmt.getObject().asResource();
 					// top level nodes should always have an explicit owner statement
-					DatasetNode n = makeNode( subSet, (String)null );
+					DatasetNode n = makeNode( subSet, (Resource)null );
 					TreeItem treeItem = new TreeItem( this.getRoot(), SWT.NONE );
 					treeItem.setText( n.getLabel() );
 					treeItem.setData( n );
@@ -261,7 +261,7 @@ public abstract class DatasetFacet implements TreeFacet
 	 */
 
 
-	abstract protected DatasetNode makeNode( Resource dataset, String defaultOwner );
+	abstract protected DatasetNode makeNode( Resource dataset, Resource defaultOwner );
 	
 	protected void copyValues( Resource dataset, DatasetNode retv )
 	{

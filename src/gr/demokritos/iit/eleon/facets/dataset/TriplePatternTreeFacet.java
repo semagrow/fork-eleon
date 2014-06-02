@@ -134,7 +134,7 @@ public class TriplePatternTreeFacet extends DatasetFacet implements TreeFacet
 					if (label == null) return;
 					TreeItem newItem = new TreeItem(selected[0], SWT.NONE);
 					DatasetNode data = new DatasetNode( null, mySelf );
-					data.setOwner( myShell.currentAnnotator );
+					data.setOwner( myShell.annotators.getActiveResource() );
 					newItem.setData(data);
 					newItem.setText(label);
 				}
@@ -165,11 +165,11 @@ public class TriplePatternTreeFacet extends DatasetFacet implements TreeFacet
 						TreeItem item = new TreeItem(selection, SWT.NONE);
 						TriplePatternTreeNode nodeData =
 								new TriplePatternTreeNode( null, mySelf, null, result[0], null, null, result[1] );
-						nodeData.setOwner( myShell.currentAnnotator );
+						nodeData.setOwner( myShell.annotators.getActiveResource() );
 						item.setData(nodeData);
 						String subjectPattern = result[0];
 						String objectPattern = result[1];
-						nodeData.setOwner( myShell.currentAnnotator );
+						nodeData.setOwner( myShell.annotators.getActiveResource() );
 						String itemText = "";
 						/*if (subjectPattern != null) {
 							itemText += "(sbj)=" + subjectPattern + " ";
@@ -261,7 +261,7 @@ public class TriplePatternTreeFacet extends DatasetFacet implements TreeFacet
 	 */
 
 	
-	protected TriplePatternTreeNode makeNode( Resource dataset, String defaultOwner )
+	protected TriplePatternTreeNode makeNode( Resource dataset, Resource defaultOwner )
 	{
 		Property p; Statement stmt;
 		String label = "";

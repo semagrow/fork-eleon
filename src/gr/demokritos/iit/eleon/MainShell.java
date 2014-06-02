@@ -57,6 +57,7 @@ import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntModelSpec;
 import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.Resource;
 
 import gr.demokritos.iit.eleon.annotations.AnnotationVocabulary;
 import gr.demokritos.iit.eleon.annotations.AnnotatorList;
@@ -75,7 +76,6 @@ public class MainShell extends Shell
 	// Menu Items
 	private Menu dataSchemaMenu;
 	public final AnnotatorList annotators;
-	public String currentAnnotator;
 	
 	// infoboxes acros the top of the screen
 	protected Text textEndpoint;
@@ -277,7 +277,7 @@ public class MainShell extends Shell
 						mntmInsertedAuthor.addSelectionListener(new SelectionAdapter() {
 							@Override
 							public void widgetSelected(SelectionEvent e) {
-								currentAnnotator = annotatorName;
+								MainShell.shell.annotators.setActive( annotatorName );
 							}
 						});
 						mntmInsertedAuthor.setText(annotatorName);
@@ -473,7 +473,7 @@ public class MainShell extends Shell
 		createContents();
 	}
 	
-	protected void fillPerPropertyTree(java.util.List<OntProperty> propertiesList, String author, TreeItem root) {
+	protected void fillPerPropertyTree(java.util.List<OntProperty> propertiesList, Resource author, TreeItem root) {
 		/*TreeItem root = new TreeItem(treePerProperty, SWT.NONE);
 		root.setText("root");*/
 		ArrayList<OntProperty> notInsertedPropertiesList = new ArrayList<OntProperty>();
@@ -507,7 +507,7 @@ public class MainShell extends Shell
 	}
 	
 	
-	protected boolean insertChildInTree(TreeItem treeItem, OntProperty ontProperty, OntProperty superProperty, String author) {
+	protected boolean insertChildInTree(TreeItem treeItem, OntProperty ontProperty, OntProperty superProperty, Resource author) {
 		boolean inserted = false;
 		for(TreeItem child : treeItem.getItems()) {
 			if (((PropertyTreeNode) child.getData()).getProperty().equals(superProperty)) {
@@ -586,11 +586,12 @@ public class MainShell extends Shell
 				}
 				
 				DatasetNode treeFacetNode = (DatasetNode) tree.getSelection()[0].getData();
-				String creator = treeFacetNode.getOwner();
-				if ( ! creator.equals(currentAnnotator)) {
+				Resource creator = treeFacetNode.getOwner();
+				assert creator != null;  
+				if( ! creator.equals(MainShell.shell.annotators.getActiveResource()) ) {
 					MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
 	                box.setText("Value read-only");
-	                box.setMessage("You cannot edit this value because it was inserted by author \"" + creator + "\".");
+	                box.setMessage("You cannot edit this value because it is owned by user \"" + creator.getLocalName() + "\".");
 	                box.open();
 	                return;
 				}
@@ -606,8 +607,8 @@ public class MainShell extends Shell
 				//Get Property name
 				final String property = item.getText(0);
 				
-				 if (property.equals("dc:creator")) {//TODO:breaks independence from property names!
-					 item.setText(1, creator);
+				 if( AnnotationVocabulary.property_qnames[0][0].equals(property)) {
+					 item.setText(1, creator.getLocalName());
 					 return;
 				 }
 				
@@ -656,7 +657,7 @@ public class MainShell extends Shell
 					property_values[schemaIndex][index] = proper_text;//TODO:check what happens if user clicks cancel in the dialog
 					
 					item.setText(1, proper_text);
-					fillPerPropertyTree(ontModel.listAllOntProperties().toList(), currentAnnotator, tree.getSelection()[0]);
+					fillPerPropertyTree(ontModel.listAllOntProperties().toList(), annotators.getActiveResource(), tree.getSelection()[0]);
 					return;
 				 }
 				 

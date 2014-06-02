@@ -130,7 +130,7 @@ public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 					if (label == null) return;
 					TreeItem newItem = new TreeItem(selected[0], SWT.NONE);
 					DatasetNode data = new DatasetNode( null, mySelf );
-					data.setOwner( myShell.currentAnnotator );
+					data.setOwner( myShell.annotators.getActiveResource() );
 					newItem.setData(data);
 					newItem.setText(label);
 				}
@@ -198,7 +198,7 @@ public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 	 * INTERNAL HELPERS 
 	 */
 
-	protected PropertyTreeNode makeNode( Resource dataset, String defaultOwner )
+	protected PropertyTreeNode makeNode( Resource dataset, Resource defaultOwner )
 	{
 		Property prop = dataset.getModel().getProperty( "http://rdfs.org/ns/void#property" );
 		Statement stmt = dataset.getProperty( prop );

@@ -59,6 +59,11 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
+/*
+ * FIXME:
+ * In various places in the code there is the assumption when referring to the
+ * active annotator that login == uri.getLocalName()
+ */
 
 public class AnnotatorList
 {
@@ -73,21 +78,32 @@ public class AnnotatorList
 		this.active = null;
 	}
 
-	public Annotator getActiveResource()
+	public Resource getActiveResource()
 	{
-		return this.active;
+		if( this.active == null ) { return null; }
+		else { return this.active.getResource(); }
 	}
 	
-	public Annotator getActiveLogin()
+	public String getActiveLogin()
 	{
-		return this.active;
+		if( this.active == null ) { return null; }
+		else { return this.active.getLogin(); }
 	}
 	
 	public void setActive( Annotator newActive )
 	{
 		if( this.annList.contains(newActive) ) {
 			this.active = newActive;
-			
+		}
+	}
+	
+	public void setActive( String login )
+	{
+		for( Annotator ann : this.annList ) {
+			if( ann.getLogin().equals(login) ) {
+				this.active = ann;
+				break;
+			}
 		}
 	}
 	
@@ -151,7 +167,7 @@ public class AnnotatorList
 						mntmInsertedAuthor.addSelectionListener(new SelectionAdapter() {
 							@Override
 							public void widgetSelected(SelectionEvent e) {
-								MainShell.shell.currentAnnotator = annotatorName;
+								MainShell.shell.annotators.setActive( annotatorName );
 							}
 						});
 						mntmInsertedAuthor.setText(annotatorName);
@@ -171,7 +187,6 @@ public class AnnotatorList
 			});
 			mntmInsertedAuthor.setText( ann.getLogin() );
 			mntmInsertedAuthor.setData( ann );
-
 		}
 		
 	}

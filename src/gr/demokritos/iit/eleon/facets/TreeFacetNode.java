@@ -37,6 +37,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 package gr.demokritos.iit.eleon.facets;
 
+import com.hp.hpl.jena.rdf.model.Resource;
+
 public interface TreeFacetNode
 {
 
@@ -45,7 +47,7 @@ public interface TreeFacetNode
 	 * @return the name of the owner of this node.
 	 */
 
-	public String getOwner();
+	public Resource getOwner();
 
 
 	/**
