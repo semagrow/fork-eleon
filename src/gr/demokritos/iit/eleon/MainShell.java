@@ -703,6 +703,19 @@ public class MainShell extends Shell
 				newEditor.addModifyListener(new ModifyListener() {
 					@Override
 					public void modifyText(ModifyEvent me) {
+						
+						for (int i = 0; i < AnnotationVocabulary.property_qnames[schemaIndex].length; i++) {
+							if (property.equals(AnnotationVocabulary.property_qnames[schemaIndex][i])) {
+								if ( ! AnnotationVocabulary.property_is_editable[schemaIndex][i] ) {
+									MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
+					                box.setText("Value read-only");
+					                box.setMessage("You cannot edit this value because it set as read-only by the chosen annotation schema.");
+					                box.open();
+					                return;
+								}
+							}
+						}
+						
 						//String oldValue = editor.getItem().getText(1);
 						//System.out.println(editor.getItem().getText(1));
 						Text text = (Text)editor.getEditor();
