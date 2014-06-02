@@ -274,10 +274,10 @@ public class MainShell extends Shell
 					}
 					if (not_found) {
 						MenuItem mntmInsertedAuthor = new MenuItem(annotators.annMenu, SWT.RADIO);
+						MainShell.shell.annotators.insertAnnotator(annotatorName);
 						mntmInsertedAuthor.addSelectionListener(new SelectionAdapter() {
 							@Override
 							public void widgetSelected(SelectionEvent e) {
-								MainShell.shell.annotators.insertAnnotator(annotatorName);
 								MainShell.shell.annotators.setActive( annotatorName );
 							}
 						});
