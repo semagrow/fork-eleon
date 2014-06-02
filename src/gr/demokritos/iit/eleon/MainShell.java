@@ -558,13 +558,15 @@ public class MainShell extends Shell
 		
 		int i = 0;
 		while(AnnotationVocabulary.property_qnames[schemaIndex][i] != null) {
-			TableItem item = new TableItem(table, SWT.NONE);
-			Object value = treeNodeData.property_values[schemaIndex][i];
-			String value_str = null;
-			if (value != null) {
-				value_str = value.toString();
+			if (AnnotationVocabulary.property_is_visible[schemaIndex][i]) {
+				TableItem item = new TableItem(table, SWT.NONE);
+				Object value = treeNodeData.property_values[schemaIndex][i];
+				String value_str = null;
+				if (value != null) {
+					value_str = value.toString();
+				}
+				item.setText(new String [] {AnnotationVocabulary.property_qnames[schemaIndex][i], value_str});
 			}
-			item.setText(new String [] {AnnotationVocabulary.property_qnames[schemaIndex][i], value_str});
 			i++;
 		}
 		
@@ -608,10 +610,10 @@ public class MainShell extends Shell
 				//Get Property name
 				final String property = item.getText(0);
 				
-				 if( AnnotationVocabulary.property_qnames[0][0].equals(property)) {
+				 /*if( AnnotationVocabulary.property_qnames[0][0].equals(property)) {
 					 item.setText(1, creator.getLocalName());
 					 return;
-				 }
+				 }*/
 				
 				 if (property.equals("void:vocabulary")) {//TODO:breaks independence from property names!
 					SelectVocabulariesDialog dialog = new SelectVocabulariesDialog(getShell());
