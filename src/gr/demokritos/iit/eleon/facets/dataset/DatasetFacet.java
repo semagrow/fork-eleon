@@ -151,7 +151,6 @@ public abstract class DatasetFacet implements TreeFacet
 					TreeItem treeItem = new TreeItem( this.getRoot(), SWT.NONE );
 					treeItem.setText( n.getLabel() );
 					treeItem.setData( n );
-					// TODO update owners' list
 					done.add( treeItem );
 					logger.debug( "Added under Root" );
 				}

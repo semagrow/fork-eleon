@@ -57,6 +57,7 @@ import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 /*
@@ -95,6 +96,19 @@ public class AnnotatorList
 		if( this.annList.contains(newActive) ) {
 			this.active = newActive;
 		}
+	}
+	
+	public void insertAnnotator( String login ) {
+		for( Annotator ann : this.annList ) {
+			if( ann.getLogin().equals(login) ) {
+				this.active = ann;
+				return;
+			}
+		}
+		Annotator ann = new Annotator(
+				ResourceFactory.createResource("http://purl.org/dc/terms/identifier"
+						+ login), login);//TODO: will wee use this resource?
+		this.annList.add(ann);
 	}
 	
 	public void setActive( String login )

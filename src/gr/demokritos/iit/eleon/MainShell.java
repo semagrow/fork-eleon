@@ -91,7 +91,7 @@ public class MainShell extends Shell
 	public String activeAnnSchemaName;
 	public Integer activeAnnSchema;
 
-	public OntModel ont = null;
+	public OntModel ont = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM );
 
 
 	/**
@@ -277,6 +277,7 @@ public class MainShell extends Shell
 						mntmInsertedAuthor.addSelectionListener(new SelectionAdapter() {
 							@Override
 							public void widgetSelected(SelectionEvent e) {
+								MainShell.shell.annotators.insertAnnotator(annotatorName);
 								MainShell.shell.annotators.setActive( annotatorName );
 							}
 						});
