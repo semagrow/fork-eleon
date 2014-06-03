@@ -288,6 +288,7 @@ public abstract class DatasetFacet implements TreeFacet
 	public void initTree()
 	{
 		this.myTree = new Tree( this.myShell, SWT.BORDER );
+		this.myTree.setBounds(318, 84, 369, 578);
 		TreeItem root = new TreeItem( myTree, SWT.NONE );
 		root.setText("root");
 		DatasetNode n = this.makeNode( this.top, null );

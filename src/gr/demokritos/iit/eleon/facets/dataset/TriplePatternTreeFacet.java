@@ -125,7 +125,7 @@ public class TriplePatternTreeFacet extends DatasetFacet implements TreeFacet
 				myShell.createTableContents( myTree );
 			}
 		});
-		myTree.setBounds(318, 84, 369, 578);
+		//myTree.setBounds(318, 84, 369, 578);
 		
 		/*TreeItem root = new TreeItem( myTree, SWT.NONE );
 		root.setText("root");*/

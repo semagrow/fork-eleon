@@ -120,7 +120,7 @@ public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 				myShell.createTableContents(myTree);
 			}
 		});
-		myTree.setBounds(318, 84, 369, 578);
+		//myTree.setBounds(318, 84, 369, 578);
 		
 		//insert menu for this tree
 		final Menu treeMenu = new Menu(myTree);
