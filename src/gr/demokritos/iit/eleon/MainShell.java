@@ -77,21 +77,27 @@ public class MainShell extends Shell
 	// Menu Items
 	private Menu dataSchemaMenu;
 	public final AnnotatorList annotators;
-	
-	// infoboxes acros the top of the screen
-	protected Text textEndpoint;
-
-	// hierarchy trees in the middle
-	TreeFacet propertyTree, entityTree;
-	// property values at the right
-	public Table table;
-	protected List list;
-	private Text textTitle;
-	public PersistenceBackend persistence;
 	//Menu annotationSchemaMenu;
 	public String activeAnnSchemaName;
 	public Integer activeAnnSchema;
+	
+	// infoboxes across the top of the screen
+	protected Text textEndpoint;
+	private Text textTitle;
+	
+	//facet list at the left
+	protected List list;
 
+	// hierarchy trees in the middle
+	TreeFacet propertyTree, entityTree;
+	
+	// property values at the right
+	public Table table;
+	
+	//persistence
+	public PersistenceBackend persistence;
+
+	//Ontology model
 	public OntModel ont = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM );
 
 
