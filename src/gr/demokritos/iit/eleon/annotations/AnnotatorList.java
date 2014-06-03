@@ -60,7 +60,7 @@ import com.hp.hpl.jena.rdf.model.*;
 
 public class AnnotatorList
 {
-	static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger( DatasetFacet.class );
+	static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger( AnnotatorList.class );
 
 	public final Menu annMenu;
 	private List<Annotator> annList;
