@@ -441,6 +441,7 @@ public class MainShell extends Shell
 		                box.setText("Info");
 		                box.setMessage("Choose a schema from the \"Data Schema\" menu first.");
 		                box.open();
+		                return;
 					}
 				} else if (list.getSelection()[0].toString().equals("per entity")) {
 					if( entityTree.getTree() == null ) {
