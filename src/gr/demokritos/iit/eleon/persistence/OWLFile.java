@@ -145,9 +145,18 @@ public class OWLFile implements PersistenceBackend
 		}
 		if( this.filename == null ) { return false; }
 
-		// TODO Auto-generated method stub
-		return false;
+		for( Facet facet : facets ) {
+			facet.syncTo( this.myShell.ont );
+		}
+		this.myShell.annotators.syncTo( this.myShell.ont );
+		
+		java.io.FileOutputStream file = new java.io.FileOutputStream( this.filename );
+		java.io.BufferedOutputStream buf = new java.io.BufferedOutputStream( file );
+		this.myShell.ont.write( buf, "TTL" );
+		buf.close();
+		return true;
 	}
+
 
 	private void loadSchemas()
 	throws IOException

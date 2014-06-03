@@ -55,7 +55,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
-import com.hp.hpl.jena.ontology.Individual;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.rdf.model.*;
@@ -66,6 +65,8 @@ public class TriplePatternTreeFacet extends DatasetFacet implements TreeFacet
 	static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger( TriplePatternTreeFacet.class );
 	static final String myRDFName = "http://rdf.iit.demokritos.gr/2013/sevod#patternFacet";
 	
+	private final Resource resMyself;	
+
 	
 	/*
 	 * CONSTRUCTOR
@@ -75,6 +76,7 @@ public class TriplePatternTreeFacet extends DatasetFacet implements TreeFacet
 	public TriplePatternTreeFacet( MainShell shell )
 	{
 		super( shell );
+		this.resMyself = this.myShell.ont.createResource( TriplePatternTreeFacet.myRDFName );
 	}
 	
 
@@ -86,7 +88,7 @@ public class TriplePatternTreeFacet extends DatasetFacet implements TreeFacet
 	@Override
 	public void initTree()
 	{
-		myTree = new Tree( this.myShell, SWT.BORDER );
+		super.initTree();
 		myTree.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
@@ -353,6 +355,12 @@ public class TriplePatternTreeFacet extends DatasetFacet implements TreeFacet
 			retv.setLabel( label );
 		}
 		return retv;
+	}
+
+
+	protected void write_facet( OntModel model, DatasetNode node )
+	{
+		model.add( node.getResource(), this.facet, this.resMyself );
 	}
 
 }

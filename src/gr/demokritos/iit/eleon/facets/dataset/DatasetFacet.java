@@ -70,16 +70,25 @@ public abstract class DatasetFacet implements TreeFacet
 	static final String Facet = "http://rdf.iit.demokritos.gr/2013/sevod#Facet";
 	static final String propFacet = "http://rdf.iit.demokritos.gr/2013/sevod#facet";
 
+	private final Resource top;
+	private final Property subsumes;
+	protected final Property facet;
+
 	protected Tree myTree;
 	protected MainShell myShell;
 	protected DatasetFacet mySelf;
 	private String title = "";
 	private String info = "";
+	
+	
 
 	protected DatasetFacet( MainShell shell )
 	{
 		this.mySelf = this;
 		this.myShell = shell;
+		this.top = this.myShell.ont.createResource( DatasetFacet.entityTop );
+		this.subsumes = this.myShell.ont.createProperty( DatasetFacet.propSubsumes );
+		this.facet = this.myShell.ont.createProperty( DatasetFacet.propFacet );
 	}
 
 	
@@ -240,11 +249,34 @@ public abstract class DatasetFacet implements TreeFacet
 
 
 	@Override
-	public void syncTo( OntModel ont )
+	public void syncTo( OntModel model )
 	{
-		Individual top = ont.getIndividual( DatasetFacet.entityTop );
+		TreeItem[] q = this.myTree.getItems();
+		List<TreeItem> queue = new ArrayList<TreeItem>();
+		for( TreeItem treeItem : q ) { queue.add( treeItem ); }
 
-	
+		while( ! queue.isEmpty() ) {
+			System.out.println("XX" + queue);
+			TreeItem treeItem = queue.get( 0 );
+			queue.remove( 0 );
+			TreeItem[] qq = treeItem.getItems();
+			for( TreeItem tt : qq ) { queue.add( tt ); }
+			
+			DatasetNode myself = (DatasetNode)treeItem.getData();
+			TreeItem parentItem = treeItem.getParentItem();
+			if( parentItem != null ) {
+				// only for non-root nodes
+				DatasetNode parent = (DatasetNode)parentItem.getData();
+				model.add( parent.getResource(), this.subsumes, myself.getResource() );
+			}
+			if( myself == null ) {
+				// I am the root
+			}
+			else {
+				myself.syncTo( model );
+				write_facet( model, myself );
+			}
+		}
 	}
 
 	
@@ -252,6 +284,16 @@ public abstract class DatasetFacet implements TreeFacet
 	 * TreeFacet IMPLEMENTATION
 	 */
 
+	@Override
+	public void initTree()
+	{
+		this.myTree = new Tree( this.myShell, SWT.BORDER );
+		TreeItem root = new TreeItem( myTree, SWT.NONE );
+		root.setText("root");
+		DatasetNode n = this.makeNode( this.top, null );
+		root.setData( n );
+	}
+ 
 	@Override
 	public Tree getTree() { return this.myTree; }
 	
@@ -270,8 +312,9 @@ public abstract class DatasetFacet implements TreeFacet
 
 
 	abstract protected DatasetNode makeNode( Resource dataset, Resource defaultOwner );
+	abstract protected void write_facet( OntModel model, DatasetNode node );
 	
-	protected void copyValues( Resource dataset, DatasetNode retv )
+	protected void copyValues( Resource dataset, DatasetNode node )
 	{
 		int i = 0;
 		while( AnnotationVocabulary.property_qnames[MainShell.shell.activeAnnSchema][i] != null ) {
@@ -281,28 +324,30 @@ public abstract class DatasetFacet implements TreeFacet
 			if( stmt != null ) {
 				RDFNode v = stmt.getObject();
 				if( v.canAs(Resource.class) ) {
-					retv.property_values[1][i] = v;
+					node.property_values[1][i] = v;
 				}
 				else if( v.canAs(Literal.class) ) {
 					com.hp.hpl.jena.datatypes.RDFDatatype dt = v.asLiteral().getDatatype();
 					if( dt == null ) {
 						// untyped literal, effectively a string
-						retv.property_values[MainShell.shell.activeAnnSchema][i] = v.asLiteral().getLexicalForm();
+						node.property_values[MainShell.shell.activeAnnSchema][i] = v.asLiteral().getLexicalForm();
 					}
 					else if( Integer.class.equals(dt.getJavaClass()) ) {
-						retv.property_values[MainShell.shell.activeAnnSchema][i] = new Integer( v.asLiteral().getInt() );
+						node.property_values[MainShell.shell.activeAnnSchema][i] = new Integer( v.asLiteral().getInt() );
 					}
 					else {
-						retv.property_values[MainShell.shell.activeAnnSchema][i] = v.asLiteral().getLexicalForm();
+						node.property_values[MainShell.shell.activeAnnSchema][i] = v.asLiteral().getLexicalForm();
 					}
 				}
 			}
 			else {
-				retv.property_values[MainShell.shell.activeAnnSchema][i] = null;
+				node.property_values[MainShell.shell.activeAnnSchema][i] = null;
 			}
 			++i;
 		}
 	}
+
+
 
 
 }

@@ -47,7 +47,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.*;
 
-import com.hp.hpl.jena.ontology.Individual;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.rdf.model.*;
@@ -61,7 +60,8 @@ public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 {
 	static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger( PropertyTreeFacet.class );
 	static final String myRDFName = "http://rdf.iit.demokritos.gr/2013/sevod#propertyFacet";
-	
+
+	private final Resource resMyself;
 
 	/*
 	 * CONSTRUCTOR
@@ -71,6 +71,7 @@ public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 	public PropertyTreeFacet( MainShell shell )
 	{
 		super( shell );
+		this.resMyself = this.myShell.ont.createResource( PropertyTreeFacet.myRDFName );
 	}
 	
 
@@ -82,7 +83,7 @@ public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 	@Override
 	public void initTree()
 	{
-		myTree = new Tree( this.myShell, SWT.BORDER );
+		super.initTree();
 		myTree.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
@@ -120,9 +121,6 @@ public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 			}
 		});
 		myTree.setBounds(318, 84, 369, 578);
-		
-		TreeItem root = new TreeItem(myTree, SWT.NONE);
-		root.setText("root");
 		
 		//insert menu for this tree
 		final Menu treeMenu = new Menu(myTree);
@@ -238,5 +236,10 @@ public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 		return retv;
 	}
 
+
+	protected void write_facet( OntModel model, DatasetNode node )
+	{
+		model.add( node.getResource(), this.facet, this.resMyself );
+	}
 
 }

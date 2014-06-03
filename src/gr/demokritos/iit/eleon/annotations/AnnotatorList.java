@@ -209,5 +209,11 @@ public class AnnotatorList
 		}
 	}
 
+
+	public void syncTo( OntModel model )
+	{
+		// TODO Auto-generated method stub
+	}
+
 	
 }

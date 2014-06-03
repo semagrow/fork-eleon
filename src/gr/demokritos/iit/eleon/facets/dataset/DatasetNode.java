@@ -38,7 +38,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 package gr.demokritos.iit.eleon.facets.dataset;
 
+import com.hp.hpl.jena.ontology.OntModel;
+import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.Statement;
 
 import gr.demokritos.iit.eleon.MainShell;
 import gr.demokritos.iit.eleon.annotations.AnnotationVocabulary;
@@ -163,5 +166,36 @@ public class DatasetNode implements TreeFacetNode
 			++i;
 		}
 	}
+	
+	public void syncTo( OntModel model )
+	{
+		// TODO: maintain dirty bits and only sync changes
+		int i = 0;
+		while( AnnotationVocabulary.property_qnames[MainShell.shell.activeAnnSchema][i] != null ) {
+			String uri = AnnotationVocabulary.property_uris[MainShell.shell.activeAnnSchema][i];
+			Property p = model.getProperty( uri );
+			Object value = this.property_values[MainShell.shell.activeAnnSchema][i];
+			Statement stmt;
+			if( value == null ) {
+				stmt = null;
+			}
+			else if( value instanceof Resource ) {
+				stmt = model.createStatement( this.res, p, (Resource)value );
+			}
+			else if( value instanceof Integer ) {
+				stmt = model.createLiteralStatement( this.res, p, ((Integer)value).intValue() );
+			}
+			else if( value instanceof String ) {
+				stmt = model.createLiteralStatement( this.res, p, (String)value );
+			}
+			else {
+				// TODO: warning
+				stmt = null;
+			}
+			if( stmt != null ) { model.add( stmt ); }
+			++i;
+		}
+	}
+
 	
 }
