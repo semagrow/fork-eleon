@@ -39,11 +39,17 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 package gr.demokritos.iit.eleon.facets.dataset;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.*;
 
+import com.hp.hpl.jena.ontology.Individual;
+import com.hp.hpl.jena.ontology.OntModel;
+import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.rdf.model.*;
 
 import gr.demokritos.iit.eleon.MainShell;
@@ -54,7 +60,9 @@ import gr.demokritos.iit.eleon.ui.InsertInMenuDialog;
 public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 {
 	static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger( PropertyTreeFacet.class );
+	static final String myRDFName = "http://rdf.iit.demokritos.gr/2013/sevod#propertyFacet";
 	
+
 	/*
 	 * CONSTRUCTOR
 	 */
@@ -176,22 +184,21 @@ public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 		
 	}
 
-	
-	/*
+
 	@Override
-	public void buildPropertyTree( Tree propertyTree )
+	public void syncFrom( OntModel ont )
 	{
-		ExtendedIterator<OntProperty> it = this.ont.listAllOntProperties();
-		while( it.hasNext() ) {
-			OntProperty p = it.next();
-			ExtendedIterator<? extends OntProperty> it2 = p.listSuperProperties( true );
-			while( it2.hasNext() ) {
-				OntProperty superp = it2.next();
-				// TODO
-			}
+		// Get all statements ?r void:subset ?o svd:facet svd:propertyFacet
+		OntProperty svd_facet = ont.getOntProperty( DatasetFacet.propFacet );
+		Resource svd_me = ont.createResource( PropertyTreeFacet.myRDFName );
+
+		List<Resource> datasets = new ArrayList<Resource>();
+		StmtIterator stmtss = ont.listStatements( null, svd_facet, svd_me );
+		while( stmtss.hasNext() ) {
+			datasets.add( stmtss.next().getSubject() );
 		}
+		syncFrom( ont, datasets );
 	}
-	*/
 
 
 	/*

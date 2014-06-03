@@ -38,6 +38,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 package gr.demokritos.iit.eleon.facets.dataset;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import gr.demokritos.iit.eleon.MainShell;
 import gr.demokritos.iit.eleon.facets.TreeFacet;
 import gr.demokritos.iit.eleon.ui.*;
@@ -52,11 +55,16 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
+import com.hp.hpl.jena.ontology.Individual;
+import com.hp.hpl.jena.ontology.OntModel;
+import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.rdf.model.*;
 
 
 public class TriplePatternTreeFacet extends DatasetFacet implements TreeFacet
 {
+	static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger( TriplePatternTreeFacet.class );
+	static final String myRDFName = "http://rdf.iit.demokritos.gr/2013/sevod#patternFacet";
 	
 	
 	/*
@@ -255,7 +263,22 @@ public class TriplePatternTreeFacet extends DatasetFacet implements TreeFacet
 	}
 
 
-	
+	@Override
+	public void syncFrom( OntModel ont )
+	{
+		// Get all statements ?r void:subset ?o svd:facet svd:propertyFacet
+		OntProperty svd_facet = ont.getOntProperty( DatasetFacet.propFacet );
+		Resource svd_me = ont.createResource( TriplePatternTreeFacet.myRDFName );
+
+		List<Resource> datasets = new ArrayList<Resource>();
+		StmtIterator stmtss = ont.listStatements( null, svd_facet, svd_me );
+		while( stmtss.hasNext() ) {
+			datasets.add( stmtss.next().getSubject() );
+		}
+		syncFrom( ont, datasets );
+	}
+
+
 	/*
 	 * INTERNAL HELPERS
 	 */

@@ -69,8 +69,6 @@ public abstract class DatasetFacet implements TreeFacet
 	static final String propSubsumes = "http://rdfs.org/ns/void#subset";
 	static final String Facet = "http://rdf.iit.demokritos.gr/2013/sevod#Facet";
 	static final String propFacet = "http://rdf.iit.demokritos.gr/2013/sevod#facet";
-	static final String propertyFacet = "http://rdf.iit.demokritos.gr/2013/sevod#propertyFacet";
-	static final String propEntityFacet = "http://rdf.iit.demokritos.gr/2013/sevod#entityFacet";
 
 	protected Tree myTree;
 	protected MainShell myShell;
@@ -119,23 +117,32 @@ public abstract class DatasetFacet implements TreeFacet
 	@Override
 	public void syncFrom( OntModel ont )
 	{
-		Individual top = ont.getIndividual( DatasetFacet.entityTop );
-		
-		// Get all statements ?r void:subset ?o svd:facet svd:propertyFacet
-		OntProperty void_subset = ont.getOntProperty( DatasetFacet.propSubsumes );
-		OntProperty svd_facet = ont.getOntProperty( DatasetFacet.propFacet );
-		Individual svd_propertyFacet = ont.getIndividual( DatasetFacet.propertyFacet );
+		// Get all statements ?r void:subset ?o
+		OntProperty void_sub = ont.getOntProperty( DatasetFacet.propSubsumes );
 
+		List<Resource> datasets = new ArrayList<Resource>();
+		StmtIterator stmtss = ont.listStatements( null, void_sub, (RDFNode)null );
+		while( stmtss.hasNext() ) {
+			Statement s = stmtss.next();
+			RDFNode o = s.getObject();
+			if( o.canAs(Resource.class) ) { datasets.add( o.asResource() ); }
+			else {
+				logger.warn( "Non-URI resource value in statement %s", s );
+			}
+		}
+		syncFrom( ont, datasets );
+	}
+
+
+	public void syncFrom( OntModel ont, List<Resource> datasets )
+	{
+		Individual top = ont.getIndividual( DatasetFacet.entityTop );
+		OntProperty void_subset = ont.getOntProperty( DatasetFacet.propSubsumes );
+		
 		List<Statement> todo = new ArrayList<Statement>();
 		List<Resource> dangling = new ArrayList<Resource>();
 		List<TreeItem> done = new ArrayList<TreeItem>();
 
-		List<Resource> datasets = new ArrayList<Resource>();
-		StmtIterator stmtss = ont.listStatements( null, svd_facet, svd_propertyFacet );
-		while( stmtss.hasNext() ) {
-			
-			datasets.add( stmtss.next().getSubject() );
-		}
 		Iterator<Resource> it = datasets.iterator();
 		while( it.hasNext() ) {
 			Resource r = it.next();
@@ -223,11 +230,11 @@ public abstract class DatasetFacet implements TreeFacet
 		}
 		
 		if( ! todo.isEmpty() ) {
-			// TODO: There are dangling subset statements
+			logger.warn( "Subset statements that could not be handled: %s", todo.toString() );
 		}
 		
 		if( ! dangling.isEmpty() ) {
-			// TODO: There are dangling datasets
+			logger.warn( "Dataset instances that could not be handled: %s", dangling.toString() );
 		}
 	}
 
@@ -235,7 +242,9 @@ public abstract class DatasetFacet implements TreeFacet
 	@Override
 	public void syncTo( OntModel ont )
 	{
-		// TODO Auto-generated method stub
+		Individual top = ont.getIndividual( DatasetFacet.entityTop );
+
+	
 	}
 
 	
