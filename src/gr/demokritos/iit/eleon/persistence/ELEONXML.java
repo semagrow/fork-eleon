@@ -393,7 +393,7 @@ public class ELEONXML implements PersistenceBackend
 							}
 						}
 					}
-					PropertyTreeNode data = new PropertyTreeNode( null, facet, ontProperty, "activeAnnotationSchema" );
+					PropertyTreeNode data = new PropertyTreeNode( null, facet, ontProperty );
 					data.setValue( "dc:title", dc_title );
 					data.setValue( "dc:creator", dc_creator );
 					data.setValue( "void:triples", void_triples );

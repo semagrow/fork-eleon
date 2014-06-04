@@ -71,19 +71,27 @@ public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 	public PropertyTreeFacet( MainShell shell )
 	{
 		super( shell );
-		this.resMyself = this.myShell.ont.createResource( PropertyTreeFacet.myRDFName );
+		this.resMyself = this.myShell.data.createResource( PropertyTreeFacet.myRDFName );
 	}
 	
 
 	/*
-	 * TreeFacet IMPLEMENTATION
+	 * Facet IMPLEMENTATION
 	 */
+
+	@Override
+	public boolean isAutoFilled() { return true; }
 
 
 	@Override
-	public void initTree()
+	public boolean isEditable() { return false; }
+
+
+	@Override
+	public void init( boolean generateTree )
 	{
-		super.initTree();
+		// my super does not know how to init( true ); i'll do that later
+		super.init( false );
 		myTree.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
@@ -180,6 +188,9 @@ public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 		});
 	    remove.setText("Remove");
 		
+	    if( generateTree ) {
+	    	update();
+	    }
 	}
 
 
@@ -216,7 +227,7 @@ public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 			myProperty = stmt.getObject().asResource();
 		}
 		PropertyTreeNode retv =
-				new PropertyTreeNode( dataset, this, myProperty, "activeAnnotationSchema" );
+				new PropertyTreeNode( dataset, this, myProperty );
 
 		copyValues( dataset, retv );
 		
@@ -226,7 +237,7 @@ public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 		if( retv.getLabel() == null ) {
 			if( myProperty != null ) {
 				// label defaults to property name
-				String qname = this.myShell.ont.shortForm( myProperty.getURI() );
+				String qname = this.myShell.data.shortForm( myProperty.getURI() );
 				retv.setLabel( qname );
 			}
 			else {
@@ -241,5 +252,68 @@ public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 	{
 		model.add( node.getResource(), this.facet, this.resMyself );
 	}
+
+	@Override
+	public void update()
+	throws IllegalArgumentException
+	{
+		//FIXME
+	}
+	
+	public void update( TreeItem localRoot, OntModel dataSchema )
+	throws IllegalArgumentException
+	{
+		List<OntProperty> propertiesList = dataSchema.listAllOntProperties().toList();
+		ArrayList<OntProperty> notInsertedPropertiesList = new ArrayList<OntProperty>();
+		for (OntProperty ontProperty : propertiesList) {
+			OntProperty superProperty = ontProperty.getSuperProperty();
+			if (superProperty == null) {
+				TreeItem treeItem = new TreeItem(localRoot, SWT.NONE);
+				treeItem.setText("?s " + ontProperty.toString() + " ?o");
+				PropertyTreeNode property =
+						new PropertyTreeNode( null, this, ontProperty );
+				property.setOwner( this.myShell.annotators.getActiveResource() );
+				treeItem.setData(property);
+			} else {	
+					boolean inserted = insertChildInTree(localRoot, ontProperty, superProperty );
+					if ( ! inserted ) {
+						notInsertedPropertiesList.add(ontProperty);
+					}
+			}
+		}
+		while ( ! notInsertedPropertiesList.isEmpty()) {
+			java.util.Collections.rotate( notInsertedPropertiesList, 1 );
+			OntProperty ontProperty = notInsertedPropertiesList.get( 0 );
+			OntProperty superProperty = ontProperty.getSuperProperty();
+			// All properties with null super-properties have been consumed by the for loop above 
+			assert superProperty != null;
+			boolean inserted = insertChildInTree(localRoot, ontProperty, superProperty );
+			if( inserted ) {
+				notInsertedPropertiesList.remove( 0 );
+			}
+		}
+	}
+	
+	private boolean insertChildInTree( TreeItem treeItem, OntProperty ontProperty, OntProperty superProperty )
+	{
+		boolean inserted = false;
+		for(TreeItem child : treeItem.getItems()) {
+			if (((PropertyTreeNode) child.getData()).getProperty().equals(superProperty)) {
+				TreeItem newtreeItem = new TreeItem(child, SWT.NONE);
+				newtreeItem.setText(ontProperty.toString());
+				PropertyTreeNode property = new PropertyTreeNode( null, this, ontProperty );
+				property.setOwner( this.myShell.annotators.getActiveResource() );
+				newtreeItem.setData(property);
+				inserted = true;
+			}
+			if ((!inserted) && child.getItemCount()>0) {//if not leaf check the children
+				inserted = insertChildInTree( child, ontProperty, superProperty );
+			}
+		}
+		return inserted;
+	}
+	
+
+	
 
 }

@@ -37,6 +37,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 package gr.demokritos.iit.eleon.ui;
 
+import gr.demokritos.iit.eleon.facets.dataset.DatasetNode;
+
 import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
@@ -52,31 +54,34 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 
-/**
- * @author gmouchakis
- *
- */
-public class SelectVocabulariesDialog extends Dialog {
+
+public class SelectVocabulariesDialog extends Dialog
+{
 
 	protected Shell shell;
 	protected List list;
+	final public DatasetNode node;
 	java.util.List<String> selectedItems = new ArrayList<String>();
 	
 	/**
 	 * 
 	 */
-	public SelectVocabulariesDialog(Shell parent, int style) {
-		 super (parent, style);
+	public SelectVocabulariesDialog( Shell parent, DatasetNode node, int style )
+	{
+		 super( parent, style );
+		 this.node = node;
 	}
 	
 	/**
 	 * @param parent
 	 */
-	public SelectVocabulariesDialog(Shell parent) {
-		 this (parent, 0);//default style bits go here (not the Shell's style bits)
+	public SelectVocabulariesDialog( Shell parent, DatasetNode node )
+	{
+		// default style bits go here (not the Shell's style bits)
+		this( parent, node, 0 );
 	}
 	
-public java.util.List<String> open(Menu vocabulariesMenu) {
+	public java.util.List<String> open(Menu vocabulariesMenu) {
 			
 		Shell parent = getParent();
 		shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);

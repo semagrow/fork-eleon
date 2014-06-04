@@ -43,9 +43,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.hp.hpl.jena.ontology.OntModel;
+import com.hp.hpl.jena.ontology.OntModelSpec;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.Resource;
+
 public class AnnotationVocabulary
 {
 	private List<String> requirements;
+	// TODO: These will be moved to the class representing the annotation schema
+	public static final String entityTop = "http://rdf.iit.demokritos.gr/2013/sevod#datasetTop";
 	public static final Map<String,AnnotationVocabulary> loadedVocabularies =
 			new HashMap<String,AnnotationVocabulary>(10);
 	public static final String[] knownVocabularies = { "VoID", "Sevod" };
@@ -313,6 +321,28 @@ public class AnnotationVocabulary
 		return o;
 	}
 
+	public static final int NONE = -1;
+	public static final int VOID = 0;
+	public static final int SEVOD = 1;
+	
+	public static OntModel getNewModel( int voc )
+	{
+		OntModel retv = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM );
+		
+		if( voc == SEVOD ) {
+			Resource top = retv.createResource( AnnotationVocabulary.entityTop );
+			Property label = retv.createProperty( property_uris[SEVOD][1] );
+			retv.add( top, label, "root" );
+		}
+		else if( voc == VOID ) {
+			Resource top = retv.createResource( AnnotationVocabulary.entityTop );
+			Property label = retv.createProperty( property_uris[VOID][1] );
+			retv.add( top, label, "root" );
+		}
+		return retv;
+	}
+	
+	
 	public AnnotationVocabulary( String vocabulary )
 	{
 		requirements = new ArrayList<String>();

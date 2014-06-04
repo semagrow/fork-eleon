@@ -8,8 +8,6 @@ public interface TreeFacet extends Facet
 	
 	public Tree getTree();
 
-	public void initTree();
-
 	public TreeItem getRoot();
 
 }

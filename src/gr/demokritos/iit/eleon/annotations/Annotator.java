@@ -81,7 +81,7 @@ public class Annotator implements Comparable<Annotator>
 
 		Annotator retv = Annotator.masterList.get( id );
 		if( retv == null ) {
-			Resource u = MainShell.shell.ont.createResource( uriPrefix + id );
+			Resource u = MainShell.shell.data.createResource( uriPrefix + id );
 			retv = new Annotator( u, id );
 			Annotator.masterList.put( id, retv );
 		}

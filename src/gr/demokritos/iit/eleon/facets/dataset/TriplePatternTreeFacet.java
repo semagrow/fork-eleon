@@ -76,19 +76,33 @@ public class TriplePatternTreeFacet extends DatasetFacet implements TreeFacet
 	public TriplePatternTreeFacet( MainShell shell )
 	{
 		super( shell );
-		this.resMyself = this.myShell.ont.createResource( TriplePatternTreeFacet.myRDFName );
+		this.resMyself = this.myShell.data.createResource( TriplePatternTreeFacet.myRDFName );
 	}
 	
 
 	/*
-	 * TreeFacet IMPLEMENTATION
+	 * Facet IMPLEMENTATION
 	 */
+
+	@Override
+	public boolean isAutoFilled() { return false; }
 
 
 	@Override
-	public void initTree()
+	public boolean isEditable() { return true; }
+
+	@Override
+	public void update() throws IllegalArgumentException
+	{ throw new IllegalArgumentException( "Cannot auto-fill" ); }
+
+
+	@Override
+	public void init( boolean generateTree )
+	throws IllegalArgumentException
 	{
-		super.initTree();
+		// This facet is manual; let my super explode if generateTree is true 
+		super.init( generateTree );
+
 		myTree.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
@@ -296,7 +310,7 @@ public class TriplePatternTreeFacet extends DatasetFacet implements TreeFacet
 		stmt = dataset.getProperty( p );
 		if( stmt != null ) {
 			subC = stmt.getObject().asResource().getURI();
-			subC = this.myShell.ont.shortForm( subC );
+			subC = this.myShell.data.shortForm( subC );
 			label = "(" + subC + ")";
 		}
 		
@@ -316,7 +330,7 @@ public class TriplePatternTreeFacet extends DatasetFacet implements TreeFacet
 		stmt = dataset.getProperty( p );
 		if( stmt != null ) {
 			pred = stmt.getObject().asResource().getURI();
-			pred = this.myShell.ont.shortForm( pred );
+			pred = this.myShell.data.shortForm( pred );
 			label += " " + pred; 
 		}
 		else {
@@ -328,7 +342,7 @@ public class TriplePatternTreeFacet extends DatasetFacet implements TreeFacet
 		stmt = dataset.getProperty( p );
 		if( stmt != null ) {
 			objC = stmt.getObject().asResource().getURI();
-			objC = this.myShell.ont.shortForm( objC );
+			objC = this.myShell.data.shortForm( objC );
 			label = "(" + objC + ") ";
 		}
 		

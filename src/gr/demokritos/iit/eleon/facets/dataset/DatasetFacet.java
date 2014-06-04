@@ -64,8 +64,6 @@ public abstract class DatasetFacet implements TreeFacet
 {
 	static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger( DatasetFacet.class );
 
-	// TODO: These will be moved to the class representing the annotation schema
-	static final String entityTop = "http://rdf.iit.demokritos.gr/2013/sevod#datasetTop";
 	static final String propSubsumes = "http://rdfs.org/ns/void#subset";
 	static final String Facet = "http://rdf.iit.demokritos.gr/2013/sevod#Facet";
 	static final String propFacet = "http://rdf.iit.demokritos.gr/2013/sevod#facet";
@@ -86,9 +84,9 @@ public abstract class DatasetFacet implements TreeFacet
 	{
 		this.mySelf = this;
 		this.myShell = shell;
-		this.top = this.myShell.ont.createResource( DatasetFacet.entityTop );
-		this.subsumes = this.myShell.ont.createProperty( DatasetFacet.propSubsumes );
-		this.facet = this.myShell.ont.createProperty( DatasetFacet.propFacet );
+		this.top = this.myShell.data.createResource( AnnotationVocabulary.entityTop );
+		this.subsumes = this.myShell.data.createProperty( DatasetFacet.propSubsumes );
+		this.facet = this.myShell.data.createProperty( DatasetFacet.propFacet );
 	}
 
 	
@@ -122,7 +120,38 @@ public abstract class DatasetFacet implements TreeFacet
 		return this.info;
 	}
 
-	
+		
+	@Override
+	public boolean isDirty()
+	{
+		//TODO: dirty bit
+		return true;
+	}
+
+
+	@Override
+	public void init( boolean autoFill )
+	throws IllegalArgumentException
+	{
+		// I do not know how to autofill; should be overridden by auto-filling extensions
+		if( autoFill ) { throw new IllegalArgumentException( "Cannot auto-fill" ); }
+
+		this.myTree = new Tree( this.myShell, SWT.BORDER );
+		this.myTree.setBounds(318, 84, 369, 578);
+		TreeItem root = new TreeItem( myTree, SWT.NONE );
+		root.setText("root");
+		DatasetNode n = this.makeNode( this.top, null );
+		root.setData( n );
+	}
+
+
+	@Override
+	public void init()
+	{
+		this.init( this.isAutoFilled() );
+	}
+
+		
 	@Override
 	public void syncFrom( OntModel ont )
 	{
@@ -145,7 +174,7 @@ public abstract class DatasetFacet implements TreeFacet
 
 	public void syncFrom( OntModel ont, List<Resource> datasets )
 	{
-		Individual top = ont.getIndividual( DatasetFacet.entityTop );
+		Individual top = ont.getIndividual( AnnotationVocabulary.entityTop );
 		OntProperty void_subset = ont.getOntProperty( DatasetFacet.propSubsumes );
 		
 		List<Statement> todo = new ArrayList<Statement>();
@@ -284,17 +313,6 @@ public abstract class DatasetFacet implements TreeFacet
 	 * TreeFacet IMPLEMENTATION
 	 */
 
-	@Override
-	public void initTree()
-	{
-		this.myTree = new Tree( this.myShell, SWT.BORDER );
-		this.myTree.setBounds(318, 84, 369, 578);
-		TreeItem root = new TreeItem( myTree, SWT.NONE );
-		root.setText("root");
-		DatasetNode n = this.makeNode( this.top, null );
-		root.setData( n );
-	}
- 
 	@Override
 	public Tree getTree() { return this.myTree; }
 	

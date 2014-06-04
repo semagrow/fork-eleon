@@ -46,7 +46,6 @@ package gr.demokritos.iit.eleon;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
@@ -54,9 +53,6 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.custom.TableEditor;
 
 import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntModelSpec;
-import com.hp.hpl.jena.ontology.OntProperty;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Resource;
 
 import gr.demokritos.iit.eleon.annotations.AnnotationVocabulary;
@@ -98,7 +94,7 @@ public class MainShell extends Shell
 	public PersistenceBackend persistence;
 
 	//Ontology model
-	public OntModel ont = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM );
+	public OntModel data = AnnotationVocabulary.getNewModel( AnnotationVocabulary.SEVOD );
 
 
 	/**
@@ -181,15 +177,15 @@ public class MainShell extends Shell
         			MainShell.shell.persistence.open( openFilename );
 					textTitle.setText( MainShell.shell.persistence.getLabel() );
 					//create the faceted trees
-					MainShell.shell.propertyTree.initTree();
+					MainShell.shell.propertyTree.init();
 					MainShell.shell.textTitle.setText( propertyTree.getTitle() );
 					MainShell.shell.textEndpoint.setText( propertyTree.getInfo() );
-					MainShell.shell.propertyTree.syncFrom( MainShell.shell.ont );
+					MainShell.shell.propertyTree.syncFrom( MainShell.shell.data );
 
-					MainShell.shell.entityTree.initTree();
+					MainShell.shell.entityTree.init();
 					MainShell.shell.textTitle.setText( MainShell.shell.entityTree.getTitle() );
 					MainShell.shell.textEndpoint.setText( MainShell.shell.entityTree.getInfo() );
-					MainShell.shell.entityTree.syncFrom( MainShell.shell.ont );
+					MainShell.shell.entityTree.syncFrom( MainShell.shell.data );
 				}
         		catch( Exception e ) {
 					e.printStackTrace();
@@ -436,10 +432,10 @@ public class MainShell extends Shell
 					if( has_vocabulary ) {
 						//treePerProperty.dispose();
 						if (propertyTree.getTree() == null) {
-							propertyTree.initTree();
+							propertyTree.init();
 							textTitle.setText( propertyTree.getTitle() );
 							textEndpoint.setText( propertyTree.getInfo() );
-							//fillPerPropertyTree(ontModel.listAllOntProperties().toList(), currentAuthor, treePerProperty.getItems()[0]);
+							//propertyTree.update();
 						}
 						propertyTree.getTree().moveAbove( null );
 					} else {
@@ -451,7 +447,7 @@ public class MainShell extends Shell
 					}
 				} else if (list.getSelection()[0].toString().equals("per entity")) {
 					if( entityTree.getTree() == null ) {
-						entityTree.initTree();
+						entityTree.init();
 						textTitle.setText( entityTree.getTitle() );
 						textEndpoint.setText( entityTree.getInfo() );
 					}
@@ -483,59 +479,6 @@ public class MainShell extends Shell
 		createContents();
 	}
 	
-	protected void fillPerPropertyTree(java.util.List<OntProperty> propertiesList, Resource author, TreeItem root) {
-		/*TreeItem root = new TreeItem(treePerProperty, SWT.NONE);
-		root.setText("root");*/
-		ArrayList<OntProperty> notInsertedPropertiesList = new ArrayList<OntProperty>();
-		for (OntProperty ontProperty : propertiesList) {
-			OntProperty superProperty = ontProperty.getSuperProperty();
-			if (superProperty == null) {
-				TreeItem treeItem = new TreeItem(root, SWT.NONE);
-				treeItem.setText("?s " + ontProperty.toString() + " ?o");
-				PropertyTreeNode property =
-						new PropertyTreeNode( null, (PropertyTreeFacet)this.propertyTree, ontProperty, activeAnnSchemaName );
-				property.setOwner(author);
-				treeItem.setData(property);
-			} else {	
-					boolean inserted = insertChildInTree(root, ontProperty, superProperty, author);
-					if ( ! inserted ) {
-						notInsertedPropertiesList.add(ontProperty);
-					}
-			}
-		}
-		while ( ! notInsertedPropertiesList.isEmpty()) {
-			java.util.Collections.rotate( notInsertedPropertiesList, 1 );
-			OntProperty ontProperty = notInsertedPropertiesList.get( 0 );
-			OntProperty superProperty = ontProperty.getSuperProperty();
-			// All properties with null super-properties have been consumed by the for loop above 
-			assert superProperty != null;
-			boolean inserted = insertChildInTree(root, ontProperty, superProperty, author);
-			if( inserted ) {
-				notInsertedPropertiesList.remove( 0 );
-			}
-		}
-	}
-	
-	
-	protected boolean insertChildInTree(TreeItem treeItem, OntProperty ontProperty, OntProperty superProperty, Resource author) {
-		boolean inserted = false;
-		for(TreeItem child : treeItem.getItems()) {
-			if (((PropertyTreeNode) child.getData()).getProperty().equals(superProperty)) {
-				TreeItem newtreeItem = new TreeItem(child, SWT.NONE);
-				newtreeItem.setText(ontProperty.toString());
-				PropertyTreeNode property =
-						new PropertyTreeNode( null, (PropertyTreeFacet)this.propertyTree, ontProperty, activeAnnSchemaName);
-				property.setOwner(author);
-				newtreeItem.setData(property);
-				inserted = true;
-			}
-			if ((!inserted) && child.getItemCount()>0) {//if not leaf check the children
-				inserted = insertChildInTree(child, ontProperty, superProperty, author);
-			}
-		}
-		return inserted;
-	}
-	
 	protected void createTable() {
 		table = new Table(this, SWT.BORDER | SWT.FULL_SELECTION);
 		table.setBounds(693, 84, 394, 578);
@@ -560,10 +503,10 @@ public class MainShell extends Shell
 		}
 		createTable();
 		
-		DatasetNode treeNodeData = ((DatasetNode) tree.getSelection()[0].getData());
+		final DatasetNode treeNodeData = ((DatasetNode) tree.getSelection()[0].getData());
 		
 		//final int schemaIndex = treeNodeData.getAnnotationSchemaIndex();
-		final int schemaIndex = 1;
+		final int schemaIndex = AnnotationVocabulary.SEVOD;
 		
 		int i = 0;
 		while(AnnotationVocabulary.property_qnames[schemaIndex][i] != null) {
@@ -625,12 +568,13 @@ public class MainShell extends Shell
 				 }*/
 				
 				 if (property.equals("void:vocabulary")) {//TODO:breaks independence from property names!
-					SelectVocabulariesDialog dialog = new SelectVocabulariesDialog(getShell());
+					SelectVocabulariesDialog dialog = new SelectVocabulariesDialog( getShell(), treeNodeData );
 					java.util.List<String> selectedVocabularies = dialog.open(dataSchemaMenu);
 					if (selectedVocabularies.isEmpty()) {
 						return;
 					}
-					OntModel ontModel = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM );
+					//FIXME: do all auto-filled facets
+					OntModel schema = AnnotationVocabulary.getNewModel( AnnotationVocabulary.NONE );
 					for (String selectedVocabulary : selectedVocabularies) {
 						item.setText(1, item.getText(1) + selectedVocabulary + ", ");
 						for (MenuItem menuItem : dataSchemaMenu.getItems()) {
@@ -640,17 +584,18 @@ public class MainShell extends Shell
 										ontModel.read("file:////" + (new File("vocabularies/skos.rdf")).getAbsolutePath());
 									}*/
 									if (menuItem.getText().equals("crop.owl")) {
-										ontModel.read("file:////" + (new File("resources/schemas/crop.owl")).getAbsolutePath());
+										schema.read("file:////" + (new File("resources/schemas/crop.owl")).getAbsolutePath());
 									}
 									else if (menuItem.getText().equals("t4f.owl")) {
-										ontModel.read("file:////" + (new File("resources/schemas/t4f.owl")).getAbsolutePath());
+										schema.read("file:////" + (new File("resources/schemas/t4f.owl")).getAbsolutePath());
 									} else {
-										ontModel.read("file:////" + (new File((String) menuItem.getData())).getAbsolutePath());
+										schema.read("file:////" + (new File((String) menuItem.getData())).getAbsolutePath());
 									}
 								}
 							}
 						}
 					}
+					((PropertyTreeFacet)MainShell.shell.propertyTree).update( tree.getSelection()[0], schema );
 					
 					String proper_text = item.getText(1).substring(0, item.getText(1).length() - 2);
 					
@@ -669,7 +614,9 @@ public class MainShell extends Shell
 					property_values[schemaIndex][index] = proper_text;//TODO:check what happens if user clicks cancel in the dialog
 					
 					item.setText(1, proper_text);
-					fillPerPropertyTree(ontModel.listAllOntProperties().toList(), annotators.getActiveResource(), tree.getSelection()[0]);
+					if( dialog.node.getFacet().isAutoFilled() ) {
+						dialog.node.getFacet().update();
+					}
 					return;
 				 }
 				 

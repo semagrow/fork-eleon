@@ -39,12 +39,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 package gr.demokritos.iit.eleon.persistence;
 
 import gr.demokritos.iit.eleon.MainShell;
+import gr.demokritos.iit.eleon.annotations.AnnotationVocabulary;
 import gr.demokritos.iit.eleon.facets.Facet;
 
 import java.io.IOException;
-
-import com.hp.hpl.jena.ontology.OntModelSpec;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 
 public class OWLFile implements PersistenceBackend
@@ -91,11 +89,11 @@ public class OWLFile implements PersistenceBackend
 			throw new IllegalArgumentException( "Argument should be a String", ex );
 		}
 
-		if( this.myShell.ont == null ) {
-			this.myShell.ont = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM );
+		if( this.myShell.data == null ) {
+			this.myShell.data = AnnotationVocabulary.getNewModel( AnnotationVocabulary.NONE );
 		}
 		else {
-			this.myShell.ont.removeAll();
+			this.myShell.data.removeAll();
 		}
 		
 
@@ -107,7 +105,7 @@ public class OWLFile implements PersistenceBackend
 			boolean ok = false;
 			for( String format : formats ) {
 				try {
-					this.myShell.ont.read( buf, "", format );
+					this.myShell.data.read( buf, "", format );
 					buf.close();
 					ok = true;
 					break;
@@ -129,7 +127,7 @@ public class OWLFile implements PersistenceBackend
 
 		// TODO: find the label
 		this.label = "LABEL";
-		this.myShell.annotators.syncFrom( this.myShell.ont );
+		this.myShell.annotators.syncFrom( this.myShell.data );
 	}
 
 	
@@ -146,13 +144,13 @@ public class OWLFile implements PersistenceBackend
 		if( this.filename == null ) { return false; }
 
 		for( Facet facet : facets ) {
-			facet.syncTo( this.myShell.ont );
+			facet.syncTo( this.myShell.data );
 		}
-		this.myShell.annotators.syncTo( this.myShell.ont );
+		this.myShell.annotators.syncTo( this.myShell.data );
 		
 		java.io.FileOutputStream file = new java.io.FileOutputStream( this.filename );
 		java.io.BufferedOutputStream buf = new java.io.BufferedOutputStream( file );
-		this.myShell.ont.write( buf, "TTL" );
+		this.myShell.data.write( buf, "TTL" );
 		buf.close();
 		return true;
 	}
@@ -165,12 +163,12 @@ public class OWLFile implements PersistenceBackend
 		java.io.BufferedInputStream io =
 				new java.io.BufferedInputStream(
 						ClassLoader.getSystemClassLoader().getResourceAsStream( "void.rdf" ) );
-		this.myShell.ont.read( io, "", "RDF/XML" );
+		this.myShell.data.read( io, "", "RDF/XML" );
 		io.close();
 		
 		io = new java.io.BufferedInputStream(
 						ClassLoader.getSystemClassLoader().getResourceAsStream( "sevod.ttl" ) );
-		this.myShell.ont.read( io, "", "TTL" );
+		this.myShell.data.read( io, "", "TTL" );
 		io.close();
 	}
 

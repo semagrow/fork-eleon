@@ -62,7 +62,7 @@ public class DatasetNode implements TreeFacetNode
 		if( res == null ) {
 			com.hp.hpl.jena.graph.Node node =
 					com.hp.hpl.jena.graph.NodeFactory.createURI( "http://anon.com/#id" );
-			this.res = this.myFacet.myShell.ont.wrapAsResource( node );
+			this.res = this.myFacet.myShell.data.wrapAsResource( node );
 		}
 		else {
 			this.res = res;

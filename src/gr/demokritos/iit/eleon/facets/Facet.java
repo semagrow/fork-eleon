@@ -43,13 +43,83 @@ import com.hp.hpl.jena.ontology.OntModel;
 
 public interface Facet
 {
+	/**
+	 * Returns the title of this facet
+	 * @return
+	 */
+	public String getTitle();
 
-	String getTitle();
+	/**
+	 * Returns a short description of this facet
+	 * and its functionality, appropriate for
+	 * help items such as hover balloons.
+	 * @return
+	 */
+	public String getInfo();
 
-	String getInfo();
+	/**
+	 * Tracks whether edits have been made since
+	 * the most recent sync from the underlying data. 
+	 * @return true if the in-memory objects contain
+	 * information other than what was loaded from
+	 * the persistency object that supports them.
+	 */
+	public boolean isDirty();
 
-	void syncFrom(  OntModel ont );
+	/**
+	 * Responds whether this facet can be automatically
+	 * generated from data or only holds manually authored
+	 * information. Simply loading previously saved information
+	 * is not meant to be interpreted as auto-filling.  
+	 * @return
+	 */
+	public boolean isAutoFilled();
+
+	/**
+	 * Responds whether this facet can be edited. This
+	 * refers to the faceted browsing, not the property
+	 * values: A read-only facet might give access to editable
+	 * property fields, but may not be edited itself.
+	 * @return
+	 */
+	public boolean isEditable();
+
+	/**
+	 * Initializes the facet. Must be called before any other method. 
+	 * @param autoFill if true, the facet will be auto-filled;
+	 * @throws IllegalArgumentException if auto-filling was requested
+	 * from a facet that cannot be auto-filled
+	 */
+	public void init( boolean autoFill )
+	throws IllegalArgumentException;
+
+	/**
+	 * Initializes the facet. It auto-fills the facet, if possible.  
+	 */
+	public void init();
+
+	/**
+	 * Updates the auto-filled parts of this facet. If editable,
+	 * no manually edited information is altered or lost. In case of
+	 * inconsistency, the manually edited information overrides auto-filling.
+	 * A clean auto-fill can be achieved by calling init( true ).
+	 * @throws IllegalArgumentException if this facet cannot be auto-filled
+	 */
+	public void update()
+	throws IllegalArgumentException;
+
+	/**
+	 * Synchronizes the facet contents with the underlying data,
+	 * by loading data from the model into the facet.
+	 * @param model
+	 */
+	public void syncFrom(  OntModel model );
 	
-	void syncTo( OntModel ont );
+	/**
+	 * Synchronizes the facet contents with the underlying data,
+	 * by saving data in the facet to the model.
+	 * @param model
+	 */
+	public void syncTo( OntModel ont );
 	
 }
