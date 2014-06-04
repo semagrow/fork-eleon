@@ -145,6 +145,7 @@ public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 					TreeItem newItem = new TreeItem(selected[0], SWT.NONE);
 					DatasetNode data = new DatasetNode( null, mySelf );
 					data.setOwner( myShell.annotators.getActiveResource() );
+					data.setLabel(label);
 					newItem.setData(data);
 					newItem.setText(label);
 				}
@@ -269,10 +270,12 @@ public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 			OntProperty superProperty = ontProperty.getSuperProperty();
 			if (superProperty == null) {
 				TreeItem treeItem = new TreeItem(localRoot, SWT.NONE);
-				treeItem.setText("?s " + ontProperty.toString() + " ?o");
+				String label = "?s " + ontProperty.toString() + " ?o";
+				treeItem.setText(label);
 				PropertyTreeNode property =
 						new PropertyTreeNode( null, this, ontProperty );
 				property.setOwner( this.myShell.annotators.getActiveResource() );
+				property.setLabel(label);
 				treeItem.setData(property);
 			} else {	
 					boolean inserted = insertChildInTree(localRoot, ontProperty, superProperty );
@@ -300,9 +303,11 @@ public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 		for(TreeItem child : treeItem.getItems()) {
 			if (((PropertyTreeNode) child.getData()).getProperty().equals(superProperty)) {
 				TreeItem newtreeItem = new TreeItem(child, SWT.NONE);
-				newtreeItem.setText(ontProperty.toString());
+				String label = ontProperty.toString();
+				newtreeItem.setText(label);
 				PropertyTreeNode property = new PropertyTreeNode( null, this, ontProperty );
 				property.setOwner( this.myShell.annotators.getActiveResource() );
+				property.setLabel(label);
 				newtreeItem.setData(property);
 				inserted = true;
 			}

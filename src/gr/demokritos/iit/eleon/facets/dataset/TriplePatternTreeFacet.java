@@ -52,7 +52,6 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
 import com.hp.hpl.jena.ontology.OntModel;
@@ -159,6 +158,7 @@ public class TriplePatternTreeFacet extends DatasetFacet implements TreeFacet
 					TreeItem newItem = new TreeItem(selected[0], SWT.NONE);
 					DatasetNode data = new DatasetNode( null, mySelf );
 					data.setOwner( myShell.annotators.getActiveResource() );
+					data.setLabel(label);
 					newItem.setData(data);
 					newItem.setText(label);
 				}
@@ -193,7 +193,6 @@ public class TriplePatternTreeFacet extends DatasetFacet implements TreeFacet
 						item.setData(nodeData);
 						String subjectPattern = result[0];
 						String objectPattern = result[1];
-						nodeData.setOwner( myShell.annotators.getActiveResource() );
 						String itemText = "";
 						/*if (subjectPattern != null) {
 							itemText += "(sbj)=" + subjectPattern + " ";
@@ -213,6 +212,7 @@ public class TriplePatternTreeFacet extends DatasetFacet implements TreeFacet
 							itemText += objectPattern;
 						}
 						//TODO:check if node already exists.
+						nodeData.setLabel(itemText);
 						item.setText(itemText);
 					}
 					//System.out.println("Insert Into - " + selected[0].getText());

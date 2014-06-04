@@ -44,7 +44,6 @@ import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
-import com.hp.hpl.jena.sparql.function.library.uuid;
 
 import gr.demokritos.iit.eleon.MainShell;
 import gr.demokritos.iit.eleon.annotations.AnnotationVocabulary;

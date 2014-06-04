@@ -141,6 +141,7 @@ public abstract class DatasetFacet implements TreeFacet
 		TreeItem root = new TreeItem( myTree, SWT.NONE );
 		root.setText("root");
 		DatasetNode n = this.makeNode( this.top, null );
+		n.setLabel("root");
 		root.setData( n );
 	}
 
