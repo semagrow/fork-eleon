@@ -231,7 +231,6 @@ public class MainShell extends Shell
 					saveAs( propertyTree.getTree(), entityTree.getTree() );
 				} catch (Exception e) {
 					e.printStackTrace();
-					e.printStackTrace();
 			    	MessageBox box = new MessageBox(getShell(), SWT.ERROR);
 	                box.setText("Error");
 	                box.setMessage(e.toString());
@@ -750,14 +749,14 @@ public class MainShell extends Shell
 	{
 		FileDialog dialog = new FileDialog (shell, SWT.SAVE);
 		dialog.setOverwrite(true);
-		String [] filterNames = new String [] {"XML Files", "All Files (*)"};
-		String [] filterExtensions = new String [] {"*.xml", "*"};
+		String [] filterNames = new String [] {"TTL Files", "XML Files", "All Files (*)"};
+		String [] filterExtensions = new String [] {"*.ttl", "*.xml", "*"};
 		//String filterPath = "/";
 		String filterPath = System.getProperty("user.dir");
 		String platform = SWT.getPlatform();
 		if (platform.equals("win32") || platform.equals("wpf")) {
-			filterNames = new String [] {"XML Files", "All Files (*.*)"};
-			filterExtensions = new String [] {"*.xml", "*.*"};
+			filterNames = new String [] {"TTL Files", "XML Files", "All Files (*)"};
+			filterExtensions = new String [] {"*.ttl", "*.xml", "*.*"};
 			//filterPath = "c:\\";
 		}
 		dialog.setFilterNames (filterNames);
