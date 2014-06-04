@@ -182,7 +182,7 @@ public class TriplePatternTreeFacet extends DatasetFacet implements TreeFacet
 					PerEntityInsertDialog dialog = new PerEntityInsertDialog( myShell );
 					String[] result = dialog.open();//result[0] containts the subject pattern and result[1] the object pattern
 					//EntityInclusionTreeNode nodeData = dialog.open();
-					if (result[0] == null && result[0] == null ) {
+					if (result[0] == null && result[1] == null ) {
 						return;
 					} else {
 						TreeItem selection = selected[0];
@@ -221,6 +221,7 @@ public class TriplePatternTreeFacet extends DatasetFacet implements TreeFacet
 	                box.setText("Info");
 	                box.setMessage("Nothing selected.");
 	                box.open();
+	                return;
 				}
 			}
 
