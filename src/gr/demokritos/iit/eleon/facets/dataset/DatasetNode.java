@@ -38,10 +38,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 package gr.demokritos.iit.eleon.facets.dataset;
 
+import java.util.UUID;
+
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.sparql.function.library.uuid;
 
 import gr.demokritos.iit.eleon.MainShell;
 import gr.demokritos.iit.eleon.annotations.AnnotationVocabulary;
@@ -60,8 +63,9 @@ public class DatasetNode implements TreeFacetNode
 		super();
 		this.myFacet = myFacet;
 		if( res == null ) {
+			String urn = "urn:uuid:" + UUID.randomUUID().toString();
 			com.hp.hpl.jena.graph.Node node =
-					com.hp.hpl.jena.graph.NodeFactory.createURI( "http://anon.com/#id" );
+					com.hp.hpl.jena.graph.NodeFactory.createURI( urn );
 			this.res = this.myFacet.myShell.data.wrapAsResource( node );
 		}
 		else {

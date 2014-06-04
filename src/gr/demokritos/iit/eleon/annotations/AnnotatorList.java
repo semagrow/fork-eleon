@@ -40,7 +40,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 package gr.demokritos.iit.eleon.annotations;
 
 import gr.demokritos.iit.eleon.MainShell;
-import gr.demokritos.iit.eleon.facets.dataset.DatasetFacet;
 import gr.demokritos.iit.eleon.ui.InsertInMenuDialog;
 
 import java.util.ArrayList;
@@ -212,7 +211,10 @@ public class AnnotatorList
 
 	public void syncTo( OntModel model )
 	{
-		// TODO Auto-generated method stub
+		final Property p = model.getProperty("http://purl.org/dc/terms/identifier");
+		for(Annotator a : this.annList) {
+			model.add(a.getResource(), p, a.getLogin());
+		}
 	}
 
 	
