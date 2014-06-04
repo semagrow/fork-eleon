@@ -285,6 +285,11 @@ public class MainShell extends Shell
 								MainShell.shell.annotators.setActive( annotatorName );
 							}
 						});
+						for (MenuItem item : annotators.annMenu.getItems()) {
+							item.setSelection(false);
+						}
+						mntmInsertedAuthor.setSelection(true);
+						MainShell.shell.annotators.setActive( annotatorName );
 						mntmInsertedAuthor.setText(annotatorName);
 					}
 				}
