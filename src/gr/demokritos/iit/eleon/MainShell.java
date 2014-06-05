@@ -544,17 +544,6 @@ public class MainShell extends Shell
 	                return;
 				}
 				
-				DatasetNode treeFacetNode = (DatasetNode) tree.getSelection()[0].getData();
-				Resource creator = treeFacetNode.getOwner();
-				assert creator != null;  
-				if( ! creator.equals(MainShell.shell.annotators.getActiveResource()) ) {
-					MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
-	                box.setText("Value read-only");
-	                box.setMessage("You cannot edit this value because it is owned by user \"" + creator.getLocalName() + "\".");
-	                box.open();
-	                return;
-				}
-				
 				// Clean up any previous editor control
 				Control oldEditor = editor.getEditor();
 				if (oldEditor != null) oldEditor.dispose();
@@ -566,10 +555,30 @@ public class MainShell extends Shell
 				//Get Property name
 				final String property = item.getText(0);
 				
-				 /*if( AnnotationVocabulary.property_qnames[0][0].equals(property)) {
-					 item.setText(1, creator.getLocalName());
-					 return;
-				 }*/
+				//check if property is set editable
+				for (int i = 0; i < AnnotationVocabulary.property_qnames[schemaIndex].length; i++) {
+					if (property.equals(AnnotationVocabulary.property_qnames[schemaIndex][i])) {
+						if ( ! AnnotationVocabulary.property_is_editable[schemaIndex][i] ) {
+							MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
+			                box.setText("Value read-only");
+			                box.setMessage("You cannot edit this value because it set as read-only by the chosen annotation schema.");
+			                box.open();
+			                return;
+						}
+					}
+				}
+				
+				DatasetNode treeFacetNode = (DatasetNode) tree.getSelection()[0].getData();
+				Resource creator = treeFacetNode.getOwner();
+				assert creator != null;  
+				if( ! creator.equals(MainShell.shell.annotators.getActiveResource()) ) {
+					MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
+	                box.setText("Value read-only");
+	                box.setMessage("You cannot edit this value because it is owned by user \"" + creator.getLocalName() + "\".");
+	                box.open();
+	                return;
+				}
+				
 				
 				 if (property.equals("void:vocabulary")) {//TODO:breaks independence from property names!
 					SelectVocabulariesDialog dialog = new SelectVocabulariesDialog( getShell(), treeNodeData );
@@ -639,9 +648,7 @@ public class MainShell extends Shell
 					 Object nominalSet = ((DatasetNode) treeFacetNode).property_values[schemaIndex][index];
 					 if (nominalSet == null) {
 						 nominalSet = new NominalSet();
-					 }/* else {
-						 nominalSet = (NominalSet) nominalSet;
-					 }*/
+					 }
 					 nominalSet = ((NominalSet) nominalSet);			
 					 
 					 SelectNominalSetDialog dialog = new SelectNominalSetDialog(getShell());
@@ -664,20 +671,6 @@ public class MainShell extends Shell
 					@Override
 					public void modifyText(ModifyEvent me) {
 						
-						for (int i = 0; i < AnnotationVocabulary.property_qnames[schemaIndex].length; i++) {
-							if (property.equals(AnnotationVocabulary.property_qnames[schemaIndex][i])) {
-								if ( ! AnnotationVocabulary.property_is_editable[schemaIndex][i] ) {
-									MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
-					                box.setText("Value read-only");
-					                box.setMessage("You cannot edit this value because it set as read-only by the chosen annotation schema.");
-					                box.open();
-					                return;
-								}
-							}
-						}
-						
-						//String oldValue = editor.getItem().getText(1);
-						//System.out.println(editor.getItem().getText(1));
 						Text text = (Text)editor.getEditor();
 						editor.getItem().setText(1, text.getText());
 						
@@ -690,13 +683,8 @@ public class MainShell extends Shell
 						assert(i>=0);
 							
 						DatasetNode treeNodeData = ((DatasetNode) tree.getSelection()[0].getData());
-						//Class<?> objClass = TreeNodeData.property_value_types[voc][index].getClass();
-						//boolean functional = TreeNodeData.property_is_functional[voc][index];
-						//Class<?> params[] = new Class[1];
-						//params[0] = String.class;
+
 						try {
-							//java.lang.reflect.Constructor<?> constr = objClass.getConstructor( params );
-							//Object o = constr.newInstance( text.getText() );
 							Class<?> cls[] = new Class[] { String.class };
 							java.lang.reflect.Constructor<?> c = ((Class<?>) AnnotationVocabulary.property_value_types[schemaIndex][index]).getConstructor(cls);
 							Object obj = c.newInstance(text.getText());
@@ -729,12 +717,7 @@ public class MainShell extends Shell
 							textTitle.setText(text.getText());
 							return;
 						}
-						/*} catch (NumberFormatException e) {
-							MessageBox box = new MessageBox(getShell(), SWT.ERROR);
-			                box.setText("Error");
-			                box.setMessage("Input must be integer!");
-			                box.open();
-						}*/
+
 					}
 				});
 				newEditor.selectAll();
