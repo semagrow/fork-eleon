@@ -670,7 +670,7 @@ public class MainShell extends Shell
 				newEditor.addModifyListener(new ModifyListener() {
 					@Override
 					public void modifyText(ModifyEvent me) {
-						
+		
 						Text text = (Text)editor.getEditor();
 						editor.getItem().setText(1, text.getText());
 						
@@ -691,6 +691,7 @@ public class MainShell extends Shell
 							treeNodeData.property_values[schemaIndex][index] = obj;
 						} catch (NoSuchMethodException e) {
 							e.printStackTrace();
+							me.getSource();/*this.restore =  true;*/
 						} catch (SecurityException e) {
 							e.printStackTrace();
 						} catch (InstantiationException e) {
@@ -705,17 +706,16 @@ public class MainShell extends Shell
 			                box.setText("Error");
 			                box.setMessage("Invalid input!");
 			                box.open();
-			                
+			                return;
 						}
 						
 						if (property.equals("void:sparqlEndpoint")) {
 							//((TreeNodeData) tree.getSelection()[0].getData()).setVoid_sparqlEnpoint(text.getText());
 							textEndpoint.setText(text.getText());
-							return;
 						} else if (property.equals("dc:title")) {
 							//((TreeNodeData) tree.getSelection()[0].getData()).setDc_title(text.getText());
+							tree.getSelection()[0].setText(text.getText());
 							textTitle.setText(text.getText());
-							return;
 						}
 
 					}

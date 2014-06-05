@@ -88,7 +88,7 @@ public class DatasetNode implements TreeFacetNode
 
 
 	@Override
-	public boolean equals( Object that )
+	public boolean equals( Object that )//FIXME: is this really enough?
 	{
 		if( that instanceof DatasetNode ) {
 			String thatLabel = ((DatasetNode)that).getLabel();
