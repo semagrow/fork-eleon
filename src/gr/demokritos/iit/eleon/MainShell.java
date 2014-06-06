@@ -630,6 +630,7 @@ public class MainShell extends Shell
 					if( dialog.node.getFacet().isAutoFilled() ) {
 						dialog.node.getFacet().update();
 					}
+					tree.getSelection()[0].setExpanded(true);
 					return;
 				 }
 				 

@@ -161,6 +161,7 @@ public class TriplePatternTreeFacet extends DatasetFacet implements TreeFacet
 					data.setLabel(label);
 					newItem.setData(data);
 					newItem.setText(label);
+					selected[0].setExpanded(true);
 				}
 			}
 		});
@@ -214,6 +215,7 @@ public class TriplePatternTreeFacet extends DatasetFacet implements TreeFacet
 						//TODO:check if node already exists.
 						nodeData.setLabel(itemText);
 						item.setText(itemText);
+						selected[0].setExpanded(true);
 					}
 					//System.out.println("Insert Into - " + selected[0].getText());
 				} else {
@@ -235,6 +237,7 @@ public class TriplePatternTreeFacet extends DatasetFacet implements TreeFacet
 				if (selected.length > 0) {
 					CopyExistingNodeDialog dialogCopy = new CopyExistingNodeDialog( myShell );
 					dialogCopy.copy(myTree, selected[0]);
+					selected[0].setExpanded(true);
 				} else {
 					MessageBox box = new MessageBox(myShell, SWT.OK | SWT.ICON_INFORMATION);
 	                box.setText("Info");

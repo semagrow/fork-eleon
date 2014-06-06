@@ -148,6 +148,7 @@ public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 					data.setLabel(label);
 					newItem.setData(data);
 					newItem.setText(label);
+					selected[0].setExpanded(true);
 				}
 			}
 		});
