@@ -312,8 +312,8 @@ public class ELEONXML implements PersistenceBackend
 			treeItemNode.setAttribute("dc:title", treeNodeData.getLabel());
 			if (treeItemCurrent.getData() instanceof TriplePatternTreeNode) {
 				TriplePatternTreeNode perEntityNode = (TriplePatternTreeNode) treeItemCurrent.getData();
-				String subjectPattern = perEntityNode.getSubjectPattern();
-				String objectPattern = perEntityNode.getObjectPattern();
+				String subjectPattern = null;/*perEntityNode.getSubjectPattern();*///FIXME this should not be null
+				String objectPattern = null;/*perEntityNode.getObjectPattern();*///FIXME this should not be null
 				if (subjectPattern != null) {
 					Element subjectElement = doc.createElement("rdf:subject");
 					subjectElement.setAttribute("void:uriRegexPattern", subjectPattern);
@@ -434,7 +434,7 @@ public class ELEONXML implements PersistenceBackend
 					// FIXME: Resource should not be null, but be read in from DOM
 					// MIght not be worth fixing, if ELEON/XML is going to disappear
 					TriplePatternTreeNode data =
-							new TriplePatternTreeNode( null, facet, subjectPattern, null, null, objectPattern, null );
+							new TriplePatternTreeNode( null, facet, null, subjectPattern, null, null, objectPattern );
 					data.setValue( "dc:title", dc_title );
 					data.setValue( "dc:creator", dc_creator );
 					data.setValue( "void:triples", void_triples );

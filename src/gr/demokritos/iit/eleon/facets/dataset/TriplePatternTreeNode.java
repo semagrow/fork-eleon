@@ -39,55 +39,35 @@ package gr.demokritos.iit.eleon.facets.dataset;
 
 import com.hp.hpl.jena.rdf.model.Resource;
 
+import gr.demokritos.iit.eleon.MainShell;
+import gr.demokritos.iit.eleon.annotations.AnnotationVocabulary;
 import gr.demokritos.iit.eleon.facets.TreeFacetNode;
 
 public class TriplePatternTreeNode extends DatasetNode implements TreeFacetNode
 {
 	
-	private String subjectPattern;
-	private String objectPattern;
 	
-	/**
-	 * @param subjectPattern
-	 * @param objectPattern
-	 */
 	public TriplePatternTreeNode(  Resource res, DatasetFacet facet,
-			String subjectPattern, String subjectClass,
-			String predicate, String objectClass, String objectPattern )
+			String subjectClass, String subjectPattern, 
+			String predicate, String objectClass, String objectPattern )//FIXME: is predicate used anywhere?
 	{
 		super( res, facet );
-		this.subjectPattern = subjectPattern;
-		this.objectPattern = objectPattern;
+		Integer active_ann = MainShell.shell.activeAnnSchema;
+		for (int i = 0; i<AnnotationVocabulary.property_qnames[active_ann].length; i++) {
+			String ann_name = AnnotationVocabulary.property_qnames[active_ann][i];
+			if (ann_name == null) {
+				break;
+			} else if (ann_name.equals("svd:subjectRegexPattern")) {
+				this.property_values[active_ann][i] = subjectPattern;
+			} else if (ann_name.equals("svd:subjectClass")) {
+				this.property_values[active_ann][i] = subjectClass;
+			} else if (ann_name.equals("svd:objectRegexPattern")) {
+				this.property_values[active_ann][i] = objectPattern;
+			} else if (ann_name.equals("svd:objectClass")) {
+				this.property_values[active_ann][i] = objectClass;
+			}
+		}
 	}
 
-
-	/**
-	 * @return the subjectPattern
-	 */
-	public String getSubjectPattern() {
-		return subjectPattern;
-	}
-
-	/**
-	 * @param subjectPattern the subjectPattern to set
-	 */
-	public void setSubjectPattern(String subjectPattern) {
-		this.subjectPattern = subjectPattern;
-	}
-
-	/**
-	 * @return the objectPattern
-	 */
-	public String getObjectPattern() {
-		return objectPattern;
-	}
-
-	/**
-	 * @param objectPattern the objectPattern to set
-	 */
-	public void setObjectPattern(String objectPattern) {
-		this.objectPattern = objectPattern;
-	}
-	
 
 }
