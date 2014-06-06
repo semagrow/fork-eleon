@@ -274,7 +274,7 @@ public class AnnotationVocabulary
 		// Sevod extension
 		property_qnames[1][i] = "svd:subjectRegexPattern";
 		property_uris[1][i] = "http://rdf.iit.demokritos.gr/2013/sevod#subjectRegexPattern";
-		property_value_types[1][i] = Integer.class;//FIXME
+		property_value_types[1][i] = String.class;
 		property_is_functional[1][i] = true;	
 		property_is_visible[1][i] = true;
 		property_is_editable[1][i] = true;
@@ -290,7 +290,7 @@ public class AnnotationVocabulary
 		++i;
 		property_qnames[1][i] = "svd:objectRegexPattern";
 		property_uris[1][i] = "http://rdf.iit.demokritos.gr/2013/sevod#objectRegexPattern";
-		property_value_types[1][i] = Integer.class;//FIXME
+		property_value_types[1][i] = String.class;
 		property_is_functional[1][i] = true;	
 		property_is_visible[1][i] = true;
 		property_is_editable[1][i] = true;
