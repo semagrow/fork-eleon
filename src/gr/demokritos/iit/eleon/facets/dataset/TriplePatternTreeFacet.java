@@ -140,6 +140,18 @@ public class TriplePatternTreeFacet extends DatasetFacet implements TreeFacet
 		});
 		//myTree.setBounds(318, 84, 369, 578);
 		
+		myTree.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetDefaultSelected(SelectionEvent arg0) {
+				TreeItem selected = myTree.getSelection()[0];
+				if (selected.getExpanded()) {
+					selected.setExpanded(false);
+				} else {
+					selected.setExpanded(true);
+				}
+			}
+		});
+		
 		/*TreeItem root = new TreeItem( myTree, SWT.NONE );
 		root.setText("root");*/
 		
