@@ -46,6 +46,8 @@ import gr.demokritos.iit.eleon.facets.TreeFacet;
 import gr.demokritos.iit.eleon.ui.*;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Menu;
@@ -152,8 +154,18 @@ public class TriplePatternTreeFacet extends DatasetFacet implements TreeFacet
 			}
 		});
 		
-		/*TreeItem root = new TreeItem( myTree, SWT.NONE );
-		root.setText("root");*/
+		myTree.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.keyCode == SWT.ARROW_LEFT) {
+					if (myTree.getSelection().length==0) return;
+					myTree.getSelection()[0].setExpanded(false);
+				} else if (e.keyCode == SWT.ARROW_RIGHT) {
+					if (myTree.getSelection().length==0) return;
+					myTree.getSelection()[0].setExpanded(true);
+				}
+			}
+		});
 		
 		//insert menu for this tree
 		final Menu treeMenu = new Menu( myTree );

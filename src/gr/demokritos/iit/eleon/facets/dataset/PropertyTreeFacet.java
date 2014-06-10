@@ -43,6 +43,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.*;
@@ -138,6 +140,19 @@ public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 					selected.setExpanded(false);
 				} else {
 					selected.setExpanded(true);
+				}
+			}
+		});
+		
+		myTree.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.keyCode == SWT.ARROW_LEFT) {
+					if (myTree.getSelection().length==0) return;
+					myTree.getSelection()[0].setExpanded(false);
+				} else if (e.keyCode == SWT.ARROW_RIGHT) {
+					if (myTree.getSelection().length==0) return;
+					myTree.getSelection()[0].setExpanded(true);
 				}
 			}
 		});
