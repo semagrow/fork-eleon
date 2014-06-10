@@ -157,12 +157,19 @@ public class TriplePatternTreeFacet extends DatasetFacet implements TreeFacet
 		myTree.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
+				//System.out.println((e.stateMask & SWT.CTRL) != 0);
 				if (e.keyCode == SWT.ARROW_LEFT) {
 					if (myTree.getSelection().length==0) return;
 					myTree.getSelection()[0].setExpanded(false);
 				} else if (e.keyCode == SWT.ARROW_RIGHT) {
 					if (myTree.getSelection().length==0) return;
 					myTree.getSelection()[0].setExpanded(true);
+				} else if (e.keyCode == (SWT.CTRL & SWT.ARROW_DOWN)) {
+					System.out.println("SWT.CTRL + SWT.ARROW_DOWN");
+				} else if ((e.stateMask & SWT.CTRL) != 0) {//Ctrl was presses
+					if (e.keyCode == SWT.ARROW_DOWN) {
+						//System.out.println("Ctrl + Arrow_DownSWT.TRAVERSE_ARROW_NEXT");
+					}
 				}
 			}
 		});
