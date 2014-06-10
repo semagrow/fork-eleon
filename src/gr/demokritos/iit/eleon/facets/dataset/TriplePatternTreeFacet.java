@@ -50,6 +50,7 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
@@ -157,18 +158,52 @@ public class TriplePatternTreeFacet extends DatasetFacet implements TreeFacet
 		myTree.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				//System.out.println((e.stateMask & SWT.CTRL) != 0);
 				if (e.keyCode == SWT.ARROW_LEFT) {
 					if (myTree.getSelection().length==0) return;
 					myTree.getSelection()[0].setExpanded(false);
 				} else if (e.keyCode == SWT.ARROW_RIGHT) {
 					if (myTree.getSelection().length==0) return;
 					myTree.getSelection()[0].setExpanded(true);
-				} else if (e.keyCode == (SWT.CTRL & SWT.ARROW_DOWN)) {
-					System.out.println("SWT.CTRL + SWT.ARROW_DOWN");
-				} else if ((e.stateMask & SWT.CTRL) != 0) {//Ctrl was presses
+				} else if ((e.stateMask & SWT.CTRL) != 0) {//Ctrl was pressed
+					if (myTree.getSelection().length==0) return;
 					if (e.keyCode == SWT.ARROW_DOWN) {
-						//System.out.println("Ctrl + Arrow_DownSWT.TRAVERSE_ARROW_NEXT");
+						TreeItem parent = myTree.getSelection()[0].getParentItem();
+						if (parent == null) return;//root has no siblings
+						TreeItem[] children = parent.getItems();
+						int index = -1;
+						for (int i=0; i<children.length; i++) {
+							if (myTree.getSelection()[0] == children[i]) {
+								index = i;
+								break;
+							}
+						}
+						assert index != -1;
+						if (index == children.length - 1) {
+							myTree.setSelection(children[0]);
+							myTree.notifyListeners(SWT.Selection, new Event());
+						} else {
+							myTree.setSelection(children[index + 1]);
+							myTree.notifyListeners(SWT.Selection, new Event());
+						}
+					} else if (e.keyCode == SWT.ARROW_UP) {
+						TreeItem parent = myTree.getSelection()[0].getParentItem();
+						if (parent == null) return;//root has no siblings
+						TreeItem[] children = parent.getItems();
+						int index = -1;
+						for (int i=0; i<children.length; i++) {
+							if (myTree.getSelection()[0] == children[i]) {
+								index = i;
+								break;
+							}
+						}
+						assert index != -1;
+						if (index == 0) {
+							myTree.setSelection(children[children.length - 1]);
+							myTree.notifyListeners(SWT.Selection, new Event());
+						} else {
+							myTree.setSelection(children[index - 1]);
+							myTree.notifyListeners(SWT.Selection, new Event());
+						}
 					}
 				}
 			}
