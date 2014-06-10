@@ -135,6 +135,7 @@ public class SelectVocabulariesDialog extends Dialog
 		btnCancel.setBounds(279, 533, 81, 24);
 		btnCancel.setText("Cancel");
 
+		shell.setDefaultButton(btnOk);
 		shell.open();
 		Display display = parent.getDisplay();
 		while (!shell.isDisposed()) {

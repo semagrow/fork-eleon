@@ -95,6 +95,7 @@ public class InsertInMenuDialog extends Dialog {
             btnCancel.setBounds(222, 58, 81, 24);
             btnCancel.setText("&Cancel");
             
+            shell.setDefaultButton(btnInsert);
             shell.open();
             Display display = parent.getDisplay();
             while (!shell.isDisposed()) {

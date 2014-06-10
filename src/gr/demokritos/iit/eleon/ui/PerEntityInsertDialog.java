@@ -138,6 +138,7 @@ public class PerEntityInsertDialog  extends Dialog {
             textObject = new Text(shell, SWT.BORDER);
             textObject.setBounds(106, 52, 375, 21);
             
+            shell.setDefaultButton(btnInsert);
             shell.open();
             Display display = parent.getDisplay();
             while (!shell.isDisposed()) {

@@ -149,6 +149,7 @@ public class CopyExistingNodeDialog extends Dialog {
 		btnCancel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
 		btnCancel.setText("Cancel");
 		
+		shell.setDefaultButton(btnOk);
 		shell.setActive();
 
 		shell.open();
