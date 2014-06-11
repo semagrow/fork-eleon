@@ -715,18 +715,15 @@ public class MainShell extends Shell
 							
 						DatasetNode treeNodeData = ((DatasetNode) tree.getSelection()[0].getData());
 						
-						if (property.equals("void:property")) {
+						if (AnnotationVocabulary.property_value_types[schemaIndex][index] == Resource.class) {
 							//TODO: check for valid URI here?
 							treeNodeData.property_values[schemaIndex][index] = ResourceFactory.createResource(text.getText());
+							if (property.equals("void:sparqlEndpoint")) {
+								textEndpoint.setText(text.getText());
+							}
 							return;
-						} else if (property.equals("void:sparqlEndpoint")) {
-							//TODO: check for valid URI here?
-							treeNodeData.property_values[schemaIndex][index] = ResourceFactory.createResource(text.getText());
-							textEndpoint.setText(text.getText());
-							return;
-							
 						}
-
+						
 						try {
 							Class<?> cls[] = new Class[] { String.class };
 							java.lang.reflect.Constructor<?> c = ((Class<?>) AnnotationVocabulary.property_value_types[schemaIndex][index]).getConstructor(cls);
@@ -762,6 +759,36 @@ public class MainShell extends Shell
 				newEditor.selectAll();
 				newEditor.setFocus();
 				editor.setEditor(newEditor, item, 1);
+				
+				/*newEditor.addTraverseListener(new TraverseListener() {
+					public void keyTraversed(TraverseEvent e) {
+						if (e.detail == SWT.TRAVERSE_TAB_NEXT) {
+							e.doit = false;
+							if (table.getSelectionCount() == 1) {
+								int index = table.indexOf(table.getSelection()[0]);
+								int lenght = table.getItemCount();
+								if (index == lenght - 1) {
+									e.doit = true;
+								} else {
+									Event ev = new Event();
+									ev.detail = SWT.TRAVERSE_TAB_NEXT;
+									table.notifyListeners(SWT.Traverse, ev);
+									//table.setSelection(index + 1);
+								}
+							}
+						} else if (e.detail == SWT.TRAVERSE_TAB_PREVIOUS) {
+							e.doit = false;
+							if (table.getSelectionCount() == 1) {
+								int index = table.indexOf(table.getSelection()[0]);
+								if (index == 0) {
+									e.doit = true;
+								} else {
+									table.setSelection(index - 1);
+								}
+							}
+						}
+					}
+				});*/
 			}
 		});
 	}
