@@ -690,6 +690,12 @@ public class MainShell extends Shell
 							//TODO: check for valid URI here?
 							treeNodeData.property_values[schemaIndex][index] = ResourceFactory.createResource(text.getText());
 							return;
+						} else if (property.equals("void:sparqlEndpoint")) {
+							//TODO: check for valid URI here?
+							treeNodeData.property_values[schemaIndex][index] = ResourceFactory.createResource(text.getText());
+							textEndpoint.setText(text.getText());
+							return;
+							
 						}
 
 						try {
@@ -717,11 +723,7 @@ public class MainShell extends Shell
 			                return;
 						}
 						
-						if (property.equals("void:sparqlEndpoint")) {
-							//((TreeNodeData) tree.getSelection()[0].getData()).setVoid_sparqlEnpoint(text.getText());
-							textEndpoint.setText(text.getText());
-						} else if (property.equals("dc:title")) {
-							//((TreeNodeData) tree.getSelection()[0].getData()).setDc_title(text.getText());
+						if (property.equals("dc:title")) {
 							tree.getSelection()[0].setText(text.getText());
 							textTitle.setText(text.getText());
 						}
