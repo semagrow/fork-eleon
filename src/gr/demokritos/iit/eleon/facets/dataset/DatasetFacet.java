@@ -286,7 +286,7 @@ public abstract class DatasetFacet implements TreeFacet
 		for( TreeItem treeItem : q ) { queue.add( treeItem ); }
 
 		while( ! queue.isEmpty() ) {
-			System.out.println("XX" + queue);
+			//System.out.println("XX" + queue);
 			TreeItem treeItem = queue.get( 0 );
 			queue.remove( 0 );
 			TreeItem[] qq = treeItem.getItems();
