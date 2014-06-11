@@ -54,6 +54,7 @@ import org.eclipse.swt.custom.TableEditor;
 
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.ResourceFactory;
 
 import gr.demokritos.iit.eleon.annotations.AnnotationVocabulary;
 import gr.demokritos.iit.eleon.annotations.Annotator;
@@ -684,6 +685,12 @@ public class MainShell extends Shell
 						assert(i>=0);
 							
 						DatasetNode treeNodeData = ((DatasetNode) tree.getSelection()[0].getData());
+						
+						if (property.equals("void:property")) {
+							//TODO: check for valid URI here?
+							treeNodeData.property_values[schemaIndex][index] = ResourceFactory.createResource(text.getText());
+							return;
+						}
 
 						try {
 							Class<?> cls[] = new Class[] { String.class };

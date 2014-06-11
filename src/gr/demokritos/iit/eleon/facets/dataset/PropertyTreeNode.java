@@ -37,6 +37,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 package gr.demokritos.iit.eleon.facets.dataset;
 
+import gr.demokritos.iit.eleon.MainShell;
+import gr.demokritos.iit.eleon.annotations.AnnotationVocabulary;
 import gr.demokritos.iit.eleon.facets.TreeFacetNode;
 
 import com.hp.hpl.jena.rdf.model.Resource;
@@ -44,7 +46,7 @@ import com.hp.hpl.jena.rdf.model.Resource;
 
 public class PropertyTreeNode extends DatasetNode implements TreeFacetNode
 {
-	private Resource ontProperty = null;
+	//private Resource ontProperty = null;
 
 	/**
 	 * @param ontProperty
@@ -52,7 +54,16 @@ public class PropertyTreeNode extends DatasetNode implements TreeFacetNode
 	public PropertyTreeNode( Resource res, DatasetFacet myFacet, Resource ontProperty )
 	{
 		super( res, myFacet );
-		this.ontProperty = ontProperty;
+		//this.ontProperty = ontProperty;
+		Integer active_ann = MainShell.shell.activeAnnSchema;
+		for (int i = 0; i<AnnotationVocabulary.property_qnames[active_ann].length; i++) {
+			String ann_name = AnnotationVocabulary.property_qnames[active_ann][i];
+			if (ann_name == null) {
+				break;
+			} else if (ann_name.equals("void:property")) {
+				this.property_values[active_ann][i] = ontProperty;
+			}
+		}
 	}
 	
 	
@@ -60,13 +71,35 @@ public class PropertyTreeNode extends DatasetNode implements TreeFacetNode
 	 * @return the ontProperty
 	 */
 	public Resource getProperty()
-	{ return ontProperty; }
+	{
+		Integer active_ann = MainShell.shell.activeAnnSchema;
+		for (int i = 0; i<AnnotationVocabulary.property_qnames[active_ann].length; i++) {
+			String ann_name = AnnotationVocabulary.property_qnames[active_ann][i];
+			if (ann_name == null) {
+				break;
+			} else if (ann_name.equals("void:property")) {
+				return (Resource) this.property_values[active_ann][i];
+			}
+		}
+		return null; 
+	}
 
 	/**
 	 * @param ontProperty the ontProperty to set
 	 */
 	public void setProperty( Resource ontProperty )
-	{ this.ontProperty = ontProperty; }
+	{
+		Integer active_ann = MainShell.shell.activeAnnSchema;
+		for (int i = 0; i<AnnotationVocabulary.property_qnames[active_ann].length; i++) {
+			String ann_name = AnnotationVocabulary.property_qnames[active_ann][i];
+			if (ann_name == null) {
+				break;
+			} else if (ann_name.equals("void:property")) {
+				this.property_values[active_ann][i] = ontProperty;
+			}
+		}
+		//this.ontProperty = ontProperty; 
+	}
 
 
 }
