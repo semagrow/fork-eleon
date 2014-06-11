@@ -508,6 +508,35 @@ public class MainShell extends Shell
 		}
 		createTable();
 		
+		table.addTraverseListener(new TraverseListener() {
+			public void keyTraversed(TraverseEvent e) {
+				if (e.detail == SWT.TRAVERSE_TAB_NEXT) {
+					e.doit = false;
+					if (table.getSelectionCount() == 1) {
+						int index = table.indexOf(table.getSelection()[0]);
+						int lenght = table.getItemCount();
+						if (index == lenght - 1) {
+							e.doit = true;
+						} else {
+							table.setSelection(index + 1);
+							table.notifyListeners(SWT.Selection, new Event());
+						}
+					}
+				} else if (e.detail == SWT.TRAVERSE_TAB_PREVIOUS) {
+					e.doit = false;
+					if (table.getSelectionCount() == 1) {
+						int index = table.indexOf(table.getSelection()[0]);
+						if (index == 0) {
+							e.doit = true;
+						} else {
+							table.setSelection(index - 1);
+							table.notifyListeners(SWT.Selection, new Event());
+						}
+					}
+				}
+			}
+		});
+		
 		final DatasetNode treeNodeData = ((DatasetNode) tree.getSelection()[0].getData());
 		
 		//final int schemaIndex = treeNodeData.getAnnotationSchemaIndex();
