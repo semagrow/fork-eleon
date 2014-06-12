@@ -312,8 +312,8 @@ public class ELEONXML implements PersistenceBackend
 			treeItemNode.setAttribute("dc:title", treeNodeData.getLabel());
 			if (treeItemCurrent.getData() instanceof TriplePatternTreeNode) {
 				TriplePatternTreeNode perEntityNode = (TriplePatternTreeNode) treeItemCurrent.getData();
-				String subjectPattern = null;/*perEntityNode.getSubjectPattern();*///FIXME this should not be null
-				String objectPattern = null;/*perEntityNode.getObjectPattern();*///FIXME this should not be null
+				String subjectPattern  = perEntityNode.getSubjectPattern();
+				String objectPattern = perEntityNode.getObjectPattern();
 				if (subjectPattern != null) {
 					Element subjectElement = doc.createElement("rdf:subject");
 					subjectElement.setAttribute("void:uriRegexPattern", subjectPattern);

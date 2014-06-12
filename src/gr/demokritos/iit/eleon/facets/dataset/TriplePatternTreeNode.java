@@ -68,6 +68,32 @@ public class TriplePatternTreeNode extends DatasetNode implements TreeFacetNode
 			}
 		}
 	}
+	
+	public String getSubjectPattern() {
+		Integer active_ann = MainShell.shell.activeAnnSchema;
+		for (int i = 0; i<AnnotationVocabulary.property_qnames[active_ann].length; i++) {
+			String ann_name = AnnotationVocabulary.property_qnames[active_ann][i];
+			if (ann_name == null) {
+				break;
+			} else if (ann_name.equals("svd:subjectRegexPattern")) {
+				return (String) this.property_values[active_ann][i];
+			}
+		}
+		return null;
+	}
+	
+	public String getObjectPattern() {
+		Integer active_ann = MainShell.shell.activeAnnSchema;
+		for (int i = 0; i<AnnotationVocabulary.property_qnames[active_ann].length; i++) {
+			String ann_name = AnnotationVocabulary.property_qnames[active_ann][i];
+			if (ann_name == null) {
+				break;
+			} else if (ann_name.equals("svd:objectRegexPattern")) {
+				return (String) this.property_values[active_ann][i];
+			}
+		}
+		return null;
+	}
 
 
 }

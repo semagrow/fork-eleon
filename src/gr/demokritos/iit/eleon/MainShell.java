@@ -746,6 +746,24 @@ public class MainShell extends Shell
 						}
 						
 						if (property.equals("dc:title")) {
+							/*if ( (treeNodeData instanceof TriplePatternTreeNode) && text.getText().equals("") ) {
+								TriplePatternTreeNode data = (TriplePatternTreeNode) treeNodeData;
+								String subjectPattern = data.getSubjectPattern();
+								String objectPattern = data.getObjectPattern();
+								String label = "";
+								if (subjectPattern == null) {
+									label += "?s ";
+								} else {
+									label += subjectPattern + " ";
+								}
+								label += "?p ";
+								if (objectPattern == null) {
+									label += "?o";
+								} else {
+									label += objectPattern;
+								}
+								text.setText(label);
+							}*/
 							tree.getSelection()[0].setText(text.getText());
 							textTitle.setText(text.getText());
 						}
