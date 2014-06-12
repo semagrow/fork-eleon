@@ -760,7 +760,7 @@ public class MainShell extends Shell
 				newEditor.setFocus();
 				editor.setEditor(newEditor, item, 1);
 				
-				/*newEditor.addTraverseListener(new TraverseListener() {
+				newEditor.addTraverseListener(new TraverseListener() {
 					public void keyTraversed(TraverseEvent e) {
 						if (e.detail == SWT.TRAVERSE_TAB_NEXT) {
 							e.doit = false;
@@ -772,8 +772,10 @@ public class MainShell extends Shell
 								} else {
 									Event ev = new Event();
 									ev.detail = SWT.TRAVERSE_TAB_NEXT;
+									ev.doit = true;
 									table.notifyListeners(SWT.Traverse, ev);
-									//table.setSelection(index + 1);
+									table.setFocus();
+									table.notifyListeners(SWT.Selection, ev);
 								}
 							}
 						} else if (e.detail == SWT.TRAVERSE_TAB_PREVIOUS) {
@@ -783,12 +785,18 @@ public class MainShell extends Shell
 								if (index == 0) {
 									e.doit = true;
 								} else {
-									table.setSelection(index - 1);
+									//table.setSelection(index - 1);
+									Event ev = new Event();
+									ev.detail = SWT.TRAVERSE_TAB_PREVIOUS;
+									ev.doit = true;
+									table.notifyListeners(SWT.Traverse, ev);
+									table.setFocus();
+									table.notifyListeners(SWT.Selection, ev);
 								}
 							}
 						}
 					}
-				});*/
+				});
 			}
 		});
 	}
