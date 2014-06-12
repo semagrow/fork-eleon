@@ -142,17 +142,15 @@ public class MainShell extends Shell
 		Menu fileMenu = new Menu(this, SWT.DROP_DOWN);
 		mntmFile.setMenu(fileMenu);
 		
-		/*MenuItem newItem = new MenuItem(fileMenu, SWT.PUSH);
+		MenuItem newItem = new MenuItem(fileMenu, SWT.PUSH);
 		newItem.addSelectionListener(new SelectionAdapter() {
         	@Override
         	public void widgetSelected(SelectionEvent arg0) {
-        		
+        		newButtonFunctionality();
         	}
         });
-		newItem.setText("&New");*/
+		newItem.setText("&New");
 		
-		/*propertyTree = new PropertyTreeFacet( this );
-		entityTree = new EntityInclusionTreeFacet( this );*/
 		MenuItem openItem = new MenuItem(fileMenu, SWT.PUSH);
         openItem.addSelectionListener(new SelectionAdapter() {
         	@Override
@@ -195,7 +193,6 @@ public class MainShell extends Shell
 	                box.setMessage(e.toString());
 	                box.open();
 				}
-        		//System.out.println ("Open: " + dialog.open ());
         	}
         });
         openItem.setText("&Open...");
@@ -499,8 +496,7 @@ public class MainShell extends Shell
 		tblclmnValue.setText("Value");
 	}
 	
-	//protected void createTableContents(String triples, String subjects, String objects, String sparqlEnpoint, String title, final Tree tree) {
-	public void createTableContents(/*TreeNodeData treeNodeData, */final Tree tree) {	
+	public void createTableContents(final Tree tree) {	
 		
 		if (table != null && !table.isDisposed()) {
 			table.dispose();
@@ -842,6 +838,31 @@ public class MainShell extends Shell
 	}
 	
 	
+	private void newButtonFunctionality() {
+		int style = SWT.ICON_WARNING | SWT.APPLICATION_MODAL | SWT.YES | SWT.NO;  
+		MessageBox messageBox = new MessageBox(this, style);  
+		messageBox.setText("Start new annotation?");  
+		messageBox.setMessage("Are you sure you want start a new annotation session? Any unsaved progress will be lost.");  
+		if (messageBox.open() == SWT.YES) {
+			if (table != null && !table.isDisposed()) {
+				table.dispose();
+				table = null;
+			}
+			Tree tree = null;
+			tree = entityTree.getTree();
+			if (tree != null && !tree.isDisposed()) {
+				tree.dispose();
+				tree = null;
+			}
+			tree = propertyTree.getTree();
+			if (tree != null && !tree.isDisposed()) {
+				tree.dispose();
+				tree = null;
+			}
+			propertyTree = new PropertyTreeFacet( this );
+			entityTree = new TriplePatternTreeFacet( this );
+		}
+	}
 	
 	/*
 	private boolean deleteNode(TreeItem treeItem, String nodeNameToDelete) {
@@ -873,30 +894,6 @@ public class MainShell extends Shell
 	}
 	*/
 	
-
-	
-	/*protected boolean canEditItem(TreeItem treeItem, String author) {
-		String creator = ((TreeNodeData) treeItem.getData()).getDc_creator();
-		if (creator.equals(author)) {
-			return true;
-		} else {
-			return false;
-		}
-	}*/
-	
-	/*protected void clearListTreeTavle() {
-		list.dispose();
-		list = new List(this, SWT.BORDER);
-		list.setBounds(10, 79, 302, 583);
-		treePerProperty.dispose();
-		treePerProperty = new Tree(this, SWT.BORDER);
-		treePerProperty.setBounds(318, 79, 283, 583);
-		table.dispose();
-		table = new Table(this, SWT.BORDER | SWT.FULL_SELECTION);
-		table.setBounds(607, 79, 401, 583);
-		table.setHeaderVisible(true);
-		table.setLinesVisible(true);
-	}*/
 
 	/**
 	 * Create contents of the shell.
