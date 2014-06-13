@@ -76,7 +76,7 @@ public class CopyExistingNodeDialog extends Dialog {
 		 this (parent, 0);//default style bits go here (not the Shell's style bits)
 	}
 	
-	public void copy(Tree originalTree, final TreeItem selectedItem) {
+	public void open(Tree originalTree, final TreeItem selectedItem) {
 		
 		Shell parent = getParent();
 		shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);

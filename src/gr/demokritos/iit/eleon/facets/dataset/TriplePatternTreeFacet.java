@@ -302,7 +302,7 @@ public class TriplePatternTreeFacet extends DatasetFacet implements TreeFacet
 				TreeItem[] selected = myTree.getSelection();
 				if (selected.length > 0) {
 					CopyExistingNodeDialog dialogCopy = new CopyExistingNodeDialog( myShell );
-					dialogCopy.copy(myTree, selected[0]);
+					dialogCopy.open(myTree, selected[0]);
 					selected[0].setExpanded(true);
 				} else {
 					MessageBox box = new MessageBox(myShell, SWT.OK | SWT.ICON_INFORMATION);
