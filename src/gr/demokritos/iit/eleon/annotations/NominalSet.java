@@ -38,8 +38,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 package gr.demokritos.iit.eleon.annotations;
 
+import gr.demokritos.iit.eleon.MainShell;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import com.hp.hpl.jena.rdf.model.Resource;
 
 
 public class NominalSet
@@ -48,6 +52,30 @@ public class NominalSet
 	// All possible values
 	public static String[] availableNomilas = {"class1" , "class2", "class3", "class4", "class5"};
 
+	private static final String cropPref = "http://ontologies.seamless-ip.org/crop.owl#";
+	public static final String[] cropClassNames = { "Crop", "CropGroup", "SimpleCropGroup",
+		"ProductGroup", "ProductType", "Product", "CropProduct" };
+
+	private static final String t4fPref = "http://www.semagrow.eu/schemas/t4f#";
+	public static final String[] t4fClassNames = { "Sensor", "SensorMeasurement" };
+	public static final Resource[] cropClasses;
+	public static final Resource[] t4fClasses;
+	
+	static {
+		cropClasses = new Resource[ cropClassNames.length ];
+		for( int i=0; i<cropClassNames.length; ++i ) {
+			Resource r = MainShell.shell.data.createResource( cropPref + cropClassNames[i] );
+			cropClasses[i] = r;
+		}
+		
+		t4fClasses = new Resource[ t4fClassNames.length ];
+		for( int i=0; i<t4fClassNames.length; ++i ) {
+			Resource r = MainShell.shell.data.createResource( t4fPref + t4fClassNames[i] );
+			t4fClasses[i] = r;
+		}
+	}
+
+	
 	// Current selection
 	List<String> containingNominals = new ArrayList<String>();
 	

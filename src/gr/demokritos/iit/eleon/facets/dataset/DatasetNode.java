@@ -38,6 +38,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 package gr.demokritos.iit.eleon.facets.dataset;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 import com.hp.hpl.jena.ontology.OntModel;
@@ -47,6 +50,7 @@ import com.hp.hpl.jena.rdf.model.Statement;
 
 import gr.demokritos.iit.eleon.MainShell;
 import gr.demokritos.iit.eleon.annotations.AnnotationVocabulary;
+import gr.demokritos.iit.eleon.annotations.NominalSet;
 import gr.demokritos.iit.eleon.facets.TreeFacetNode;
 
 
@@ -178,24 +182,51 @@ public class DatasetNode implements TreeFacetNode
 			String uri = AnnotationVocabulary.property_uris[MainShell.shell.activeAnnSchema][i];
 			Property p = model.getProperty( uri );
 			Object value = this.property_values[MainShell.shell.activeAnnSchema][i];
-			Statement stmt;
+			List<Statement> stmts;
 			if( value == null ) {
-				stmt = null;
+				stmts = Collections.emptyList();
 			}
 			else if( value instanceof Resource ) {
-				stmt = model.createStatement( this.res, p, (Resource)value );
+				Statement stmt = model.createStatement( this.res, p, (Resource)value );
+				stmts = Collections.singletonList( stmt );
 			}
 			else if( value instanceof Integer ) {
-				stmt = model.createLiteralStatement( this.res, p, ((Integer)value).intValue() );
+				Statement stmt = model.createLiteralStatement( this.res, p, ((Integer)value).intValue() );
+				stmts = Collections.singletonList( stmt );
 			}
 			else if( value instanceof String ) {
-				stmt = model.createLiteralStatement( this.res, p, (String)value );
+				Statement stmt = model.createLiteralStatement( this.res, p, (String)value );
+				stmts = Collections.singletonList( stmt );
+			}
+			else if( value instanceof NominalSet ) {
+				stmts = new ArrayList<Statement>();
+
+				List<Integer> it;
+
+				// FIXME: get indexes of all ticked crop values in the table entry
+				it = Collections.emptyList();
+				for( Integer index : it ) {
+					Resource object = NominalSet.cropClasses[index.intValue()];
+					Statement stmt = model.createStatement( this.res, p, object );
+					stmts.add( stmt );
+				}
+				
+				// FIXME: get indexes of all ticked t4f values in the table entry
+				it = Collections.emptyList();
+				for( Integer index : it ) {
+					Resource object = NominalSet.t4fClasses[index.intValue()];
+					Statement stmt = model.createStatement( this.res, p, object );
+					stmts.add( stmt );
+				}
 			}
 			else {
 				// TODO: warning
-				stmt = null;
+				stmts = Collections.emptyList();
 			}
-			if( stmt != null ) { model.add( stmt ); }
+			
+			for( Statement stmt : stmts ) {
+				if( stmt != null ) { model.add( stmt ); }
+			}
 			++i;
 		}
 	}
