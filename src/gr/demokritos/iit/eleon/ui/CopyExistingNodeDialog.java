@@ -97,13 +97,12 @@ public class CopyExistingNodeDialog extends Dialog {
 		Functions.copyTree(originalTree.getItems()[0], trtmRoot);
 		
 		Composite composite = new Composite(shell, SWT.NONE);
-		composite.setLayout(new GridLayout(6, true));
+		composite.setLayout(new GridLayout(5, true));
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		new Label(composite, SWT.NONE);
 		new Label(composite, SWT.NONE);
 		new Label(composite, SWT.NONE);
-		new Label(composite, SWT.NONE);
-				
+		
 		Button btnOk = new Button(composite, SWT.NONE);
 		btnOk.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -138,6 +137,8 @@ public class CopyExistingNodeDialog extends Dialog {
 		//btnOk.setBounds(0, 0, 81, 24);
 		btnOk.setText("    OK    ");
 		
+		shell.setDefaultButton(btnOk);
+		
 		Button btnCancel = new Button(composite, SWT.NONE);
 		btnCancel.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -148,8 +149,6 @@ public class CopyExistingNodeDialog extends Dialog {
 		});
 		btnCancel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
 		btnCancel.setText("Cancel");
-		
-		shell.setDefaultButton(btnOk);
 		shell.setActive();
 
 		shell.open();
