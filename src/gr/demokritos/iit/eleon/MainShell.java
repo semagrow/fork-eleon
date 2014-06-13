@@ -108,6 +108,7 @@ public class MainShell extends Shell
 			Display display = Display.getDefault();
 			MainShell.shell = new MainShell(display);
 			MainShell.shell.persistence = new OWLFile( MainShell.shell );
+			MainShell.shell.initializeFacets();
 			// shell.persistence = new ELEONXML();
 			MainShell.shell.open();
 			MainShell.shell.layout();
@@ -478,8 +479,7 @@ public class MainShell extends Shell
 		textTitle = new Text(this, SWT.BORDER | SWT.READ_ONLY);
 		textTitle.setBounds(46, 30, 266, 24);
 		
-		propertyTree = new PropertyTreeFacet( this );
-		entityTree = new TriplePatternTreeFacet( this );
+		//initializeFacets();
 		
 		createContents();
 	}
@@ -880,9 +880,18 @@ public class MainShell extends Shell
 				tree.dispose();
 				tree = null;
 			}
-			propertyTree = new PropertyTreeFacet( this );
-			entityTree = new TriplePatternTreeFacet( this );
+			
+			initializeFacets();
 		}
+	}
+	
+	private void initializeFacets() {
+		propertyTree = new PropertyTreeFacet( this );
+		propertyTree.init();
+		propertyTree.getTree().setVisible(false);
+		entityTree = new TriplePatternTreeFacet( this );
+		entityTree.init();
+		entityTree.getTree().setVisible(false);
 	}
 	
 	/*
