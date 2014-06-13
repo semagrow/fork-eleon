@@ -131,7 +131,9 @@ public class MainShell extends Shell
 
 	public MainShell( Display display )
 	{
-		super(display, SWT.SHELL_TRIM);
+		//super(display, SWT.SHELL_TRIM);
+		//forbid resize for now.
+		super(display, SWT.CLOSE | SWT.TITLE | SWT.MIN);
 		
 		Menu menu = new Menu(this, SWT.BAR);
 		setMenuBar(menu);
