@@ -179,11 +179,13 @@ public class MainShell extends Shell
 					MainShell.shell.textTitle.setText( propertyTree.getTitle() );
 					MainShell.shell.textEndpoint.setText( propertyTree.getInfo() );
 					MainShell.shell.propertyTree.syncFrom( MainShell.shell.data );
+					MainShell.shell.propertyTree.getTree().setVisible(false);
 
 					MainShell.shell.entityTree.init();
 					MainShell.shell.textTitle.setText( MainShell.shell.entityTree.getTitle() );
 					MainShell.shell.textEndpoint.setText( MainShell.shell.entityTree.getInfo() );
 					MainShell.shell.entityTree.syncFrom( MainShell.shell.data );
+					MainShell.shell.entityTree.getTree().setVisible(false);
 				}
         		catch( Exception e ) {
 					e.printStackTrace();
@@ -438,6 +440,7 @@ public class MainShell extends Shell
 							textEndpoint.setText( propertyTree.getInfo() );
 							//propertyTree.update();
 						}
+						propertyTree.getTree().setVisible(true);
 						propertyTree.getTree().moveAbove( null );
 					} else {
 						MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
@@ -452,6 +455,7 @@ public class MainShell extends Shell
 						textTitle.setText( entityTree.getTitle() );
 						textEndpoint.setText( entityTree.getInfo() );
 					}
+					entityTree.getTree().setVisible(true);
 					entityTree.getTree().moveAbove( null );
 				}
 			}
