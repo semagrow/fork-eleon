@@ -60,7 +60,6 @@ import gr.demokritos.iit.eleon.annotations.AnnotationVocabulary;
 import gr.demokritos.iit.eleon.annotations.Annotator;
 import gr.demokritos.iit.eleon.annotations.AnnotatorList;
 import gr.demokritos.iit.eleon.annotations.NominalSet;
-import gr.demokritos.iit.eleon.commons.Constants;
 import gr.demokritos.iit.eleon.facets.*;
 import gr.demokritos.iit.eleon.facets.dataset.*;
 import gr.demokritos.iit.eleon.ui.*;
@@ -423,7 +422,7 @@ public class MainShell extends Shell
 	                box.open();
 	                return;
 				}		
-				if (list.getSelection()[0].toString().equals(Constants.perProperty)) {
+				if (list.getSelection()[0].toString().equals("per property")) {
 					boolean has_vocabulary = false;
 					for (MenuItem menuItem : dataSchemaMenu.getItems()) {
 						if (menuItem.getSelection()) {
@@ -458,7 +457,7 @@ public class MainShell extends Shell
 			}
 		});
 		list.setBounds(10, 84, 302, 578);
-		String[] listItems = {Constants.perProperty, "per entity"};
+		String[] listItems = {"per property", "per entity"};
 		list.setItems(listItems);
 		
 		//createTree();
