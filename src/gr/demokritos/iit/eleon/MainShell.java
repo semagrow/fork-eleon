@@ -485,11 +485,13 @@ public class MainShell extends Shell
 	}
 	
 	protected void createTable() {
+		//table
 		table = new Table(this, SWT.BORDER | SWT.FULL_SELECTION);
 		table.setBounds(693, 84, 394, 578);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		
+		//table columns
 		TableColumn tblclmnProperty = new TableColumn(table, SWT.NONE);
 		tblclmnProperty.setWidth(198);
 		tblclmnProperty.setText("Property");
@@ -497,15 +499,6 @@ public class MainShell extends Shell
 		TableColumn tblclmnValue = new TableColumn(table, SWT.NONE);
 		tblclmnValue.setWidth(100);
 		tblclmnValue.setText("Value");
-	}
-	
-	public void createTableContents(final Tree tree) {	
-		
-		if (table != null && !table.isDisposed()) {
-			table.dispose();
-			table = null;
-		}
-		createTable();
 		
 		table.addTraverseListener(new TraverseListener() {
 			public void keyTraversed(TraverseEvent e) {
@@ -535,6 +528,16 @@ public class MainShell extends Shell
 				}
 			}
 		});
+	}
+	
+	public void createTableContents(final Tree tree) {	
+		
+		if (table != null && !table.isDisposed()) {
+			table.dispose();
+			table = null;
+		}
+		
+		createTable();
 		
 		final DatasetNode treeNodeData = ((DatasetNode) tree.getSelection()[0].getData());
 		
