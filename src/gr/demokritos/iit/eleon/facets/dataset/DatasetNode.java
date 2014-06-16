@@ -200,8 +200,12 @@ public class DatasetNode implements TreeFacetNode
 			}
 			else if( value instanceof NominalSet ) {
 				stmts = new ArrayList<Statement>();
+				for (Resource nominal_class : ((NominalSet) value).getContainingNominals()) {
+					Statement stmt = model.createStatement( this.res, p, nominal_class );
+					stmts.add( stmt );
+				}
 
-				List<Integer> it;
+				/*List<Integer> it;
 
 				// FIXME: get indexes of all ticked crop values in the table entry
 				it = Collections.emptyList();
@@ -217,7 +221,7 @@ public class DatasetNode implements TreeFacetNode
 					Resource object = NominalSet.t4fClasses[index.intValue()];
 					Statement stmt = model.createStatement( this.res, p, object );
 					stmts.add( stmt );
-				}
+				}*/
 			}
 			else {
 				// TODO: warning
