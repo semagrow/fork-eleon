@@ -1,0 +1,14 @@
+
+NL.jar:			NaturalOWL 1.1
+xercesImpl:		2.7.1
+
+Jena
+  jena.jar:		jena 2.6.4
+  icu4j:		icu4j 3.4.4
+  iri.jar:		iri 0.8
+
+Logging
+  slf4j-api:	1.5.8
+  slf4j-log4j12:1.5.8
+  log4j:		1.2.12
+  

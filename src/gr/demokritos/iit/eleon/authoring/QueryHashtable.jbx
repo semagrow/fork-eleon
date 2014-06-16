@@ -1,0 +1,24 @@
+[PropertyInfo]
+allEntitiesAndGenericBeforeRemove,Vector,false,false, , ,false,<default>
+allEntityTypesBeforeRemove,Vector,false,false, , ,false,<default>
+currentFieldValues,Hashtable,false,false, , ,false,<default>
+currentHashtable,Hashtable,false,false, , ,false,<default>
+currentSpecialValue,String,false,false, , ,false,<default>
+currentSpecialValues,Hashtable,false,false, , ,false,<default>
+currentStoriesVector,Vector,false,false, , ,false,<default>
+currentStoryText,Object,false,false, , ,false,<default>
+currentStoryValues,Hashtable,false,false, , ,false,<default>
+currentValue,String,false,false, , ,false,<default>
+currentValues,Vector,false,false, , ,false,<default>
+currentVector,Vector,false,false, , ,false,<default>
+defaultHashtable,Hashtable,false,false, , ,false,<default>
+field,String,false,false, , ,false,<default>
+hashtableEntry,String,false,false, , ,false,<default>
+leftMargin,Dimension,false,false, , ,false,<default>
+mainDBHashtable,Hashtable,false,false, , ,false,<default>
+panelFont,Font,false,false, , ,false,<default>
+[IconNames]
+
+
+
+

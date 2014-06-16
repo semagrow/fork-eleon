@@ -1,29 +1,137 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project default="create_run_jar" name="Create Runnable Jar for Project eleon-trunk">
-    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
-    <!--ANT 1.7 is required                                        -->
-    <target name="create_run_jar">
-        <jar destfile="${basedir}/eleon.jar" filesetmanifest="mergewithoutmain">
-            <manifest>
-                <attribute name="Main-Class" value="gr.demokritos.iit.eleon.MainShell"/>
-                <attribute name="Class-Path" value="."/>
-            </manifest>
-            <fileset dir="${basedir}/classes"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/giannis/git/eleon/lib/jena/commons-codec-1.6.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/giannis/git/eleon/lib/jena/httpclient-4.2.3.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/giannis/git/eleon/lib/jena/httpcore-4.2.2.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/giannis/git/eleon/lib/jena/jcl-over-slf4j-1.6.4.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/giannis/git/eleon/lib/jena/jena-arq-2.11.1.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/giannis/git/eleon/lib/jena/jena-core-2.11.1.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/giannis/git/eleon/lib/jena/jena-iri-1.0.1.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/giannis/git/eleon/lib/jena/jena-sdb-1.4.1.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/giannis/git/eleon/lib/jena/jena-tdb-1.0.1.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/giannis/git/eleon/lib/jena/log4j-1.2.16.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/giannis/git/eleon/lib/jena/slf4j-api-1.6.4.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/giannis/git/eleon/lib/jena/slf4j-log4j12-1.6.4.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/giannis/git/eleon/lib/jena/xercesImpl-2.11.0.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/giannis/git/eleon/lib/jena/xml-apis-1.4.01.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="/home/giannis/git/eleon/lib/swt.jar"/>
-        </jar>
-    </target>
+<project name="eleon" default="compile" basedir=".">
+
+  <!-- Configuration properties -->
+  <!-- ======================== -->
+
+  <exec executable="cat"
+	outputproperty="version" errorproperty="stderr"
+	input="VERSION" />
+
+  <property name="name"            value="eleon"/>
+  <property name="vname"           value="${name}-${version}"/>
+
+  <!-- Output file names and locations -->
+
+  <property name="dist.name"       value="${vname}"/>
+  <property name="dist.zip.name"   value="${vname}.zip"/>
+  <property name="jarfile"         value="${name}.jar"/>
+  <property name="srczipfile"      value="${vname}-src.zip"/>
+
+  <property name="dist.dir"        value="dist/${dist.name}"/>
+  <property name="dist.lib.dir"    value="${dist.dir}/lib"/>
+
+  <!-- Source locations -->
+
+  <property name="src.dir"           value="src"/>
+  <property name="classes.dir"       value="classes"/>
+  <property name="lib.dir"           value="lib"/>
+  <property name="bat.dir"           value="scripts"/>
+
+  <!-- Classpaths -->
+
+  <path id="classpath">
+    <fileset dir="${lib.dir}" includes="*.jar" excludes="${jarfile}"/>
+  </path>
+
+
+  <!-- Primary externally visible targets -->
+  <!-- ================================== -->
+
+  <target name="compile"
+    description="Compile the source tree into class files under ${classes.dir}">
+    <javac
+       srcdir="${src.dir}"
+       destdir="${classes.dir}"
+       debug="${java.debug}"
+       debuglevel="${java.debuglevel}"
+       deprecation="${java.deprecation}"
+       optimize="${java.optimize}"
+       source="${java.source}"
+       target="${java.target}">
+      <classpath refid="classpath" />
+    </javac>
+  </target>
+
+  <target name="distro-minimal" depends="compile,make-jar-debug"
+      description="Make a bin-only distribution">
+  	<mkdir dir="${dist.dir}"/>
+  	<mkdir dir="${dist.lib.dir}"/>
+    <copy todir="${dist.lib.dir}"><fileset dir="${lib.dir}"/></copy>
+    <copy todir="${dist.dir}"><fileset dir="${bat.dir}"/></copy>
+  </target>
+
+  <target name="distro" depends="compile,make-jar-debug,make-src-zip"
+      description="Make a complete distro with binary jar and zipped sources">
+  	<mkdir dir="${dist.dir}"/>
+  	<mkdir dir="${dist.lib.dir}"/>
+    <copy todir="${dist.lib.dir}"><fileset dir="${lib.dir}"/></copy>
+    <copy todir="${dist.dir}"><fileset dir="${bat.dir}"/></copy>
+  </target>
+
+
+  <!-- Internal targets -->
+  <!-- ================ -->
+
+  <manifestclasspath property="jar.classpath" jarfile="${dist.dir}/${jarfile}">
+  	<classpath>
+  	  <fileset dir="${dist.lib.dir}"><include name="**/*.jar"/></fileset>
+  	</classpath>
+  </manifestclasspath>
+	
+  <target name="make-jar-debug" depends="compile"
+      description="Create jarfile (with debug info) from the contents of the classes dir">
+  	<mkdir dir="${dist.dir}" />
+    <jar jarfile="${dist.dir}/${jarfile}">
+      <fileset dir="${classes.dir}"/>
+      <manifest>
+        <attribute name="Class-Path" value="${jar.classpath}" />
+      	<attribute name="Built-By" value="Stasinos Konstantopoulos for NCSR Demokritos" />
+        <attribute name="Main-Class" value="gr.demokritos.iit.eleon.authoring.Mpiro" />
+      </manifest>  
+    </jar>
+  </target>
+
+  <target name="make-jar-optimised"  depends="optimise-javac-flags,compile"
+    description="Create jarfile (optimized, no debug info) from the contents of the classes dir">
+  	<mkdir dir="${dist.dir}"/>
+  	<mkdir dir="${dist.lib.dir}"/>
+    <jar jarfile="${dist.lib.dir}/${jarfile}">
+      <manifest>
+        <attribute name="Class-Path" value="${jar.classpath}" />
+      	<attribute name="Built-By" value="Stasinos Konstantopoulos for NCSR Demokritos" />
+        <attribute name="Main-Class" value="gr.demokritos.iit.eleon.authoring.Mpiro" />
+      </manifest>  
+      <fileset dir="${classes.dir}"/>
+    </jar>
+  </target>
+
+  <target name="optimise-javac-flags"
+    description="Set the javac flags that will produce an optmised jar with no debug symbols" >
+    <property name="java.debug"       value="false"/>
+    <property name="java.debuglevel"  value=""/>
+    <property name="java.deprecation" value="false"/>
+    <property name="java.optimize"    value="true"/>
+    <property name="java.source"      value="1.6"/>
+    <property name="java.target"      value="1.5"/>
+  </target>
+
+  <target name="default-javac-flags"
+    description="Set the javac flags that will produce an debug jar with no compiler optimisation and all debug symbols" >
+    <!-- Note that in ant, if these flags are already set setting them again has no effect -->
+    <property name="java.debug"       value="true"/>
+    <property name="java.debuglevel"  value="source,lines,vars"/>
+    <property name="java.deprecation" value="false"/>
+    <property name="java.optimize"    value="false"/>
+    <property name="java.source"      value="1.6"/>
+    <property name="java.target"      value="1.6"/>
+  </target>
+
+  <target name="make-src-zip">
+  	<mkdir dir="${dist.dir}"/>
+    <zip zipfile="${dist.dir}/${srczipfile}">
+      <fileset dir="${src.dir}"/>
+    </zip>
+  </target>
+
 </project>
