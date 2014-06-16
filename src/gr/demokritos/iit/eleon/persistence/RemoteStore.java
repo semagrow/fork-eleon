@@ -39,12 +39,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 package gr.demokritos.iit.eleon.persistence;
 
 import gr.demokritos.iit.eleon.facets.Facet;
-import gr.demokritos.iit.eleon.facets.dataset.TriplePatternTreeFacet;
-import gr.demokritos.iit.eleon.facets.dataset.PropertyTreeFacet;
-
 import java.io.IOException;
-
-import org.eclipse.swt.widgets.Tree;
 
 public class RemoteStore implements PersistenceBackend
 {

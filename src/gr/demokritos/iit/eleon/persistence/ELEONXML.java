@@ -49,8 +49,6 @@ import javax.xml.parsers.*;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.xpath.*;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -339,6 +337,7 @@ public class ELEONXML implements PersistenceBackend
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	private void createTreeFromDOM( Node node, DatasetFacet facet, TreeItem parentTreeItem )
 	{
 		Tree tree = facet.getTree();

@@ -914,11 +914,13 @@ public class MainShell extends Shell
 	
 	private void getAvailableClasses(final TreeItem treeItem, java.util.List<Resource> available_classes, final int schemaIndex, final int index_vocabulary) {
 		if (treeItem == null) return;//finished tree
-		DatasetNode data = (DatasetNode) treeItem.getData();
-		assert data!=null;
-		java.util.List<DataSchema> list_vocabulary = (java.util.List<DataSchema>) data.property_values[schemaIndex][index_vocabulary];
+		DatasetNode datasetNode = (DatasetNode) treeItem.getData();
+		assert datasetNode!=null;
+		java.util.List<?> list_vocabulary = (java.util.List<?>) datasetNode.property_values[schemaIndex][index_vocabulary];
 		if (list_vocabulary != null && (!list_vocabulary.isEmpty())) {
-			for (DataSchema dataSchema : list_vocabulary) {
+			for (Object data : list_vocabulary) {
+				assert (data instanceof DataSchema);
+				DataSchema dataSchema = (DataSchema) data;
 				if (dataSchema.getLabel().equals("crop.owl")) {
 					available_classes.addAll(Arrays.asList(NominalSet.cropClasses));
 				} else if (dataSchema.getLabel().equals("t4f.owl")) {
