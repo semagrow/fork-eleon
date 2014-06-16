@@ -46,6 +46,7 @@ package gr.demokritos.iit.eleon;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
@@ -59,6 +60,7 @@ import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import gr.demokritos.iit.eleon.annotations.AnnotationVocabulary;
 import gr.demokritos.iit.eleon.annotations.Annotator;
 import gr.demokritos.iit.eleon.annotations.AnnotatorList;
+import gr.demokritos.iit.eleon.annotations.DataSchema;
 import gr.demokritos.iit.eleon.annotations.NominalSet;
 import gr.demokritos.iit.eleon.facets.*;
 import gr.demokritos.iit.eleon.facets.dataset.*;
@@ -375,10 +377,14 @@ public class MainShell extends Shell
 		mntmSkos.setText("skos.rdf");*/
 		
 		MenuItem mntmCrop = new MenuItem(dataSchemaMenu, SWT.CHECK);
-		mntmCrop.setText("crop.owl");
+		DataSchema crop = new DataSchema("crop.owl", new File("resources/schemas/crop.owl"));
+		mntmCrop.setText(crop.getLabel());
+		mntmCrop.setData(crop);
 		
 		MenuItem mntmTf = new MenuItem(dataSchemaMenu, SWT.CHECK);
-		mntmTf.setText("t4f.owl");
+		DataSchema t4f = new DataSchema("t4f.owl", new File("resources/schemas/t4f.owl"));
+		mntmTf.setText(t4f.getLabel());
+		mntmTf.setData(t4f);
 		
 		
 		MenuItem mntmAbout = new MenuItem(menu, SWT.PUSH);
@@ -622,8 +628,9 @@ public class MainShell extends Shell
 					}
 					//FIXME: do all auto-filled facets
 					OntModel schema = AnnotationVocabulary.getNewModel( AnnotationVocabulary.NONE );
+					java.util.List<DataSchema> dataSchemaList = new ArrayList<DataSchema>();
 					for (String selectedVocabulary : selectedVocabularies) {
-						item.setText(1, item.getText(1) + selectedVocabulary + ", ");
+						//item.setText(1, item.getText(1) + selectedVocabulary + ", ");
 						for (MenuItem menuItem : dataSchemaMenu.getItems()) {
 							if (menuItem.getSelection()) {
 								if (selectedVocabulary.equals(menuItem.getText())) {
@@ -668,11 +675,15 @@ public class MainShell extends Shell
 					return;
 				 }
 				 
-				 if (property.equals("void:subjectsTarget")) {//TODO:breaks independence from property names!
+				 //nominal set
+				 if ( property.equals("svd:subjectClass") || property.equals("svd:objectClass")) {
+					 
+					 
+					 
 					 String[][] property_names = AnnotationVocabulary.property_qnames;
 					 int i = 0; int index = -1;
 					 while( (index < 0) && (property_names[schemaIndex][i] != null) ) {
-						 if("void:subjectsTarget".equals(property_names[schemaIndex][i]) ) { 
+						 if( property.equals(property_names[schemaIndex][i]) ) { 
 							 index = i;
 							 break;
 						 }
@@ -857,10 +868,15 @@ public class MainShell extends Shell
 		if (filename == null) {
 			return;
 		}
-		File file = new File(filename);
+		/*File file = new File(filename);
 		MenuItem mntmNewVoc = new MenuItem(vocabulariesMenu, SWT.CHECK);
 		mntmNewVoc.setText(file.getName());
-		mntmNewVoc.setData(filename);
+		mntmNewVoc.setData(filename);*/
+		File schemaFile = new File(filename);
+		MenuItem mntmNewVoc = new MenuItem(vocabulariesMenu, SWT.CHECK);
+		DataSchema dataSchema = new DataSchema(schemaFile.getName(), schemaFile);
+		mntmNewVoc.setText(dataSchema.getLabel());
+		mntmNewVoc.setData(dataSchema);
 	}
 	
 	

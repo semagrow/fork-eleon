@@ -155,7 +155,7 @@ public class AnnotationVocabulary
 		++i;
 		property_qnames[0][i] = "void:vocabulary";
 		property_uris[0][i] = "http://rdfs.org/ns/void#vocabulary";
-		property_value_types[0][i] = String.class;
+		property_value_types[0][i] = List.class;
 		property_is_functional[0][i] = false;
 		property_is_visible[0][i] = true;
 		property_is_editable[0][i] = true;
