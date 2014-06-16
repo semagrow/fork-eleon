@@ -50,6 +50,8 @@ import com.hp.hpl.jena.rdf.model.Statement;
 
 import gr.demokritos.iit.eleon.MainShell;
 import gr.demokritos.iit.eleon.annotations.AnnotationVocabulary;
+import gr.demokritos.iit.eleon.annotations.DataSchema;
+import gr.demokritos.iit.eleon.annotations.DataSchemaSet;
 import gr.demokritos.iit.eleon.annotations.NominalSet;
 import gr.demokritos.iit.eleon.facets.TreeFacetNode;
 
@@ -198,31 +200,20 @@ public class DatasetNode implements TreeFacetNode
 				Statement stmt = model.createLiteralStatement( this.res, p, (String)value );
 				stmts = Collections.singletonList( stmt );
 			}
-			else if( value instanceof NominalSet ) {
+			else if ( value instanceof NominalSet ) {
 				stmts = new ArrayList<Statement>();
 				for (Resource nominal_class : ((NominalSet) value).getContainingNominals()) {
 					Statement stmt = model.createStatement( this.res, p, nominal_class );
 					stmts.add( stmt );
 				}
-
-				/*List<Integer> it;
-
-				// FIXME: get indexes of all ticked crop values in the table entry
-				it = Collections.emptyList();
-				for( Integer index : it ) {
-					Resource object = NominalSet.cropClasses[index.intValue()];
-					Statement stmt = model.createStatement( this.res, p, object );
+			} 
+			else if ( value instanceof DataSchemaSet ) {
+				stmts = new ArrayList<Statement>();
+				for (DataSchema data_schema : ((DataSchemaSet) value).getContainingSchemas()) {
+					Statement stmt = model.createStatement( this.res, p, data_schema.getResource() );
 					stmts.add( stmt );
 				}
-				
-				// FIXME: get indexes of all ticked t4f values in the table entry
-				it = Collections.emptyList();
-				for( Integer index : it ) {
-					Resource object = NominalSet.t4fClasses[index.intValue()];
-					Statement stmt = model.createStatement( this.res, p, object );
-					stmts.add( stmt );
-				}*/
-			}
+			} 
 			else {
 				// TODO: warning
 				stmts = Collections.emptyList();

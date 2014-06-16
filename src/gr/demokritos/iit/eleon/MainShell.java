@@ -46,6 +46,7 @@ package gr.demokritos.iit.eleon;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -62,6 +63,7 @@ import gr.demokritos.iit.eleon.annotations.AnnotationVocabulary;
 import gr.demokritos.iit.eleon.annotations.Annotator;
 import gr.demokritos.iit.eleon.annotations.AnnotatorList;
 import gr.demokritos.iit.eleon.annotations.DataSchema;
+import gr.demokritos.iit.eleon.annotations.DataSchemaSet;
 import gr.demokritos.iit.eleon.annotations.NominalSet;
 import gr.demokritos.iit.eleon.facets.*;
 import gr.demokritos.iit.eleon.facets.dataset.*;
@@ -95,9 +97,11 @@ public class MainShell extends Shell
 	
 	//persistence
 	public PersistenceBackend persistence;
+	
+	final int schemaIndex = AnnotationVocabulary.SEVOD;//TODO: to be changed when more schemas are added.
 
 	//Ontology model
-	public OntModel data = AnnotationVocabulary.getNewModel( AnnotationVocabulary.SEVOD );
+	public OntModel data = AnnotationVocabulary.getNewModel( schemaIndex );
 
 
 	/**
@@ -130,9 +134,10 @@ public class MainShell extends Shell
 	/**
 	 * Create the main shell.
 	 * @param display
+	 * @throws MalformedURLException 
 	 */
 
-	public MainShell( Display display )
+	public MainShell( Display display ) throws MalformedURLException
 	{
 		//super(display, SWT.SHELL_TRIM);
 		//forbid resize for now.
@@ -331,7 +336,7 @@ public class MainShell extends Shell
 			}
 		});
 		mntmVoID_Semagrow.setSelection(true);
-		activeAnnSchema = 1;
+		activeAnnSchema = schemaIndex;
 		activeAnnSchemaName = mntmVoID_Semagrow.getText();
 		
 		
@@ -378,14 +383,18 @@ public class MainShell extends Shell
 		mntmSkos.setText("skos.rdf");*/
 		
 		MenuItem mntmCrop = new MenuItem(dataSchemaMenu, SWT.CHECK);
-		DataSchema crop = new DataSchema("crop.owl", new File("resources/schemas/crop.owl"));
-		mntmCrop.setText(crop.getLabel());
-		mntmCrop.setData(crop);
+		File crop_file = new File("resources/schemas/crop.owl");
+		Resource crop_r = data.createResource( crop_file.toURI().toURL().toString() );
+		DataSchema crop_schema = new DataSchema(crop_file.getName(), crop_file, crop_r);
+		mntmCrop.setText(crop_schema.getLabel());
+		mntmCrop.setData(crop_schema);
 		
 		MenuItem mntmTf = new MenuItem(dataSchemaMenu, SWT.CHECK);
-		DataSchema t4f = new DataSchema("t4f.owl", new File("resources/schemas/t4f.owl"));
-		mntmTf.setText(t4f.getLabel());
-		mntmTf.setData(t4f);
+		File t4f_file = new File("resources/schemas/t4f.owl");
+		Resource t4f_r = data.createResource( t4f_file.toURI().toURL().toString() );
+		DataSchema t4f_schema = new DataSchema(t4f_file.getName(), t4f_file, t4f_r);
+		mntmTf.setText(t4f_schema.getLabel());
+		mntmTf.setData(t4f_schema);
 		
 		
 		MenuItem mntmAbout = new MenuItem(menu, SWT.PUSH);
@@ -550,9 +559,6 @@ public class MainShell extends Shell
 		
 		final DatasetNode treeNodeData = ((DatasetNode) tree.getSelection()[0].getData());
 		
-		//final int schemaIndex = treeNodeData.getAnnotationSchemaIndex();
-		final int schemaIndex = AnnotationVocabulary.SEVOD;
-		
 		int i = 0;
 		while(AnnotationVocabulary.property_qnames[schemaIndex][i] != null) {
 			if (AnnotationVocabulary.property_is_visible[schemaIndex][i]) {
@@ -624,7 +630,7 @@ public class MainShell extends Shell
 				 if (property.equals("void:vocabulary")) {//TODO:breaks independence from property names!
 					SelectVocabulariesDialog dialog = new SelectVocabulariesDialog( getShell(), treeNodeData );
 					java.util.List<String> selectedVocabularies = dialog.open(dataSchemaMenu);
-					if (selectedVocabularies.isEmpty()) {
+					if ( selectedVocabularies.isEmpty() ) {
 						return;
 					}
 					//FIXME: do all auto-filled facets
@@ -657,9 +663,16 @@ public class MainShell extends Shell
 					assert(i>=0);
 					
 					Object[][] property_values = ((DatasetNode) treeFacetNode).property_values;
-					property_values[schemaIndex][index] = dataSchemaList;
+					if (dataSchemaList.isEmpty()) {
+						property_values[schemaIndex][index] = null;
+						item.setText(1, "[]");
+					} else {
+						DataSchemaSet schemaSet = new DataSchemaSet();
+						schemaSet.setContainingSchemas(dataSchemaList);
+						property_values[schemaIndex][index] = schemaSet;
+						item.setText(1, schemaSet.toString());
+					}
 					
-					item.setText(1, dataSchemaList.toString());
 					if( dialog.node.getFacet().isAutoFilled() ) {
 						dialog.node.getFacet().update();
 					}
@@ -697,6 +710,7 @@ public class MainShell extends Shell
 					 java.util.List<Resource> selectedNominals = dialog.open(available_classes, ((NominalSet) nominalSet).getContainingNominals());
 					 if (selectedNominals.isEmpty()) {
 						 ((DatasetNode) treeFacetNode).property_values[schemaIndex][index_class] = null;
+						 item.setText(1, "");
 						 return;
 					 }
 					 nominalSet.setContainingNominals(selectedNominals);
@@ -860,7 +874,7 @@ public class MainShell extends Shell
 		//System.out.println ("Save to: " + dialog.open ());
 	}
 	
-	private void addVocabularyToMenu(String filename, Menu vocabulariesMenu) {
+	private void addVocabularyToMenu(String filename, Menu vocabulariesMenu) throws MalformedURLException {
 		if (filename == null) {
 			return;
 		}
@@ -870,7 +884,8 @@ public class MainShell extends Shell
 		mntmNewVoc.setData(filename);*/
 		File schemaFile = new File(filename);
 		MenuItem mntmNewVoc = new MenuItem(vocabulariesMenu, SWT.CHECK);
-		DataSchema dataSchema = new DataSchema(schemaFile.getName(), schemaFile);
+		Resource r = data.createResource( schemaFile.toURI().toURL().toString() );
+		DataSchema dataSchema = new DataSchema(schemaFile.getName(), schemaFile, r);
 		mntmNewVoc.setText(dataSchema.getLabel());
 		mntmNewVoc.setData(dataSchema);
 	}
@@ -916,9 +931,9 @@ public class MainShell extends Shell
 		if (treeItem == null) return;//finished tree
 		DatasetNode datasetNode = (DatasetNode) treeItem.getData();
 		assert datasetNode!=null;
-		java.util.List<?> list_vocabulary = (java.util.List<?>) datasetNode.property_values[schemaIndex][index_vocabulary];
-		if (list_vocabulary != null && (!list_vocabulary.isEmpty())) {
-			for (Object data : list_vocabulary) {
+		DataSchemaSet set = (DataSchemaSet) datasetNode.property_values[schemaIndex][index_vocabulary];
+		if (set!=null && set.getContainingSchemas() != null && (!set.getContainingSchemas().isEmpty())) {
+			for (Object data : set.getContainingSchemas()) {
 				assert (data instanceof DataSchema);
 				DataSchema dataSchema = (DataSchema) data;
 				if (dataSchema.getLabel().equals("crop.owl")) {
