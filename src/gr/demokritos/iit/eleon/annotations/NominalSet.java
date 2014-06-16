@@ -77,7 +77,7 @@ public class NominalSet
 
 	
 	// Current selection
-	List<String> containingNominals = new ArrayList<String>();
+	List<Resource> containingNominals = new ArrayList<Resource>();
 	
 	public NominalSet()
 	{
@@ -94,7 +94,19 @@ public class NominalSet
 	 */
 	@Override
 	public String toString()
-	{ return containingNominals.toString(); }
+	{ 
+		String str = null;
+		if (containingNominals.isEmpty()) {
+			str = "[]";
+		} else {
+			str = "[";
+			for (int i=0; i<containingNominals.size()-1; i++) {
+				str += containingNominals.get(i).getLocalName() + ", ";
+			}
+			str += containingNominals.get(containingNominals.size()-1).getLocalName() + "]";
+		}
+		return str; 
+	}
 	
 
 	
@@ -102,12 +114,13 @@ public class NominalSet
 	 * Specifics
 	 */
 	
-	public void setContainingNominals( List<String> containingNominals )
+	public void setContainingNominals( List<Resource> nominals_to_set )
 	{
-		this.containingNominals = new ArrayList<String>(containingNominals); 
+		this.containingNominals.clear();
+		this.containingNominals.addAll(nominals_to_set);
 	}
 	
-	public List<String> getContainingNominals()
+	public List<Resource> getContainingNominals()
 	{
 		return containingNominals;
 	}

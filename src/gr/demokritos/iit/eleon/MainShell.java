@@ -47,6 +47,7 @@ package gr.demokritos.iit.eleon;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
@@ -634,24 +635,15 @@ public class MainShell extends Shell
 						for (MenuItem menuItem : dataSchemaMenu.getItems()) {
 							if (menuItem.getSelection()) {
 								if (selectedVocabulary.equals(menuItem.getText())) {
-									/*if (menuItem.getText().equals("skos.rdf")) {
-										ontModel.read("file:////" + (new File("vocabularies/skos.rdf")).getAbsolutePath());
-									}*/
-									if (menuItem.getText().equals("crop.owl")) {
-										schema.read("file:////" + (new File("resources/schemas/crop.owl")).getAbsolutePath());
-									}
-									else if (menuItem.getText().equals("t4f.owl")) {
-										schema.read("file:////" + (new File("resources/schemas/t4f.owl")).getAbsolutePath());
-									} else {
-										schema.read("file:////" + (new File((String) menuItem.getData())).getAbsolutePath());
-									}
+									schema.read("file:////" + ((DataSchema) menuItem.getData()).getSchemaFile().getAbsolutePath());
+									dataSchemaList.add((DataSchema) menuItem.getData());
 								}
 							}
 						}
 					}
 					((PropertyTreeFacet)MainShell.shell.propertyTree).update( tree.getSelection()[0], schema );
 					
-					String proper_text = item.getText(1).substring(0, item.getText(1).length() - 2);
+					//String proper_text = item.getText(1).substring(0, item.getText(1).length() - 2);
 					
 					String[][] property_names = AnnotationVocabulary.property_qnames;
 					int i = 0; int index = -1;
@@ -665,9 +657,9 @@ public class MainShell extends Shell
 					assert(i>=0);
 					
 					Object[][] property_values = ((DatasetNode) treeFacetNode).property_values;
-					property_values[schemaIndex][index] = proper_text;//TODO:check what happens if user clicks cancel in the dialog
+					property_values[schemaIndex][index] = dataSchemaList;
 					
-					item.setText(1, proper_text);
+					item.setText(1, dataSchemaList.toString());
 					if( dialog.node.getFacet().isAutoFilled() ) {
 						dialog.node.getFacet().update();
 					}
@@ -677,36 +669,40 @@ public class MainShell extends Shell
 				 
 				 //nominal set
 				 if ( property.equals("svd:subjectClass") || property.equals("svd:objectClass")) {
-					 
-					 
-					 
+
 					 String[][] property_names = AnnotationVocabulary.property_qnames;
-					 int i = 0; int index = -1;
-					 while( (index < 0) && (property_names[schemaIndex][i] != null) ) {
+					 int i = 0; int index_class = -1; int index_vocabulary = -1;
+					 while( property_names[schemaIndex][i] != null ) {
 						 if( property.equals(property_names[schemaIndex][i]) ) { 
-							 index = i;
-							 break;
+							 index_class = i;
+							 //break;
+						 } else if ( "void:vocabulary".equals(property_names[schemaIndex][i]) ) {
+							 index_vocabulary = i;
 						 }
 						 ++i;
 					 }
 					 assert(i>=0);
+					 assert(index_class>=0);
+					 assert(index_vocabulary>=0);
 					 
-					 Object nominalSet = ((DatasetNode) treeFacetNode).property_values[schemaIndex][index];
+					 java.util.List<Resource> available_classes = new ArrayList<Resource>();
+					 getAvailableClasses(tree.getSelection()[0], available_classes, schemaIndex, index_vocabulary);
+					 
+					 NominalSet nominalSet = (NominalSet) ((DatasetNode) treeFacetNode).property_values[schemaIndex][index_class];
 					 if (nominalSet == null) {
 						 nominalSet = new NominalSet();
 					 }
-					 nominalSet = ((NominalSet) nominalSet);			
 					 
 					 SelectNominalSetDialog dialog = new SelectNominalSetDialog(getShell());
-					 java.util.List<String> selectedNominals = dialog.select(NominalSet.availableNomilas, ((NominalSet) nominalSet).getContainingNominals());
+					 java.util.List<Resource> selectedNominals = dialog.open(available_classes, ((NominalSet) nominalSet).getContainingNominals());
 					 if (selectedNominals.isEmpty()) {
-						 ((DatasetNode) treeFacetNode).property_values[schemaIndex][index] = null;
+						 ((DatasetNode) treeFacetNode).property_values[schemaIndex][index_class] = null;
 						 return;
 					 }
-					 ((NominalSet) nominalSet).setContainingNominals(selectedNominals);
-					 ((DatasetNode) treeFacetNode).property_values[schemaIndex][index] = (NominalSet) nominalSet;
+					 nominalSet.setContainingNominals(selectedNominals);
+					 ((DatasetNode) treeFacetNode).property_values[schemaIndex][index_class] = nominalSet;
 
-					 item.setText(1, ((NominalSet) nominalSet).toString());
+					 item.setText(1, nominalSet.toString());
 					 return;
 				 }
 		
@@ -913,6 +909,28 @@ public class MainShell extends Shell
 		entityTree = new TriplePatternTreeFacet( this );
 		entityTree.init();
 		entityTree.getTree().setVisible(false);
+	}
+	
+	
+	private void getAvailableClasses(final TreeItem treeItem, java.util.List<Resource> available_classes, final int schemaIndex, final int index_vocabulary) {
+		if (treeItem == null) return;//finished tree
+		DatasetNode data = (DatasetNode) treeItem.getData();
+		assert data!=null;
+		java.util.List<DataSchema> list_vocabulary = (java.util.List<DataSchema>) data.property_values[schemaIndex][index_vocabulary];
+		if (list_vocabulary != null && (!list_vocabulary.isEmpty())) {
+			for (DataSchema dataSchema : list_vocabulary) {
+				if (dataSchema.getLabel().equals("crop.owl")) {
+					available_classes.addAll(Arrays.asList(NominalSet.cropClasses));
+				} else if (dataSchema.getLabel().equals("t4f.owl")) {
+					available_classes.addAll(Arrays.asList(NominalSet.t4fClasses));
+				} else {
+					// TODO: what about new vocabularies added by the user?
+				}
+			}
+			return;
+		} else {
+			getAvailableClasses(treeItem.getParentItem(), available_classes, schemaIndex, index_vocabulary);
+		}
 	}
 	
 	/*

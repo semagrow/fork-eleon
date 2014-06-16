@@ -17,6 +17,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 
+import com.hp.hpl.jena.rdf.model.Resource;
+
 /**
  * @author gmouchakis
  *
@@ -24,7 +26,7 @@ import org.eclipse.swt.widgets.Composite;
 public class SelectNominalSetDialog extends Dialog {
 
 	protected Shell shell;
-	private List<String> selectedNominals = new ArrayList<String>();;
+	private List<Resource> selectedNominals = new ArrayList<Resource>();;
 	
 	/**
 	 * 
@@ -40,31 +42,31 @@ public class SelectNominalSetDialog extends Dialog {
 		 this (parent, 0);//default style bits go here (not the Shell's style bits)
 	}
 	
-	public List<String> select(String[] availableNominals, final List<String> currentNominals) {
+	public List<Resource> open(final List<Resource> availableNominals, final List<Resource> currentNominals) {
 		
 		Shell parent = getParent();
 		shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
-		shell.setText("Select Nodes");
+		shell.setText("Select classes");
 		shell.setSize(559, 742);
 		shell.setLayout(new GridLayout(1, false));
 		
 		Label lblNewLabel = new Label(shell, SWT.NONE);
 		lblNewLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		lblNewLabel.setText("Select nominals");
+		lblNewLabel.setText("Select one or more from the classes bellow.");
 		
 		final Table table = new Table(shell, SWT.CHECK | SWT.BORDER);
 		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		
-		for (String nominal : availableNominals) {
+		for (Resource nominal : availableNominals) {
 			TableItem item = new TableItem(table, SWT.NONE);
-		    item.setText(nominal);
+		    item.setText(nominal.toString());
 		    if (currentNominals.contains(nominal)) {
 		    	item.setChecked(true);
 		    } else {
 		    	item.setChecked(false);
 		    }
 		}
-				
+		
 		Composite composite = new Composite(shell, SWT.NONE);
 		composite.setLayout(new GridLayout(6, true));
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
@@ -72,16 +74,20 @@ public class SelectNominalSetDialog extends Dialog {
 		new Label(composite, SWT.NONE);
 		new Label(composite, SWT.NONE);
 		new Label(composite, SWT.NONE);
+		
+		selectedNominals.addAll(currentNominals);
 				
 		Button btnOk = new Button(composite, SWT.NONE);
 		btnOk.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				//selectedNominals.clear();
+				selectedNominals.clear();
+				int i = 0;
 				for (TableItem tableItem : table.getItems()) {
 					if (tableItem.getChecked()) {
-						selectedNominals.add(tableItem.getText());
+						selectedNominals.add(availableNominals.get(i));
 					}
+					i++;
 				}
 				shell.dispose();
 			}
@@ -94,7 +100,6 @@ public class SelectNominalSetDialog extends Dialog {
 		btnCancel.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				selectedNominals = currentNominals;
 				shell.dispose();
 			}
 		});
