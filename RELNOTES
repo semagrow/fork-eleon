@@ -1,11 +1,21 @@
-
-Planned near future changes:
- - finalize the DL inference pipeline, making everything properties-configurable
- - implement an OntoExtension object that interfaces with Pellet   
- - extend to pipelines for preference and ling annotations
+Planned for v3.1:
+ - Check functional/non-functional property values and decide on behaviour
  - remove the fixed filenames for annotations, and implement a mechanism
-   (possibly based on owl:import) for remembering the links between OWL files
-   and RDF annotations.
+   (possibly based on owl:import) for remembering the links between data
+   and annotations.
+ - Decide and implement behaviour when using unfaceted annotation schema 
+ - Decide and implement behaviour when adding/removing data schema, esp.
+   with respect to auto-created facets
+ - Remaking auto-created facets should never delete user-added data. Grey
+   out and let the user make the final decision
+ - Decide and implement behaviour when changing the annotation schema 
+
+Planned near future features:
+ - Develop non-tree facets, such as graphs
+
+Planned future changes:
+ - finalize the DL inference pipeline, making everything properties-configurable
+ - extend to pipelines for preference and ling annotations
  - Make it possible to re-combine annotations and ontologies.
  - Factor UI strings out of the code and use standard localization mechanisms.
  
@@ -21,6 +31,13 @@ Planned near future changes:
    exact dates)
  - Initialize from rdf:label and abstract names, assuming classes are nouns and
    properties are verbs
+
+
+16 Jun 2014, Version 3.0
+
+Major extension, porting ELEON to a new domain: the annotation of datasets
+and data sources using the VoID vocabulary and Sevod, its SemaGrow extension.
+
 
 
 17 Jun 2011, Version 2.0
