@@ -256,7 +256,14 @@ public class MainShell extends Shell
         exitItem.addSelectionListener(new SelectionAdapter() {
         	@Override
         	public void widgetSelected(SelectionEvent arg0) {
-        		shell.dispose();
+        		int style = SWT.ICON_WARNING | SWT.APPLICATION_MODAL | SWT.YES | SWT.NO;  
+        		MessageBox messageBox = new MessageBox(MainShell.this, style);  
+        		messageBox.setText("Exit Eleon?");  
+        		messageBox.setMessage("Are you sure you want to exit?\n"
+        				+ "Any unsaved progress will be lost.");  
+        		if (messageBox.open() == SWT.YES) {
+        			MainShell.this.dispose();
+        		}
         		//getDisplay().dispose();
                 //System.exit(0);
         	}
