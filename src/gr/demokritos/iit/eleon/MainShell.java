@@ -421,6 +421,7 @@ public class MainShell extends Shell
 		
 		textEndpoint = new Text(this, SWT.BORDER | SWT.READ_ONLY);
 		textEndpoint.setBounds(388, 30, 699, 24);
+		//textEndpoint.setEnabled(false);
 		
 		Label lblEnpoint = new Label(this, SWT.NONE);
 		lblEnpoint.setBounds(318, 30, 64, 18);
@@ -506,6 +507,7 @@ public class MainShell extends Shell
 		
 		textTitle = new Text(this, SWT.BORDER | SWT.READ_ONLY);
 		textTitle.setBounds(46, 30, 266, 24);
+		//textTitle.setEnabled(false);
 		
 		//initializeFacets();
 		
