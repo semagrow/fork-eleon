@@ -83,8 +83,8 @@ public class MainShell extends Shell
 	public Integer activeAnnSchema;
 	
 	// infoboxes across the top of the screen
-	protected Text textEndpoint;
-	private Text textTitle;
+	public Text textEndpoint;
+	public Text textTitle;
 	
 	//facet list at the left
 	protected List list;

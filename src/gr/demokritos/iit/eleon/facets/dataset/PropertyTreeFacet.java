@@ -124,8 +124,8 @@ public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 				else {
 					setTitle( "" );
 				}
-				String se = (String)treeNodeData.getValue("void:sparqlEnpoint");
-				if( se != null) { setInfo( se ); }
+				Resource se = (Resource) treeNodeData.getValue("void:sparqlEndpoint");
+				if( se != null) { setInfo( se.toString() ); }
 				else { setInfo( "" ); }
 				myShell.createTableContents(myTree);
 			}

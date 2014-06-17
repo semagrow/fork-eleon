@@ -95,10 +95,16 @@ public abstract class DatasetFacet implements TreeFacet
 	 */
 
 	protected void setTitle( String title )
-	{ this.title = (title == null)? "" : title; }
+	{
+		this.title = (title == null)? "" : title; 
+		this.myShell.textTitle.setText(this.title);
+	}
 
 	protected void setInfo( String info )
-	{ this.info = (info == null)? "" : info; }
+	{
+		this.info = (info == null)? "" : info;
+		this.myShell.textEndpoint.setText(this.info);
+	}
 
 	/*
 	 * Facet IMPLEMENTATION
