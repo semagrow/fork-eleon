@@ -256,8 +256,9 @@ public class MainShell extends Shell
         exitItem.addSelectionListener(new SelectionAdapter() {
         	@Override
         	public void widgetSelected(SelectionEvent arg0) {
-        		getDisplay().dispose();
-                System.exit(0);
+        		shell.dispose();
+        		//getDisplay().dispose();
+                //System.exit(0);
         	}
         });
         exitItem.setText( "&Exit" );
