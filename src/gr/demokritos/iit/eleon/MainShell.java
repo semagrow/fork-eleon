@@ -250,6 +250,8 @@ public class MainShell extends Shell
         });
         saveAsItem.setText("Save &As...");
         
+        new MenuItem(fileMenu, SWT.SEPARATOR);
+        
         MenuItem exitItem = new MenuItem(fileMenu, SWT.PUSH);
         exitItem.addSelectionListener(new SelectionAdapter() {
         	@Override
