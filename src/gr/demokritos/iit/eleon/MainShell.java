@@ -102,6 +102,8 @@ public class MainShell extends Shell
 
 	//Ontology model
 	public OntModel data = AnnotationVocabulary.getNewModel( schemaIndex );
+	
+	private final String schema_folder = "resources" + File.separator + "schemas" + File.separator;
 
 
 	/**
@@ -393,14 +395,14 @@ public class MainShell extends Shell
 		mntmSkos.setText("skos.rdf");*/
 		
 		MenuItem mntmCrop = new MenuItem(dataSchemaMenu, SWT.CHECK);
-		File crop_file = new File("resources/schemas/crop.owl");
+		File crop_file = new File(this.schema_folder + "crop.owl");
 		Resource crop_r = data.createResource( crop_file.toURI().toURL().toString() );
 		DataSchema crop_schema = new DataSchema(crop_file.getName(), crop_file, crop_r);
 		mntmCrop.setText(crop_schema.getLabel());
 		mntmCrop.setData(crop_schema);
 		
 		MenuItem mntmTf = new MenuItem(dataSchemaMenu, SWT.CHECK);
-		File t4f_file = new File("resources/schemas/t4f.owl");
+		File t4f_file = new File(this.schema_folder + "t4f.owl");
 		Resource t4f_r = data.createResource( t4f_file.toURI().toURL().toString() );
 		DataSchema t4f_schema = new DataSchema(t4f_file.getName(), t4f_file, t4f_r);
 		mntmTf.setText(t4f_schema.getLabel());
