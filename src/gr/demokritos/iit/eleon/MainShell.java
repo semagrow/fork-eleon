@@ -46,7 +46,9 @@ package gr.demokritos.iit.eleon;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -103,7 +105,19 @@ public class MainShell extends Shell
 	//Ontology model
 	public OntModel data = AnnotationVocabulary.getNewModel( schemaIndex );
 	
-	private final String schema_folder = "resources" + File.separator + "schemas" + File.separator;
+	static final String schema_folder;
+	static {
+		String path = MainShell.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+		String jar_path = null;
+		try {
+			jar_path = URLDecoder.decode(path, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		assert jar_path != null;
+		String eleon_directory = (new File(jar_path)).getParent() + File.separator;
+		schema_folder = eleon_directory + "resources" + File.separator + "schemas" + File.separator;
+	}
 
 
 	/**
@@ -391,18 +405,17 @@ public class MainShell extends Shell
 		});
 		mntmNew.setText("New...");
 		
-		/*MenuItem mntmSkos = new MenuItem(dataSchemaMenu, SWT.CHECK);
-		mntmSkos.setText("skos.rdf");*/
+		assert MainShell.schema_folder != null;
 		
 		MenuItem mntmCrop = new MenuItem(dataSchemaMenu, SWT.CHECK);
-		File crop_file = new File(this.schema_folder + "crop.owl");
+		File crop_file = new File(MainShell.schema_folder + "crop.owl");
 		Resource crop_r = data.createResource( crop_file.toURI().toURL().toString() );
 		DataSchema crop_schema = new DataSchema(crop_file.getName(), crop_file, crop_r);
 		mntmCrop.setText(crop_schema.getLabel());
 		mntmCrop.setData(crop_schema);
 		
 		MenuItem mntmTf = new MenuItem(dataSchemaMenu, SWT.CHECK);
-		File t4f_file = new File(this.schema_folder + "t4f.owl");
+		File t4f_file = new File(MainShell.schema_folder + "t4f.owl");
 		Resource t4f_r = data.createResource( t4f_file.toURI().toURL().toString() );
 		DataSchema t4f_schema = new DataSchema(t4f_file.getName(), t4f_file, t4f_r);
 		mntmTf.setText(t4f_schema.getLabel());
