@@ -678,7 +678,9 @@ public class MainShell extends Shell
 										ex.printStackTrace();
 									} catch (UnsupportedEncodingException ex) {
 										ex.printStackTrace();
-									} 
+									} catch (Exception ex) {
+										ex.printStackTrace();
+									}
 								}
 							}
 						}
