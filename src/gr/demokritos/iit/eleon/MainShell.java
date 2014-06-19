@@ -435,23 +435,24 @@ public class MainShell extends Shell
 		mntmAbout.setText("&About");
 		
 		textEndpoint = new Text(this, SWT.BORDER | SWT.READ_ONLY);
-		textEndpoint.setBounds(388, 30, 699, 24);
-		//textEndpoint.setEnabled(false);
+		textEndpoint.setBounds(580, 30, 507, 24);
+		textEndpoint.setVisible(false);
 		
 		Label lblEnpoint = new Label(this, SWT.NONE);
 		lblEnpoint.setBounds(318, 30, 64, 18);
 		lblEnpoint.setText("Enpdoint");
+		lblEnpoint.setVisible(false);
 		
 		Label lbltree = new Label(this, SWT.NONE);
-		lbltree.setBounds(318, 60, 283, 18);
+		lbltree.setBounds(202, 30, 283, 18);
 		lbltree.setText("Tree");
 		
 		Label lblfacet = new Label(this, SWT.NONE);
-		lblfacet.setBounds(10, 60, 76, 18);
+		lblfacet.setBounds(10, 30, 76, 18);
 		lblfacet.setText("Facet");
 		
 		Label lblFields = new Label(this, SWT.NONE);
-		lblFields.setBounds(693, 60, 76, 18);
+		lblFields.setBounds(580, 36, 76, 18);
 		lblFields.setText("Fields");
 		
 		list = new List(this, SWT.BORDER);
@@ -505,7 +506,7 @@ public class MainShell extends Shell
 				}
 			}
 		});
-		list.setBounds(10, 84, 302, 578);
+		list.setBounds(10, 60, 186, 602);
 		String[] listItems = {"per property", "per entity"};
 		list.setItems(listItems);
 		
@@ -519,10 +520,11 @@ public class MainShell extends Shell
 		Label lblTitle = new Label(this, SWT.NONE);
 		lblTitle.setBounds(10, 30, 30, 18);
 		lblTitle.setText("Title");
+		lblTitle.setVisible(false);
 		
 		textTitle = new Text(this, SWT.BORDER | SWT.READ_ONLY);
 		textTitle.setBounds(46, 30, 266, 24);
-		//textTitle.setEnabled(false);
+		textTitle.setVisible(false);
 		
 		//initializeFacets();
 		
@@ -532,13 +534,13 @@ public class MainShell extends Shell
 	protected void createTable() {
 		//table
 		table = new Table(this, SWT.BORDER | SWT.FULL_SELECTION);
-		table.setBounds(693, 84, 394, 578);
+		table.setBounds(580, 60, 507, 602);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		
 		//table columns
 		TableColumn tblclmnProperty = new TableColumn(table, SWT.NONE);
-		tblclmnProperty.setWidth(198);
+		tblclmnProperty.setWidth(181);
 		tblclmnProperty.setText("Property");
 		
 		TableColumn tblclmnValue = new TableColumn(table, SWT.NONE);
