@@ -145,17 +145,17 @@ public class AnnotatorList
 						}
 						catch( IllegalArgumentException ex ) {
 							// identifier is not unique
-							logger.warn( "Tried to map \"%s\" to %s:" + ex.getMessage(),
+							logger.warn( "Tried to map \"{}\" to {}:" + ex.getMessage(),
 									o2.asLiteral().getString(), o.asResource().getURI() );
 						}
 					}
 					else {
-						logger.warn( "Ignored statement %s: value is not a literal string", s2 );
+						logger.warn( "Ignored statement {}: value is not a literal string", s2 );
 					}
 				}
 			}
 			else {
-				logger.warn( "Ignored statement %s: value is not a URI resource", s );
+				logger.warn( "Ignored statement {}: value is not a URI resource", s );
 			}
 		}
 		Collections.sort( this.annList );

@@ -172,7 +172,7 @@ public abstract class DatasetFacet implements TreeFacet
 			RDFNode o = s.getObject();
 			if( o.canAs(Resource.class) ) { datasets.add( o.asResource() ); }
 			else {
-				logger.warn( "Non-URI resource value in statement %s", s );
+				logger.warn( "Non-URI resource value in statement " + s );
 			}
 		}
 		syncFrom( ont, datasets );
@@ -195,7 +195,7 @@ public abstract class DatasetFacet implements TreeFacet
 			boolean at_least_one = false;
 			while( stmts.hasNext() ) {
 				Statement stmt = stmts.next();
-				logger.debug( "Doing Statement: %s", stmt.toString() );
+				logger.debug( "Doing Statement: {}", stmt.toString() );
 				if( stmt.getSubject().equals(top) ) {
 					Resource subSet = stmt.getObject().asResource();
 					// top level nodes should always have an explicit owner statement
@@ -257,7 +257,7 @@ public abstract class DatasetFacet implements TreeFacet
 					treeItem.setText( n.getLabel() );
 					treeItem.setData( n );
 					done.add( treeItem );
-					logger.debug( "Added under %s", ((DatasetNode)father.getData()).getLabel() );
+					logger.debug( "Added under {}", ((DatasetNode)father.getData()).getLabel() );
 				}
 				else {
 					// keep for next iteration
@@ -275,11 +275,11 @@ public abstract class DatasetFacet implements TreeFacet
 		}
 		
 		if( ! todo.isEmpty() ) {
-			logger.warn( "Subset statements that could not be handled: %s", todo.toString() );
+			logger.warn( "Subset statements that could not be handled: {}", todo.toString() );
 		}
 		
 		if( ! dangling.isEmpty() ) {
-			logger.warn( "Dataset instances that could not be handled: %s", dangling.toString() );
+			logger.warn( "Dataset instances that could not be handled: {}", dangling.toString() );
 		}
 	}
 
