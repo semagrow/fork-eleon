@@ -668,8 +668,17 @@ public class MainShell extends Shell
 						for (MenuItem menuItem : dataSchemaMenu.getItems()) {
 							if (menuItem.getSelection()) {
 								if (selectedVocabulary.equals(menuItem.getText())) {
-									schema.read("file:////" + ((DataSchema) menuItem.getData()).getSchemaFile().getAbsolutePath());
-									dataSchemaList.add((DataSchema) menuItem.getData());
+									//schema.read("file:////" + ((DataSchema) menuItem.getData()).getSchemaFile().getAbsolutePath());
+									try {
+										String path = ((DataSchema) menuItem.getData()).getSchemaFile().toURI().toURL().toString();
+										String decoded_path = URLDecoder.decode(path, "UTF-8");
+										schema.read(decoded_path);
+										dataSchemaList.add((DataSchema) menuItem.getData());
+									} catch (MalformedURLException ex) {
+										ex.printStackTrace();
+									} catch (UnsupportedEncodingException ex) {
+										ex.printStackTrace();
+									} 
 								}
 							}
 						}
