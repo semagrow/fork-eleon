@@ -445,15 +445,15 @@ public class MainShell extends Shell
 		
 		Label lbltree = new Label(this, SWT.NONE);
 		lbltree.setBounds(202, 30, 283, 18);
-		lbltree.setText("Tree");
+		lbltree.setText("Hierarchy Tree");
 		
 		Label lblfacet = new Label(this, SWT.NONE);
 		lblfacet.setBounds(10, 30, 76, 18);
 		lblfacet.setText("Facet");
 		
 		Label lblFields = new Label(this, SWT.NONE);
-		lblFields.setBounds(580, 36, 76, 18);
-		lblFields.setText("Fields");
+		lblFields.setBounds(580, 36, 200, 18);
+		lblFields.setText("Dataset Properties Editor");
 		
 		list = new List(this, SWT.BORDER);
 		list.addSelectionListener(new SelectionAdapter() {
@@ -470,7 +470,7 @@ public class MainShell extends Shell
 	                box.open();
 	                return;
 				}		
-				if (list.getSelection()[0].toString().equals("per property")) {
+				if (list.getSelection()[0].toString().equals("Per property")) {
 					boolean has_vocabulary = false;
 					for (MenuItem menuItem : dataSchemaMenu.getItems()) {
 						if (menuItem.getSelection()) {
@@ -495,7 +495,7 @@ public class MainShell extends Shell
 		                box.open();
 		                return;
 					}
-				} else if (list.getSelection()[0].toString().equals("per entity")) {
+				} else if (list.getSelection()[0].toString().equals("Per entity")) {
 					if( entityTree.getTree() == null ) {
 						entityTree.init();
 						textTitle.setText( entityTree.getTitle() );
@@ -507,7 +507,7 @@ public class MainShell extends Shell
 			}
 		});
 		list.setBounds(10, 60, 186, 602);
-		String[] listItems = {"per property", "per entity"};
+		String[] listItems = {"Per property", "Per entity"};
 		list.setItems(listItems);
 		
 		//createTree();
