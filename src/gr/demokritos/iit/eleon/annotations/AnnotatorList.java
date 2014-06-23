@@ -182,13 +182,21 @@ public class AnnotatorList
 					}
 					if (not_found) {
 						MenuItem mntmInsertedAuthor = new MenuItem(MainShell.shell.annotators.annMenu, SWT.RADIO);
+						Annotator ann = Annotator.getAnnotator( annotatorName );
+						MainShell.shell.annotators.insert( ann );
 						mntmInsertedAuthor.addSelectionListener(new SelectionAdapter() {
 							@Override
 							public void widgetSelected(SelectionEvent e) {
 								MainShell.shell.annotators.setActive( annotatorName );
 							}
 						});
+						for (MenuItem item : MainShell.shell.annotators.annMenu.getItems()) {
+							item.setSelection(false);
+						}
+						mntmInsertedAuthor.setSelection(true);
+						MainShell.shell.annotators.setActive( annotatorName );
 						mntmInsertedAuthor.setText(annotatorName);
+						mntmInsertedAuthor.setData(ann);
 					}
 				}
 			}

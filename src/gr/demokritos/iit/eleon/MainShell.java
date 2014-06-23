@@ -326,6 +326,7 @@ public class MainShell extends Shell
 						mntmInsertedAuthor.setSelection(true);
 						MainShell.shell.annotators.setActive( annotatorName );
 						mntmInsertedAuthor.setText(annotatorName);
+						mntmInsertedAuthor.setData(ann);
 					}
 				}
 			}
