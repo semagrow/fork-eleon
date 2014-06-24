@@ -75,6 +75,8 @@ import gr.demokritos.iit.eleon.persistence.*;
 
 public class MainShell extends Shell
 {
+	static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger( PropertyTreeFacet.class );
+	
 	public static MainShell shell;
 
 	// Menu Items
@@ -673,13 +675,18 @@ public class MainShell extends Shell
 					//FIXME: do all auto-filled facets
 					OntModel schema = AnnotationVocabulary.getNewModel( AnnotationVocabulary.NONE );
 					java.util.List<DataSchema> dataSchemaList = new ArrayList<DataSchema>();
+					boolean loaded_dc = false;
 					for (String selectedVocabulary : selectedVocabularies) {
-						//item.setText(1, item.getText(1) + selectedVocabulary + ", ");
 						for (MenuItem menuItem : dataSchemaMenu.getItems()) {
 							if (menuItem.getSelection()) {
 								if (selectedVocabulary.equals(menuItem.getText())) {
 									//schema.read("file:////" + ((DataSchema) menuItem.getData()).getSchemaFile().getAbsolutePath());
 									try {
+										if ( ! loaded_dc ) {
+											//schema.read(schema_folder + "dcterms.rdf");
+											schema.read(schema_folder + "dcelements.rdf");
+											loaded_dc = true;
+										}
 										String path = ((DataSchema) menuItem.getData()).getSchemaFile().toURI().toURL().toString();
 										String decoded_path = URLDecoder.decode(path, "UTF-8");
 										schema.read(decoded_path);
@@ -695,7 +702,17 @@ public class MainShell extends Shell
 							}
 						}
 					}
-					((PropertyTreeFacet)MainShell.shell.propertyTree).update( tree.getSelection()[0], schema );
+					try {
+						((PropertyTreeFacet)MainShell.shell.propertyTree).update( tree.getSelection()[0], schema );
+					} catch (Exception exc) {//FIXME: some schemas could not be loaded. check why.
+						logger.error("Error while inserting vocabulary", exc);
+						MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_ERROR);
+		                box.setText("Error while inserting vocabulary");
+		                box.setMessage("Error while inserting vocabulary. Check log output for more information.");
+		                box.open();
+		                return;
+					}
+					
 					
 					//String proper_text = item.getText(1).substring(0, item.getText(1).length() - 2);
 					
