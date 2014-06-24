@@ -58,8 +58,15 @@ public class NominalSet
 
 	private static final String t4fPref = "http://www.semagrow.eu/schemas/t4f#";
 	public static final String[] t4fClassNames = { "Sensor", "SensorMeasurement" };
+	
+	private static final String organicEdunetPref = "http://data.organic-edunet.eu/";
+	public static final String[] organicEdunetNames = { "Annotation", "Classification", "Contribution", "DateTime" , 
+		"Duration" , "Educational" , "Identifier" , "LangString" , "LearningObject" , "LifeCycleContribution" ,	"MetaMetadataContribution" ,
+		"Relation" , "SingleTechnicalRequirement" , "Taxon" , "TaxonPath" , "TechnicalRequirement" , "VCard" };
+	
 	public static final Resource[] cropClasses;
 	public static final Resource[] t4fClasses;
+	public static final Resource[] organicEdunetClasses;
 	
 	static {
 		cropClasses = new Resource[ cropClassNames.length ];
@@ -72,6 +79,12 @@ public class NominalSet
 		for( int i=0; i<t4fClassNames.length; ++i ) {
 			Resource r = MainShell.shell.data.createResource( t4fPref + t4fClassNames[i] );
 			t4fClasses[i] = r;
+		}
+		
+		organicEdunetClasses = new Resource[ organicEdunetNames.length ];
+		for( int i=0; i<organicEdunetNames.length; ++i ) {
+			Resource r = MainShell.shell.data.createResource( organicEdunetPref + organicEdunetNames[i] );
+			organicEdunetClasses[i] = r;
 		}
 	}
 

@@ -422,6 +422,13 @@ public class MainShell extends Shell
 		mntmTf.setText(t4f_schema.getLabel());
 		mntmTf.setData(t4f_schema);
 		
+		MenuItem mntmOrganicEdunet = new MenuItem(dataSchemaMenu, SWT.CHECK);
+		File organicEdunet_file = new File(MainShell.schema_folder + "organicEdunet.owl");
+		Resource organicEdunet_r = data.createResource( organicEdunet_file.toURI().toURL().toString() );
+		DataSchema organicEdunet_schema = new DataSchema(organicEdunet_file.getName(), organicEdunet_file, organicEdunet_r);
+		mntmOrganicEdunet.setText(organicEdunet_schema.getLabel());
+		mntmOrganicEdunet.setData(organicEdunet_schema);
+		
 		
 		MenuItem mntmAbout = new MenuItem(menu, SWT.PUSH);
 		mntmAbout.addSelectionListener(new SelectionAdapter() {
@@ -981,6 +988,8 @@ public class MainShell extends Shell
 					available_classes.addAll(Arrays.asList(NominalSet.cropClasses));
 				} else if (dataSchema.getLabel().equals("t4f.owl")) {
 					available_classes.addAll(Arrays.asList(NominalSet.t4fClasses));
+				} else if (dataSchema.getLabel().equals("organicEdunet.owl")) {
+					available_classes.addAll(Arrays.asList(NominalSet.organicEdunetClasses));
 				} else {
 					// TODO: what about new vocabularies added by the user?
 				}
