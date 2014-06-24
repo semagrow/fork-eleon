@@ -331,7 +331,6 @@ public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 	}
 	
 	public void update( TreeItem localRoot, OntModel dataSchema )
-	throws IllegalArgumentException
 	{
 		List<OntProperty> propertiesList = dataSchema.listAllOntProperties().toList();
 		ArrayList<OntProperty> notInsertedPropertiesList = new ArrayList<OntProperty>();

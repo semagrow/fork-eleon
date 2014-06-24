@@ -21,7 +21,7 @@
 	<classpathentry kind="lib" path="lib/jena/slf4j-log4j12-1.6.4.jar"/>
 	<classpathentry kind="lib" path="lib/jena/xercesImpl-2.11.0.jar"/>
 	<classpathentry kind="lib" path="lib/jena/xml-apis-1.4.01.jar"/>
-	<classpathentry kind="lib" path="lib/swt.jar"/>
 	<classpathentry kind="lib" path="lib/NL.jar"/>
+	<classpathentry kind="lib" path="lib/swt.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
