@@ -675,30 +675,21 @@ public class MainShell extends Shell
 					//FIXME: do all auto-filled facets
 					OntModel schema = AnnotationVocabulary.getNewModel( AnnotationVocabulary.NONE );
 					java.util.List<DataSchema> dataSchemaList = new ArrayList<DataSchema>();
-					//boolean loaded_dc = false;
 					for (String selectedVocabulary : selectedVocabularies) {
 						for (MenuItem menuItem : dataSchemaMenu.getItems()) {
 							if (menuItem.getSelection()) {
 								if (selectedVocabulary.equals(menuItem.getText())) {
-									//schema.read("file:////" + ((DataSchema) menuItem.getData()).getSchemaFile().getAbsolutePath());
 									try {
-										/*if ( ! loaded_dc ) {
-											schema.read(schema_folder + "dcterms.rdf");
-											schema.read(schema_folder + "dcelements.rdf");
-											//schema.read(schema_folder + "cidoc_crm_v5.0.4_official_release.rdfs");
-											schema.read(schema_folder + "crm.rdf");
-											loaded_dc = true;
-										}*/
 										String path = ((DataSchema) menuItem.getData()).getSchemaFile().toURI().toURL().toString();
 										String decoded_path = URLDecoder.decode(path, "UTF-8");
 										schema.read(decoded_path);
 										dataSchemaList.add((DataSchema) menuItem.getData());
 									} catch (MalformedURLException ex) {
-										ex.printStackTrace();
+										logger.error("Error while inserting vocabulary", ex);
 									} catch (UnsupportedEncodingException ex) {
-										ex.printStackTrace();
+										logger.error("Error while inserting vocabulary", ex);
 									} catch (Exception ex) {
-										ex.printStackTrace();
+										logger.error("Error while inserting vocabulary", ex);
 									}
 								}
 							}
