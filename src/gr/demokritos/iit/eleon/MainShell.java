@@ -706,7 +706,7 @@ public class MainShell extends Shell
 					}
 					try {
 						((PropertyTreeFacet)MainShell.shell.propertyTree).update( tree.getSelection()[0], schema );
-					} catch (Exception exc) {//FIXME: some schemas could not be loaded. check why.
+					} catch (Exception exc) {
 						logger.error("Error while inserting vocabulary", exc);
 						MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_ERROR);
 		                box.setText("Error while inserting vocabulary");
