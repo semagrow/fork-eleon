@@ -203,6 +203,15 @@ public class MainShell extends Shell
         			if( openFilename == null ) { return; }
         			MainShell.shell.persistence.open( openFilename );
 					textTitle.setText( MainShell.shell.persistence.getLabel() );
+					
+					//drop old trees and tables
+					MainShell.shell.propertyTree.getTree().dispose();
+					MainShell.shell.entityTree.getTree().dispose();
+					if (table != null && !table.isDisposed()) {
+						table.dispose();
+						table = null;
+					}
+					
 					//create the faceted trees
 					MainShell.shell.propertyTree.init();
 					MainShell.shell.textTitle.setText( propertyTree.getTitle() );
