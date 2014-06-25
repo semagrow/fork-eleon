@@ -286,8 +286,6 @@ public class MainShell extends Shell
         		if (messageBox.open() == SWT.YES) {
         			MainShell.this.dispose();
         		}
-        		//getDisplay().dispose();
-                //System.exit(0);
         	}
         });
         exitItem.setText( "&Exit" );
@@ -397,10 +395,8 @@ public class MainShell extends Shell
         		dialog.setFilterNames (filterNames);
         		dialog.setFilterExtensions (filterExtensions);
         		dialog.setFilterPath (filterPath);
-        		//dialog.setFileName ("myfile");
         		try {
         			addVocabularyToMenu(dialog.open(), dataSchemaMenu);
-        			//System.out.println(dialog.open());
 				} catch (Exception ex) {
 					ex.printStackTrace();
 			    	MessageBox box = new MessageBox(getShell(), SWT.ERROR);
@@ -493,12 +489,10 @@ public class MainShell extends Shell
 						}
 					}
 					if( has_vocabulary ) {
-						//treePerProperty.dispose();
 						if (propertyTree.getTree() == null) {
 							propertyTree.init();
 							textTitle.setText( propertyTree.getTitle() );
 							textEndpoint.setText( propertyTree.getInfo() );
-							//propertyTree.update();
 						}
 						propertyTree.getTree().setVisible(true);
 						propertyTree.getTree().moveAbove( null );
@@ -524,10 +518,6 @@ public class MainShell extends Shell
 		String[] listItems = {"Per property", "Per entity"};
 		list.setItems(listItems);
 		
-		//createTree();
-		
-		//createTable();
-				
 		ToolBar toolBar = new ToolBar(this, SWT.FLAT | SWT.RIGHT);
 		toolBar.setBounds(10, 0, 1077, 24);
 		
@@ -539,9 +529,7 @@ public class MainShell extends Shell
 		textTitle = new Text(this, SWT.BORDER | SWT.READ_ONLY);
 		textTitle.setBounds(46, 30, 266, 24);
 		textTitle.setVisible(false);
-		
-		//initializeFacets();
-		
+				
 		createContents();
 	}
 	
@@ -933,7 +921,6 @@ public class MainShell extends Shell
 			boolean ok = persistence.save( arr, filename );
 			assert ok;
 		}
-		//System.out.println ("Save to: " + dialog.open ());
 	}
 	
 	private void addVocabularyToMenu(String filename, Menu vocabulariesMenu) throws MalformedURLException {
