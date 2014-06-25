@@ -792,7 +792,11 @@ public class MainShell extends Shell
 						
 						if (AnnotationVocabulary.property_value_types[schemaIndex][index] == Resource.class) {
 							//TODO: check for valid URI here?
-							treeNodeData.property_values[schemaIndex][index] = ResourceFactory.createResource(text.getText());
+							if (text.getText().equals("")) {
+								treeNodeData.property_values[schemaIndex][index] = null;
+							} else {
+								treeNodeData.property_values[schemaIndex][index] = ResourceFactory.createResource(text.getText());
+							}
 							if (property.equals("void:sparqlEndpoint")) {
 								textEndpoint.setText(text.getText());
 							}
@@ -802,7 +806,12 @@ public class MainShell extends Shell
 						try {
 							Class<?> cls[] = new Class[] { String.class };
 							java.lang.reflect.Constructor<?> c = ((Class<?>) AnnotationVocabulary.property_value_types[schemaIndex][index]).getConstructor(cls);
-							Object obj = c.newInstance(text.getText());
+							Object obj;
+							if (text.getText().equals("")) {
+								obj = null;
+							} else {
+								obj = c.newInstance(text.getText());
+							}
 							treeNodeData.property_values[schemaIndex][index] = obj;
 						} catch (NoSuchMethodException e) {
 							e.printStackTrace();
