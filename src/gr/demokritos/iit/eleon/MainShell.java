@@ -205,12 +205,7 @@ public class MainShell extends Shell
 					textTitle.setText( MainShell.shell.persistence.getLabel() );
 					
 					//drop old trees and tables
-					MainShell.shell.propertyTree.getTree().dispose();
-					MainShell.shell.entityTree.getTree().dispose();
-					if (table != null && !table.isDisposed()) {
-						table.dispose();
-						table = null;
-					}
+					disposeTreesAndTable();
 					
 					//create the faceted trees
 					MainShell.shell.propertyTree.init();
@@ -964,23 +959,26 @@ public class MainShell extends Shell
 		messageBox.setText("Start new annotation?");  
 		messageBox.setMessage("Are you sure you want start a new annotation session? Any unsaved progress will be lost.");  
 		if (messageBox.open() == SWT.YES) {
-			if (table != null && !table.isDisposed()) {
-				table.dispose();
-				table = null;
-			}
-			Tree tree = null;
-			tree = entityTree.getTree();
-			if (tree != null && !tree.isDisposed()) {
-				tree.dispose();
-				tree = null;
-			}
-			tree = propertyTree.getTree();
-			if (tree != null && !tree.isDisposed()) {
-				tree.dispose();
-				tree = null;
-			}
-			
+			disposeTreesAndTable();
 			initializeFacets();
+		}
+	}
+	
+	private void disposeTreesAndTable() {
+		if (table != null && !table.isDisposed()) {
+			table.dispose();
+			table = null;
+		}
+		Tree tree = null;
+		tree = entityTree.getTree();
+		if (tree != null && !tree.isDisposed()) {
+			tree.dispose();
+			tree = null;
+		}
+		tree = propertyTree.getTree();
+		if (tree != null && !tree.isDisposed()) {
+			tree.dispose();
+			tree = null;
 		}
 	}
 	
