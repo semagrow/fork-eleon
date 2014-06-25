@@ -241,7 +241,7 @@ public class MainShell extends Shell
 					}
 				}
         		catch( Exception ex ) {
-					ex.printStackTrace();
+					logger.error("error while saving", ex);
 			    	MessageBox box = new MessageBox(getShell(), SWT.ERROR);
 	                box.setText("Error");
 	                box.setMessage(ex.toString());

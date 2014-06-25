@@ -133,7 +133,7 @@ public class OWLFile implements PersistenceBackend
 	
 	@Override
 	public boolean save( Facet[] facets, Object parameter )
-	throws IOException
+	throws IOException, IllegalArgumentException
 	{
 		if( parameter != null ) {
 			try { this.filename = (String)parameter; }
