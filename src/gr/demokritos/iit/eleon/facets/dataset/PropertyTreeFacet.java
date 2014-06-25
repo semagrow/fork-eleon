@@ -49,6 +49,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.*;
 
+import com.hp.hpl.jena.ontology.ConversionException;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntProperty;
 import com.hp.hpl.jena.rdf.model.*;
@@ -335,7 +336,12 @@ public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 		List<OntProperty> propertiesList = dataSchema.listAllOntProperties().toList();
 		ArrayList<OntProperty> notInsertedPropertiesList = new ArrayList<OntProperty>();
 		for (OntProperty ontProperty : propertiesList) {
-			OntProperty superProperty = ontProperty.getSuperProperty();
+			OntProperty superProperty = null;
+			try {
+				superProperty = ontProperty.getSuperProperty();
+			} catch (ConversionException e) {
+				logger.debug("could not get super property so add property under root. error message: {}", e.getMessage());
+			}
 			if (superProperty == null) {
 				TreeItem treeItem = new TreeItem(localRoot, SWT.NONE);
 				String label = "?s " + ontProperty.toString() + " ?o";
