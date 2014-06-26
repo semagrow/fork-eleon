@@ -143,6 +143,8 @@ public class OWLFile implements PersistenceBackend
 		}
 		if( this.filename == null ) { return false; }
 
+		//this.myShell.data = AnnotationVocabulary.getNewModel( this.myShell.activeAnnSchema );
+		
 		for( Facet facet : facets ) {
 			facet.syncTo( this.myShell.data );
 		}

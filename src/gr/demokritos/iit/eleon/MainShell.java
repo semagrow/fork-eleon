@@ -992,7 +992,17 @@ public class MainShell extends Shell
 		if (treeItem == null) return;//finished tree
 		DatasetNode datasetNode = (DatasetNode) treeItem.getData();
 		assert datasetNode!=null;
-		DataSchemaSet set = (DataSchemaSet) datasetNode.property_values[schemaIndex][index_vocabulary];
+		DataSchemaSet set = null;
+		try {
+			set = (DataSchemaSet) datasetNode.property_values[schemaIndex][index_vocabulary];
+		} catch (ClassCastException e) {
+			logger.error("Error while getting available vocabularies", e);
+			MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ERROR);
+            box.setText("Error");
+            box.setMessage("Error while getting available vocabularies. See log output for details.");
+            box.open();
+            return;
+		}
 		if (set!=null && set.getContainingSchemas() != null && (!set.getContainingSchemas().isEmpty())) {
 			for (Object data : set.getContainingSchemas()) {
 				assert (data instanceof DataSchema);
@@ -1015,7 +1025,7 @@ public class MainShell extends Shell
 	
 	/*
 	private boolean deleteNode(TreeItem treeItem, String nodeNameToDelete) {
-		int index = 0;
+		int index = 0;DataSchemaSet 
 		TreeItem[] items = treeItem.getItems();
 		for (int i=0; i<items.length; i++) {
 			if (items[i].getText().equals(nodeNameToDelete)) {
