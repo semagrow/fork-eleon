@@ -64,7 +64,6 @@ import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import gr.demokritos.iit.eleon.annotations.AnnotationVocabulary;
 import gr.demokritos.iit.eleon.annotations.Annotator;
 import gr.demokritos.iit.eleon.annotations.AnnotatorList;
-import gr.demokritos.iit.eleon.annotations.DataSchema;
 import gr.demokritos.iit.eleon.annotations.DataSchemaSet;
 import gr.demokritos.iit.eleon.annotations.NominalSet;
 import gr.demokritos.iit.eleon.facets.*;
@@ -107,7 +106,7 @@ public class MainShell extends Shell
 	//Ontology model
 	public OntModel data = AnnotationVocabulary.getNewModel( schemaIndex );
 	
-	static final String schema_folder;
+/*	static final String schema_folder;
 	static {
 		String path = MainShell.class.getProtectionDomain().getCodeSource().getLocation().getPath();
 		String jar_path = null;
@@ -119,7 +118,7 @@ public class MainShell extends Shell
 		assert jar_path != null;
 		String eleon_directory = (new File(jar_path)).getParent() + File.separator;
 		schema_folder = eleon_directory + "resources" + File.separator + "schemas" + File.separator;
-	}
+	}*/
 
 
 	/**
@@ -134,6 +133,7 @@ public class MainShell extends Shell
 			MainShell.shell = new MainShell(display);
 			MainShell.shell.persistence = new OWLFile( MainShell.shell );
 			MainShell.shell.initializeFacets();
+			MainShell.shell.fillDataSchemaMenu();
 			// shell.persistence = new ELEONXML();
 			MainShell.shell.open();
 			MainShell.shell.layout();
@@ -381,6 +381,19 @@ public class MainShell extends Shell
 		mntmNew.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+			    MessageBox box = new MessageBox(getShell(), SWT.ICON_INFORMATION);
+	            box.setText("Info");
+	            box.setMessage("Not available for now.");
+	            box.open();
+			}
+		});
+		mntmNew.setText("New...");
+		
+		/*
+		MenuItem mntmNew = new MenuItem(dataSchemaMenu, SWT.PUSH);
+		mntmNew.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
 				FileDialog dialog = new FileDialog (shell, SWT.OPEN);
         		String [] filterNames = new String [] {"Ont Files", "All Files (*)"};
         		String [] filterExtensions = new String [] {"*.rdf;*.owl;*.ttl,*.xml", "*"};
@@ -408,8 +421,6 @@ public class MainShell extends Shell
 		});
 		mntmNew.setText("New...");
 		
-		assert MainShell.schema_folder != null;
-		
 		MenuItem mntmCrop = new MenuItem(dataSchemaMenu, SWT.CHECK);
 		File crop_file = new File(MainShell.schema_folder + "crop.owl");
 		Resource crop_r = data.createResource( crop_file.toURI().toURL().toString() );
@@ -429,7 +440,7 @@ public class MainShell extends Shell
 		Resource organicEdunet_r = data.createResource( organicEdunet_file.toURI().toURL().toString() );
 		DataSchema organicEdunet_schema = new DataSchema(organicEdunet_file.getName(), organicEdunet_file, organicEdunet_r);
 		mntmOrganicEdunet.setText(organicEdunet_schema.getLabel());
-		mntmOrganicEdunet.setData(organicEdunet_schema);
+		mntmOrganicEdunet.setData(organicEdunet_schema);*/
 		
 		
 		MenuItem mntmAbout = new MenuItem(menu, SWT.PUSH);
@@ -666,16 +677,19 @@ public class MainShell extends Shell
 					}
 					//FIXME: do all auto-filled facets
 					OntModel schema = AnnotationVocabulary.getNewModel( AnnotationVocabulary.NONE );
-					java.util.List<DataSchema> dataSchemaList = new ArrayList<DataSchema>();
+					DataSchemaSet dataSchemaSet = new DataSchemaSet();
 					for (String selectedVocabulary : selectedVocabularies) {
 						for (MenuItem menuItem : dataSchemaMenu.getItems()) {
 							if (menuItem.getSelection()) {
 								if (selectedVocabulary.equals(menuItem.getText())) {
 									try {
-										String path = ((DataSchema) menuItem.getData()).getSchemaFile().toURI().toURL().toString();
+										File schemaFile = DataSchemaSet.getFileFromLabel(menuItem.getText());
+										String path = schemaFile.toURI().toURL().toString();
 										String decoded_path = URLDecoder.decode(path, "UTF-8");
 										schema.read(decoded_path);
-										dataSchemaList.add((DataSchema) menuItem.getData());
+										Resource r = DataSchemaSet.getResourceFromLabel(menuItem.getText());
+										assert r != null;
+										dataSchemaSet.getContainingSchemas().add(r);
 									} catch (MalformedURLException ex) {
 										logger.error("Error while inserting vocabulary", ex);
 									} catch (UnsupportedEncodingException ex) {
@@ -712,14 +726,12 @@ public class MainShell extends Shell
 					assert(i>=0);
 					
 					Object[][] property_values = ((DatasetNode) treeFacetNode).property_values;
-					if (dataSchemaList.isEmpty()) {
+					if (dataSchemaSet.getContainingSchemas().isEmpty()) {
 						property_values[schemaIndex][index] = null;
 						item.setText(1, "[]");
 					} else {
-						DataSchemaSet schemaSet = new DataSchemaSet();
-						schemaSet.setContainingSchemas(dataSchemaList);
-						property_values[schemaIndex][index] = schemaSet;
-						item.setText(1, schemaSet.toString());
+						property_values[schemaIndex][index] = dataSchemaSet;
+						item.setText(1, dataSchemaSet.toString());
 					}
 					
 					if( dialog.node.getFacet().isAutoFilled() ) {
@@ -931,21 +943,17 @@ public class MainShell extends Shell
 		}
 	}
 	
-	private void addVocabularyToMenu(String filename, Menu vocabulariesMenu) throws MalformedURLException {
+/*	private void addVocabularyToMenu(String filename, Menu vocabulariesMenu) throws MalformedURLException {
 		if (filename == null) {
 			return;
 		}
-		/*File file = new File(filename);
-		MenuItem mntmNewVoc = new MenuItem(vocabulariesMenu, SWT.CHECK);
-		mntmNewVoc.setText(file.getName());
-		mntmNewVoc.setData(filename);*/
 		File schemaFile = new File(filename);
-		MenuItem mntmNewVoc = new MenuItem(vocabulariesMenu, SWT.CHECK);
+		MenuItem mntmNewVoc = new MenuItem(vocabulariesMenu, SWT.CHECK);		
 		Resource r = data.createResource( schemaFile.toURI().toURL().toString() );
 		DataSchema dataSchema = new DataSchema(schemaFile.getName(), schemaFile, r);
 		mntmNewVoc.setText(dataSchema.getLabel());
 		mntmNewVoc.setData(dataSchema);
-	}
+	}*/
 	
 	
 	private void newButtonFunctionality() {
@@ -1003,22 +1011,30 @@ public class MainShell extends Shell
             return;
 		}
 		if (set!=null && set.getContainingSchemas() != null && (!set.getContainingSchemas().isEmpty())) {
-			for (Object data : set.getContainingSchemas()) {
-				assert (data instanceof DataSchema);
-				DataSchema dataSchema = (DataSchema) data;
-				if (dataSchema.getLabel().equals("crop.owl")) {
+			for (Resource resource : set.getContainingSchemas()) {
+				String label = DataSchemaSet.getLabelFromResource(resource);
+				if (label.equals(DataSchemaSet.crop)) {
 					available_classes.addAll(Arrays.asList(NominalSet.cropClasses));
-				} else if (dataSchema.getLabel().equals("t4f.owl")) {
+				} else if (label.equals(DataSchemaSet.t4f)) {
 					available_classes.addAll(Arrays.asList(NominalSet.t4fClasses));
-				} else if (dataSchema.getLabel().equals("organicEdunet.owl")) {
+				} else if (label.equals(DataSchemaSet.organic_edunet)) {
 					available_classes.addAll(Arrays.asList(NominalSet.organicEdunetClasses));
 				} else {
+					// TODO: rest of the classes.
 					// TODO: what about new vocabularies added by the user?
 				}
 			}
 			return;
 		} else {
 			getAvailableClasses(treeItem.getParentItem(), available_classes, schemaIndex, index_vocabulary);
+		}
+	}
+	
+	private void fillDataSchemaMenu() {
+		assert DataSchemaSet.schema_folder != null;
+		for (String schemaLabel : DataSchemaSet.schemaLabels) {
+			MenuItem new_item = new MenuItem(dataSchemaMenu, SWT.CHECK);
+			new_item.setText(schemaLabel);
 		}
 	}
 	

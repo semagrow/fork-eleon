@@ -50,7 +50,6 @@ import com.hp.hpl.jena.rdf.model.Statement;
 
 import gr.demokritos.iit.eleon.MainShell;
 import gr.demokritos.iit.eleon.annotations.AnnotationVocabulary;
-import gr.demokritos.iit.eleon.annotations.DataSchema;
 import gr.demokritos.iit.eleon.annotations.DataSchemaSet;
 import gr.demokritos.iit.eleon.annotations.NominalSet;
 import gr.demokritos.iit.eleon.facets.TreeFacetNode;
@@ -188,6 +187,20 @@ public class DatasetNode implements TreeFacetNode
 			if( value == null ) {
 				stmts = Collections.emptyList();
 			}
+			else if ( value instanceof NominalSet ) {
+				stmts = new ArrayList<Statement>();
+				for (Resource nominal_class : ((NominalSet) value).getContainingNominals()) {
+					Statement stmt = model.createStatement( this.res, p, nominal_class );
+					stmts.add( stmt );
+				}
+			} 
+			else if ( value instanceof DataSchemaSet ) {
+				stmts = new ArrayList<Statement>();
+				for (Resource data_schema : ((DataSchemaSet) value).getContainingSchemas()) {
+					Statement stmt = model.createStatement( this.res, p, data_schema );
+					stmts.add( stmt );
+				}
+			}
 			else if( value instanceof Resource ) {
 				Statement stmt = model.createStatement( this.res, p, (Resource)value );
 				stmts = Collections.singletonList( stmt );
@@ -199,20 +212,6 @@ public class DatasetNode implements TreeFacetNode
 			else if( value instanceof String ) {
 				Statement stmt = model.createLiteralStatement( this.res, p, (String)value );
 				stmts = Collections.singletonList( stmt );
-			}
-			else if ( value instanceof NominalSet ) {
-				stmts = new ArrayList<Statement>();
-				for (Resource nominal_class : ((NominalSet) value).getContainingNominals()) {
-					Statement stmt = model.createStatement( this.res, p, nominal_class );
-					stmts.add( stmt );
-				}
-			} 
-			else if ( value instanceof DataSchemaSet ) {
-				stmts = new ArrayList<Statement>();
-				for (DataSchema data_schema : ((DataSchemaSet) value).getContainingSchemas()) {
-					Statement stmt = model.createStatement( this.res, p, data_schema.getResource() );
-					stmts.add( stmt );
-				}
 			} 
 			else {
 				// TODO: warning

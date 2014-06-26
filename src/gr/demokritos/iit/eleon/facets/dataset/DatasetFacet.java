@@ -57,6 +57,7 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 import gr.demokritos.iit.eleon.MainShell;
 import gr.demokritos.iit.eleon.annotations.AnnotationVocabulary;
+import gr.demokritos.iit.eleon.annotations.DataSchemaSet;
 import gr.demokritos.iit.eleon.annotations.NominalSet;
 import gr.demokritos.iit.eleon.facets.TreeFacet;
 
@@ -384,7 +385,19 @@ public abstract class DatasetFacet implements TreeFacet
 					}
 				}
 				else if (currentName.equals("void:vocabulary")) {
-					//TODO: do it
+					StmtIterator stmt_it = dataset.listProperties(p);
+					while (stmt_it.hasNext()) {
+						Statement st = stmt_it.next();
+						if( st != null ) {
+							RDFNode rdf_node = st.getObject();
+							if( rdf_node.canAs(Resource.class) ) {
+								if (node.property_values[1][i] == null || ! (node.property_values[1][i] instanceof DataSchemaSet)) {
+									node.property_values[1][i] = new DataSchemaSet();
+								}
+								((DataSchemaSet) node.property_values[1][i]).getContainingSchemas().add( (Resource) rdf_node );
+							}
+						}
+					}
 				}
 			}
 			else {
