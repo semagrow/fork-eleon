@@ -57,6 +57,7 @@ import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 import gr.demokritos.iit.eleon.MainShell;
 import gr.demokritos.iit.eleon.annotations.AnnotationVocabulary;
+import gr.demokritos.iit.eleon.annotations.NominalSet;
 import gr.demokritos.iit.eleon.facets.TreeFacet;
 
 
@@ -364,6 +365,26 @@ public abstract class DatasetFacet implements TreeFacet
 					else {
 						node.property_values[MainShell.shell.activeAnnSchema][i] = v.asLiteral().getLexicalForm();
 					}
+				}
+				String currentName = AnnotationVocabulary.property_qnames[MainShell.shell.activeAnnSchema][i];
+				
+				if (currentName.equals("svd:subjectClass") || currentName.equals("svd:objectClass")) {//TODO:not best implementation. to improve later
+					StmtIterator stmt_it = dataset.listProperties(p);
+					while (stmt_it.hasNext()) {
+						Statement st = stmt_it.next();
+						if( st != null ) {
+							RDFNode rdf_node = st.getObject();
+							if( rdf_node.canAs(Resource.class) ) {
+								if (node.property_values[1][i] == null || ! (node.property_values[1][i] instanceof NominalSet)) {
+									node.property_values[1][i] = new NominalSet();
+								}
+								((NominalSet) node.property_values[1][i]).getContainingNominals().add( (Resource) rdf_node );
+							}
+						}
+					}
+				}
+				else if (currentName.equals("void:vocabulary")) {
+					//TODO: do it
 				}
 			}
 			else {

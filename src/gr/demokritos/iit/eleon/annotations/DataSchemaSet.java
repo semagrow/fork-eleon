@@ -3,8 +3,11 @@
  */
 package gr.demokritos.iit.eleon.annotations;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.hp.hpl.jena.rdf.model.Resource;
 
 
 
@@ -13,6 +16,10 @@ import java.util.List;
  *
  */
 public class DataSchemaSet {
+	
+	/*public static final String[] availableSchemasLabels;
+	public static final Resource[] availableSchemasURIs;
+	public static final File[] availableSchemasFiles;*/
 	
 	// Current selection
 	List<DataSchema> containingSchemas = new ArrayList<DataSchema>();
