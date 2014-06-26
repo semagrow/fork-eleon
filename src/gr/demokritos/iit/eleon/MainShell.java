@@ -687,19 +687,18 @@ public class MainShell extends Shell
 							}
 						}
 					}
-					try {
-						((PropertyTreeFacet)MainShell.shell.propertyTree).update( tree.getSelection()[0], schema );
-					} catch (Exception exc) {
-						logger.error("Error while inserting vocabulary", exc);
-						MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_ERROR);
-		                box.setText("Error while inserting vocabulary");
-		                box.setMessage("Error while inserting vocabulary. Check log output for more information.");
-		                box.open();
-		                return;
+					if (treeFacetNode.getFacet() instanceof PropertyTreeFacet) {
+						try {
+							((PropertyTreeFacet)MainShell.shell.propertyTree).update( tree.getSelection()[0], schema );
+						} catch (Exception exc) {
+							logger.error("Error while inserting vocabulary", exc);
+							MessageBox box = new MessageBox(getShell(), SWT.OK | SWT.ICON_ERROR);
+			                box.setText("Error while inserting vocabulary");
+			                box.setMessage("Error while inserting vocabulary. Check log output for more information.");
+			                box.open();
+			                return;
+						}
 					}
-					
-					
-					//String proper_text = item.getText(1).substring(0, item.getText(1).length() - 2);
 					
 					String[][] property_names = AnnotationVocabulary.property_qnames;
 					int i = 0; int index = -1;
