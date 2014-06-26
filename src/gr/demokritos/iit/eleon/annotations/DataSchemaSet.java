@@ -3,11 +3,11 @@
  */
 package gr.demokritos.iit.eleon.annotations;
 
-import java.io.File;
+//import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.hp.hpl.jena.rdf.model.Resource;
+//import com.hp.hpl.jena.rdf.model.Resource;
 
 
 
