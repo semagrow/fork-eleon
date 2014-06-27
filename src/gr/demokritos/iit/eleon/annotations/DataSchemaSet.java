@@ -48,7 +48,7 @@ public class DataSchemaSet {
 	public static final String organic_edunet = "organic edunet";
 	public static final String skos = "skos";
 	public static final String t4f = "trees 4 future";
-	public static final String voar = "voar";
+	public static final String voar = "voa3r";
 	
 	public static final String[] schemaLabels = { 
 		bibo,
