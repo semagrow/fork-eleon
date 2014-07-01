@@ -64,9 +64,19 @@ public class NominalSet
 		"Duration" , "Educational" , "Identifier" , "LangString" , "LearningObject" , "LifeCycleContribution" ,	"MetaMetadataContribution" ,
 		"Relation" , "SingleTechnicalRequirement" , "Taxon" , "TaxonPath" , "TechnicalRequirement" , "VCard" };
 	
+	private static final String europeanaPref = "http://www.europeana.eu/schemas/edm/";
+	public static final String[] europeanaClassNames = { "Agent", "EuropeanaAggregation", "EuropeanaObject", "Event", "InformationResource",
+		"NonInformationResource", "PhysicalThing", "Place", "ProvidedCHO", "TimeSpan", "WebResource" };
+
+	private static final String naturalEuropePref = "http://www.natural-europe.eu/ontology#" ;
+	public static final String[] naturalEuropeNames = { "3D", "CHO", "Collection", "DigitalObject", "Image", "Observation", "Sound",
+		"Species", "Specimen", "Text", "Unit", "Video" };
+	
 	public static final Resource[] cropClasses;
 	public static final Resource[] t4fClasses;
 	public static final Resource[] organicEdunetClasses;
+	public static final Resource[] europeanaClasses;
+	public static final Resource[] naturalEuropeClasses;
 	
 	static {
 		cropClasses = new Resource[ cropClassNames.length ];
@@ -85,6 +95,18 @@ public class NominalSet
 		for( int i=0; i<organicEdunetNames.length; ++i ) {
 			Resource r = MainShell.shell.data.createResource( organicEdunetPref + organicEdunetNames[i] );
 			organicEdunetClasses[i] = r;
+		}
+		
+		europeanaClasses = new Resource[ europeanaClassNames.length ];
+		for( int i=0; i<europeanaClassNames.length; ++i ) {
+			Resource r = MainShell.shell.data.createResource( europeanaPref + europeanaClassNames[i] );
+			europeanaClasses[i] = r;
+		}
+		
+		naturalEuropeClasses = new Resource[ naturalEuropeNames.length ];
+		for( int i=0; i<naturalEuropeNames.length; ++i ) {
+			Resource r = MainShell.shell.data.createResource( naturalEuropePref + naturalEuropeNames[i] );
+			naturalEuropeClasses[i] = r;
 		}
 	}
 

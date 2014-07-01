@@ -1019,6 +1019,10 @@ public class MainShell extends Shell
 					available_classes.addAll(Arrays.asList(NominalSet.t4fClasses));
 				} else if (label.equals(DataSchemaSet.organic_edunet)) {
 					available_classes.addAll(Arrays.asList(NominalSet.organicEdunetClasses));
+				} else if (label.equals(DataSchemaSet.europeana)) {
+					available_classes.addAll(Arrays.asList(NominalSet.europeanaClasses));
+				} else if (label.equals(DataSchemaSet.natural_europe)) {
+					available_classes.addAll(Arrays.asList(NominalSet.naturalEuropeClasses));
 				} else {
 					// TODO: rest of the classes.
 					// TODO: what about new vocabularies added by the user?
