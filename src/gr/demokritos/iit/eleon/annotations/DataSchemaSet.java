@@ -49,6 +49,7 @@ public class DataSchemaSet {
 	public static final String skos = "skos";
 	public static final String t4f = "trees 4 future";
 	public static final String voar = "voa3r";
+	public static final String organic_edunet_2 = "organic edunet 2";
 	
 	public static final String[] schemaLabels = { 
 		bibo,
@@ -60,7 +61,8 @@ public class DataSchemaSet {
 		organic_edunet,
 		skos,
 		t4f,
-		voar
+		voar,
+		organic_edunet_2
 		};
 	
 	public static final Resource[] schemaURIs = { 
@@ -74,6 +76,7 @@ public class DataSchemaSet {
 		MainShell.shell.data.createResource("http://www.w3.org/2004/02/skos/core"),
 		MainShell.shell.data.createResource("http://rdf.demokritos.gr/2014/t4f"),
 		MainShell.shell.data.createResource("https://raw.githubusercontent.com/davidmartinmoncunill/voa3r/master/etc/resourceont.owl"),
+		MainShell.shell.data.createResource("http://data.organic-edunet.eu/lom_ontology_organicEdunet.owl")
 		};
 	
 	public static final File[] schemaFiles = { 
@@ -87,6 +90,7 @@ public class DataSchemaSet {
 		new File (schema_folder + "skos.rdf"),
 		new File (schema_folder + "t4f.owl"),
 		new File (schema_folder + "voar.owl"),
+		new File (schema_folder + "organicEdunet2.owl")
 		};
 	
 	// Current selection
