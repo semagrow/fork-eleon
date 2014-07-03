@@ -41,7 +41,7 @@ public class DataSchemaSet {
 	
 	public static final String bibo = "bibo";
 	public static final String crop = "crop";
-	public static final String dct = "dct";
+	public static final String dct = "dcterms";
 	public static final String europeana = "europeana";
 	public static final String foaf = "foaf";
 	public static final String natural_europe = "natural europe";
@@ -49,6 +49,12 @@ public class DataSchemaSet {
 	public static final String skos = "skos";
 	public static final String t4f = "trees 4 future";
 	public static final String voar = "voa3r";
+	public static final String rdf_syntax_ns_22 = "22-rdf-syntax-ns";
+	public static final String rdf_schema = "rdf-schema";
+	public static final String dcelements = "dcelements";
+	public static final String eurocris_ontologies_cerif_1_3 = "eurocris_ontologies_cerif_1.3";
+	public static final String owl = "owl";
+	
 	
 	public static final String[] schemaLabels = { 
 		bibo,
@@ -60,7 +66,12 @@ public class DataSchemaSet {
 		organic_edunet,
 		skos,
 		t4f,
-		voar
+		voar,
+		rdf_syntax_ns_22,
+		rdf_schema,
+		dcelements,
+		eurocris_ontologies_cerif_1_3,
+		owl
 		};
 	
 	public static final Resource[] schemaURIs = { 
@@ -73,7 +84,12 @@ public class DataSchemaSet {
 		MainShell.shell.data.createResource("http://data.organic-edunet.eu/lom_ontology_organicEdunet.owl"),
 		MainShell.shell.data.createResource("http://www.w3.org/2004/02/skos/core"),
 		MainShell.shell.data.createResource("http://rdf.demokritos.gr/2014/t4f"),
-		MainShell.shell.data.createResource("https://raw.githubusercontent.com/davidmartinmoncunill/voa3r/master/etc/resourceont.owl")
+		MainShell.shell.data.createResource("https://raw.githubusercontent.com/davidmartinmoncunill/voa3r/master/etc/resourceont.owl"),
+		MainShell.shell.data.createResource("http://www.w3.org/1999/02/22-rdf-syntax-ns"),
+		MainShell.shell.data.createResource("http://www.w3.org/2000/01/rdf-schema#"),
+		MainShell.shell.data.createResource("http://purl.org/dc/elements/1.1/ "),
+		MainShell.shell.data.createResource("http://www.eurocris.org/ontologies/cerif/1.3#"),
+		MainShell.shell.data.createResource("http://www.w3.org/2002/07/owl#")
 		};
 	
 	public static final File[] schemaFiles = { 
@@ -86,7 +102,12 @@ public class DataSchemaSet {
 		new File (schema_folder + "organicEdunet.owl"),
 		new File (schema_folder + "skos.rdf"),
 		new File (schema_folder + "t4f.owl"),
-		new File (schema_folder + "voar.owl")
+		new File (schema_folder + "voar.owl"),
+		new File (schema_folder + "22-rdf-syntax-ns.rdf"),
+		new File (schema_folder + "rdf-schema.rdf"),
+		new File (schema_folder + "dcelements.rdf"),
+		new File (schema_folder + "eurocris_ontologies_cerif_1.3.rdf"),
+		new File (schema_folder + "owl.rdf")
 		};
 	
 	// Current selection
