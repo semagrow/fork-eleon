@@ -1,8 +1,6 @@
 /**
+ * Provides the classes for representing RDF vocabularies. 
  * 
  */
-/**
- * @author konstant
- *
- */
+
 package gr.demokritos.iit.eleon.annotations;

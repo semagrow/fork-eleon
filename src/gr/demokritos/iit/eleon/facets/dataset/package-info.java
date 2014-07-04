@@ -1,8 +1,7 @@
 /**
+ * Provides the classes that implement the facet interfaces for annotated datasets.
  * 
+ * @see gr.demokritos.iit.eleon.facets
  */
-/**
- * @author konstant
- *
- */
+
 package gr.demokritos.iit.eleon.facets.dataset;

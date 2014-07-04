@@ -1,8 +1,5 @@
 /**
+ * Provides the classes necessary to persist ELEON-edited data in a variety of backends.
  * 
- */
-/**
- * @author konstant
- *
  */
 package gr.demokritos.iit.eleon.persistence;
