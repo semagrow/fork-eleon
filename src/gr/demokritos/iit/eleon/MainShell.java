@@ -230,7 +230,8 @@ public class MainShell extends Shell
 				}
         	}
         });
-        openItem.setText("&Open...");
+        openItem.setText("&Open...\tCtrl+O");
+        openItem.setAccelerator(SWT.CTRL + 'O');
         
         MenuItem saveItem = new MenuItem(fileMenu, SWT.PUSH);
         saveItem.addSelectionListener(new SelectionAdapter() {
