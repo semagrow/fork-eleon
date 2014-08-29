@@ -177,7 +177,8 @@ public class MainShell extends Shell
         		newButtonFunctionality();
         	}
         });
-		newItem.setText("&New");
+		newItem.setText("&New\tCtrl+N");
+		newItem.setAccelerator(SWT.CTRL + 'N');
 		
 		MenuItem openItem = new MenuItem(fileMenu, SWT.PUSH);
         openItem.addSelectionListener(new SelectionAdapter() {
