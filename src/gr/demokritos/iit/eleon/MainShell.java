@@ -255,7 +255,8 @@ public class MainShell extends Shell
 				}
         	}
         });
-        saveItem.setText("&Save");
+        saveItem.setText("&Save\tCtrl+S");
+        saveItem.setAccelerator(SWT.CTRL + 'S');
         
         MenuItem saveAsItem = new MenuItem(fileMenu, SWT.PUSH);
         saveAsItem.addSelectionListener(new SelectionAdapter() {
