@@ -74,7 +74,7 @@ import gr.demokritos.iit.eleon.persistence.*;
 
 public class MainShell extends Shell
 {
-	static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger( PropertyTreeFacet.class );
+	static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger( MainShell.class );
 	
 	public static MainShell shell;
 
