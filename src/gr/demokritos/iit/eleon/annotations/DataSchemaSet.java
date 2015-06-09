@@ -87,7 +87,7 @@ public class DataSchemaSet {
 		MainShell.shell.data.createResource("https://raw.githubusercontent.com/davidmartinmoncunill/voa3r/master/etc/resourceont.owl"),
 		MainShell.shell.data.createResource("http://www.w3.org/1999/02/22-rdf-syntax-ns"),
 		MainShell.shell.data.createResource("http://www.w3.org/2000/01/rdf-schema#"),
-		MainShell.shell.data.createResource("http://purl.org/dc/elements/1.1/ "),
+		MainShell.shell.data.createResource("http://purl.org/dc/elements/1.1/"),
 		MainShell.shell.data.createResource("http://www.eurocris.org/ontologies/cerif/1.3#"),
 		MainShell.shell.data.createResource("http://www.w3.org/2002/07/owl#")
 		};
