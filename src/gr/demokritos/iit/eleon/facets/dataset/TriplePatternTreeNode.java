@@ -48,8 +48,8 @@ public class TriplePatternTreeNode extends DatasetNode implements TreeFacetNode
 	
 	
 	public TriplePatternTreeNode(  Resource res, DatasetFacet facet,
-			String subjectClass, String subjectPattern, 
-			String predicate, String objectClass, String objectPattern )//FIXME: is predicate used anywhere?
+			String subjectVocabulary, String subjectPattern, 
+			String predicate, String objectVocabulary, String objectPattern )//FIXME: is predicate used anywhere?
 	{
 		super( res, facet );
 		Integer active_ann = MainShell.shell.activeAnnSchema;
@@ -59,12 +59,12 @@ public class TriplePatternTreeNode extends DatasetNode implements TreeFacetNode
 				break;
 			} else if (ann_name.equals("svd:subjectRegexPattern")) {
 				this.property_values[active_ann][i] = subjectPattern;
-			} else if (ann_name.equals("svd:subjectClass")) {
-				this.property_values[active_ann][i] = subjectClass;
+			} else if (ann_name.equals("svd:subjectVocabulary")) {
+				this.property_values[active_ann][i] = subjectVocabulary;
 			} else if (ann_name.equals("svd:objectRegexPattern")) {
 				this.property_values[active_ann][i] = objectPattern;
-			} else if (ann_name.equals("svd:objectClass")) {
-				this.property_values[active_ann][i] = objectClass;
+			} else if (ann_name.equals("svd:objectVocabulary")) {
+				this.property_values[active_ann][i] = objectVocabulary;
 			}
 		}
 	}

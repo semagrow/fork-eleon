@@ -280,8 +280,8 @@ public class AnnotationVocabulary
 		property_is_editable[1][i] = true;
 		
 		++i;
-		property_qnames[1][i] = "svd:subjectClass";
-		property_uris[1][i] = "http://rdf.iit.demokritos.gr/2013/sevod#subjectClass";
+		property_qnames[1][i] = "svd:subjectVocabulary";
+		property_uris[1][i] = "http://rdf.iit.demokritos.gr/2013/sevod#subjectVocabulary";
 		property_value_types[1][i] = NominalSet.class;
 		property_is_functional[1][i] = true;	
 		property_is_visible[1][i] = true;
@@ -296,8 +296,8 @@ public class AnnotationVocabulary
 		property_is_editable[1][i] = true;
 		
 		++i;
-		property_qnames[1][i] = "svd:objectClass";
-		property_uris[1][i] = "http://rdf.iit.demokritos.gr/2013/sevod#objectClass";
+		property_qnames[1][i] = "svd:objectVocabulary";
+		property_uris[1][i] = "http://rdf.iit.demokritos.gr/2013/sevod#objectVocabulary";
 		property_value_types[1][i] = NominalSet.class;
 		property_is_functional[1][i] = true;	
 		property_is_visible[1][i] = true;

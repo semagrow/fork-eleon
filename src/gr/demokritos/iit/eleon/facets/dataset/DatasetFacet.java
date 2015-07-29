@@ -369,7 +369,7 @@ public abstract class DatasetFacet implements TreeFacet
 				}
 				String currentName = AnnotationVocabulary.property_qnames[MainShell.shell.activeAnnSchema][i];
 				
-				if (currentName.equals("svd:subjectClass") || currentName.equals("svd:objectClass")) {//TODO:not best implementation. to improve later
+				if (currentName.equals("svd:subjectVocabulary") || currentName.equals("svd:objectVocabulary")) {//TODO:not best implementation. to improve later
 					StmtIterator stmt_it = dataset.listProperties(p);
 					while (stmt_it.hasNext()) {
 						Statement st = stmt_it.next();

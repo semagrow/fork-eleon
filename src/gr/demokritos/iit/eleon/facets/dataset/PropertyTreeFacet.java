@@ -375,7 +375,9 @@ public class PropertyTreeFacet extends DatasetFacet implements TreeFacet
 	{
 		boolean inserted = false;
 		for(TreeItem child : treeItem.getItems()) {
-			if (((PropertyTreeNode) child.getData()).getProperty().equals(superProperty)) {
+			if (child.getData() instanceof PropertyTreeNode
+					&& ((PropertyTreeNode) child.getData()).getProperty()
+							.equals(superProperty)) {
 				TreeItem newtreeItem = new TreeItem(child, SWT.NONE);
 				String label = ontProperty.toString();
 				newtreeItem.setText(label);
