@@ -376,7 +376,7 @@ public class TriplePatternTreeFacet extends DatasetFacet implements TreeFacet
 		String label = "";
 
 		String subC = "";
-		p = dataset.getModel().getProperty( "http://rdf.iit.demokritos.gr/2013/sevod#subjectClass" );
+		p = dataset.getModel().getProperty( "http://rdf.iit.demokritos.gr/2013/sevod#subjectVocabulary" );
 		stmt = dataset.getProperty( p );
 		if( stmt != null ) {
 			subC = stmt.getObject().asResource().getURI();
@@ -408,7 +408,7 @@ public class TriplePatternTreeFacet extends DatasetFacet implements TreeFacet
 		}
 		
 		String objC = "";
-		p = dataset.getModel().getProperty( "http://rdf.iit.demokritos.gr/2013/sevod#objectClass" );
+		p = dataset.getModel().getProperty( "http://rdf.iit.demokritos.gr/2013/sevod#objectVocabulary" );
 		stmt = dataset.getProperty( p );
 		if( stmt != null ) {
 			objC = stmt.getObject().asResource().getURI();

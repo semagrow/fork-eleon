@@ -745,7 +745,7 @@ public class MainShell extends Shell
 				 }
 				 
 				 //nominal set
-				 if ( property.equals("svd:subjectClass") || property.equals("svd:objectClass")) {
+				 if ( property.equals("svd:subjectVocabulary") || property.equals("svd:objectVocabulary")) {
 
 					 String[][] property_names = AnnotationVocabulary.property_qnames;
 					 int i = 0; int index_class = -1; int index_vocabulary = -1;
