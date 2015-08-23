@@ -9,10 +9,11 @@
     <name>semagrow-stack-eleon</name>
     <url>http://semagrow.eu</url>
 
-    <properties>        
+    <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.build.directory>target</project.build.directory>
         <distribution.site>/var/www/docs/${project.artifactId}/${project.version}</distribution.site>
-        <distribution.mvn>/var/www/mvn</distribution.mvn>        
+        <distribution.mvn>/var/www/mvn</distribution.mvn>
     </properties>
 
     <organization>
@@ -37,16 +38,16 @@
             <id>acharal</id>
             <name>Angelos Charalambidis</name>
             <email>acharal@iit.demokritos.gr</email>
-        </developer>        
+        </developer>
     </developers>
     <contributors>
         <contributor>
             <name>Jürgen W. Jakobitsch A</name>
             <url>http://www.turnguard.com/turnguard</url>
             <email>j.jakobitsch@semantic-web.at</email>
-        </contributor>            
-    </contributors>            
-    
+        </contributor>
+    </contributors>
+
     <mailingLists>
         <mailingList>
             <name>public-semagrow</name>
@@ -75,7 +76,7 @@
     <scm>
         <connection>scm:git:git://github.com/semagrow/semagrow-stack-eleon.git</connection>
         <url>https://github.com/semagrow/semagrow-stack-eleon</url>
-    </scm>                
+    </scm>
 
     <distributionManagement>
         <site>
@@ -87,7 +88,7 @@
             <url>file://${distribution.mvn}</url>
         </repository>
     </distributionManagement>
-            
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -98,20 +99,20 @@
         <dependency>
             <groupId>eleon.semagrow.eu</groupId>
             <artifactId>swt</artifactId>
-            <version>1.0.0</version>     
-        </dependency> 
+            <version>1.0.0</version>
+        </dependency>
         <dependency>
             <groupId>eleon.semagrow.eu</groupId>
             <artifactId>nl</artifactId>
-            <version>1.0.0</version>     
+            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.jena</groupId>
             <artifactId>jena-arq</artifactId>
-            <version>2.11.1</version>     
-        </dependency>            
+            <version>2.11.1</version>
+        </dependency>
     </dependencies>
-    
+
     <profiles>
         <profile>
             <id>eleon-executable</id>
@@ -126,7 +127,7 @@
                             <target>1.5</target>
                         </configuration>
                     </plugin>
-                    <plugin> 
+                    <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-dependency-plugin</artifactId>
                         <executions>
@@ -141,7 +142,7 @@
                                 </configuration>
                             </execution>
                         </executions>
-                    </plugin>                    
+                    </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-jar-plugin</artifactId>
@@ -158,10 +159,10 @@
                                     <mode>development</mode>
                                     <url>${project.url}</url>
                                     <key>value</key>
-                                </manifestEntries>                        
+                                </manifestEntries>
                             </archive>
                         </configuration>
-                    </plugin>           
+                    </plugin>
                 </plugins>
             </build>
         </profile>
@@ -199,7 +200,7 @@
                                 <dnameO>semagrow.eu</dnameO>
                                 <dnameL>eleon</dnameL>
                                 <dnameSt>eleon</dnameSt>
-                                <dnameC>eu</dnameC>  
+                                <dnameC>eu</dnameC>
                                 <keystoreConfig>
                                     <delete>false</delete>
                                     <gen>true</gen>
@@ -208,9 +209,85 @@
                             <gzip>true</gzip>
                             <outputJarVersions>true</outputJarVersions>
                         </configuration>
-                    </plugin>  
+                    </plugin>
                 </plugins>
             </build>
-        </profile>      
+        </profile>
     </profiles>
+
+    <build>
+        <sourceDirectory>src</sourceDirectory>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.0.2</version>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                    <excludes>
+                       <exclude>gr/demokritos/iit/eleon/authoring/*</exclude>
+                       <exclude>gr/demokritos/iit/eleon/parser/*</exclude>
+                       <exclude>gr/demokritos/iit/eleon/struct/*</exclude>
+                       <exclude>gr/demokritos/iit/eleon/ui/lang/*</exclude>
+                       <exclude>gr/demokritos/iit/eleon/ui/lang/en/*</exclude>
+                       <exclude>gr/demokritos/iit/eleon/ui/lang/gr/*</exclude>
+                       <exclude>gr/demokritos/iit/eleon/ui/lang/it/*</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+      				<groupId>org.apache.maven.plugins</groupId>
+      				<artifactId>maven-jar-plugin</artifactId>
+      				<configuration>
+      					<archive>
+      						<manifest>
+                    <addClasspath>true</addClasspath>
+      							<mainClass>gr.demokritos.iit.eleon.MainShell</mainClass>
+                    <classpathPrefix>lib/</classpathPrefix>
+      						</manifest>
+      					</archive>
+      				</configuration>
+      			</plugin>
+<plugin>
+  <artifactId>maven-assembly-plugin</artifactId>
+  <configuration>
+    <archive>
+      <manifest>
+        <mainClass>gr.demokritos.iit.eleon.MainShell</mainClass>
+      </manifest>
+    </archive>
+    <descriptorRefs>
+      <descriptorRef>jar-with-dependencies</descriptorRef>
+    </descriptorRefs>
+  </configuration>
+  <executions>
+    <execution>
+      <id>make-assembly</id> <!-- this is used for inheritance merges -->
+      <phase>package</phase> <!-- bind to the packaging phase -->
+      <goals>
+        <goal>single</goal>
+      </goals>
+    </execution>
+  </executions>
+</plugin>
+        </plugins>
+    </build>
 </project>
