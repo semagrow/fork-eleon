@@ -31,7 +31,7 @@
   <!-- Classpaths -->
 
   <path id="classpath">
-    <fileset dir="${lib.dir}" includes="*.jar" excludes="${jarfile}"/>
+    <fileset dir="${lib.dir}" includes="**/*.jar" excludes="${jarfile}"/>
   </path>
 
 
@@ -40,16 +40,20 @@
 
   <target name="compile"
     description="Compile the source tree into class files under ${classes.dir}">
+    <mkdir dir="${classes.dir}" />
     <javac
        srcdir="${src.dir}"
        destdir="${classes.dir}"
        debug="${java.debug}"
        debuglevel="${java.debuglevel}"
        deprecation="${java.deprecation}"
-       optimize="${java.optimize}"
-       source="${java.source}"
-       target="${java.target}">
+       optimize="${java.optimize}">
       <classpath refid="classpath" />
+      <include name="**/*.java"/>
+      <exclude name="gr/demokritos/iit/eleon/authoring/**"/>
+      <exclude name="gr/demokritos/iit/eleon/parser/**"/>
+      <exclude name="gr/demokritos/iit/eleon/struct/**"/>
+      <exclude name="gr/demokritos/iit/eleon/ui/lang/**"/>
     </javac>
   </target>
 
@@ -81,7 +85,7 @@
 	
   <target name="make-jar-debug" depends="compile"
       description="Create jarfile (with debug info) from the contents of the classes dir">
-  	<mkdir dir="${dist.dir}" />
+    <mkdir dir="${dist.dir}" />
     <jar jarfile="${dist.dir}/${jarfile}">
       <fileset dir="${classes.dir}"/>
       <manifest>
