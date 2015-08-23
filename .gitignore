@@ -1,2 +1,6 @@
 /classes
 /dist
+/target/
+.classpath
+.project
+.settings

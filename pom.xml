@@ -17,14 +17,14 @@
     </properties>
 
     <organization>
-        <name>SemaGrow - FP7</name>
+        <name>Semagrow</name>
         <url>http://www.semagrow.eu</url>
     </organization>
 
     <licenses>
         <license>
-            <name>Apache 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+            <name>GNU GENERAL PUBLIC LICENSE Version 2</name>
+            <url>http://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html</url>
         </license>
     </licenses>
 
@@ -216,15 +216,15 @@
     </profiles>
 
     <build>
-        <sourceDirectory>src</sourceDirectory>
+        <sourceDirectory>src/main/java</sourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.0.2</version>
                 <configuration>
-                    <source>1.5</source>
-                    <target>1.5</target>
+                    <source>1.7</source>
+                    <target>1.7</target>
                     <excludes>
                        <exclude>gr/demokritos/iit/eleon/authoring/*</exclude>
                        <exclude>gr/demokritos/iit/eleon/parser/*</exclude>
@@ -253,41 +253,43 @@
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
-      				<groupId>org.apache.maven.plugins</groupId>
-      				<artifactId>maven-jar-plugin</artifactId>
-      				<configuration>
-      					<archive>
-      						<manifest>
-                    <addClasspath>true</addClasspath>
-      							<mainClass>gr.demokritos.iit.eleon.MainShell</mainClass>
-                    <classpathPrefix>lib/</classpathPrefix>
-      						</manifest>
-      					</archive>
-      				</configuration>
-      			</plugin>
-<plugin>
-  <artifactId>maven-assembly-plugin</artifactId>
-  <configuration>
-    <archive>
-      <manifest>
-        <mainClass>gr.demokritos.iit.eleon.MainShell</mainClass>
-      </manifest>
-    </archive>
-    <descriptorRefs>
-      <descriptorRef>jar-with-dependencies</descriptorRef>
-    </descriptorRefs>
-  </configuration>
-  <executions>
-    <execution>
-      <id>make-assembly</id> <!-- this is used for inheritance merges -->
-      <phase>package</phase> <!-- bind to the packaging phase -->
-      <goals>
-        <goal>single</goal>
-      </goals>
-    </execution>
-  </executions>
-</plugin>
+      			<groupId>org.apache.maven.plugins</groupId>
+      			<artifactId>maven-jar-plugin</artifactId>
+      			<configuration>
+      				<archive>
+      					<manifest>
+                    		<addClasspath>true</addClasspath>
+      						<mainClass>gr.demokritos.iit.eleon.MainShell</mainClass>
+                    		<classpathPrefix>lib/</classpathPrefix>
+      					</manifest>
+      				</archive>
+      			</configuration>
+	      	</plugin>
+
+			<plugin>
+  				<artifactId>maven-assembly-plugin</artifactId>
+  				<configuration>
+    				<archive>
+      					<manifest>
+        					<mainClass>gr.demokritos.iit.eleon.MainShell</mainClass>
+      					</manifest>
+			    	</archive>
+    				<descriptorRefs>
+      					<descriptorRef>jar-with-dependencies</descriptorRef>
+    				</descriptorRefs>
+  				</configuration>
+  				<executions>
+    				<execution>
+      					<id>make-assembly</id> <!-- this is used for inheritance merges -->
+ 					    <phase>package</phase> <!-- bind to the packaging phase -->
+      					<goals>
+        					<goal>single</goal>
+      					</goals>
+    				</execution>
+  				</executions>
+			</plugin>
         </plugins>
     </build>
 </project>
