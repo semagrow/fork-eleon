@@ -61,33 +61,14 @@
 	<include name="swt-win-x86_64/swt-debug.jar"/>
   </fileset>
 
-  <path id="linux-classpath">
-	<fileset refid="linux-libs"/>
-  </path>
-
 
 	
 
   <!-- Primary externally visible targets -->
   <!-- ================================== -->
 
-  <target name="compile"
+  <target name="compile" depends="compile-linux"
 		description="Compile the source tree into class files under ${classes.dir}">
-	<mkdir dir="${classes.dir}" />
-    <javac
-       srcdir="${src.dir}"
-       destdir="${classes.dir}"
-       debug="${java.debug}"
-       debuglevel="${java.debuglevel}"
-       deprecation="${java.deprecation}"
-       optimize="${java.optimize}">
-      <classpath refid="classpath" />
-      <include name="**/*.java"/>
-      <exclude name="gr/demokritos/iit/eleon/authoring/**"/>
-      <exclude name="gr/demokritos/iit/eleon/parser/**"/>
-      <exclude name="gr/demokritos/iit/eleon/struct/**"/>
-      <exclude name="gr/demokritos/iit/eleon/ui/lang/**"/>
-    </javac>
   </target>
 
   <target name="make-debug-jar" depends="compile"
@@ -132,7 +113,65 @@
   <!-- Internal targets -->
   <!-- ================ -->
 
-  <target name="make-linux-jar" depends="optimise-javac-flags,compile"
+
+  <target name="compile-linux"
+	  description="Compile the source tree into class files under ${classes.dir}">
+	<mkdir dir="${classes.dir}" />
+	<javac
+		  srcdir="${src.dir}"
+		  destdir="${classes.dir}"
+		  debug="${java.debug}"
+		  debuglevel="${java.debuglevel}"
+		  deprecation="${java.deprecation}"
+		  optimize="${java.optimize}">
+		<classpath><fileset refid="linux-libs"/></classpath>
+		<include name="**/*.java"/>
+		<exclude name="gr/demokritos/iit/eleon/authoring/**"/>
+		<exclude name="gr/demokritos/iit/eleon/parser/**"/>
+		<exclude name="gr/demokritos/iit/eleon/struct/**"/>
+		<exclude name="gr/demokritos/iit/eleon/ui/lang/**"/>
+	</javac>
+  </target>
+
+  <target name="compile-macos"
+	  description="Compile the source tree into class files under ${classes.dir}">
+	<mkdir dir="${classes.dir}" />
+	<javac
+		  srcdir="${src.dir}"
+		  destdir="${classes.dir}"
+		  debug="${java.debug}"
+		  debuglevel="${java.debuglevel}"
+		  deprecation="${java.deprecation}"
+		  optimize="${java.optimize}">
+		<classpath><fileset refid="macos-libs"/></classpath>
+		<include name="**/*.java"/>
+		<exclude name="gr/demokritos/iit/eleon/authoring/**"/>
+		<exclude name="gr/demokritos/iit/eleon/parser/**"/>
+		<exclude name="gr/demokritos/iit/eleon/struct/**"/>
+		<exclude name="gr/demokritos/iit/eleon/ui/lang/**"/>
+	</javac>
+  </target>
+	
+  <target name="compile-win"
+	  description="Compile the source tree into class files under ${classes.dir}">
+	<mkdir dir="${classes.dir}" />
+	<javac
+		  srcdir="${src.dir}"
+		  destdir="${classes.dir}"
+		  debug="${java.debug}"
+		  debuglevel="${java.debuglevel}"
+		  deprecation="${java.deprecation}"
+		  optimize="${java.optimize}">
+		<classpath><fileset refid="win-libs"/></classpath>
+		<include name="**/*.java"/>
+		<exclude name="gr/demokritos/iit/eleon/authoring/**"/>
+		<exclude name="gr/demokritos/iit/eleon/parser/**"/>
+		<exclude name="gr/demokritos/iit/eleon/struct/**"/>
+		<exclude name="gr/demokritos/iit/eleon/ui/lang/**"/>
+	</javac>
+  </target>	
+	
+  <target name="make-linux-jar" depends="optimise-javac-flags,compile-linux"
       description="Create jarfile (optimized, no debug info) from the contents of the classes dir">
     <manifestclasspath property="jar.classpath" jarfile="${jarfile}">
     	<classpath><fileset refid="linux-libs"/></classpath>
@@ -147,7 +186,7 @@
     </jar>
   </target>
 
-  <target name="make-macos-jar" depends="optimise-javac-flags,compile"
+  <target name="make-macos-jar" depends="optimise-javac-flags,compile-macos"
       description="Create jarfile (optimized, no debug info) from the contents of the classes dir">
     <manifestclasspath property="jar.classpath" jarfile="${jarfile}">
     	<classpath><fileset refid="macos-libs"/></classpath>
@@ -162,7 +201,7 @@
     </jar>
   </target>
 
-  <target name="make-win-jar" depends="optimise-javac-flags,compile"
+  <target name="make-win-jar" depends="optimise-javac-flags,compile-win"
       description="Create jarfile (optimized, no debug info) from the contents of the classes dir">
     <manifestclasspath property="jar.classpath" jarfile="${jarfile}">
     	<classpath><fileset refid="win-libs"/></classpath>
