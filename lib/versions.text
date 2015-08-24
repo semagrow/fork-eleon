@@ -1,5 +1,6 @@
 UI:
-  swt:			SWT 4.5
+  swt (Linux):		SWT 4.3.2
+  swt (MacOS, Windows):	SWT 4.5
 
 XML:
   xml-apis:		1.4.01
