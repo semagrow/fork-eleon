@@ -20,12 +20,14 @@
 
   <property name="dist.dir"        value="dist/${dist.name}"/>
   <property name="dist.lib.dir"    value="${dist.dir}/lib"/>
+  <property name="dist.res.dir"    value="${dist.dir}/resources"/>
 
   <!-- Source locations -->
 
   <property name="src.dir"         value="src"/>
   <property name="classes.dir"     value="classes"/>
   <property name="lib.dir"         value="lib"/>
+  <property name="res.dir"         value="resources"/>
   <property name="bat.dir"         value="scripts/eleon.bat"/>
   <property name="sh.dir"          value="scripts/eleon.sh"/>
 
@@ -87,6 +89,8 @@
     <mkdir dir="${dist.dir}" />
   	<mkdir dir="${dist.lib.dir}"/>
     <copy todir="${dist.lib.dir}"><fileset dir="${lib.dir}"/></copy>
+  	<mkdir dir="${dist.res.dir}"/>
+    <copy todir="${dist.res.dir}"><fileset dir="${res.dir}"/></copy>
     <copy todir="${dist.dir}"><fileset file="${jarfile}"/></copy>
     <copy todir="${dist.dir}"><fileset file="${sh.dir}"/></copy>
   </target>
@@ -96,6 +100,8 @@
     <mkdir dir="${dist.dir}" />
   	<mkdir dir="${dist.lib.dir}"/>
     <copy todir="${dist.lib.dir}"><fileset dir="${lib.dir}"/></copy>
+  	<mkdir dir="${dist.res.dir}"/>
+    <copy todir="${dist.res.dir}"><fileset dir="${res.dir}"/></copy>
     <copy todir="${dist.dir}"><fileset file="${jarfile}"/></copy>
 	<copy todir="${dist.dir}"><fileset file="${sh.dir}"/></copy>
   </target>
@@ -105,6 +111,8 @@
     <mkdir dir="${dist.dir}" />
   	<mkdir dir="${dist.lib.dir}"/>
     <copy todir="${dist.lib.dir}"><fileset dir="${lib.dir}"/></copy>
+  	<mkdir dir="${dist.res.dir}"/>
+    <copy todir="${dist.res.dir}"><fileset dir="${res.dir}"/></copy>
     <copy todir="${dist.dir}"><fileset file="${jarfile}"/></copy>
 	<copy todir="${dist.dir}"><fileset file="${bat.dir}"/></copy>
   </target>
