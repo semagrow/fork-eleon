@@ -1,8 +1,9 @@
 /***************
 
-<p>Title:</p>
+<p>Title: Check Box List</p>
 
 <p>Description:
+A custom CheckBoxList
 </p>
 
 <p>
@@ -10,9 +11,6 @@ This file is part of the ELEON Ontology Authoring and Enrichment Tool.<br>
 Copyright (c) 2001-2011 National Centre for Scientific Research "Demokritos"<br>
 Please see at the bottom of this file for license details.
 </p>
-
-@author Stamatakis Kostas (kstam@iit.demokritos.gr)
-@author Spiliotopoulos Dimitris (dspiliot@iit.demokritos.gr)
 
 ***************/
 
@@ -27,7 +25,7 @@ import javax.swing.border.*;
 
 
 /**
-* A custom CheckBoxList
+* 
 *
 * @version 1.0
 **/

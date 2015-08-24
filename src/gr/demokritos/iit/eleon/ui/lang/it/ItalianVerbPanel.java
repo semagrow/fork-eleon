@@ -1,8 +1,19 @@
-//  "M-PIRO AUTHORING TOOL v.4.4"
-//  Copyright (c) 2001, 2002, 2003, 2004
-//  Software and Knowledge Engineering Laboratory,
-//  Institute of Informatics and Telecommunications,
-//  National Centre for Scientific Research "Demokritos", Greece.
+/***************
+
+<p>Title: ItalianVerbPanel</p>
+
+<p>Description:
+The panel for the italian verbs in LEXICON tab
+</p>
+
+<p>
+This file is part of the ELEON Ontology Authoring and Enrichment Tool.<br>
+Copyright (c) 2001-2015 National Centre for Scientific Research "Demokritos"<br>
+Please see at the bottom of this file for license details.
+</p>
+
+***************/
+
 
 package gr.demokritos.iit.eleon.ui.lang.it;
 
@@ -33,14 +44,6 @@ import javax.swing.table.*;
 import javax.swing.tree.*;
 import javax.swing.JTree;
 
-/**
- * <p>Title: ItalianVerbPanel</p>
- * <p>Description: The panel for the italian verbs in LEXICON tab</p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: NCSR "Demokritos"</p>
- * @author Dimitris Spiliotopoulos
- * @version 1.0
- */
 public class ItalianVerbPanel extends JPanel implements ActionListener, FocusListener 
 {
 	private boolean DEBUG = true;
@@ -468,4 +471,22 @@ public class ItalianVerbPanel extends JPanel implements ActionListener, FocusLis
 			}; // if
 		}
 	}
-}//ItalianVerbPanel
+}
+
+
+/*
+This file is part of the ELEON Ontology Authoring and Enrichment Tool.
+
+ELEON is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program; if not, see <http://www.gnu.org/licenses/>.
+*/

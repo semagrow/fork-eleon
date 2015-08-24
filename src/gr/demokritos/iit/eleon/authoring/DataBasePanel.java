@@ -7,15 +7,9 @@
 
 <p>
 This file is part of the ELEON Ontology Authoring and Enrichment Tool.<br>
-Copyright (c) 2001-2011 National Centre for Scientific Research "Demokritos"<br>
+Copyright (c) 2001-2015 National Centre for Scientific Research "Demokritos"<br>
 Please see at the bottom of this file for license details.
 </p>
-
-@author Kostas Stamatakis (2002)
-@author Dimitris Spiliotopoulos (2002)
-@author Maria Prospathopoulou
-@author Theofilos Nickolaou
-@author Dimitris Bilidas (XENIOS & INDIGO, 2007-2009; RoboSKEL 2010-2011)
 
  ***************/
 

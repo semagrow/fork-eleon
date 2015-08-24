@@ -1,8 +1,19 @@
-//  "M-PIRO AUTHORING TOOL v.4.4"
-//  Copyright (c) 2001, 2002, 2003, 2004
-//  Software and Knowledge Engineering Laboratory,
-//  Institute of Informatics and Telecommunications,
-//  National Centre for Scientific Research "Demokritos", Greece.
+/***************
+
+<p>Title: </p>
+
+<p>Description:
+
+</p>
+
+<p>
+This file is part of the ELEON Ontology Authoring and Enrichment Tool.<br>
+Copyright (c) 2001-2015 National Centre for Scientific Research "Demokritos"<br>
+Please see at the bottom of this file for license details.
+</p>
+
+***************/
+
 
 package gr.demokritos.iit.eleon.ui.lang.gr;
 

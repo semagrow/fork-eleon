@@ -1,3 +1,47 @@
+/***************
+
+<p>Title: PSClientRequest</p>
+
+<p>Description:
+This class is intented to be part of applications that use the
+Personalization Server (PersServer). It delegates requests to
+PersServer through HTTP messages, and receives and parses the
+response. The class has the following main responsibilities:
+1. Connect to the specified server at the specified port
+2. Form and send an HTTP message with the specified request,
+   using the specified method (GET and POST HTTP methods are
+   supported)
+3. Get the HTTP response message and detect possible errors
+4. Extract the respose body (the actual response to the request)
+   in XML format, parse it, extract the pieces of data, and
+   insert those fields in a dynamically created two-dimensional
+   array
+The parameter 'timeout' is the maximum time in millisecs that
+this class will wait for reading the server response. If it is
+set to 0 the class will wait infinitely for the response.
+
+Note that response data are always arranged by the PersServer
+in columns and rows in the response XML document. Also note that
+the corresponding two-dimensional array is a perception of the
+class user, the actual implementation is a single dimensional
+Vector.
+
+USAGE: each request to PersServer must be an instance of
+PSClientRequest. At initialization, the object performs its main
+responsibilities. Then, the application can check for errors,
+get the number of rows and columns of the response data, and
+access those data as in a two-dimensional array.
+</p>
+
+<p>
+This file is part of the ELEON Ontology Authoring and Enrichment Tool.<br>
+Copyright (c) 2001-2015 National Centre for Scientific Research "Demokritos"<br>
+Please see at the bottom of this file for license details.
+</p>
+
+***************/
+
+
 package gr.demokritos.iit.indigo.adaptation;
 
 
@@ -6,36 +50,8 @@ import java.net.*;
 import java.util.*;
 
 //===================================================================
-// PSClientRequest
+// 
 //
-// This class is intented to be part of applications that use the
-// Personalization Server (PersServer). It delegates requests to
-// PersServer through HTTP messages, and receives and parses the
-// response. The class has the following main responsibilities:
-// 1. Connect to the specified server at the specified port
-// 2. Form and send an HTTP message with the specified request,
-//    using the specified method (GET and POST HTTP methods are
-//    supported)
-// 3. Get the HTTP response message and detect possible errors
-// 4. Extract the respose body (the actual response to the request)
-//    in XML format, parse it, extract the pieces of data, and
-//    insert those fields in a dynamically created two-dimensional
-//    array
-// The parameter 'timeout' is the maximum time in millisecs that
-// this class will wait for reading the server response. If it is
-// set to 0 the class will wait infinitely for the response.
-//
-// Note that response data are always arranged by the PersServer
-// in columns and rows in the response XML document. Also note that
-// the corresponding two-dimensional array is a perception of the
-// class user, the actual implementation is a single dimensional
-// Vector.
-//
-// USAGE: each request to PersServer must be an instance of
-// PSClientRequest. At initialization, the object performs its main
-// responsibilities. Then, the application can check for errors,
-// get the number of rows and columns of the response data, and
-// access those data as in a two-dimensional array.
 //===================================================================
 public class PSClientRequest {
     //raw response variables
@@ -353,7 +369,23 @@ public class PSClientRequest {
         
         return 200;
     }
-    
-    
-    
+
 }
+
+
+/*
+This file is part of the ELEON Ontology Authoring and Enrichment Tool.
+
+ELEON is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program; if not, see <http://www.gnu.org/licenses/>.
+*/

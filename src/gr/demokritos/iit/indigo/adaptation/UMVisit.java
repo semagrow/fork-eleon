@@ -1,10 +1,8 @@
-package gr.demokritos.iit.indigo.adaptation;
+/***************
 
-import java.net.*;
-import java.sql.*;
-import java.util.*;
+<p>Title: </p>
 
-/** 
+<p>Description:
 * This interface specifying the API between the Natular-OWL (the Natural-Language-Machine of A.U.E.B.) and the Personalization-Server.
 * The Personalization-Server is a system that parses and processes the contents of the UserModeling.rdf file  (which is a file that 
 * the Authoring tool exports) and then stores the information into a DataBase. These files contain information which is about the user
@@ -33,12 +31,23 @@ import java.util.*;
 * 	
 * 
 * The following interface are the functions of the API between the Personalization-Server and the Natural-OWL machine.
-* 
-* 
-* @author Tegos Athnasios
-* @version 2
-* 
-**/
+
+</p>
+
+<p>
+This file is part of the ELEON Ontology Authoring and Enrichment Tool.<br>
+Copyright (c) 2001-2015 National Centre for Scientific Research "Demokritos"<br>
+Please see at the bottom of this file for license details.
+</p>
+
+***************/
+
+
+package gr.demokritos.iit.indigo.adaptation;
+
+import java.net.*;
+import java.sql.*;
+import java.util.*;
 
 
 public interface UMVisit {
@@ -215,3 +224,21 @@ public interface UMVisit {
 	 */        
 	 	
 }
+
+
+/*
+This file is part of the ELEON Ontology Authoring and Enrichment Tool.
+
+ELEON is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program; if not, see <http://www.gnu.org/licenses/>.
+*/
