@@ -1,2 +1,5 @@
 /classes
 /dist
+eleon.jar
+.classpath
+.DS_Store
