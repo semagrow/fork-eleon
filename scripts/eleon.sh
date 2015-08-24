@@ -1,10 +1,16 @@
 #!/bin/sh
 
-MACOS_JAVA6_HOME=/System/Library/Frameworks/JavaVM.framework/Versions/1.6.0/Home
+UNAME=$(uname)
 
-# check for MacOS, where JRE 6 is at a strange place
-if [[ -d ${MACOS_JAVA6_HOME} ]]; then
-	export PATH=${MACOS_JAVA6_HOME}/bin:$PATH
+if [[ x${UNAME} -eq "xDarwin" ]]; then
+	echo "MACOS"
+	JVM_PARAMS="-mx512M -d64 -XstartOnFirstThread"
+elif [[ x${UNAME} -eq "xLinux" ]]; then
+	echo "Linux"
+	JVM_PARAMS="-mx512M"
+else
+	echo "Other"
 fi	
 
-exec java -mx512M -jar eleon.jar
+exec java $JVM_PARAMS -jar eleon.jar
+

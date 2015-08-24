@@ -23,24 +23,57 @@
 
   <!-- Source locations -->
 
-  <property name="src.dir"           value="src"/>
-  <property name="classes.dir"       value="classes"/>
-  <property name="lib.dir"           value="lib"/>
-  <property name="bat.dir"           value="scripts"/>
+  <property name="src.dir"         value="src"/>
+  <property name="classes.dir"     value="classes"/>
+  <property name="lib.dir"         value="lib"/>
+  <property name="bat.dir"         value="scripts/eleon.bat"/>
+  <property name="sh.dir"          value="scripts/eleon.sh"/>
 
-  <!-- Classpaths -->
+  <!-- Different SWT lib is needed for each supported platform -->
 
-  <path id="classpath">
-    <fileset dir="${lib.dir}" includes="**/*.jar" excludes="${jarfile}"/>
+  <fileset id="linux-libs" dir="${lib.dir}">
+  	<include name="*.jar"/><include name="jena/*.jar"/>
+  	<include name="swt-linux-x86_64/swt.jar"/>
+  </fileset>
+
+  <fileset id="macos-libs" dir="${lib.dir}">
+	<include name="*.jar"/><include name="jena/*.jar"/>
+	<include name="swt-macos-x86_64/swt.jar"/>
+  </fileset>
+
+  <fileset id="win-libs" dir="${lib.dir}">
+	<include name="*.jar"/><include name="jena/*.jar"/>
+	<include name="swt-win-x86_64/swt.jar"/>
+  </fileset>
+
+  <fileset id="linux-debug-libs" dir="${lib.dir}">
+	<include name="*.jar"/><include name="jena/*.jar"/>
+	<include name="swt-linux-x86_64/swt-debug.jar"/>
+  </fileset>
+
+  <fileset id="macos-debug-libs" dir="${lib.dir}">
+	<include name="*.jar"/><include name="jena/*.jar"/>
+	<include name="swt-macos-x86_64/swt-debug.jar"/>
+  </fileset>
+
+  <fileset id="win-debug-libs" dir="${lib.dir}">
+	<include name="*.jar"/><include name="jena/*.jar"/>
+	<include name="swt-win-x86_64/swt-debug.jar"/>
+  </fileset>
+
+  <path id="linux-classpath">
+	<fileset refid="linux-libs"/>
   </path>
 
+
+	
 
   <!-- Primary externally visible targets -->
   <!-- ================================== -->
 
   <target name="compile"
-    description="Compile the source tree into class files under ${classes.dir}">
-    <mkdir dir="${classes.dir}" />
+		description="Compile the source tree into class files under ${classes.dir}">
+	<mkdir dir="${classes.dir}" />
     <javac
        srcdir="${src.dir}"
        destdir="${classes.dir}"
@@ -57,61 +90,95 @@
     </javac>
   </target>
 
-  <target name="distro-minimal" depends="compile,make-jar-debug"
-      description="Make a bin-only distribution">
-  	<mkdir dir="${dist.dir}"/>
-  	<mkdir dir="${dist.lib.dir}"/>
-    <copy todir="${dist.lib.dir}"><fileset dir="${lib.dir}"/></copy>
-    <copy todir="${dist.dir}"><fileset dir="${bat.dir}"/></copy>
+  <target name="make-debug-jar" depends="compile"
+		description="Create jarfile (with debug info, no hard-wired classapth) from the contents of the classes dir">
+	<jar jarfile="./${jarfile}">
+		<manifest>
+			<attribute name="Built-By" value="Stasinos Konstantopoulos for NCSR Demokritos" />
+			<attribute name="Main-Class" value="gr.demokritos.iit.eleon.MainShell" />
+		</manifest>
+		<fileset dir="${classes.dir}"/>
+	</jar>
   </target>
 
-  <target name="distro" depends="compile,make-jar-debug,make-src-zip"
-      description="Make a complete distro with binary jar and zipped sources">
-  	<mkdir dir="${dist.dir}"/>
+  <target name="distro-linux" depends="make-linux-jar,make-src-zip"
+      description="Make a complete Linux distro with binary jar and zipped sources">
+    <mkdir dir="${dist.dir}" />
   	<mkdir dir="${dist.lib.dir}"/>
     <copy todir="${dist.lib.dir}"><fileset dir="${lib.dir}"/></copy>
-    <copy todir="${dist.dir}"><fileset dir="${bat.dir}"/></copy>
+    <copy todir="${dist.dir}"><fileset file="${jarfile}"/></copy>
+    <copy todir="${dist.dir}"><fileset file="${sh.dir}"/></copy>
+  </target>
+
+  <target name="distro-macos" depends="make-macos-jar,make-src-zip"
+	  description="Make a complete MacOS X distro with binary jar and zipped sources">
+    <mkdir dir="${dist.dir}" />
+  	<mkdir dir="${dist.lib.dir}"/>
+    <copy todir="${dist.lib.dir}"><fileset dir="${lib.dir}"/></copy>
+    <copy todir="${dist.dir}"><fileset file="${jarfile}"/></copy>
+	<copy todir="${dist.dir}"><fileset file="${sh.dir}"/></copy>
+  </target>
+
+  <target name="distro-win" depends="make-win-jar,make-src-zip"
+	  description="Make a complete Windows distro with binary jar and zipped sources">
+    <mkdir dir="${dist.dir}" />
+  	<mkdir dir="${dist.lib.dir}"/>
+    <copy todir="${dist.lib.dir}"><fileset dir="${lib.dir}"/></copy>
+    <copy todir="${dist.dir}"><fileset file="${jarfile}"/></copy>
+	<copy todir="${dist.dir}"><fileset file="${bat.dir}"/></copy>
   </target>
 
 
   <!-- Internal targets -->
   <!-- ================ -->
 
-  <manifestclasspath property="jar.classpath" jarfile="${dist.dir}/${jarfile}">
-  	<classpath>
-  	  <fileset dir="${dist.lib.dir}"><include name="**/*.jar"/></fileset>
-  	</classpath>
-  </manifestclasspath>
-	
-  <target name="make-jar-debug" depends="compile"
-      description="Create jarfile (with debug info) from the contents of the classes dir">
-    <mkdir dir="${dist.dir}" />
-    <jar jarfile="${dist.dir}/${jarfile}">
+  <target name="make-linux-jar" depends="optimise-javac-flags,compile"
+      description="Create jarfile (optimized, no debug info) from the contents of the classes dir">
+    <manifestclasspath property="jar.classpath" jarfile="${jarfile}">
+    	<classpath><fileset refid="linux-libs"/></classpath>
+    </manifestclasspath>
+    <jar jarfile="${jarfile}">
       <fileset dir="${classes.dir}"/>
       <manifest>
         <attribute name="Class-Path" value="${jar.classpath}" />
       	<attribute name="Built-By" value="Stasinos Konstantopoulos for NCSR Demokritos" />
-        <attribute name="Main-Class" value="gr.demokritos.iit.eleon.authoring.Mpiro" />
+        <attribute name="Main-Class" value="gr.demokritos.iit.eleon.MainShell" />
       </manifest>  
     </jar>
   </target>
 
-  <target name="make-jar-optimised"  depends="optimise-javac-flags,compile"
-    description="Create jarfile (optimized, no debug info) from the contents of the classes dir">
-  	<mkdir dir="${dist.dir}"/>
-  	<mkdir dir="${dist.lib.dir}"/>
-    <jar jarfile="${dist.lib.dir}/${jarfile}">
+  <target name="make-macos-jar" depends="optimise-javac-flags,compile"
+      description="Create jarfile (optimized, no debug info) from the contents of the classes dir">
+    <manifestclasspath property="jar.classpath" jarfile="${jarfile}">
+    	<classpath><fileset refid="macos-libs"/></classpath>
+    </manifestclasspath>
+    <jar jarfile="${jarfile}">
+      <fileset dir="${classes.dir}"/>
       <manifest>
         <attribute name="Class-Path" value="${jar.classpath}" />
       	<attribute name="Built-By" value="Stasinos Konstantopoulos for NCSR Demokritos" />
-        <attribute name="Main-Class" value="gr.demokritos.iit.eleon.authoring.Mpiro" />
+        <attribute name="Main-Class" value="gr.demokritos.iit.eleon.MainShell" />
       </manifest>  
+    </jar>
+  </target>
+
+  <target name="make-win-jar" depends="optimise-javac-flags,compile"
+      description="Create jarfile (optimized, no debug info) from the contents of the classes dir">
+    <manifestclasspath property="jar.classpath" jarfile="${jarfile}">
+    	<classpath><fileset refid="win-libs"/></classpath>
+    </manifestclasspath>
+    <jar jarfile="${jarfile}">
       <fileset dir="${classes.dir}"/>
+      <manifest>
+        <attribute name="Class-Path" value="${jar.classpath}" />
+      	<attribute name="Built-By" value="Stasinos Konstantopoulos for NCSR Demokritos" />
+        <attribute name="Main-Class" value="gr.demokritos.iit.eleon.MainShell" />
+      </manifest>  
     </jar>
   </target>
 
   <target name="optimise-javac-flags"
-    description="Set the javac flags that will produce an optmised jar with no debug symbols" >
+    description="Set the javac flags that will produce an optimised jar without debug symbols" >
     <property name="java.debug"       value="false"/>
     <property name="java.debuglevel"  value=""/>
     <property name="java.deprecation" value="false"/>

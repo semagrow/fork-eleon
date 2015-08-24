@@ -1,12 +1,12 @@
 UI:
-  swt:			SWT
+  swt:			SWT 4.5
 
 XML:
   xml-apis:		1.4.01
   xercesImpl:	2.11.0
 
 Jena
-  jena.jar:		jena 2.11.1
+  jena.jar:		Jena 2.11.1
 
 Logging
   slf4j-api:	1.6.4
