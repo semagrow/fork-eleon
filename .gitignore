@@ -1,5 +1,7 @@
 /classes
 /dist
+target/
+.settings/
 eleon.jar
 .classpath
 .DS_Store
