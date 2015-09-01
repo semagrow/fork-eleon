@@ -1,0 +1,209 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>eu.semagrow.stack.eleon</groupId>
+    <artifactId>semagrow-stack-eleon</artifactId>
+    <version>3.1</version>
+    <packaging>jar</packaging>
+    <name>semagrow-stack-eleon</name>
+    <url>http://semagrow.eu</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.build.directory>target</project.build.directory>
+        <distribution.site>/var/www/docs/${project.artifactId}/${project.version}</distribution.site>
+        <distribution.mvn>/var/www/mvn</distribution.mvn>
+    </properties>
+
+    <organization>
+        <name>Semagrow</name>
+        <url>http://www.semagrow.eu</url>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>GNU GENERAL PUBLIC LICENSE Version 2</name>
+            <url>http://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>gmouchakis</id>
+            <name>Giannis Mouchakis</name>
+            <email>gmouchakis@iit.demokritos.gr</email>
+        </developer>
+        <developer>
+            <id>acharal</id>
+            <name>Angelos Charalambidis</name>
+            <email>acharal@iit.demokritos.gr</email>
+        </developer>
+    </developers>
+    <contributors>
+        <contributor>
+            <name>Jürgen W. Jakobitsch A</name>
+            <url>http://www.turnguard.com/turnguard</url>
+            <email>j.jakobitsch@semantic-web.at</email>
+        </contributor>
+    </contributors>
+
+    <mailingLists>
+        <mailingList>
+            <name>public-semagrow</name>
+            <subscribe>subscribe@semagrow_list@googlegroups.com</subscribe>
+            <unsubscribe>unsubscribe@semagrow_list@googlegroups.com</unsubscribe>
+            <post>semagrow_list@googlegroups.com</post>
+        </mailingList>
+    </mailingLists>
+    <repositories>
+
+        <repository>
+            <id>swc-semagrow</id>
+            <name>SWC SemaGrow Repository</name>
+            <url>http://semagrow.semantic-web.at/mvn/</url>
+            <snapshots>
+                <updatePolicy>always</updatePolicy>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>maven-central</id>
+            <url>http://repo1.maven.org/maven2</url>
+        </repository>
+    </repositories>
+
+    <scm>
+        <connection>scm:git:git://github.com/semagrow/semagrow-stack-eleon.git</connection>
+        <url>https://github.com/semagrow/semagrow-stack-eleon</url>
+    </scm>
+
+    <distributionManagement>
+        <site>
+            <id>online-documentation</id>
+            <url>file://${distribution.site}</url>
+        </site>
+        <repository>
+            <id>online-mvn-repository</id>
+            <url>file://${distribution.mvn}</url>
+        </repository>
+    </distributionManagement>
+    
+    <profiles>
+        <profile>
+            <id>debian</id>            
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>properties-maven-plugin</artifactId>
+                        <version>1.0-alpha-2</version>
+                        <executions>
+                            <execution>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>read-project-properties</goal>
+                                </goals>
+                                <configuration>                            
+                                    <files>                                                                
+                                        <file>${basedir}/src/properties/eleon.properties</file>
+                                    </files>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>                    
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>                        
+                        <executions>
+                            <execution>
+                                <phase>process-resources</phase>
+                                <configuration>
+                                    <tasks>
+                                        <ant antfile="build.xml" target="distro-linux"/>
+                                    </tasks>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>                        
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>2.6</version>
+                        <executions>
+                            <execution>
+                                <id>copy-deb</id>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${basedir}/target/deb</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${basedir}/src/deb</directory>
+                                            <filtering>true</filtering>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>copy-deb-deploy-script</id>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${basedir}/target/</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${basedir}/src/script</directory>
+                                            <filtering>true</filtering>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin> 
+                    <plugin>
+                        <artifactId>jdeb</artifactId>
+                        <groupId>org.vafer</groupId>
+                        <version>1.0</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jdeb</goal>
+                                </goals>
+                                <configuration>                            
+                                    <verbose>true</verbose>                            
+                                    <controlDir>${basedir}/target/deb/control</controlDir>                                                                                         
+                                    <dataSet>
+                                        <data>
+                                            <src>${basedir}/dist/eleon-${project.version}/</src>
+                                            <type>directory</type>
+                                            <mapper>
+                                                <type>perm</type>
+                                                <prefix>${distribution.all.package.home}</prefix>
+                                                <user>loader</user>
+                                                <group>loader</group>
+                                            </mapper>
+                                        </data>
+                                        <data>
+                                            <type>link</type>
+                                            <linkName>/usr/bin/eleon</linkName>
+                                            <linkTarget>${eleon.linux.base.dir}/eleon.sh</linkTarget>
+                                            <symlink>true</symlink>
+                                        </data>                                        
+                                    </dataSet>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+    
+</project>

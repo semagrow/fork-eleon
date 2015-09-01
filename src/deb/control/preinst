@@ -1,0 +1,38 @@
+#!/bin/sh
+
+ELEON_SHORT_NAME="${distribution.all.package.shortname}";
+ELEON_HOME="${distribution.all.package.home}";
+ELEON_GROUP="${distribution.all.package.group}";
+ELEON_USER="${distribution.all.package.user}";
+
+echo "PREINSTALL (version: ${project.version}) WITH $@"
+
+set -e
+case "$1" in
+    install)
+        echo "Install";
+        echo "Checking Stack Group and User";
+
+        if ! getent group "$ELEON_GROUP" > /dev/null 2>&1 ; then
+            addgroup --system "$ELEON_GROUP" --quiet
+            echo "Created group $ELEON_GROUP";
+        else 
+            echo "Group $ELEON_GROUP already exists";
+        fi
+
+        if ! id $ELEON_USER > /dev/null 2>&1 ; then
+            adduser --system --home $ELEON_HOME --no-create-home \
+            --ingroup "$ELEON_GROUP" --disabled-password --shell /bin/false \
+            "$ELEON_USER"
+            echo "Created user $ELEON_USER";
+        else
+            echo "User $ELEON_USER already exists";
+        fi
+    ;;
+		upgrade)
+			echo "Upgrade";
+		;;
+		abort-upgrade)
+			echo "Abort upgrade";
+		;;
+esac

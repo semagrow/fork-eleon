@@ -1,0 +1,23 @@
+#!/bin/sh
+
+ELEON_SHORT_NAME="${distribution.all.package.shortname}";
+ELEON_HOME="${distribution.all.package.home}";
+ELEON_GROUP="${distribution.all.package.group}";
+ELEON_USER="${distribution.all.package.user}";
+
+echo "POSTINSTALL (version: ${project.version}) WITH $@"
+
+set -e
+case "$1" in
+    configure)
+				echo "Configure";
+        chmod +x  $ELEON_HOME/*.sh        
+        chmod +x  /etc/init.d/$SEMAGROW_SHORT_NAME
+    ;;
+		abort-remove)
+			echo "Abort remove";
+		;;
+		abort-upgrade)
+			echo "Abort upgrade";
+		;;
+esac

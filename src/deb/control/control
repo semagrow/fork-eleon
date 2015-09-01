@@ -1,0 +1,7 @@
+Package: eleon
+Version: ${project.version}
+Section: misc
+Priority: low
+Architecture: all
+Description: Eleon Authoring Tool
+Maintainer: jakobitschj@semantic-web.at

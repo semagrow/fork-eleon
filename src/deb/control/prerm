@@ -1,0 +1,27 @@
+#!/bin/sh
+
+ELEON_SHORT_NAME="${distribution.all.package.shortname}";
+ELEON_HOME="${distribution.all.package.home}";
+
+echo "PREREMOVE (version: ${project.version}) WITH $@"
+
+#rm -f /etc/init.d/$SEMAGROW_SHORT_NAME
+
+set -e
+case "$1" in
+    remove)
+	    echo "Remove";
+			echo "Deleting : $ELEON_HOME";
+			cd $ELEON_HOME/.. && rm -rf $ELEON_HOME
+			rm /usr/bin/eleon
+    ;;
+    upgrade)
+	    echo "Upgrade";
+			echo "Deleting : $ELEON_HOME";
+			cd $ELEON_HOME/.. && rm -rf $ELEON_HOME
+			rm /usr/bin/eleon
+    ;;
+    fail-upgrade)
+	    echo "Fail upgrade";
+    ;;
+esac
